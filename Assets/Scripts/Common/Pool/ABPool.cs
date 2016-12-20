@@ -4,8 +4,26 @@ using System.Collections.Generic;
 
 namespace Common
 {
-    public class ABPool:Singleton<ABPool>
+    public class ABPool
     {
+        private static object locker = new object();
+        private static ABPool instance;
+        public static ABPool Instance
+        {
+            get
+            {
+                if (null == instance)
+                {
+                    lock (locker)
+                    {
+                        if (null == instance)
+                            instance = new ABPool();
+                    }
+                }
+                return instance;
+            }
+        }
+
         Dictionary<string, List<IPoolUser>> instWaitingUsers = new Dictionary<string, List<IPoolUser>>();
         Dictionary<string, List<IPoolUser>> assetWaitingUsers = new Dictionary<string, List<IPoolUser>>();      
 

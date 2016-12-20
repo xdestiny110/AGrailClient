@@ -6,7 +6,7 @@ public class MonoRoot : MonoBehaviour {
     public static MonoRoot Instance;
     private void OnLevelWasLoaded(int level)
     {
-        AppMgr.GetInstance().OnLevelLoaded();
+        AppMgr.Instance.OnLevelLoaded();
     }
 
     private void Awake()
@@ -20,6 +20,6 @@ public class MonoRoot : MonoBehaviour {
         gameObject.AddComponent<EventSystem.AsyncEventQueue>();
 
         SceneManager.LoadScene(1);
-        AppMgr.GetInstance().OnStart();
+        AppMgr.Instance.OnStart();
     }  
 }

@@ -86,15 +86,14 @@ namespace Network
                     state.stream.Position = 0;
 
                     // 4个字节协议长度
-                    byte[] b = state.stream.GetBuffer();
-                    int sumLen = Utils.ReadBytes(state.stream, 4);
+                    int sumLen = readBytes(state.stream, 4);
 
                     //读取完成 解析
                     //Debug.Log("sum len = " + sumLen + " stream len = " + state.stream.Length);
                     while (sumLen + 4 <= state.stream.Length)
                     {
                         state.stream.Position = 6;
-                        int protoId = Utils.ReadBytes(state.stream, 2);
+                        int protoId = readBytes(state.stream, 2);
                         state.stream.Position = 8;
                         MemoryStream protoStream = new MemoryStream();
                         //开始位置，长度                   
@@ -206,7 +205,7 @@ namespace Network
                             if (state.stream.Length > 2)
                             {
                                 state.stream.Position = 0;
-                                sumLen = Utils.ReadBytes(state.stream, 4);
+                                sumLen = readBytes(state.stream, 4);
                             }
                             else break;
                         }
@@ -243,6 +242,16 @@ namespace Network
                 return;
             }
         }
+
+        private int readBytes(Stream stream, int length)
+        {
+            int n = 0;
+            for (int i = 0; i < length; ++i)
+                //n = n * 256 + stream.ReadByte();
+                n += stream.ReadByte() * (int)Mathf.Pow(256, i);
+            return n;
+        }
+
     }
 
     public class StateObject

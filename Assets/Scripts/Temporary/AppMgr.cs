@@ -2,8 +2,26 @@
 using UnityEngine.SceneManagement;
 using System.Collections;
 
-public class AppMgr:Singleton<AppMgr>
+public class AppMgr
 {
+    private static object locker = new object();
+    private static AppMgr instance;
+    public static AppMgr Instance
+    {
+        get
+        {
+            if (null == instance)
+            {
+                lock (locker)
+                {
+                    if (null == instance)
+                        instance = new AppMgr();
+                }
+            }
+            return instance;
+        }
+    }
+
     UI.WinStack loginStack;  
     public void OnStart()
     {       

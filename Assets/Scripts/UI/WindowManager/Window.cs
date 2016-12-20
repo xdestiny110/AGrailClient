@@ -73,7 +73,7 @@ namespace UI
         {
             if (winHandle == null)
             {
-                ABPool.GetInstance().InstanceAsync(ABName.UserAssetName2UserBundleName(string.Format("{0}.prefab", winName), ABPath.UIWin), this);
+                ABPool.Instance.InstanceAsync(ABName.UserAssetName2UserBundleName(string.Format("{0}.prefab", winName), ABPath.UIWin), this);
                 return;
             }
             winHandle.SetActive(true);
@@ -99,7 +99,7 @@ namespace UI
         {
             UnRegistModuleEvent();
             willDestroy();
-            ABPool.GetInstance().GiveBack(winHandle);
+            ABPool.Instance.GiveBack(winHandle);
         }
 
         void SetCanvasLayer()

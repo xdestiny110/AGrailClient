@@ -29,6 +29,5 @@ namespace EventSystem
             eventTypes.Enqueue(type);
             eventParms.Enqueue(parameters);
         }
-
     }
 }

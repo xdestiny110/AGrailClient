@@ -6,21 +6,21 @@ namespace Network
 {
     public class NetworkManager : IEventListener
     {
-        protected static NetworkManager _instance;
         protected static object locker = new object();
+        protected static NetworkManager instance;
         public static NetworkManager Instance
         {
             get
             {
-                if (_instance == null)
+                if (null == instance)
                 {
                     lock (locker)
                     {
-                        if (_instance == null)
-                            _instance = new NetworkManager();
+                        if (null == instance)
+                            instance = new NetworkManager();
                     }
                 }
-                return _instance;
+                return instance;
             }
         }
 
@@ -61,10 +61,14 @@ namespace Network
             _state = ConnectState.Disconected;
         }
 
-        public void Send(System.IO.Stream stream)
+        public void Send(ProtoBuf.IExtensible protobuf, ProtoNameIds id)
         {
-            byte[] bytes = new byte[stream.Length];
-            Array.Copy((stream as System.IO.MemoryStream).GetBuffer(), bytes, stream.Length);
+            var serializeStream = new System.IO.MemoryStream();
+            ProtoSerializer.Serialize(id, serializeStream, protobuf);
+            var sendStream = Utils.SerializeStreamToSendStream(serializeStream, id);
+
+            byte[] bytes = new byte[sendStream.Length];
+            Array.Copy((sendStream as System.IO.MemoryStream).GetBuffer(), bytes, sendStream.Length);
             _tcp.Send(bytes);
         }
 
