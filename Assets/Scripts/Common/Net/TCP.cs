@@ -1,16 +1,17 @@
 using System.Net.Sockets;
-using System.Net;
 using System;
 using System.IO;
 using UnityEngine;
-using network;
-using System.Collections;
 
 namespace Network
 {
     public class TCP
     {
         protected Socket _socket;
+
+        private ConcurrentQueue<System.Action> actions = new ConcurrentQueue<System.Action>();
+
+        private System.Diagnostics.Stopwatch frameWatcher = new System.Diagnostics.Stopwatch();        
 
         public void Connect(string ip, int port)  //连接服务器
         {
@@ -22,7 +23,7 @@ namespace Network
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.SendTimeout, 30);
             _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, 30);
-            _socket.BeginConnect(ip, port, new AsyncCallback(ConnectCallback), _socket);
+            _socket.BeginConnect(ip, port, new AsyncCallback((ar)=> { actions.Enqueue(()=> { connectCallback(ar); }); }), _socket);
         }
 
         public void Disconnect()
@@ -34,7 +35,7 @@ namespace Network
             _socket.Close();
         }
 
-        private void ConnectCallback(IAsyncResult ar)
+        private void connectCallback(IAsyncResult ar)
         {
             Socket socket = (Socket)ar.AsyncState;
             try
@@ -45,18 +46,18 @@ namespace Network
             {
                 _socket = null;
                 Debug.LogError("服务器连接失败:" + e.ToString());
-                EventSystem.EventSystem.NotifyAsync(EventSystem.EventType.SocketResponse, false);
+                EventSystem.EventSystem.Notify(EventSystem.EventType.SocketResponse, false);
                 return;
             }
             Debug.Log("服务器连接成功!");
             //注册消息接收
             StateObject state = new StateObject();
             state.workSocket = socket;
-            socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReadCallback), state);
-            EventSystem.EventSystem.NotifyAsync(EventSystem.EventType.SocketResponse, true);
+            socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, SocketFlags.None, _ar => { actions.Enqueue(() => { readCallback(_ar); }); }, state);
+            EventSystem.EventSystem.Notify(EventSystem.EventType.SocketResponse, true);
         }
 
-        private void ReadCallback(IAsyncResult ar)
+        private void readCallback(IAsyncResult ar)
         {
             StateObject state = (StateObject)ar.AsyncState;
             Socket socket = state.workSocket;
@@ -217,17 +218,27 @@ namespace Network
                     }
                 }
                 // 继续接收
-                socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReadCallback), state);
+                socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, SocketFlags.None, _ar => { actions.Enqueue(() => { readCallback(_ar); }); }, state);
             }
         }
 
         public void Send(byte[] msgString)
         {
             if (_socket == null || !_socket.Connected) return;
-            _socket.BeginSend(msgString, 0, msgString.Length, 0, new AsyncCallback(SendCallback), _socket);
+            _socket.BeginSend(msgString, 0, msgString.Length, 0, new AsyncCallback(sendCallback), _socket);
         }
 
-        protected void SendCallback(IAsyncResult ar)
+        public void Process(long maxMiliseconds)
+        {
+            frameWatcher.Reset();
+            frameWatcher.Start();
+            //没有超过最大容忍时间的话就一直处理回调事件
+            //保证此时在Unity主线程中
+            while (frameWatcher.ElapsedMilliseconds < maxMiliseconds && actions.Count > 0)            
+                actions.Dequeue()();            
+        }
+
+        protected void sendCallback(IAsyncResult ar)
         {
             try
             {

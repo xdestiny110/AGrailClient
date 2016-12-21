@@ -31,14 +31,9 @@ namespace EventSystem
             {
                 foreach (IEventListener usr in usrs)
                 {
-                    usr.OnUIEventTrigger(type, parameters);
+                    usr.OnEventTrigger(type, parameters);
                 }
             }
-        }
-
-        public static void NotifyAsync(EventType type, params object[] parameters)
-        {
-            AsyncEventQueue.Instance.Enqueue(type, parameters);
         }
     }
 }

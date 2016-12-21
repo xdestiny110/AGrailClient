@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.SceneManagement;
+
 public class MonoRoot : MonoBehaviour {
 
     public static MonoRoot Instance;
@@ -11,13 +11,12 @@ public class MonoRoot : MonoBehaviour {
 
     private void Awake()
     {
-        //PlayerPrefs.SetString("logphone", "");
 #if UNITY_EDITOR
         PlayerPrefs.DeleteAll();
 #endif
-        GameObject.DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad(gameObject);
         Instance = this;
-        gameObject.AddComponent<EventSystem.AsyncEventQueue>();
+        gameObject.AddComponent<Network.AsyncEventQueue>();
 
         SceneManager.LoadScene(1);
         AppMgr.Instance.OnStart();

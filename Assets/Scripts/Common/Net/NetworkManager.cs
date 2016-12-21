@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections;
 using EventSystem;
+using System.IO;
 
 namespace Network
 {
@@ -63,16 +63,16 @@ namespace Network
 
         public void Send(ProtoBuf.IExtensible protobuf, ProtoNameIds id)
         {
-            var serializeStream = new System.IO.MemoryStream();
+            var serializeStream = new MemoryStream();
             ProtoSerializer.Serialize(id, serializeStream, protobuf);
-            var sendStream = Utils.SerializeStreamToSendStream(serializeStream, id);
+            var sendStream = serializeStreamToSendStream(serializeStream, id);
 
             byte[] bytes = new byte[sendStream.Length];
-            Array.Copy((sendStream as System.IO.MemoryStream).GetBuffer(), bytes, sendStream.Length);
+            Array.Copy((sendStream as MemoryStream).GetBuffer(), bytes, sendStream.Length);
             _tcp.Send(bytes);
         }
 
-        public void OnUIEventTrigger(EventType type, params object[] parameters)
+        public void OnEventTrigger(EventType type, params object[] parameters)
         {
             if (type == EventType.SocketResponse)
             {
@@ -81,6 +81,23 @@ namespace Network
                 else
                     _state = ConnectState.Disconected;
             }
+        }
+
+        public void Process(long maxMiliSecond)
+        {
+            _tcp.Process(maxMiliSecond);
+        }
+
+        private MemoryStream serializeStreamToSendStream(MemoryStream serializeStream, ProtoNameIds type)
+        {
+            MemoryStream sendStream = new MemoryStream();
+            sendStream.SetLength(serializeStream.Length + 8);
+            sendStream.Position = 0;
+            sendStream.Write(BitConverter.GetBytes((int)sendStream.Length - 4), 0, 4);
+            sendStream.Write(BitConverter.GetBytes((short)(sendStream.Length - 4)), 0, 2);
+            sendStream.Write(BitConverter.GetBytes((short)type), 0, 2);
+            sendStream.Write(serializeStream.GetBuffer(), 0, (int)serializeStream.Length);
+            return sendStream;
         }
     }
 }
