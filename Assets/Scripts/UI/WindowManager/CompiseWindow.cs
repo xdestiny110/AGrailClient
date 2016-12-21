@@ -16,34 +16,16 @@ namespace UI
         {
             this.parent = parent;
             DoShow();
-            parent.OnMsg(ParentMsg.ShowChild, this);
+            parent.OnMsg(WinMsg.ShowChild, this);
         }
 
-        public override void Hide()
-        {
-            base.Hide();
-            foreach(CompiseWindow child in children)
-            {
-                child.OnMsg(ParentMsg.Hide);
-            }
-        }
-
-        public override void Destroy()
-        {
-            base.Destroy();
-            foreach (CompiseWindow child in children)
-            {
-                child.OnMsg(ParentMsg.Destroy);
-            }    
-        }
-
-        public override void OnMsg(ParentMsg msg, params object[] parameters)
+        public override void OnMsg(WinMsg msg, params object[] parameters)
         {
             switch (msg)
             {
-                case ParentMsg.Null:
+                case WinMsg.Null:
                     break;
-                case ParentMsg.Show:
+                case WinMsg.Show:
                     {
                         DoShow();
                         if (currentShowChild != null)
@@ -52,16 +34,27 @@ namespace UI
                         }
                         break;
                     }
-                case ParentMsg.Hide:
+                case WinMsg.Hide:
                     {
                         DoHide();
                         foreach (CompiseWindow child in children)
                         {
-                            child.OnMsg(ParentMsg.Hide);
+                            child.OnMsg(WinMsg.Hide);
                         }
                         break;
-                    }             
-                case ParentMsg.ShowChild:
+                    }
+                case WinMsg.Destroy:
+                    {
+                        DoDestroy();
+                        foreach(CompiseWindow child in children)
+                        {
+                            child.OnMsg(WinMsg.Destroy);
+                        }
+                        children.Clear();
+                        currentShowChild = null;
+                        break;
+                    }    
+                case WinMsg.ShowChild:
                     {
                         CompiseWindow child = parameters[0] as CompiseWindow;
                         if (!children.Contains(child))

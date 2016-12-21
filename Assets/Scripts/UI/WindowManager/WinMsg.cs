@@ -6,7 +6,7 @@ namespace UI
      * 窗口管理方式：
      * 如果有导航栏形式的窗口即A有子窗口BCD，那么整体用CompiseWindow表示A，然后把A压入stack
      */
-    public enum ParentMsg 
+    public enum WinMsg 
     {
         Null = 0,
         Show,

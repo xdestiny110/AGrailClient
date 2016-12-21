@@ -47,6 +47,9 @@ namespace Network
 
             //懒得写unregist了
             EventSystem.EventSystem.Regist(EventType.SocketResponse, this);
+
+            //加入主线程循环处理回调
+            Module.MonoRoot.Instance.AddUpdateAction(()=> { _tcp.Process(5); });
         }
 
         public void Connect()
@@ -81,11 +84,6 @@ namespace Network
                 else
                     _state = ConnectState.Disconected;
             }
-        }
-
-        public void Process(long maxMiliSecond)
-        {
-            _tcp.Process(maxMiliSecond);
         }
 
         private MemoryStream serializeStreamToSendStream(MemoryStream serializeStream, ProtoNameIds type)

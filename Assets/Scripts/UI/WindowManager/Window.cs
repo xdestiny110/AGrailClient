@@ -6,7 +6,7 @@ namespace UI
     public abstract class Window : IPoolUser
     {
         public GameObject winHandle; //是否使能表示窗口是否打开
-        protected virtual string winName { get; private set; } //判断窗口是否是compise的，通过名字由用户自行判断
+        public virtual string winName { get; private set; } //判断窗口是否是compise的，通过名字由用户自行判断
         public int identity;
 
         public Window(int identity)
@@ -14,22 +14,6 @@ namespace UI
             this.identity = identity;
         }
 
-        public void Show(ParentMsg pMsg)
-        {            
-            WinStack.GetStack(identity).Push(this, pMsg); //暂时先放在这，最终可能导致窗口出来慢的时候，窗口切换有空隙
-            DoShow();
-        }    
-
-        public virtual void Hide()
-        {
-            WinStack.GetStack(identity).Pop(this);
-            DoHide();
-        }
-     
-        public virtual void Destroy()
-        {
-            DoDestroy();
-        }
         protected abstract void willDestroy();
         //注册界面按钮等相关回调
         protected abstract void RegistUiEvent();
@@ -42,19 +26,19 @@ namespace UI
         protected abstract void OnActualShow();
 
         //当有新窗口打开时，做为原先的当前窗口会收到此消息
-        public virtual void OnMsg(ParentMsg msg, params object[] parameters)
+        public virtual void OnMsg(WinMsg msg, params object[] parameters)
         {
             switch(msg)
             {
-                case ParentMsg.Null:
+                case WinMsg.Null:
                     break;
-                case ParentMsg.Show:
+                case WinMsg.Show:
                     DoShow();
                     break;             
-                case ParentMsg.Hide:
+                case WinMsg.Hide:
                     DoHide();
                     break;
-                case ParentMsg.Destroy:
+                case WinMsg.Destroy:
                     DoDestroy();
                     break;
             }
@@ -91,15 +75,16 @@ namespace UI
         {
             UnRegistModuleEvent();
             if (winHandle != null)
-                winHandle.SetActive(false);
-            //DoDestroy();
+                winHandle.SetActive(false);          
         }
 
         protected void DoDestroy()
         {
+            UnregistUiEvent();
             UnRegistModuleEvent();
             willDestroy();
             ABPool.Instance.GiveBack(winHandle);
+            winHandle = null;
         }
 
         void SetCanvasLayer()
