@@ -47,8 +47,8 @@ namespace Module
 
         private void Awake()
         {
-            GameObject.DontDestroyOnLoad(gameObject);
-            Instance = this;
+            DontDestroyOnLoad(gameObject);
+            Instance = this;            
         }
 
         void Update()

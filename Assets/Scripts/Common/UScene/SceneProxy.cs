@@ -94,9 +94,9 @@ namespace UScene
         {
             UI.WinStack loginStack = null;
             InitWinStack(type, out loginStack);
-            if (loginStack != null)//Square scene 检查用户是否登录，以确定是否显示登录界面以及发消息让其它界面不响应等操作
+            if (loginStack != null)
             {
-                ShowStackStartWin(loginStack); //这里直接不显示登录
+                ShowStackStartWin(loginStack);
             }
             else
             {
