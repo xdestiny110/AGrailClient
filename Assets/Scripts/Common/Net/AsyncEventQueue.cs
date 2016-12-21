@@ -5,8 +5,8 @@ namespace EventSystem
 {
     public class AsyncEventQueue : MonoBehaviour
     {
-        private Queue<EventType> eventTypes = new Queue<EventType>();
-        private Queue<object[]> eventParms = new Queue<object[]>();
+        private ConcurrentQueue<EventType> eventTypes = new ConcurrentQueue<EventType>();
+        private ConcurrentQueue<object[]> eventParms = new ConcurrentQueue<object[]>();
 
         public static AsyncEventQueue Instance { get; private set; }
 
