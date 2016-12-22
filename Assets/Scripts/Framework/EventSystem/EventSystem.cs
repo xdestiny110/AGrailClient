@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Framework
 {
@@ -18,8 +19,14 @@ namespace Framework
 
             public static void UnRegist(EventType eventType, IEventListener listener)
             {
-                if (maps.ContainsKey(eventType))                
-                    maps[eventType].Remove(listener);                
+                if (maps.ContainsKey(eventType))
+                    maps[eventType].Remove(listener);
+            }
+
+            public static void UnRegist(IEventListener listener)
+            {
+                foreach (var v in maps.Keys)
+                    UnRegist(v, listener);
             }
 
             public static void Notify(EventType eventType, params object[] parameters)
