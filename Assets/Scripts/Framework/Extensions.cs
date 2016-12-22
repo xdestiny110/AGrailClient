@@ -23,4 +23,26 @@ public static class Extensions{
     }
     #endregion
 
+    #region stack扩展
+    public static bool TryPeek<T>(this Stack<T> stack, ref T item)
+    {
+        if (stack.Count > 0)
+        {
+            item = stack.Peek();
+            return true;
+        }
+        return false;
+    }
+
+    public static bool TryPop<T>(this Stack<T> stack, ref T item)
+    {
+        if(stack.Count > 0)
+        {
+            item = stack.Pop();
+            return true;
+        }
+        return false;
+    }
+    #endregion
+
 }

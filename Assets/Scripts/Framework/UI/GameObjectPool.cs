@@ -71,12 +71,14 @@ namespace Framework
                 go.transform.localRotation = prefab.transform.localRotation;
                 go.transform.localScale = prefab.transform.localScale;
 
+                //确保有canvas group
+                if (go.GetComponent<CanvasGroup>() == null)
+                    go.AddComponent<CanvasGroup>();
+
                 return go;
 
             }
         }
-
-        
     }
 }
 

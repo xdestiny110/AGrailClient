@@ -28,13 +28,26 @@ namespace Framework
             }            
 
             private Stack<Window> stack = new Stack<Window>();
-            private Stack<Window> idle = new Stack<Window>();
 
             private UIManager() { }
 
-            
+            public void Push(Window window, WindowMsg toParentMsg)
+            {
+                Window win = null;
+                if (stack.TryPeek(ref win))
+                    win.OnMsg(toParentMsg);
+                window.OnMsg(WindowMsg.Show);
+                stack.Push(win);
+            }
 
-
+            public void Pop()
+            {
+                Window win = null;
+                if (stack.TryPop(ref win))
+                    win.OnMsg(WindowMsg.Destroy);
+                else
+                    throw new System.ArgumentOutOfRangeException("UI Stack is empty!");
+            }
         }
     }
 }

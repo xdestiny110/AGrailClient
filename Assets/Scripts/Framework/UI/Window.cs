@@ -43,6 +43,9 @@ namespace Framework
                     case WindowMsg.Hide:
                         hide();
                         break;
+                    case WindowMsg.Uninteractable:
+                        uninteractable();
+                        break;
                     case WindowMsg.Destroy:
                         destroy();
                         break;
@@ -51,26 +54,33 @@ namespace Framework
 
             protected virtual void show()
             {
-                if(GOHandle == null)
-                {
-                    GOHandle = GameObjectPool.Instance.InstanceGO(Enum.)
-                }
-                
+                if(GOHandle == null)                
+                    GOHandle = GameObjectPool.Instance.InstanceGO(this.GetWindowType());
+                                                
                 GOHandle.SetActive(true);
-                registEvent();
-                unregistEvent();
+                GOHandle.GetComponent<CanvasGroup>().interactable = true;
+                registEvent();                
                 onActualShow();
             }
 
             protected virtual void hide()
             {
-
+                unregistEvent();
+                GOHandle.SetActive(false);                
             }
 
             protected virtual void destroy()
             {
-
+                unregistEvent();
+                GOHandle = null;
+                identityPool.Remove(Identity);
             }
+
+            protected virtual void uninteractable()
+            {
+                GOHandle.GetComponent<CanvasGroup>().interactable = false;
+            }
+
         }
     }
 }
