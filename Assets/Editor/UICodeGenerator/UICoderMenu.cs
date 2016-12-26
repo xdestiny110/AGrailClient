@@ -1,23 +1,24 @@
-﻿using UnityEngine;
-using UnityEditor;
-using System.Collections;
-using System.Collections.Generic;
-namespace Editor.UIGen
-{
-    public class UICoderMenu
-    {
-        const string UIResourcePath = "Resources/UI";        
+﻿using UnityEditor;
+using UnityEngine;
 
-        [MenuItem("AppEditor/GenerateUICode")]
-        public static void DoGenerate()
+namespace Framework.UI
+{
+    [CustomEditor(typeof(UICoder))]
+    public class UICoderEditor : Editor
+    {
+        [MenuItem("Framework/Generate UI Code")]
+        public static void Edit()
         {
-            List<string> uiAssetsPath = EditorTool.AssetPathOfUnityFolder(UIResourcePath, ".prefab");
-            foreach(string uiAsset in uiAssetsPath)
+            Selection.activeObject = UICoder.Instance;
+        }
+
+        public override void OnInspectorGUI()
+        {
+            base.OnInspectorGUI();
+            if(GUILayout.Button("Generate UI code"))
             {
-                UICoder.Instance.Generate(uiAsset);
+                UICoder.Instance.GenerateCode();
             }
-            
-            AssetDatabase.Refresh();
         }
     }
 }

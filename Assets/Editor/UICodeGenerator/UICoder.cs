@@ -1,11 +1,15 @@
 ﻿using UnityEngine;
-using System.Collections;
+using UnityEditor;
 using System.Collections.Generic;
-namespace Editor.UIGen
+using UnityEngine.EventSystems;
+using System.Linq;
+
+namespace Framework.UI
 {
-    public sealed class UICoder
+    [InitializeOnLoad]
+    public sealed class UICoder : ScriptableObject
     {
-        private static UICoder instance;
+        private static UICoder instance = null;
         private static object locker = new object();
         public static UICoder Instance
         {
@@ -15,126 +19,56 @@ namespace Editor.UIGen
                 {
                     lock (locker)
                     {
-                        if (instance == null)
-                            instance = new UICoder();
+                        if(instance == null)
+                        {
+                            instance = CreateInstance<UICoder>();
+                        }                            
                     }
                 }
                 return instance;
             }
         }
 
-        private UICoder() { }
+        [SerializeField]
+        private string UIPrefabPath = "Resources/UI";
+        [SerializeField]
+        private string UICodePath = "Scripts/UI/Auto";
+        [SerializeField]
+        private List<UIBehaviour> Widgets = new List<UIBehaviour>();
 
+        private Dictionary<string,string> widgetPathes = new Dictionary<string, string>();
 
-        const string UICodePath = "Scripts/UI/Auto";
-        static List<string> ControlNameFixPre = new List<string>
+        public void GenerateCode()
         {
-            "Txt",//Text
-            "Lab",//Label
-            "Btn", //Button
-            "Inpt", //InputField
-            "Img",//Image
-            "Tog",//Toggle
-        };
+            widgetPathes.Clear();
 
-        FileWriter writer = null;
-        string winAssetPath;
-        string codeAssetPath;
-        string winName;
-        GameObject winInst;
-        Dictionary<string, string> ControlNameToPath = new Dictionary<string, string>();
-
-        public void Generate(string winPath)
-        {
-            this.winAssetPath = winPath;
-            winName = winPath.Substring(winPath.LastIndexOf("/")+1);
-            winName = winName.Substring(0, winName.LastIndexOf("."));
-            codeAssetPath = string.Format("{0}/{1}.cs", UICodePath, winName);
-            winInst = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(winAssetPath);
-            winInst = GameObject.Instantiate<GameObject>(winInst);
-            GetFixNameControls();
-            if (writer != null)
-                writer.Dispose();
-            writer = new FileWriter(EditorTool.UnityPathToSystemPath(codeAssetPath));
-            WriteFile();
-            writer.Dispose();
-            writer = null;
-            GameObject.DestroyImmediate(winInst);
-            ControlNameToPath.Clear();
-        }
-
-        void GetFixNameControls()
-        {
-            ControlNameToPath.Clear();
-            LoopTrans(winInst.transform);
-        }
-
-        void LoopTrans(Transform trans)
-        {
-            DealTrans(trans);
-            for(int i=0; i<trans.childCount; ++i)
+            List<string> uiPrefabs = EditorTool.AssetPathOfUnityFolder(UIPrefabPath, ".prefab");
+            foreach(var v in uiPrefabs)
             {
-                LoopTrans(trans.GetChild(i));
+                var goPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(v);
+                var go = GameObject.Instantiate(goPrefab);
+                realizePrefab(go.transform);
             }
+            AssetDatabase.Refresh();
         }
 
-        void DealTrans(Transform trans)
+        private void realizePrefab(Transform trans, List<string> list = null)
         {
-            string name = trans.gameObject.name;
-            foreach(string pre in ControlNameFixPre)
+            if (list == null)
+                list = new List<string>();
+            list.Add(trans.name);
+
+            foreach(var v in Widgets)
             {
-                if(name.StartsWith(pre))
-                {
-                    AddTrans(trans);
-                    return;
+                if (trans.GetComponent(v.GetType()) != null){
+                    widgetPathes.Add(trans.name + v.GetType().ToString(), list.Aggregate((s1, s2) => { return s1 + "/" + s2; }));
                 }
             }
-        }
 
-        void AddTrans(Transform trans)
-        {
-            Stack<string> stack = new Stack<string>();
-            Transform loopTrans = trans;
-            while(loopTrans.parent != null)
-            {
-                stack.Push(loopTrans.gameObject.name);
-                loopTrans = loopTrans.parent;
-            }
-            string s = "";
-            while(stack.Count>0)
-            {
-                s = s.Length == 0 ? stack.Pop() : string.Format("{0}/{1}", s, stack.Pop());
-            }
-            ControlNameToPath.Add(trans.name, s);
-        }
+            for (int i = 0; i < trans.childCount; i++)
+                realizePrefab(trans.GetChild(i), list);
 
-        void WriteFile()
-        {
-            writer.Append("using UnityEngine;");
-            writer.Append("using System.Collections;");
-            writer.Append("using System;");
-            writer.Append("using UnityEngine.UI;");
-            writer.Append("using System.Collections.Generic;");
-            writer.Append("namespace UI");
-            writer.Append("{");
-
-            writer.Append(string.Format("    public partial class {0} : Window, IUIEventListener", winName));
-            writer.Append("    {");
-            writer.Append(string.Format("        const string name = \"{0}\";",winName));
-            writer.Append("        public override string winName{ get { return name; }}");
-            writer.Append(string.Format("        public {0}(int identity) : base(identity) ", winName));
-            writer.Append("        {}");
-            WriteTrans();
-            writer.Append("    }");
-            writer.Append("}");
-        }
-
-        void WriteTrans()
-        {
-            foreach(KeyValuePair<string,string> kvp in ControlNameToPath)
-            {
-                writer.Append(string.Format("        const string {0}Path = \"{1}\";",kvp.Key, kvp.Value));
-            }
+            list.RemoveAt(list.Count - 1);
         }
     }
 }
