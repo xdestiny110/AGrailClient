@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Framework
 {
-    public class FileWriter
+    public class FileWriter : IDisposable
     {
         FileStream fs;
         StreamWriter sw;
@@ -40,7 +40,12 @@ namespace Framework
                     sw.Close();
                 if (fs != null)
                     fs.Close();
-            }            
+            }                        
+        }
+
+        public void AppendFormat(string line, params string[] objects)
+        {
+            Append(string.Format(line, objects));
         }
 
         public void Dispose()
