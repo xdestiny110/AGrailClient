@@ -15,20 +15,23 @@ namespace Framework.UI
         {
             get
             {
-                if(instance == null)
+                if (instance == null)
                 {
                     lock (locker)
                     {
-                        if(instance == null)
+                        if (instance == null)
                         {
                             instance = CreateInstance<UICoder>();
-                        }                            
+                        }
                     }
                 }
                 return instance;
             }
         }
+        private UICoder() { }
 
+        [ReadOnly]
+        public string ConfigFilePath = "Assets/Editor/UICodeGenerator/Config.asset";
         [SerializeField]
         private string UIPrefabPath = "Resources/UI";
         [SerializeField]

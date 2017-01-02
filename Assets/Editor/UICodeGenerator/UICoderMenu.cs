@@ -16,8 +16,9 @@ namespace Framework.UI
         {
             base.OnInspectorGUI();
             if(GUILayout.Button("Generate UI code"))
-            {
-                UICoder.Instance.GenerateCode();
+            {                
+                Caching.CleanCache();
+                AssetDatabase.CreateAsset(UICoder.Instance, UICoder.Instance.ConfigFilePath);
             }
         }
     }
