@@ -2,6 +2,8 @@
 using UnityEditor;
 using System.Collections.Generic;
 using System.Linq;
+using Framework.EventSystem;
+using System;
 
 namespace Framework.UI
 {
@@ -34,7 +36,11 @@ namespace Framework.UI
         [SerializeField]
         private string UIPrefabPath = "Resources/UI";
         [SerializeField]
-        private string UICodePath = "Scripts/UI/Auto";
+        private string UIAutoCodePath = "Scripts/UI/Auto";
+        [SerializeField]
+        private bool generateCustomCode = false;
+        [SerializeField]
+        private string UICustomCodePath = "Scripts/UI/Custom";
 
         private Dictionary<string,string> widgetPathes = new Dictionary<string, string>();
 
@@ -75,7 +81,7 @@ namespace Framework.UI
 
         private void writeCode(string clazzName)
         {
-            using(var fw = new FileWriter(UICodePath))
+            using(var fw = new FileWriter(EditorTool.UnityPathToSystemPath(UIAutoCodePath + "/" + clazzName + ".cs")))
             {
                 fw.Append("using UnityEngine;");
                 fw.Append("using UnityEditor;");
@@ -83,15 +89,54 @@ namespace Framework.UI
                 fw.Append("");
                 fw.Append("namespace Framework.UI");
                 fw.Append("{");
-                fw.AppendFormat("    public sealed class {0}", clazzName);
+                fw.AppendFormat("    public sealed partail class {0} : Window, IEventListener", clazzName);
                 fw.Append("    {");
                 foreach (var v in widgetPathes)
                 {
-                    fw.AppendFormat("        public const string {0} = {1};", v.Key, v.Value);
+                    fw.AppendFormat("        public const string {0} = \"{1}\";", v.Key, v.Value);
                 }
                 fw.Append("    }");
                 fw.Append("}");
             }
+
+            if (generateCustomCode)
+            {
+                using (var fw = new FileWriter(EditorTool.UnityPathToSystemPath(UICustomCodePath + "/" + clazzName + ".cs")))
+                {
+                    fw.Append("using UnityEngine;");
+                    fw.Append("using UnityEditor;");
+                    fw.Append("using UnityEngine.UI;");
+                    fw.Append("");
+                    fw.Append("namespace Framework.UI");
+                    fw.Append("{");
+                    fw.AppendFormat("    public sealed partail class {0} : Window, IEventListener", clazzName);
+                    fw.Append("    {");
+                    fw.Append("");
+                    fw.Append("        protected override void onActualShow()");
+                    fw.Append("        {");
+                    fw.Append("");
+                    fw.Append("        }");
+                    fw.Append("        protected override void onDestroy()");
+                    fw.Append("        {");
+                    fw.Append("");
+                    fw.Append("        }");
+                    fw.Append("        protected override void registEvent()");
+                    fw.Append("        {");
+                    fw.Append("");
+                    fw.Append("        }");
+                    fw.Append("        protected override void unregistEvent()");
+                    fw.Append("        {");
+                    fw.Append("");
+                    fw.Append("        }");
+                    fw.Append("        public void OnEventTrigger(EventSystem.EventType eventType, params object[] parameters)");
+                    fw.Append("        {");
+                    fw.Append("");
+                    fw.Append("        }");
+                    fw.Append("");
+                    fw.Append("    }");
+                    fw.Append("}");
+                }
+            }            
         }
     }
 }
