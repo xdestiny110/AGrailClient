@@ -3,7 +3,7 @@
 using UnityEditor;
 #endif
 
-namespace Framework.UI
+namespace Framework
 {
     public class ReadOnlyAttribute : PropertyAttribute
     {

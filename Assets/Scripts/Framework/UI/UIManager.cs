@@ -1,54 +1,49 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-namespace Framework
+namespace Framework.UI
 {
-    namespace UI
+    public class UIManager : Singleton<UIManager>
     {
-        public class UIManager
+        private Stack<WindowsBase> winStack = new Stack<WindowsBase>();
+
+        public WindowsBase PushWindow(WindowType type, WinMsg msg)
         {
-            private static UIManager instance;
-            private static object locker = new object();
-            public static UIManager Instance
+            switch (msg)
             {
-                get
-                {
-                    if(instance == null)
-                    {
-                        lock (locker)
-                        {
-                            if(instance == null)
-                            {
-                                instance = new UIManager();
-                            }
-                        }
-                    }
-                    return instance;
-                }
-            }            
-
-            private Stack<Window> stack = new Stack<Window>();
-
-            private UIManager() { }
-
-            public void Push(Window window, WindowMsg toParentMsg)
-            {
-                Window win = null;
-                if (stack.TryPeek(ref win))
-                    win.OnMsg(toParentMsg);
-                window.OnMsg(WindowMsg.Show);
-                stack.Push(win);
+                case WinMsg.Show:
+                    break;
+                case WinMsg.Hide:
+                    break;
+                case WinMsg.Pause:
+                    break;
+                case WinMsg.Resume:
+                    break;
+                case WinMsg.Destroy:
+                    break;                    
             }
-
-            public void Pop()
-            {
-                Window win = null;
-                if (stack.TryPop(ref win))
-                    win.OnMsg(WindowMsg.Destroy);
-                else
-                    throw new System.ArgumentOutOfRangeException("UI Stack is empty!");
-            }
+            return null;
         }
+
+        public void PopWindow(WinMsg msg)
+        {
+            
+        }
+
+        public void PeekWindow()
+        {
+
+        }
+    }
+
+    public enum WinMsg
+    {
+        None = 0,
+        Show,
+        Hide,
+        Pause,
+        Resume,
+        Destroy
     }
 }
 
