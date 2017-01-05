@@ -15,12 +15,10 @@ namespace Framework.UI
             {
                 if (instance == null)
                 {
-                    lock (locker)
+                    instance = AssetDatabase.LoadAssetAtPath<WindowFactory>(ConfigFilePath);
+                    if (instance == null)
                     {
-                        if (instance == null)
-                        {
-                            instance = CreateInstance<WindowFactory>();
-                        }
+                        instance = CreateInstance<WindowFactory>();
                     }
                 }
                 return instance;
@@ -28,7 +26,7 @@ namespace Framework.UI
         }
         private WindowFactory() { }               
                 
-        public string ConfigFilePath = "Assets/Resources/UI/WindowsConfig.asset";        
+        public const string ConfigFilePath = "Assets/Resources/UI/WindowsConfig.asset";        
         public string WindowTypePath = "Scripts/Framework/UI/WindowType.cs";        
         public string WindowPrefabPath = "UI/";
 

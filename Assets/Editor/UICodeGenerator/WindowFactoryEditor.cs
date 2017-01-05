@@ -19,22 +19,25 @@ namespace Framework.UI
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
-            if(GUILayout.Button("Generate Window Code"))
+            if (GUILayout.Button("Generate Window Code"))
             {
-                AssetDatabase.CreateAsset(WindowFactory.Instance, WindowFactory.Instance.ConfigFilePath);
+                GenerateCode();
             }
-        }        
+        }
 
         private void GenerateCode()
-        {            
+        {
             List<string> uiPrefabs = EditorTool.AssetPathOfUnityFolder("Resources/" + WindowFactory.Instance.WindowPrefabPath, ".prefab");
-            foreach(var v in uiPrefabs)
+            foreach (var v in uiPrefabs)
             {
                 var goPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(v);
                 var go = GameObject.Instantiate(goPrefab);
-                if(go.GetComponent<WindowsBase>() != null)
+                go.name = goPrefab.name;
+                if (go.GetComponent<WindowsBase>() != null)
                     windowTypes.Add(go.name);
-            }            
+                DestroyImmediate(go);
+            }
+            writeCode();
         }
 
         private void writeCode()
@@ -52,8 +55,9 @@ namespace Framework.UI
                 }
                 fw.Append("    }");
                 fw.Append("}");
-            }        
+            }
         }
+    }
 }
 
 
