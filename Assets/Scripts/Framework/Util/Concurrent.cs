@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Framework
@@ -40,7 +41,7 @@ namespace Framework
         }
     }
 
-    public sealed class ConcurrentList<T>
+    public sealed class ConcurrentList<T> : IEnumerable<T>
     {
         private readonly List<T> inner = new List<T>();
         private readonly object locker = new object();
@@ -89,6 +90,24 @@ namespace Framework
             lock (locker)
             {
                 inner.Clear();
+            }
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            lock (locker)
+            {
+                foreach (var v in inner)
+                    yield return v;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            lock (locker)
+            {
+                foreach (var v in inner)
+                    yield return v;
             }
         }
     }

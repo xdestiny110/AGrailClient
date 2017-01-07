@@ -1,39 +1,235 @@
 ﻿using System;
+using System.IO;
 using System.Net.Sockets;
-using System.Diagnostics;
 
 namespace Framework.Network
 {
     public sealed class TCP
     {
+        private ICoder coder;
+        private IServerConfig serverConfig;
         private Socket socket;
         private bool startReconnect;
-        private int _reconnectDelay;
-        private int _reconnectDelayMin = 1000;
-        private int _reconnectDelayMax = 60000;
-        private bool _autoReconnect;
-
-        private const int inputSize = 4096;
-        private const int reserveInputBufSize = 8192;
-        private const int reserveOutputBufSize = 1024;
+        private int reconnectDelay;
+        private int reconnectDelayMin = 1000;
+        private int reconnectDelayMax = 60000;
+        private bool autoReconnect;
+        private int reconnectTimes = 0;
+        private int maxReconnectTimes = 3;
 
         private readonly ConcurrentQueue<Action> actions = new ConcurrentQueue<Action>();
-        private readonly Stopwatch reconnectWatcher = new Stopwatch();
-        private readonly Stopwatch frameWatcher = new Stopwatch();
-
-
+        
         public bool Connected { get { return null != socket && socket.Connected; } }
 
-        public TCP()
+        public bool AutoReconnect
         {
-
+            get { return autoReconnect; }
+            set
+            {
+                autoReconnect = value;
+                if (autoReconnect)
+                {
+                    if (!Connected)
+                    {
+                        reconnectDelay = 0;
+                        startReconnect = true;
+                        closeAndReconnect(socket);
+                    }
+                }
+                else
+                    startReconnect = false;
+            }
         }
 
+        public TCP(IServerConfig serverConfig, ICoder coder, bool reconnect = true, int maxReconnectTimes = 3)
+        {
+            this.serverConfig = serverConfig;
+            this.coder = coder;
+            autoReconnect = reconnect;
+            this.maxReconnectTimes = maxReconnectTimes;
+        }
 
+        public void Connect()
+        {
+            if(socket != null)
+            {
+                UnityEngine.Debug.LogWarning("Socket has been established!");
+                return;
+            }
 
-        //public void Connect(string )
+            try
+            {
+                socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+                {
+                    SendBufferSize = serverConfig.SendBufferSize,
+                    ReceiveBufferSize = serverConfig.ReceiveBufferSize
+                };
+                socket.BeginConnect(serverConfig.ServerIP, serverConfig.Port, 
+                    (ar) => 
+                    {
+                        try
+                        {
+                            socket.EndConnect(ar);
+                            onConnectSuccess();
+                            StateObject state = new StateObject() { workSocket = (Socket)ar.AsyncState };
+                            socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, SocketFlags.None, beginReceiveCallback, state);
+                            reconnectDelay = 0;
+                            startReconnect = false;
+                        }
+                        catch (Exception ex)
+                        {
+                            UnityEngine.Debug.LogWarning("TCP.Connect failed:");
+                            UnityEngine.Debug.LogException(ex);
+                            closeAndReconnect(socket);
+                        }
+                    }, socket);
+            }
+            catch(Exception ex)
+            {
+                UnityEngine.Debug.LogWarning("TCP.Connect failed :");
+                UnityEngine.Debug.LogException(ex);
+            }
+        }
+
+        public void Close()
+        {
+            if(socket!=null)
+            {
+                socket.Close();
+                socket = null;
+            }
+            actions.clear();
+            startReconnect = false;            
+        }
+
+        public void Send(ProtoBuf.IExtensible protobuf)
+        {            
+            if(socket == null || !socket.Connected)
+            {
+                UnityEngine.Debug.LogError("Socket was not established!");
+                return;
+            }
+            beforeSendProto(protobuf);
+            var data = coder.Encode(protobuf);
+            socket.BeginSend(data,0,data.Length,SocketFlags.None,)
+        }
+
+        private void closeAndReconnect(Socket socket)
+        {
+            if (socket != this.socket)
+                return;
+
+            Close();
+            if (autoReconnect && reconnectTimes < maxReconnectTimes)
+            {
+                if (reconnectDelay == 0)
+                {
+                    reconnectDelay = reconnectDelayMin;
+                }
+                else
+                {
+                    reconnectDelay *= 2;
+                    if (reconnectDelay > reconnectDelayMax)
+                        reconnectDelay = reconnectDelayMax;
+                }
+                startReconnect = true;
+                reconnectTimes++;
+                Connect();
+                actions.Enqueue(onReconnect);
+            }
+            else
+                actions.Enqueue(onConnectFail);                
+        }
+
+        private void beginReceiveCallback(IAsyncResult ar)
+        {
+            StateObject state = (StateObject)ar.AsyncState;
+            Socket socket = state.workSocket;
+
+            try
+            {
+                int readLength = socket.EndReceive(ar);
+                if(readLength > 0)
+                {
+                    // 不处理粘包、分包等问题，在ICoder中处理
+                    // 并且ICoder需要自己保留本次的数据
+                    ProtoBuf.IExtensible proto;
+                    if (coder.Decode(state.buffer, out proto))
+                        afterReceiveProto(proto);
+                }
+                // 继续接收
+                socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, SocketFlags.None, beginReceiveCallback, state);
+            }
+            catch(Exception ex)
+            {
+                UnityEngine.Debug.LogWarning("TCP.Receive failed :");
+                UnityEngine.Debug.LogException(ex);
+            }
+        }
+
+        private void beginSendCallback(IAsyncResult ar)
+        {
+            try
+            {
+                var sock = (Socket)ar.AsyncState;
+                sock.EndSend(ar);
+            }
+            catch(Exception ex)
+            {
+                UnityEngine.Debug.LogError("TCP.beginSend failed: ");
+                UnityEngine.Debug.LogException(ex);
+            }
+        }
+
+        private void onConnectSuccess()
+        {
+            UnityEngine.Debug.Log("OnConnectSuccess!");
+            actions.Enqueue(() => { EventSystem.EventSystem.Notify(EventSystem.EventType.OnConnect, true); });            
+        }
+
+        private void onConnectFail()
+        {
+            UnityEngine.Debug.Log("OnConnectFail!");
+            actions.Enqueue(() => { EventSystem.EventSystem.Notify(EventSystem.EventType.OnConnect, false); });
+        }
+
+        private void onDisconnect()
+        {
+            UnityEngine.Debug.Log("OnDisconnect!");
+            actions.Enqueue(() => { EventSystem.EventSystem.Notify(EventSystem.EventType.OnDisconnect); });
+        }
+
+        private void onReconnect()
+        {
+            UnityEngine.Debug.Log("OnDisconnect!");
+            actions.Enqueue(() => { EventSystem.EventSystem.Notify(EventSystem.EventType.OnReconnect); });
+        }
+
+        private void beforeSendProto(ProtoBuf.IExtensible protobuf)
+        {
+            UnityEngine.Debug.LogFormat("Send protobuf {0}", protobuf);
+        }        
+
+        private void afterReceiveProto(ProtoBuf.IExtensible protobuf)
+        {
+            UnityEngine.Debug.LogFormat("Recv protobuf {0}", protobuf);
+            actions.Enqueue(() => { EventSystem.EventSystem.Notify(EventSystem.EventType.Protobuf, protobuf); });
+        }
 
     }
+
+    public class StateObject
+    {
+        // Client  socket.
+        public Socket workSocket;
+        // Size of receive buffer.
+        public const int BufferSize = 1024;
+        // Receive buffer.
+        public byte[] buffer = new byte[BufferSize];
+        // Received data string.
+        public MemoryStream stream = new MemoryStream();
+    }
+
 }
 
 

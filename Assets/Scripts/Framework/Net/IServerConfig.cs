@@ -1,11 +1,10 @@
-﻿using UnityEngine;
-using System.Collections;
-
-namespace Framework.Network
+﻿namespace Framework.Network
 {
     public interface IServerConfig
     {
         string ServerIP { get; }
         int Port { get; }
+        int SendBufferSize { get; }
+        int ReceiveBufferSize { get; }
     }
 }
