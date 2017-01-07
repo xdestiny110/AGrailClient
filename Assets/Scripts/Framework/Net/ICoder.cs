@@ -4,7 +4,7 @@ namespace Framework.Network
 {
     public interface ICoder
     {
-        bool Decode(byte[] stream, out IExtensible proto);
+        bool Decode(byte[] data, out IExtensible proto);
         byte[] Encode(IExtensible proto);
     }
 }

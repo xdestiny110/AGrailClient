@@ -111,7 +111,13 @@ namespace Framework.Network
             }
             beforeSendProto(protobuf);
             var data = coder.Encode(protobuf);
-            socket.BeginSend(data,0,data.Length,SocketFlags.None,)
+            socket.BeginSend(data, 0, data.Length, SocketFlags.None, beginSendCallback, socket);
+        }
+
+        public void DoActions()
+        {
+            while (actions.Count > 0)
+                actions.Dequeue()();
         }
 
         private void closeAndReconnect(Socket socket)
