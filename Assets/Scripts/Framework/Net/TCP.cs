@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
 
@@ -102,7 +103,7 @@ namespace Framework.Network
             startReconnect = false;            
         }
 
-        public void Send(ProtoBuf.IExtensible protobuf)
+        public void Send(Protobuf protobuf)
         {            
             if(socket == null || !socket.Connected)
             {
@@ -159,9 +160,12 @@ namespace Framework.Network
                 {
                     // 不处理粘包、分包等问题，在ICoder中处理
                     // 并且ICoder需要自己保留本次的数据
-                    ProtoBuf.IExtensible proto;
+                    List<Protobuf> proto;
                     if (coder.Decode(state.buffer, out proto))
-                        afterReceiveProto(proto);
+                    {
+                        foreach (var v in proto)
+                            afterReceiveProto(v);
+                    }                        
                 }
                 // 继续接收
                 socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, SocketFlags.None, beginReceiveCallback, state);
@@ -211,12 +215,12 @@ namespace Framework.Network
             actions.Enqueue(() => { EventSystem.EventSystem.Notify(EventSystem.EventType.OnReconnect); });
         }
 
-        private void beforeSendProto(ProtoBuf.IExtensible protobuf)
+        private void beforeSendProto(Protobuf protobuf)
         {
             UnityEngine.Debug.LogFormat("Send protobuf {0}", protobuf);
         }        
 
-        private void afterReceiveProto(ProtoBuf.IExtensible protobuf)
+        private void afterReceiveProto(Protobuf protobuf)
         {
             UnityEngine.Debug.LogFormat("Recv protobuf {0}", protobuf);
             actions.Enqueue(() => { EventSystem.EventSystem.Notify(EventSystem.EventType.Protobuf, protobuf); });
