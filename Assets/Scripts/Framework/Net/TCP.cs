@@ -151,17 +151,19 @@ namespace Framework.Network
         private void beginReceiveCallback(IAsyncResult ar)
         {
             StateObject state = (StateObject)ar.AsyncState;
-            Socket socket = state.workSocket;
+            Socket socket = state.workSocket;            
 
             try
             {
                 int readLength = socket.EndReceive(ar);
                 if(readLength > 0)
                 {
+                    var data = new byte[readLength];
+                    Array.Copy(state.buffer, 0, data, 0, 20);
                     // 不处理粘包、分包等问题，在ICoder中处理
                     // 并且ICoder需要自己保留本次的数据
                     List<Protobuf> proto;
-                    if (coder.Decode(state.buffer, out proto))
+                    if (coder.Decode(data, out proto))
                     {
                         foreach (var v in proto)
                             afterReceiveProto(v);
@@ -217,12 +219,12 @@ namespace Framework.Network
 
         private void beforeSendProto(Protobuf protobuf)
         {
-            UnityEngine.Debug.LogFormat("Send protobuf {0}", protobuf);
+            UnityEngine.Debug.LogFormat("Send protobuf {0}", protobuf.ProtoID);
         }        
 
         private void afterReceiveProto(Protobuf protobuf)
         {
-            UnityEngine.Debug.LogFormat("Recv protobuf {0}", protobuf);
+            UnityEngine.Debug.LogFormat("Recv protobuf {0}", protobuf.ProtoID);
             actions.Enqueue(() => { EventSystem.EventSystem.Notify(EventSystem.EventType.Protobuf, protobuf); });
         }
 

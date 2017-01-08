@@ -3,12 +3,14 @@ using System.Collections.Generic;
 
 namespace Framework.UI
 {
-    public class UIManager : Singleton<UIManager>
+    public class UIManager
     {
         private Stack<WindowsBase> winStack = new Stack<WindowsBase>();
+        private Dictionary<WindowType, GameObject> goPool = new Dictionary<WindowType, GameObject>();
 
         public WindowsBase PushWindow(WindowType type, WinMsg msg)
         {
+            var go = WindowFactory.Instance.CreateWindows(type);
             switch (msg)
             {
                 case WinMsg.Show:

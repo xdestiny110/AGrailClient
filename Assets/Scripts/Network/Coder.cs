@@ -48,10 +48,18 @@ namespace AGrail
                         MemoryStream newStream = new MemoryStream();
                         newStream.Write(stream.ToArray(), (int)stream.Position, (int)(stream.Length - stream.Position));
                         stream = newStream;
+                        br = new BinaryReader(stream);
                         // 判断剩下的是否包含一个完整的协议
                         stream.Position = 0;
-                        sumLen = br.ReadInt32();                        
+                        sumLen = br.ReadInt32();
                     }
+                    else
+                    {
+                        // 说明说是一个完整的包
+                        stream = new MemoryStream();
+                        br = new BinaryReader(stream);
+                        break;
+                    }                        
                 }
             }
             catch (Exception ex)
