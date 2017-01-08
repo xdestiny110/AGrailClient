@@ -26,13 +26,14 @@ namespace Framework
         #endregion
 
         #region stack扩展
-        public static bool TryPeek<T>(this Stack<T> stack, ref T item)
+        public static bool TryPeek<T>(this Stack<T> stack, out T item)
         {
             if (stack.Count > 0)
             {
                 item = stack.Peek();
                 return true;
             }
+            item = default(T);
             return false;
         }
 

@@ -11,30 +11,47 @@ namespace Framework.UI
         public WindowsBase PushWindow(WindowType type, WinMsg msg)
         {
             var go = WindowFactory.Instance.CreateWindows(type);
-            switch (msg)
-            {
-                case WinMsg.Show:
-                    break;
-                case WinMsg.Hide:
-                    break;
-                case WinMsg.Pause:
-                    break;
-                case WinMsg.Resume:
-                    break;
-                case WinMsg.Destroy:
-                    break;                    
-            }
-            return null;
+            var win = go.GetComponent<WindowsBase>();
+            WindowsBase topWin;
+            if(winStack.TryPeek(out topWin))            
+                dealWinMsg(topWin, msg);            
+            winStack.Push(win);
+            return win;
         }
 
         public void PopWindow(WinMsg msg)
         {
-            
+            WindowsBase topWin;
+            if (winStack.TryPeek(out topWin))
+            {
+                GameObject.Destroy(topWin.gameObject);
+                if (winStack.TryPeek(out topWin))                
+                    dealWinMsg(topWin, msg);                
+            }
+            else
+                throw new System.Exception("Winstack is empty!");
         }
 
-        public void PeekWindow()
+        private void dealWinMsg(WindowsBase topWin, WinMsg msg)
         {
-
+            switch (msg)
+            {
+                case WinMsg.Show:
+                    topWin.OnShow();
+                    break;
+                case WinMsg.Hide:
+                    topWin.OnHide();
+                    break;
+                case WinMsg.Pause:
+                    topWin.OnPause();
+                    break;
+                case WinMsg.Resume:
+                    topWin.OnResume();
+                    break;
+                case WinMsg.Destroy:
+                    topWin.OnDestroy();
+                    break;
+            }
         }
     }
 

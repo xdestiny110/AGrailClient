@@ -196,25 +196,25 @@ namespace Framework.Network
         private void onConnectSuccess()
         {
             UnityEngine.Debug.Log("OnConnectSuccess!");
-            actions.Enqueue(() => { EventSystem.EventSystem.Notify(EventSystem.EventType.OnConnect, true); });            
+            actions.Enqueue(() => { Message.MessageSystem.Notify(Message.MessageType.OnConnect, true); });            
         }
 
         private void onConnectFail()
         {
             UnityEngine.Debug.Log("OnConnectFail!");
-            actions.Enqueue(() => { EventSystem.EventSystem.Notify(EventSystem.EventType.OnConnect, false); });
+            actions.Enqueue(() => { Message.MessageSystem.Notify(Message.MessageType.OnConnect, false); });
         }
 
         private void onDisconnect()
         {
             UnityEngine.Debug.Log("OnDisconnect!");
-            actions.Enqueue(() => { EventSystem.EventSystem.Notify(EventSystem.EventType.OnDisconnect); });
+            actions.Enqueue(() => { Message.MessageSystem.Notify(Message.MessageType.OnDisconnect); });
         }
 
         private void onReconnect()
         {
             UnityEngine.Debug.Log("OnDisconnect!");
-            actions.Enqueue(() => { EventSystem.EventSystem.Notify(EventSystem.EventType.OnReconnect); });
+            actions.Enqueue(() => { Message.MessageSystem.Notify(Message.MessageType.OnReconnect); });
         }
 
         private void beforeSendProto(Protobuf protobuf)
@@ -225,7 +225,7 @@ namespace Framework.Network
         private void afterReceiveProto(Protobuf protobuf)
         {
             UnityEngine.Debug.LogFormat("Recv protobuf {0}", protobuf.ProtoID);
-            actions.Enqueue(() => { EventSystem.EventSystem.Notify(EventSystem.EventType.Protobuf, protobuf); });
+            actions.Enqueue(() => { Message.MessageSystem.Notify(Message.MessageType.Protobuf, protobuf); });
         }
 
     }

@@ -1,39 +1,38 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace Framework
 {
-    namespace EventSystem
+    namespace Message
     {
-        public static class EventSystem
+        public static class MessageSystem
         {
-            private static Dictionary<EventType, List<IEventListener>> maps = new Dictionary<EventType, List<IEventListener>>();
+            private static Dictionary<MessageType, List<IMessageListener>> maps = new Dictionary<MessageType, List<IMessageListener>>();
 
-            public static void Regist(EventType eventType, IEventListener listener)
+            public static void Regist(MessageType eventType, IMessageListener listener)
             {
                 if (!maps.ContainsKey(eventType))
-                    maps.Add(eventType, new List<IEventListener>() { listener });
+                    maps.Add(eventType, new List<IMessageListener>() { listener });
                 else
                     maps[eventType].Add(listener);
             }
 
-            public static void UnRegist(EventType eventType, IEventListener listener)
+            public static void UnRegist(MessageType eventType, IMessageListener listener)
             {
                 if (maps.ContainsKey(eventType))
                     maps[eventType].Remove(listener);
             }
 
-            public static void UnRegist(IEventListener listener)
+            public static void UnRegist(IMessageListener listener)
             {
                 foreach (var v in maps.Keys)
                     UnRegist(v, listener);
             }
 
-            public static void Notify(EventType eventType, params object[] parameters)
+            public static void Notify(MessageType eventType, params object[] parameters)
             {
                 if (maps.ContainsKey(eventType))
                 {
-                    var listeners = new List<IEventListener>(maps[eventType]);
+                    var listeners = new List<IMessageListener>(maps[eventType]);
                     foreach (var v in listeners)
                         v.OnEventTrigger(eventType, parameters);
                 }

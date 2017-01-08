@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using Framework.UI;
 using Framework.Network;
+using Framework.Message;
 using UnityEngine.UI;
-using network;
+using DG.Tweening;
 
 namespace AGrail
 {
@@ -21,7 +22,8 @@ namespace AGrail
 
         public override void Awake()
         {
-            GameManager.AddUpdateAction(showLoginInput);            
+            GameManager.AddUpdateAction(showLoginInput);
+            MessageSystem.Regist(MessageType.Protobuf, this);
         }
 
         public override void OnDestroy()
@@ -31,7 +33,12 @@ namespace AGrail
 
         public override void OnHide()
         {
-            
+            transform.DOMoveX(-800, 1.0f).OnComplete(()=> { gameObject.SetActive(false); });
+        }
+
+        public override void OnShow()
+        {
+            transform.DOMoveX(800, 1.0f).OnComplete(() => { gameObject.SetActive(false); });
         }
 
         public override void OnPause()
@@ -44,14 +51,24 @@ namespace AGrail
             
         }
 
-        public override void OnShow()
+        public override void OnEventTrigger(MessageType eventType, params object[] parameters)
         {
-            
+            switch (eventType)
+            {
+                case MessageType.Protobuf:
+                    var proto = (Protobuf)parameters[0];
+                    switch (proto.ProtoID)
+                    {
+                        case ProtoNameIds.LOGINRESPONSE:                            
+                            break;
+                    }
+                    break;
+            }
         }
 
         public void Login()
         {
-            var request = new LoginRequest() { asGuest = false, user_id = inptUserName.text, user_password = inptPassword.text, version = GameManager.Version };
+            var request = new network.LoginRequest() { asGuest = false, user_id = inptUserName.text, user_password = inptPassword.text, version = GameManager.Version };
             GameManager.TCPInstance.Send(new Protobuf() { Proto = request, ProtoID = ProtoNameIds.LOGINREQUEST });
         }
 

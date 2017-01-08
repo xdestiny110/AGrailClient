@@ -1,13 +1,11 @@
 ﻿using UnityEngine;
-using System.Collections;
-using Framework.EventSystem;
-using System;
+using Framework.Message;
 
 namespace Framework.UI
 {
     [RequireComponent(typeof(Canvas))]
     [RequireComponent(typeof(CanvasGroup))]
-    public abstract class WindowsBase : MonoBehaviour, IEventListener
+    public abstract class WindowsBase : MonoBehaviour, IMessageListener
     {
         public abstract void OnShow();
         public abstract void OnHide();
@@ -16,7 +14,7 @@ namespace Framework.UI
         public abstract void Awake();
         public abstract void OnDestroy();
 
-        public virtual void OnEventTrigger(EventSystem.EventType eventType, params object[] parameters)
+        public virtual void OnEventTrigger(MessageType eventType, params object[] parameters)
         {
             
         }
