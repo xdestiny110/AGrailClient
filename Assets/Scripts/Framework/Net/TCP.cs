@@ -225,7 +225,8 @@ namespace Framework.Network
         private void afterReceiveProto(Protobuf protobuf)
         {
             UnityEngine.Debug.LogFormat("Recv protobuf {0}", protobuf.ProtoID);
-            actions.Enqueue(() => { Message.MessageSystem.Notify(Message.MessageType.Protobuf, protobuf); });
+            var msgType = (Message.MessageType)Enum.Parse(typeof(Message.MessageType), protobuf.ProtoID.ToString());
+            actions.Enqueue(() => { Message.MessageSystem.Notify(msgType, protobuf); });
         }
 
     }

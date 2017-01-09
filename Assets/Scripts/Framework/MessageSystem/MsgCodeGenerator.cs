@@ -4,12 +4,14 @@
     using UnityEngine;
     using UnityEditor;
     using System.Collections.Generic;
+    using System;
+    using network;
 
     [InitializeOnLoad]
     public class MsgCodeGenerator : ScriptableObject
     {
-        public const string configPath = "Assets/Editor/MessageCodeGenerator/Config.asset";
-        public const string messageTypePath = "Assets/Scripts/Framework/MessageSystem/MessageType.cs";
+        public const string ConfigPath = "Assets/Editor/MessageCodeGenerator/Config.asset";
+        public const string MessageTypePath = "Assets/Scripts/Framework/MessageSystem/MessageType.cs";
 
         private static MsgCodeGenerator instance;
         public static MsgCodeGenerator Instance
@@ -18,21 +20,33 @@
             {
                 if(instance == null)
                 {
-                    instance = AssetDatabase.LoadAssetAtPath<MsgCodeGenerator>(configPath);
+                    instance = AssetDatabase.LoadAssetAtPath<MsgCodeGenerator>(ConfigPath);
                     if(instance == null)
                     {
                         instance = CreateInstance<MsgCodeGenerator>();
-                        AssetDatabase.CreateAsset(instance, configPath);
+                        AssetDatabase.CreateAsset(instance, ConfigPath);
                         AssetDatabase.Refresh();
                     }
                 }
                 return instance;
             }
         }
-
-        [SerializeField]
+                
         [HideInInspector]
-        private List<string> msgtypes = new List<string>();
+        public List<string> msgTypesConst = new List<string>()
+        {
+            "Null = 0",
+            "OnConnect",
+            "OnDisconnect",
+            "OnReconnect",
+        };
+                
+        [HideInInspector]
+        public List<string> msgTypesProto = new List<string>(Enum.GetNames(typeof(ProtoNameIds)));
+
+        
+        [HideInInspector]
+        public List<string> msgTypes = new List<string>();
 
     }
 #endif

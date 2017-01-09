@@ -11,4 +11,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3245746b486b274f805feced5c7ecf8, type: 3}
   m_Name: Config
   m_EditorClassIdentifier: 
-  msgtypes: []
+  msgTypesConst:
+  - Null = 0
+  - OnConnect
+  - OnDisconnect
+  - OnReconnect
+  msgTypesProto:
+  - REGISTERREQUEST
+  - REGISTERRESPONSE
+  - LOGINREQUEST
+  - LOGINRESPONSE
+  - LOGOUTREQUEST
+  - LOGOUTRESPONSE
+  - ROOMLISTREQUEST
+  - ROOMLISTRESPONSE
+  - CREATEROOMREQUEST
+  - ENTERROOMREQUEST
+  - LEAVEROOMREQUEST
+  - JOINTEAMREQUEST
+  - READYFORGAMEREQUEST
+  - SINGLEPLAYERINFO
+  - GAMEINFO
+  - TALK
+  - GOSSIP
+  - ERROR
+  - ROLEREQUEST
+  - PICKBAN
+  - ACTION
+  - RESPOND
+  - COMMANDREQUEST
+  - ERRORINPUT
+  - HITMSG
+  - TURNBEGIN
+  - CARDMSG
+  - HURTMSG
+  - SKILLMSG
+  msgTypes:
+  - LoginState

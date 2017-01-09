@@ -22,8 +22,7 @@ namespace AGrail
 
         public override void Awake()
         {
-            GameManager.AddUpdateAction(showLoginInput);
-            MessageSystem.Regist(MessageType.Protobuf, this);
+            GameManager.AddUpdateAction(showLoginInput);            
         }
 
         public override void OnDestroy()

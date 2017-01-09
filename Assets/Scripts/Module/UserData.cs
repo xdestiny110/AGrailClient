@@ -20,14 +20,8 @@ namespace AGrail
         {
             switch (eventType)
             {
-                case MessageType.Protobuf:
-                    var proto = (Protobuf)parameters[0];
-                    switch (proto.ProtoID)
-                    {
-                        case ProtoNameIds.LOGINRESPONSE:
-
-                            break;
-                    }
+                case MessageType.LOGINRESPONSE:
+                    UnityEngine.Debug.Log("waahahha");
                     break;
             }
         }
