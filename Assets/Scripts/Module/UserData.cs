@@ -18,7 +18,7 @@ namespace AGrail
             private set
             {
                 state = value;
-                MessageSystem.Notify(MessageType.LoginState, state);
+                MessageSystem.Notify(MessageType.LoginState);
             }
         }
 
@@ -48,8 +48,8 @@ namespace AGrail
                     State = LoginState.Ready;
                     break;
                 case MessageType.LOGINRESPONSE:
-                    var protobuf = (Protobuf)parameters[0];
-                    switch((protobuf.Proto as network.LoginResponse).state)
+                    var proto = (network.LoginResponse)parameters[0];
+                    switch(proto.state)
                     {
                         case 0:
                             IsVIP = false;

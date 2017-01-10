@@ -41,5 +41,6 @@
 
         // Custom Message Type
         LoginState,
+        RoomList,
     }
 }

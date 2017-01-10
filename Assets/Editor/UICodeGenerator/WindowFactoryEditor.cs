@@ -2,46 +2,36 @@
 using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Framework.UI
 {
     [CustomEditor(typeof(WindowFactory))]
     public class WindowFactoryEditor : Editor
     {
-        private List<string> windowTypes = new List<string>();
+        private static List<string> windowTypes = new List<string>();
+        private const string ConfigFilePath = "Assets/Resources/UI/WindowsConfig.asset";
+        private const string WindowTypePath = "Scripts/Framework/UI/WindowType.cs";
+        private const string AutoUIPath = "Scripts/UI/";
 
-        [MenuItem("Framework/Window Factory")]
-        public static void ShowInspector()
-        {
-            Selection.activeObject = WindowFactory.Instance;
-        }
+        private const string customNamespace = "AGrail";
 
-        public override void OnInspectorGUI()
+        [MenuItem("Framework/Window Factory")]        
+        public static void GenerateCode()
         {
-            base.OnInspectorGUI();
-            if (GUILayout.Button("Generate Window Code"))
-            {
-                GenerateCode();
-            }
-        }
-
-        private void GenerateCode()
-        {
-            List<string> uiPrefabs = EditorTool.AssetPathOfUnityFolder("Resources/" + WindowFactory.Instance.WindowPrefabPath, ".prefab");
+            List<string> uiPrefabs = EditorTool.AssetPathOfUnityFolder("Resources/" + WindowFactory.WindowPrefabPath, ".prefab");
             foreach (var v in uiPrefabs)
             {
-                var goPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(v);
-                var go = GameObject.Instantiate(goPrefab);
-                go.name = goPrefab.name;
-                windowTypes.Add(go.name);
-                DestroyImmediate(go);
+                var goPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(v);                
+                windowTypes.Add(goPrefab.name);
+                //writeWindowBase(goPrefab.name);
             }
             writeWindowType();
         }
 
-        private void writeWindowType()
+        private static void writeWindowType()
         {
-            using (var fw = new FileWriter(EditorTool.UnityPathToSystemPath(WindowFactory.Instance.WindowTypePath)))
+            using (var fw = new FileWriter(EditorTool.UnityPathToSystemPath(WindowTypePath)))
             {
                 fw.Append("namespace Framework.UI");
                 fw.Append("{");
@@ -57,12 +47,20 @@ namespace Framework.UI
             }
         }
 
-        private void writeWindowBase()
+        private static void writeWindowBase(string name)
         {
-
+            if (File.Exists(EditorTool.UnityPathToSystemPath(AutoUIPath + name)))
+                return;
+            using (var fw = new FileWriter(EditorTool.UnityPathToSystemPath(AutoUIPath + name)))
+            {
+                fw.Append("using Framework.UI;");
+                fw.Append("using Framework.Message;");
+                fw.Append("using UnityEngine;");
+                fw.Append("using UnityEngine.UI;");
+                fw.Append("using DG.Tweening;");                
+            }
         }
-
-    }
+    }                     
 }
 
 

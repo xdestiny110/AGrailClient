@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using Framework.UI;
-using Framework.Network;
 using Framework.Message;
 using UnityEngine.UI;
 using DG.Tweening;
@@ -52,7 +51,8 @@ namespace AGrail
 
         public override void Awake()
         {
-            GameManager.AddUpdateAction(showLoginInput);            
+            GameManager.AddUpdateAction(showLoginInput);
+            state = UserData.Instance.State;
         }
 
         public override void OnDestroy()
@@ -67,7 +67,7 @@ namespace AGrail
 
         public override void OnShow()
         {
-            transform.DOMoveX(800, 1.0f).OnComplete(() => { gameObject.SetActive(false); });
+            transform.DOMoveX(800, 1.0f).OnComplete(() => { gameObject.SetActive(false); });            
         }
 
         public override void OnPause()
@@ -85,7 +85,7 @@ namespace AGrail
             switch (eventType)
             {
                 case MessageType.LoginState:
-                    state = (LoginState)parameters[0];                    
+                    state = UserData.Instance.State;                   
                     break;
             }
         }

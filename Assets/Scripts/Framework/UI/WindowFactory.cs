@@ -7,35 +7,11 @@ using UnityEditor;
 namespace Framework.UI
 {
     [InitializeOnLoad]
-    public sealed class WindowFactory : ScriptableObject
+    public sealed class WindowFactory : Singleton<WindowFactory>
     {
-        private static WindowFactory instance = null;        
-        public static WindowFactory Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = AssetDatabase.LoadAssetAtPath<WindowFactory>(ConfigFilePath);
-                    if (instance == null)
-                    {
-#if UNITY_EDITOR
-                        instance = CreateInstance<WindowFactory>();
-                        AssetDatabase.CreateAsset(instance, ConfigFilePath);
-                        AssetDatabase.Refresh();
-#else
-                        throw new System.Exception("WindowsConfig.asset is not exist!");
-#endif
-                    }
-                }
-                return instance;
-            }
-        }
-        private WindowFactory() { }
+        public WindowFactory() { }
 
-        public const string ConfigFilePath = "Assets/Resources/UI/WindowsConfig.asset";
-        public string WindowTypePath = "Scripts/Framework/UI/WindowType.cs";
-        public string WindowPrefabPath = "UI/";
+        public const string WindowPrefabPath = "UI/";
 
         private Dictionary<WindowType, GameObject> goPool = new Dictionary<WindowType, GameObject>();
 
@@ -43,7 +19,7 @@ namespace Framework.UI
         {
             if (!goPool.ContainsKey(type))
                 goPool.Add(type, Resources.Load<GameObject>(WindowPrefabPath + type.ToString()));            
-            return Instantiate(goPool[type]);
+            return GameObject.Instantiate(goPool[type]);
         }
     }
 }
