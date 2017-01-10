@@ -1,14 +1,38 @@
 ﻿using Framework;
 using Framework.Network;
 using Framework.Message;
-using System;
 
 namespace AGrail
 {
     public class UserData : Singleton<UserData>, IMessageListener
     {
+        private LoginState state = LoginState.Prepare;
+
         public string UserName { get; private set; }
         public int GameID { get; private set; }
+        public bool IsVIP { get; private set; }
+        
+        public LoginState State
+        {
+            get { return state; }
+            private set
+            {
+                state = value;
+                MessageSystem.Notify(MessageType.LoginState, state);
+            }
+        }
+
+        public UserData() : base()
+        {            
+            MessageSystem.Regist(MessageType.LOGINRESPONSE, this);
+            if (GameManager.TCPInstance.Connected)
+                State = LoginState.Ready;
+            else
+            {
+                State = LoginState.Prepare;
+                MessageSystem.Regist(MessageType.OnConnect, this);
+            }
+        }
 
         public void Login(string userName, string password)
         {
@@ -20,11 +44,45 @@ namespace AGrail
         {
             switch (eventType)
             {
+                case MessageType.OnConnect:
+                    State = LoginState.Ready;
+                    break;
                 case MessageType.LOGINRESPONSE:
-                    UnityEngine.Debug.Log("waahahha");
+                    var protobuf = (Protobuf)parameters[0];
+                    switch((protobuf.Proto as network.LoginResponse).state)
+                    {
+                        case 0:
+                            IsVIP = false;
+                            State = LoginState.Success;                            
+                            break;
+                        case 4:
+                            IsVIP = true;
+                            State = LoginState.Success;
+                            break;
+                        case 1:
+                            State = LoginState.Wrong;
+                            break;
+                        case 2:
+                            State = LoginState.Forbidden;
+                            break;
+                        case 3:
+                            State = LoginState.Update;
+                            break;
+                    }                    
                     break;
             }
-        }
+        }       
+    }
+
+    public enum LoginState
+    {
+        Prepare,
+        Ready,
+        Wrong,
+        Forbidden,
+        Update,
+        Logining,
+        Success,
     }
 }
 

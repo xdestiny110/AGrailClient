@@ -33,14 +33,13 @@ namespace Framework.UI
                 var goPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(v);
                 var go = GameObject.Instantiate(goPrefab);
                 go.name = goPrefab.name;
-                if (go.GetComponent<WindowsBase>() != null)
-                    windowTypes.Add(go.name);
+                windowTypes.Add(go.name);
                 DestroyImmediate(go);
             }
-            writeCode();
+            writeWindowType();
         }
 
-        private void writeCode()
+        private void writeWindowType()
         {
             using (var fw = new FileWriter(EditorTool.UnityPathToSystemPath(WindowFactory.Instance.WindowTypePath)))
             {
@@ -57,6 +56,12 @@ namespace Framework.UI
                 fw.Append("}");
             }
         }
+
+        private void writeWindowBase()
+        {
+
+        }
+
     }
 }
 

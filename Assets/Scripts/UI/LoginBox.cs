@@ -18,7 +18,37 @@ namespace AGrail
         [SerializeField]
         private InputField inptPassword;
         [SerializeField]
+        private Text txtStatus;
+        [SerializeField]
         private Button btnLogin;
+        
+        private LoginState state
+        {
+            set
+            {
+                switch (value)
+                {
+                    case LoginState.Prepare:
+                        txtStatus.text = "连接服务器...";
+                        break;
+                    case LoginState.Ready:
+                        txtStatus.text = "";
+                        break;
+                    case LoginState.Update:
+                        txtStatus.text = "有新版本啦~快去下载吧";
+                        break;
+                    case LoginState.Forbidden:
+                        txtStatus.text = "账号被封禁";
+                        break;
+                    case LoginState.Wrong:
+                        txtStatus.text = "账号密码错误";
+                        break;
+                    case LoginState.Logining:
+                        txtStatus.text = "登录中...";
+                        break;
+                }
+            }
+        }
 
         public override void Awake()
         {
@@ -54,14 +84,15 @@ namespace AGrail
         {
             switch (eventType)
             {
-                
+                case MessageType.LoginState:
+                    state = (LoginState)parameters[0];                    
+                    break;
             }
         }
 
         public void Login()
         {
-            var request = new network.LoginRequest() { asGuest = false, user_id = inptUserName.text, user_password = inptPassword.text, version = GameManager.Version };
-            GameManager.TCPInstance.Send(new Protobuf() { Proto = request, ProtoID = ProtoNameIds.LOGINREQUEST });
+            UserData.Instance.Login(inptUserName.text, inptPassword.text);
         }
 
         private void showLoginInput()

@@ -47,6 +47,7 @@ namespace AGrail
             {
                 case 1:
                     UIInstance.PushWindow(WindowType.LoginBox, WinMsg.None);
+                    var userDataInst = UserData.Instance;
                     break;
                 case 2:
                     break;

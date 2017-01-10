@@ -9,8 +9,7 @@ namespace Framework.UI
     [InitializeOnLoad]
     public sealed class WindowFactory : ScriptableObject
     {
-        private static WindowFactory instance = null;
-        private static object locker = new object();
+        private static WindowFactory instance = null;        
         public static WindowFactory Instance
         {
             get
