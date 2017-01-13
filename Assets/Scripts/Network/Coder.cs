@@ -31,10 +31,14 @@ namespace AGrail
                 {
                     // 2个字节协议号
                     stream.Position = 6;                    
-                    var protoID = br.ReadInt16();
+                    var protoID = br.ReadInt16();                    
                     // 协议反序列化
                     MemoryStream protoStream = new MemoryStream();
                     protoStream.Write(stream.ToArray(), 8, sumLen - 4);
+                    if (protoID == (short)ProtoNameIds.ROOMLISTRESPONSE)
+                    {
+                        network.RoomListResponse roomListResponse = (network.RoomListResponse)ProtoSerializer.ParseFrom((ProtoNameIds)protoID, protoStream);
+                    }
                     protobufs.Add(new Protobuf()
                     {
                         Proto = (IExtensible)ProtoSerializer.ParseFrom((ProtoNameIds)protoID, protoStream),

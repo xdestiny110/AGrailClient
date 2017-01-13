@@ -45,10 +45,10 @@ namespace AGrail
             Debug.LogFormat("Level = {0}", level);
             switch (level)
             {
-                case 1:
+                case 1:                    
                     UIInstance.PushWindow(WindowType.LoginBox, WinMsg.None);
                     var userDataInst = UserData.Instance;
-                    var roomInst = Room.Instance;
+                    var roomInst = Lobby.Instance;
                     break;
                 case 2:
                     break;
@@ -59,6 +59,11 @@ namespace AGrail
         {
             if (UpdateActions != null)
                 UpdateActions();
+        }
+
+        void OnApplicationQuit()
+        {
+            TCPInstance.Close();
         }
     }
 }

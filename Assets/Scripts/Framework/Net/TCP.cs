@@ -157,9 +157,9 @@ namespace Framework.Network
             {
                 int readLength = socket.EndReceive(ar);
                 if(readLength > 0)
-                {
+                {                    
                     var data = new byte[readLength];
-                    Array.Copy(state.buffer, 0, data, 0, 20);
+                    Array.Copy(state.buffer, 0, data, 0, readLength);
                     // 不处理粘包、分包等问题，在ICoder中处理
                     // 并且ICoder需要自己保留本次的数据
                     List<Protobuf> proto;
@@ -224,7 +224,7 @@ namespace Framework.Network
 
         private void afterReceiveProto(Protobuf protobuf)
         {
-            UnityEngine.Debug.LogFormat("Recv protobuf {0}", protobuf.ProtoID);
+            UnityEngine.Debug.LogFormat("Recv protobuf {0}", protobuf.ProtoID);               
             var msgType = (Message.MessageType)Enum.Parse(typeof(Message.MessageType), protobuf.ProtoID.ToString());
             actions.Enqueue(() => { Message.MessageSystem.Notify(msgType, protobuf.Proto); });
         }

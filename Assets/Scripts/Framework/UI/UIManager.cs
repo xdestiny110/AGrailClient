@@ -11,6 +11,7 @@ namespace Framework.UI
         public WindowsBase PushWindow(WindowType type, WinMsg msg, Vector3 initPos = default(Vector3))
         {
             var go = WindowFactory.Instance.CreateWindows(type);
+            go.name = type.ToString();            
             go.transform.position = initPos;
             var win = go.GetComponent<WindowsBase>();
             WindowsBase topWin;

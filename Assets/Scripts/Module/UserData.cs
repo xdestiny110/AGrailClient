@@ -8,7 +8,7 @@ namespace AGrail
     {
         private LoginState state = LoginState.Prepare;
 
-        public string UserName { get; private set; }
+        public string UserName { get; private set; }        
         public int GameID { get; private set; }
         public bool IsVIP { get; private set; }
         

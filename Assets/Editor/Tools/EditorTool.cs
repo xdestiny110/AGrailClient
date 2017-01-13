@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Framework
 {
-    public static class EditorTool 
+    public static class EditorTool
     {
         //unityFolder的上级目录为Assets
         public static List<string> AssetPathOfUnityFolder(string unityFolder, params string[] append)
@@ -46,7 +46,6 @@ namespace Framework
         {
             systemPath = systemPath.Replace("\\", "/");
             return systemPath.Substring(systemPath.IndexOf("Assets/"));
-        }
-       
+        }   
     }
 }

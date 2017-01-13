@@ -7,6 +7,8 @@ namespace Framework.UI
     [RequireComponent(typeof(CanvasGroup))]
     public abstract class WindowsBase : MonoBehaviour, IMessageListener
     {
+        public abstract WindowType Type { get; }
+
         public virtual void OnShow()
         {
             MessageSystem.Notify(MessageType.OnUIShow, this);
