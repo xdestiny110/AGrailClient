@@ -18,10 +18,10 @@
         {
             get
             {
-                if(instance == null)
+                if (instance == null)
                 {
                     instance = AssetDatabase.LoadAssetAtPath<MsgCodeGenerator>(ConfigPath);
-                    if(instance == null)
+                    if (instance == null)
                     {
                         instance = CreateInstance<MsgCodeGenerator>();
                         AssetDatabase.CreateAsset(instance, ConfigPath);
@@ -31,7 +31,7 @@
                 return instance;
             }
         }
-                
+
         [HideInInspector]
         public List<string> msgTypesConst = new List<string>()
         {
@@ -39,12 +39,18 @@
             "OnConnect",
             "OnDisconnect",
             "OnReconnect",
+            "OnUICreate",
+            "OnUIDestroy",
+            "OnUIShow",
+            "OnUIHide",
+            "OnUIPause",
+            "OnUIResume",
         };
-                
+
         [HideInInspector]
         public List<string> msgTypesProto = new List<string>(Enum.GetNames(typeof(ProtoNameIds)));
 
-        
+
         [HideInInspector]
         public List<string> msgTypes = new List<string>();
 

@@ -16,6 +16,12 @@ MonoBehaviour:
   - OnConnect
   - OnDisconnect
   - OnReconnect
+  - OnUICreate
+  - OnUIDestroy
+  - OnUIShow
+  - OnUIHide
+  - OnUIPause
+  - OnUIResume
   msgTypesProto:
   - REGISTERREQUEST
   - REGISTERRESPONSE
@@ -48,3 +54,4 @@ MonoBehaviour:
   - SKILLMSG
   msgTypes:
   - LoginState
+  - RoomList

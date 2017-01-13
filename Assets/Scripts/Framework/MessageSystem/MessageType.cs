@@ -7,6 +7,12 @@
         OnConnect,
         OnDisconnect,
         OnReconnect,
+        OnUICreate,
+        OnUIDestroy,
+        OnUIShow,
+        OnUIHide,
+        OnUIPause,
+        OnUIResume,
 
         // Protobuf Message Type
         REGISTERREQUEST,

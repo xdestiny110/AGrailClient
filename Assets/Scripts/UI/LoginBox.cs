@@ -53,31 +53,19 @@ namespace AGrail
         {
             GameManager.AddUpdateAction(showLoginInput);
             state = UserData.Instance.State;
+            base.Awake();
         }
 
         public override void OnDestroy()
         {
             GameManager.RemoveUpdateAciont(showLoginInput);
+            base.OnDestroy();
         }
 
         public override void OnHide()
         {
             transform.DOMoveX(-800, 1.0f).OnComplete(()=> { gameObject.SetActive(false); });
-        }
-
-        public override void OnShow()
-        {
-            transform.DOMoveX(800, 1.0f).OnComplete(() => { gameObject.SetActive(false); });            
-        }
-
-        public override void OnPause()
-        {
-            
-        }
-
-        public override void OnResume()
-        {
-            
+            base.OnHide();
         }
 
         public override void OnEventTrigger(MessageType eventType, params object[] parameters)
@@ -85,7 +73,7 @@ namespace AGrail
             switch (eventType)
             {
                 case MessageType.LoginState:
-                    state = UserData.Instance.State;                   
+                    state = UserData.Instance.State;
                     break;
             }
         }
