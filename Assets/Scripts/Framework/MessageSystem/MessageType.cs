@@ -48,5 +48,6 @@
         // Custom Message Type
         LoginState,
         RoomList,
+        InputBox,
     }
 }

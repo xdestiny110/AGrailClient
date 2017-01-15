@@ -9,6 +9,19 @@ namespace Framework.UI
     {
         public abstract WindowType Type { get; }
 
+        private object[] parameters;
+        public virtual object[] Parameters
+        {
+            set
+            {
+                parameters = value;
+            }
+            get
+            {
+                return parameters;
+            }
+        }
+
         public virtual void OnShow()
         {
             MessageSystem.Notify(MessageType.OnUIShow, this);

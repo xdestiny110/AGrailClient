@@ -17,14 +17,14 @@ namespace AGrail
         [SerializeField]
         private Transform content;
 
-        private List<network.RoomListResponse.RoomInfo> roomInfo
+        private List<network.RoomListResponse.RoomInfo> roomInfos
         {
             set
             {
-                if(value == null)
-                {
-                    for (int i = 0; i < content.childCount; i++)
-                        Destroy(content.GetChild(i).gameObject);
+                for (int i = 0; i < content.childCount; i++)
+                    Destroy(content.GetChild(i).gameObject);
+                if (value == null)
+                {                    
                     loadingIcon.SetActive(true);
                 }
                 else
@@ -33,6 +33,9 @@ namespace AGrail
                     foreach(var v in value)
                     {
                         var go = Instantiate(roomItemPrefab);
+                        go.transform.parent = content;
+                        var script = go.GetComponent<RoomItem>();
+                        script.RoomInfo = v;
                     }
                 }
             }
@@ -52,7 +55,7 @@ namespace AGrail
             root.localPosition = new Vector3(1280, 0, 0);
             root.DOLocalMoveX(0, 1.0f);
             Lobby.Instance.GetRoomList();
-            roomInfo = Lobby.Instance.RoomInfo;            
+            roomInfos = Lobby.Instance.RoomInfo;            
             base.Awake();
         }
 
@@ -67,7 +70,7 @@ namespace AGrail
             switch (eventType)
             {
                 case MessageType.RoomList:
-                    roomInfo = Lobby.Instance.RoomInfo;
+                    roomInfos = Lobby.Instance.RoomInfo;
                     break;
             }
         }

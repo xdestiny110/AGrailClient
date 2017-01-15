@@ -55,3 +55,4 @@ MonoBehaviour:
   msgTypes:
   - LoginState
   - RoomList
+  - InputBox

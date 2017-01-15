@@ -47,7 +47,18 @@ namespace AGrail
             {
                 case MessageType.ROOMLISTRESPONSE:
                     var proto = (network.RoomListResponse)parameters[0];
-                    RoomInfo = proto.rooms;
+                    proto.rooms.Sort(
+                        (x,y)=> 
+                        {
+                            if (x.playing && !y.playing)
+                                return 1;
+                            if (!x.playing && y.playing)
+                                return -1;
+                            if (x.room_id > y.room_id)
+                                return 1;
+                            else return -1;                            
+                        });
+                    RoomInfo = proto.rooms;                    
                     MessageSystem.Notify(MessageType.RoomList);
                     break;
             }
