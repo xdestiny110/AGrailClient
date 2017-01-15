@@ -157,7 +157,8 @@ namespace Framework.Network
             {
                 int readLength = socket.EndReceive(ar);
                 if(readLength > 0)
-                {                    
+                {
+                    UnityEngine.Debug.Log("TCP Receive data length = " + readLength);
                     var data = new byte[readLength];
                     Array.Copy(state.buffer, 0, data, 0, readLength);
                     // 不处理粘包、分包等问题，在ICoder中处理

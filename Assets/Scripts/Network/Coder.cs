@@ -35,10 +35,8 @@ namespace AGrail
                     // 协议反序列化
                     MemoryStream protoStream = new MemoryStream();
                     protoStream.Write(stream.ToArray(), 8, sumLen - 4);
-                    if (protoID == (short)ProtoNameIds.ROOMLISTRESPONSE)
-                    {
-                        network.RoomListResponse roomListResponse = (network.RoomListResponse)ProtoSerializer.ParseFrom((ProtoNameIds)protoID, protoStream);
-                    }
+                    // 将流位置重置为开头
+                    protoStream.Position = 0;
                     protobufs.Add(new Protobuf()
                     {
                         Proto = (IExtensible)ProtoSerializer.ParseFrom((ProtoNameIds)protoID, protoStream),
