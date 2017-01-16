@@ -32,7 +32,9 @@ namespace AGrail
                     loadingIcon.SetActive(false);
                     foreach(var v in value)
                     {
+                        //Debug.Log(Time.realtimeSinceStartup);
                         var go = Instantiate(roomItemPrefab);
+                        //Debug.Log(Time.realtimeSinceStartup);
                         go.transform.parent = content;
                         var script = go.GetComponent<RoomItem>();
                         script.RoomInfo = v;
@@ -54,8 +56,10 @@ namespace AGrail
             MessageSystem.Regist(MessageType.RoomList, this);
             root.localPosition = new Vector3(1280, 0, 0);
             root.DOLocalMoveX(0, 1.0f);
-            Lobby.Instance.GetRoomList();
-            roomInfos = Lobby.Instance.RoomInfo;            
+            if(Lobby.Instance.RoomInfo == null)
+                Lobby.Instance.GetRoomList();
+            else
+                roomInfos = Lobby.Instance.RoomInfo;            
             base.Awake();
         }
 

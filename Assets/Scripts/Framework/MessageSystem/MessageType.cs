@@ -49,5 +49,10 @@
         LoginState,
         RoomList,
         InputBox,
+        MoraleChange,
+        GemChange,
+        CrystalChange,
+        GrailChange,
+        PlayerInfoChange,
     }
 }

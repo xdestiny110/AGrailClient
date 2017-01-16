@@ -56,3 +56,20 @@ MonoBehaviour:
   - LoginState
   - RoomList
   - InputBox
+  - MoraleChange
+  - GemChange
+  - CrystalChange
+  - GrailChange
+  - PlayerRoleChange
+  - PlayerTeamChange
+  - PlayerHandChange
+  - PlayerHealChange
+  - PlayerGemChange
+  - PlayerCrystalChange
+  - PlayerYellowChange
+  - PlayerBlueChange
+  - PlayerCoveredChange
+  - PlayerKneltChange
+  - PlayerHandMaxChange
+  - PlayerNickName
+  - PlayerIsReady
