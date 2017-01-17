@@ -9,6 +9,7 @@ namespace AGrail
     public class Lobby : Singleton<Lobby>, IMessageListener
     {
         public List<network.RoomListResponse.RoomInfo> RoomInfo = null;
+        public network.RoomListResponse.RoomInfo SelectRoom { get; private set; }
 
         public Lobby() : base()
         {
@@ -23,12 +24,14 @@ namespace AGrail
             MessageSystem.Notify(MessageType.RoomList);
         }
 
-        public void JoinRoom(int roomID, string password = null)
+        public void JoinRoom(network.RoomListResponse.RoomInfo roomInfo, string password = null)
         {
-            var proto = new network.EnterRoomRequest() { room_id = roomID};
+            var proto = new network.EnterRoomRequest() { room_id = roomInfo.room_id};            
             if (!string.IsNullOrEmpty(password))
                 proto.password = password;
             GameManager.TCPInstance.Send(new Protobuf() { Proto = proto, ProtoID = ProtoNameIds.ENTERROOMREQUEST });
+            //其实这么写不太合适，但后端没有合适的协议
+            SelectRoom = roomInfo;
         }
         
         public void CreateRoom()

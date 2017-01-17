@@ -69,7 +69,7 @@ namespace AGrail
 
             }
             else
-                Lobby.Instance.JoinRoom(roomInfo.room_id);                     
+                Lobby.Instance.JoinRoom(roomInfo);
         }
     }
 }

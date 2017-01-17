@@ -54,23 +54,98 @@ namespace AGrail
                 Pile = value.pileSpecified ? value.pile : Pile;
                 Discard = value.discardSpecified ? value.discard : Discard;
                 IsStarted = value.is_startedSpecified ? value.is_started : IsStarted;
-                Morale[(int)Team.Blue] = value.blue_moraleSpecified ? value.blue_morale : Morale[(int)Team.Blue];
-                Morale[(int)Team.Red] = value.red_moraleSpecified ? value.red_morale : Morale[(int)Team.Red];
-                Gem[(int)Team.Blue] = value.blue_gemSpecified ? value.blue_gem : Gem[(int)Team.Blue];
-                Gem[(int)Team.Red] = value.red_gemSpecified ? value.red_gem : Gem[(int)Team.Red];
-                Crystal[(int)Team.Blue] = value.blue_crystalSpecified ? value.blue_crystal : Crystal[(int)Team.Blue];
-                Crystal[(int)Team.Red] = value.red_crystalSpecified ? value.red_crystal : Crystal[(int)Team.Red];
-                Grail[(int)Team.Blue] = value.blue_grailSpecified ? value.blue_grail : Grail[(int)Team.Blue];
-                Grail[(int)Team.Red] = value.red_grailSpecified ? value.red_grail : Grail[(int)Team.Red];
+                if (value.blue_moraleSpecified)
+                {
+                    Morale[(int)Team.Blue] = value.blue_morale;
+                    MessageSystem.Notify(MessageType.MoraleChange, Team.Blue);
+                }
+                if (value.red_moraleSpecified)
+                {
+                    Morale[(int)Team.Red] = value.red_morale;
+                    MessageSystem.Notify(MessageType.MoraleChange, Team.Red);
+                }
+                if (value.blue_gemSpecified)
+                {
+                    Gem[(int)Team.Blue] = value.blue_gem;
+                    MessageSystem.Notify(MessageType.GemChange, Team.Blue);
+                }
+                if (value.red_gemSpecified)
+                {
+                    Gem[(int)Team.Red] = value.red_gem;
+                    MessageSystem.Notify(MessageType.GemChange, Team.Red);
+                }
+                if (value.blue_crystalSpecified)
+                {
+                    Crystal[(int)Team.Blue] = value.blue_crystal;
+                    MessageSystem.Notify(MessageType.CrystalChange, Team.Blue);
+                }
+                if (value.red_crystalSpecified)
+                {
+                    Crystal[(int)Team.Red] = value.red_crystal;
+                    MessageSystem.Notify(MessageType.CrystalChange, Team.Red);
+                }
+                if (value.blue_grailSpecified)
+                {
+                    Grail[(int)Team.Blue] = value.blue_grail;
+                    MessageSystem.Notify(MessageType.GrailChange, Team.Blue);
+                }
+                if (value.red_grailSpecified)
+                {
+                    Grail[(int)Team.Red] = value.red_grail;
+                    MessageSystem.Notify(MessageType.GrailChange, Team.Red);
+                }
 
                 foreach(var v in value.player_infos)
                 {
                     var player = PlayerInfos.DefaultIfEmpty(null).FirstOrDefault((u) => { return u.id == v.id; });
                     if (player != null)
                     {
-                        player.team = v.teamSpecified ? v.team : player.team;
-                        player.role_id = v.role_idSpecified ? v.role_id : player.role_id;
-                        
+                        var idx = PlayerInfos.IndexOf(player);
+                        if (v.teamSpecified)
+                        {
+                            player.team = v.team;
+                            MessageSystem.Notify(MessageType.PlayerTeamChange, idx);
+                        }
+                        if (v.role_idSpecified)
+                        {
+                            player.role_id = v.role_id;
+                            MessageSystem.Notify(MessageType.PlayerRoleChange, idx);
+                        }
+                        if (v.readySpecified)
+                        {
+                            player.ready = v.ready;
+                            MessageSystem.Notify(MessageType.PlayerIsReady, idx);
+                        }
+                        if(v.nicknameSpecified)
+                        {
+                            player.nickname = v.nickname;
+                            MessageSystem.Notify(MessageType.PlayerNickName, idx);
+                        }
+                        if (v.hand_countSpecified)
+                        {
+                            player.hand_count = v.hand_count;
+                            MessageSystem.Notify(MessageType.PlayerHandChange, idx);
+                        }
+                        if(v.max_handSpecified)
+                        {
+                            player.max_hand = v.max_hand;
+                            MessageSystem.Notify(MessageType.PlayerHandMaxChange, idx);
+                        }
+                        if (v.heal_countSpecified)
+                        {
+                            player.heal_count = v.heal_count;
+                            MessageSystem.Notify(MessageType.PlayerHealChange, idx);
+                        }
+                        if (v.gemSpecified)
+                        {
+                            player.gem = v.gem;
+                            MessageSystem.Notify(MessageType.PlayerGemChange, idx);
+                        }
+                        if (v.crystalSpecified)
+                        {
+                            player.crystal = v.crystal;
+                            MessageSystem.Notify(MessageType.PlayerCrystalChange, idx);
+                        }
                     }
                     else
                         PlayerInfos.Add(v);
