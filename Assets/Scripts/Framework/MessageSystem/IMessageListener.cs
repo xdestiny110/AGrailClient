@@ -1,8 +1,8 @@
 ﻿namespace Framework.Message
 {
-    public interface IMessageListener
+    public interface IMessageListener<T> where T : struct
     {
-        void OnEventTrigger(MessageType eventType, params object[] parameters);
+        void OnEventTrigger(T eventType, params object[] parameters);
     }
 }
 

@@ -76,14 +76,14 @@ namespace AGrail
         {
             GameManager.AddUpdateAction(showLoginInput);
             state = UserData.Instance.State;
-            MessageSystem.Regist(MessageType.LoginState, this);
+            MessageSystem<MessageType>.Regist(MessageType.LoginState, this);
             base.Awake();
         }
 
         public override void OnDestroy()
         {
             GameManager.RemoveUpdateAciont(showLoginInput);
-            MessageSystem.UnRegist(MessageType.LoginState, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.LoginState, this);
             base.OnDestroy();
         }
 

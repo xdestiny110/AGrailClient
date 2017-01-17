@@ -197,25 +197,25 @@ namespace Framework.Network
         private void onConnectSuccess()
         {
             UnityEngine.Debug.Log("OnConnectSuccess!");
-            actions.Enqueue(() => { Message.MessageSystem.Notify(Message.MessageType.OnConnect, true); });            
+            actions.Enqueue(() => { Message.MessageSystem<Message.MessageType>.Notify(Message.MessageType.OnConnect, true); });            
         }
 
         private void onConnectFail()
         {
             UnityEngine.Debug.Log("OnConnectFail!");
-            actions.Enqueue(() => { Message.MessageSystem.Notify(Message.MessageType.OnConnect, false); });
+            actions.Enqueue(() => { Message.MessageSystem<Message.MessageType>.Notify(Message.MessageType.OnConnect, false); });
         }
 
         private void onDisconnect()
         {
             UnityEngine.Debug.Log("OnDisconnect!");
-            actions.Enqueue(() => { Message.MessageSystem.Notify(Message.MessageType.OnDisconnect); });
+            actions.Enqueue(() => { Message.MessageSystem<Message.MessageType>.Notify(Message.MessageType.OnDisconnect); });
         }
 
         private void onReconnect()
         {
             UnityEngine.Debug.Log("OnDisconnect!");
-            actions.Enqueue(() => { Message.MessageSystem.Notify(Message.MessageType.OnReconnect); });
+            actions.Enqueue(() => { Message.MessageSystem<Message.MessageType>.Notify(Message.MessageType.OnReconnect); });
         }
 
         private void beforeSendProto(Protobuf protobuf)
@@ -227,7 +227,7 @@ namespace Framework.Network
         {
             UnityEngine.Debug.LogFormat("Recv protobuf {0}", protobuf.ProtoID);               
             var msgType = (Message.MessageType)Enum.Parse(typeof(Message.MessageType), protobuf.ProtoID.ToString());
-            actions.Enqueue(() => { Message.MessageSystem.Notify(msgType, protobuf.Proto); });
+            actions.Enqueue(() => { Message.MessageSystem<Message.MessageType>.Notify(msgType, protobuf.Proto); });
         }
 
     }

@@ -44,7 +44,7 @@ namespace AGrail
 
         public override void Awake()
         {
-            MessageSystem.Regist(MessageType.RoomList, this);
+            MessageSystem<MessageType>.Regist(MessageType.RoomList, this);
             root.localPosition = new Vector3(1280, 0, 0);
             root.DOLocalMoveX(0, 1.0f);
             if(Lobby.Instance.RoomInfo == null)
@@ -56,7 +56,7 @@ namespace AGrail
 
         public override void OnDestroy()
         {
-            MessageSystem.UnRegist(MessageType.RoomList, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.RoomList, this);
             base.OnDestroy();
         }
 

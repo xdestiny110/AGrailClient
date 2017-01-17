@@ -4,7 +4,7 @@ using Framework.Message;
 
 namespace AGrail
 {
-    public class UserData : Singleton<UserData>, IMessageListener
+    public class UserData : Singleton<UserData>, IMessageListener<MessageType>
     {
         private LoginState state = LoginState.Prepare;
 
@@ -17,19 +17,19 @@ namespace AGrail
             private set
             {
                 state = value;
-                MessageSystem.Notify(MessageType.LoginState);
+                MessageSystem<MessageType>.Notify(MessageType.LoginState);
             }
         }
 
         public UserData() : base()
         {            
-            MessageSystem.Regist(MessageType.LOGINRESPONSE, this);
+            MessageSystem<MessageType>.Regist(MessageType.LOGINRESPONSE, this);
             if (GameManager.TCPInstance.Connected)
                 State = LoginState.Ready;
             else
             {
                 State = LoginState.Prepare;
-                MessageSystem.Regist(MessageType.OnConnect, this);
+                MessageSystem<MessageType>.Regist(MessageType.OnConnect, this);
             }
         }
 

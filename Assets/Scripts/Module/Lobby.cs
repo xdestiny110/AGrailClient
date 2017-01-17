@@ -6,14 +6,14 @@ using System.Collections.Generic;
 
 namespace AGrail
 {
-    public class Lobby : Singleton<Lobby>, IMessageListener
+    public class Lobby : Singleton<Lobby>, IMessageListener<MessageType>
     {
         public List<network.RoomListResponse.RoomInfo> RoomInfo = null;
         public network.RoomListResponse.RoomInfo SelectRoom { get; private set; }
 
         public Lobby() : base()
         {
-            MessageSystem.Regist(MessageType.ROOMLISTRESPONSE, this);
+            MessageSystem<MessageType>.Regist(MessageType.ROOMLISTRESPONSE, this);
         }
 
         public void GetRoomList()
@@ -21,7 +21,7 @@ namespace AGrail
             var proto = new network.RoomListRequest() { role_strategy = network.ROLE_STRATEGY.ROLE_STRATEGY_ALL };
             GameManager.TCPInstance.Send(new Protobuf() { Proto = proto, ProtoID = ProtoNameIds.ROOMLISTREQUEST });
             RoomInfo = null;
-            MessageSystem.Notify(MessageType.RoomList);
+            MessageSystem<MessageType>.Notify(MessageType.RoomList);
         }
 
         public void JoinRoom(network.RoomListResponse.RoomInfo roomInfo, string password = null)
@@ -62,7 +62,7 @@ namespace AGrail
                             else return -1;                            
                         });
                     RoomInfo = proto.rooms;                    
-                    MessageSystem.Notify(MessageType.RoomList);
+                    MessageSystem<MessageType>.Notify(MessageType.RoomList);
                     break;
             }
         }
