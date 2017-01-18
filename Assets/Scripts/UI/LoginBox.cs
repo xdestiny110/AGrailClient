@@ -24,45 +24,7 @@ namespace AGrail
         [SerializeField]
         private Button btnLogin;
         [SerializeField]
-        private Transform titleImg;
-
-        private LoginState state
-        {
-            set
-            {
-                switch (value)
-                {
-                    case LoginState.Prepare:
-                        txtStatus.text = "连接服务器...";
-                        break;
-                    case LoginState.Ready:
-                        txtStatus.text = "";
-                        if(PlayerPrefs.HasKey("username") && PlayerPrefs.HasKey("password"))
-                        {
-                            inptUserName.text = PlayerPrefs.GetString("username");
-                            inptPassword.text = PlayerPrefs.GetString("password");
-                        }
-                        break;
-                    case LoginState.Update:
-                        txtStatus.text = "有新版本啦~快去下载吧";
-                        break;
-                    case LoginState.Forbidden:
-                        txtStatus.text = "账号被封禁";
-                        break;
-                    case LoginState.Wrong:
-                        txtStatus.text = "账号密码错误";
-                        break;
-                    case LoginState.Logining:
-                        txtStatus.text = "登录中...";
-                        break;
-                    case LoginState.Success:
-                        PlayerPrefs.SetString("username", inptUserName.text);
-                        PlayerPrefs.SetString("password", inptPassword.text);
-                        GameManager.UIInstance.PushWindow(WindowType.Lobby, WinMsg.Hide);
-                        break;                        
-                }
-            }
-        }
+        private Transform titleImg;        
 
         public override WindowType Type
         {
@@ -121,6 +83,44 @@ namespace AGrail
             {
                 waitAnyClick.SetActive(false);
                 loginInput.SetActive(true);
+            }
+        }
+
+        private LoginState state
+        {
+            set
+            {
+                switch (value)
+                {
+                    case LoginState.Prepare:
+                        txtStatus.text = "连接服务器...";
+                        break;
+                    case LoginState.Ready:
+                        txtStatus.text = "";
+                        if (PlayerPrefs.HasKey("username") && PlayerPrefs.HasKey("password"))
+                        {
+                            inptUserName.text = PlayerPrefs.GetString("username");
+                            inptPassword.text = PlayerPrefs.GetString("password");
+                        }
+                        break;
+                    case LoginState.Update:
+                        txtStatus.text = "有新版本啦~快去下载吧";
+                        break;
+                    case LoginState.Forbidden:
+                        txtStatus.text = "账号被封禁";
+                        break;
+                    case LoginState.Wrong:
+                        txtStatus.text = "账号密码错误";
+                        break;
+                    case LoginState.Logining:
+                        txtStatus.text = "登录中...";
+                        break;
+                    case LoginState.Success:
+                        PlayerPrefs.SetString("username", inptUserName.text);
+                        PlayerPrefs.SetString("password", inptPassword.text);
+                        GameManager.UIInstance.PushWindow(WindowType.Lobby, WinMsg.Hide);
+                        break;
+                }
             }
         }
     }

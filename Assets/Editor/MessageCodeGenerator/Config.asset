@@ -56,6 +56,7 @@ MonoBehaviour:
   - LoginState
   - RoomList
   - InputBox
+  - ChooseRole
   - MoraleChange
   - GemChange
   - CrystalChange

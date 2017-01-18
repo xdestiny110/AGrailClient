@@ -49,6 +49,8 @@
         LoginState,
         RoomList,
         InputBox,
+        EnterRoom,
+        ChooseRole,
         MoraleChange,
         GemChange,
         CrystalChange,

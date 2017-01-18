@@ -45,19 +45,54 @@ namespace AGrail
         public override void Awake()
         {
             MessageSystem<MessageType>.Regist(MessageType.RoomList, this);
+            MessageSystem<MessageType>.Regist(MessageType.EnterRoom, this);
             root.localPosition = new Vector3(1280, 0, 0);
             root.DOLocalMoveX(0, 1.0f);
             if(Lobby.Instance.RoomInfo == null)
                 Lobby.Instance.GetRoomList();
             else
-                roomInfos = Lobby.Instance.RoomInfo;            
+                roomInfos = Lobby.Instance.RoomInfo;
             base.Awake();
         }
 
         public override void OnDestroy()
         {
             MessageSystem<MessageType>.UnRegist(MessageType.RoomList, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.EnterRoom, this);
             base.OnDestroy();
+        }
+
+        public override void OnHide()
+        {
+            MessageSystem<MessageType>.UnRegist(MessageType.RoomList, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.EnterRoom, this);
+            root.DOLocalMoveX(-1280, 1.0f).OnComplete(() => { gameObject.SetActive(false); base.OnHide(); });            
+        }
+
+        public override void OnShow()
+        {
+            MessageSystem<MessageType>.Regist(MessageType.RoomList, this);
+            MessageSystem<MessageType>.Regist(MessageType.EnterRoom, this);
+            gameObject.SetActive(true);
+            root.localPosition = new Vector3(1280, 0, 0);
+            root.DOLocalMoveX(0, 1.0f);
+            if (Lobby.Instance.RoomInfo == null)
+                Lobby.Instance.GetRoomList();
+            else
+                roomInfos = Lobby.Instance.RoomInfo;
+            base.OnShow();
+        }
+
+        public override void OnPause()
+        {
+            canvasGroup.interactable = false;
+            base.OnPause();
+        }
+
+        public override void OnResume()
+        {
+            canvasGroup.interactable = true;
+            base.OnResume();
         }
 
         public override void OnEventTrigger(MessageType eventType, params object[] parameters)
@@ -66,6 +101,9 @@ namespace AGrail
             {
                 case MessageType.RoomList:
                     roomInfos = Lobby.Instance.RoomInfo;
+                    break;
+                case MessageType.EnterRoom:
+                    //GameManager.UIInstance.PushWindow(WindowType)
                     break;
             }
         }

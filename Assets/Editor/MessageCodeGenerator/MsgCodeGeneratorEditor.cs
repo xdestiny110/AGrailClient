@@ -51,7 +51,7 @@ namespace Framework.Message
         private void buildReorderableList(ref ReorderableList list, string propName, string header, bool enable = true)
         {
             var prop = serializedObject.FindProperty(propName);
-            list = new ReorderableList(serializedObject, prop, false, true, enable, enable);
+            list = new ReorderableList(serializedObject, prop, true, true, enable, enable);
             list.drawHeaderCallback = (rect) => { EditorGUI.LabelField(rect, header); };
             list.drawElementCallback = (rect, idx, isActive, isFocused) =>
             {

@@ -66,7 +66,10 @@ namespace AGrail
         {
             if (roomInfo.has_password)
             {
-
+                GameManager.UIInstance.PushWindow(Framework.UI.WindowType.InputBox, Framework.UI.WinMsg.Pause, Vector3.zero, 
+                    new Action<string>((str) => { Lobby.Instance.JoinRoom(roomInfo, str); GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.Resume); }),
+                    new Action<string>((str) => { GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.Resume); }),
+                    "请输入暗号");
             }
             else
                 Lobby.Instance.JoinRoom(roomInfo);

@@ -47,7 +47,7 @@ namespace AGrail
                     State = LoginState.Ready;
                     break;
                 case MessageType.LOGINRESPONSE:
-                    var proto = (network.LoginResponse)parameters[0];
+                    var proto = parameters[0] as network.LoginResponse;
                     switch(proto.state)
                     {
                         case 0:

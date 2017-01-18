@@ -14,24 +14,44 @@ namespace AGrail
         public uint Pile { get; private set; }
         public uint Discard { get; private set; }
         public bool IsStarted { get; private set; }
+        public uint Round { get; private set; }
         public uint[] Morale = new uint[2];
         public uint[] Gem = new uint[2];
         public uint[] Crystal = new uint[2];
         public uint[] Grail = new uint[2];
-        public List<network.SinglePlayerInfo> PlayerInfos = new List<network.SinglePlayerInfo>();        
+        public List<network.SinglePlayerInfo> PlayerInfos = new List<network.SinglePlayerInfo>();
 
         public BattleData() : base()
         {
             MessageSystem<MessageType>.Regist(MessageType.GAMEINFO, this);
+            MessageSystem<MessageType>.Regist(MessageType.COMMANDREQUEST, this);
+            MessageSystem<MessageType>.Regist(MessageType.TURNBEGIN, this);
             reset();
+            var inst = RoleChoose.Instance;
         }
+
+        public void Ready(bool flag)
+        {
+            var proto = new network.ReadyForGameRequest() { type = flag ? network.ReadyForGameRequest.Type.START_READY : network.ReadyForGameRequest.Type.CANCEL_START_REDAY };
+            GameManager.TCPInstance.Send(new Protobuf() { Proto = proto, ProtoID = ProtoNameIds.READYFORGAMEREQUEST });
+        }
+
+        public void ChooseTeam()
+        {
+
+        }        
 
         public void OnEventTrigger(MessageType eventType, params object[] parameters)
         {
             switch (eventType)
             {
                 case MessageType.GAMEINFO:
-                    gameInfo = (network.GameInfo)parameters[0];                    
+                    gameInfo = parameters[0] as network.GameInfo;
+                    break;
+                case MessageType.TURNBEGIN:
+                    break;
+                case MessageType.COMMANDREQUEST:
+                    cmdReq = parameters[0] as network.CommandRequest;                    
                     break;
             }
         }
@@ -45,11 +65,17 @@ namespace AGrail
             PlayerInfos.Clear();
         }
 
+        
+
         private network.GameInfo gameInfo
         {
             set
-            {                
-                RoomID = value.room_idSpecified ? value.room_id : RoomID;
+            {
+                if (value.room_idSpecified)
+                {
+                    RoomID = value.room_id;
+                    
+                }                
                 PlayerID = value.player_idSpecified ? value.player_id : PlayerID;
                 Pile = value.pileSpecified ? value.pile : Pile;
                 Discard = value.discardSpecified ? value.discard : Discard;
@@ -93,7 +119,7 @@ namespace AGrail
                 {
                     Grail[(int)Team.Red] = value.red_grail;
                     MessageSystem<MessageType>.Notify(MessageType.GrailChange, Team.Red);
-                }
+                }                
 
                 foreach(var v in value.player_infos)
                 {
@@ -149,6 +175,45 @@ namespace AGrail
                     }
                     else
                         PlayerInfos.Add(v);
+                }
+            }
+        }
+
+        private network.CommandRequest cmdReq
+        {
+            set
+            {
+                UnityEngine.Debug.Log(string.Format("cmd request call back: {0}", (value.cmd_type == network.CmdType.CMD_ACTION) ?
+                    ((network.BasicActionType)value.commands[0].respond_id).ToString() : ((network.BasicRespondType)value.commands[0].respond_id).ToString()));
+                foreach(var v in value.commands)
+                {
+                    switch (v.respond_id)
+                    {
+                        case (uint)network.BasicRespondType.RESPOND_REPLY_ATTACK:
+                            break;
+                        case (uint)network.BasicRespondType.RESPOND_DISCARD:
+                            break;
+                        case (uint)network.BasicRespondType.RESPOND_DISCARD_COVER:
+                            break;
+                        case (uint)network.BasicRespondType.RESPOND_HEAL:
+                            break;
+                        case (uint)network.BasicRespondType.RESPOND_WEAKEN:
+                            break;
+                        case (uint)network.BasicRespondType.RESPOND_BULLET:
+                            break;
+                        case (uint)network.BasicRespondType.RESPOND_ADDITIONAL_ACTION:
+                            break;
+                        case (uint)network.BasicActionType.ACTION_ANY:
+                            break;
+                        case (uint)network.BasicActionType.ACTION_ATTACK_MAGIC:
+                            break;
+                        case (uint)network.BasicActionType.ACTION_ATTACK:
+                            break;
+                        case (uint)network.BasicActionType.ACTION_MAGIC:
+                            break;
+                        case (uint)network.BasicActionType.ACTION_NONE:
+                            break;
+                    }
                 }
             }
         }

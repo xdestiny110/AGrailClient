@@ -9,6 +9,8 @@ namespace Framework.UI
     {
         public abstract WindowType Type { get; }
 
+        protected CanvasGroup canvasGroup = null;        
+
         private object[] parameters;
         public virtual object[] Parameters
         {
@@ -45,6 +47,7 @@ namespace Framework.UI
         public virtual void Awake()
         {
             MessageSystem<MessageType>.Notify(MessageType.OnUICreate, this);
+            canvasGroup = GetComponent<CanvasGroup>();
         }
 
         public virtual void OnDestroy()

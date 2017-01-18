@@ -41,7 +41,9 @@ namespace AGrail
 
         public void LeaveRoom()
         {
-
+            var proto = new network.LeaveRoomRequest();
+            GameManager.TCPInstance.Send(new Protobuf() { Proto = proto, ProtoID = ProtoNameIds.LEAVEROOMREQUEST });
+            SelectRoom = null;
         }
 
         public void OnEventTrigger(MessageType eventType, params object[] parameters)
@@ -49,7 +51,7 @@ namespace AGrail
             switch (eventType)
             {
                 case MessageType.ROOMLISTRESPONSE:
-                    var proto = (network.RoomListResponse)parameters[0];
+                    var proto = parameters[0] as network.RoomListResponse;
                     proto.rooms.Sort(
                         (x,y)=> 
                         {
