@@ -94,13 +94,13 @@ namespace Framework.Network
 
         public void Close()
         {
-            if(socket!=null)
+            if(socket!=null && socket.Connected)
             {
-                socket.Close();
-                socket = null;
+                socket.Shutdown(SocketShutdown.Both);
+                socket.Close();                
             }
             actions.clear();
-            startReconnect = false;            
+            startReconnect = false;
         }
 
         public void Send(Protobuf protobuf)
@@ -173,7 +173,7 @@ namespace Framework.Network
                 // 继续接收
                 socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, SocketFlags.None, beginReceiveCallback, state);
             }
-            catch(Exception ex)
+            catch(SocketException ex)
             {
                 UnityEngine.Debug.LogWarning("TCP.Receive failed :");
                 UnityEngine.Debug.LogException(ex);

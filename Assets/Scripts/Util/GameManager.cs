@@ -35,7 +35,10 @@ namespace AGrail
             UpdateActions += TCPInstance.DoActions;
             TCPInstance.Connect();
 
-            UIInstance = new UIManager();            
+            UIInstance = new UIManager();
+            var userDataInst = UserData.Instance;
+            var roomInst = Lobby.Instance;
+            var battleInst = BattleData.Instance;
 
             SceneManager.LoadScene(1);
         }
@@ -46,9 +49,7 @@ namespace AGrail
             switch (level)
             {
                 case 1:                    
-                    UIInstance.PushWindow(WindowType.LoginBox, WinMsg.None);
-                    var userDataInst = UserData.Instance;
-                    var roomInst = Lobby.Instance;
+                    UIInstance.PushWindow(WindowType.LoginBox, WinMsg.None);                    
                     break;
                 case 2:
                     break;

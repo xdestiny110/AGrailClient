@@ -25,7 +25,7 @@ namespace Framework.UI
         public void PopWindow(WinMsg msg)
         {
             WindowsBase topWin;
-            if (winStack.TryPeek(out topWin))
+            if (winStack.TryPop(out topWin))
             {
                 GameObject.Destroy(topWin.gameObject);
                 if (winStack.TryPeek(out topWin))                

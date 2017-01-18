@@ -90,13 +90,13 @@ namespace AGrail
 
         public override void OnPause()
         {
-            canvasGroup.interactable = false;
+            canvasGroup.blocksRaycasts = false;
             base.OnPause();
         }
 
         public override void OnResume()
         {
-            canvasGroup.interactable = true;
+            canvasGroup.blocksRaycasts = true;
             base.OnResume();
         }
 

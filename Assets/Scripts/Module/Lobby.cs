@@ -3,6 +3,7 @@ using Framework.Network;
 using Framework.Message;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace AGrail
@@ -27,7 +28,7 @@ namespace AGrail
 
         public void JoinRoom(network.RoomListResponse.RoomInfo roomInfo, string password = null)
         {
-            var proto = new network.EnterRoomRequest() { room_id = roomInfo.room_id};            
+            var proto = new network.EnterRoomRequest() { room_id = roomInfo.room_id};
             if (!string.IsNullOrEmpty(password))
                 proto.password = password;
             GameManager.TCPInstance.Send(new Protobuf() { Proto = proto, ProtoID = ProtoNameIds.ENTERROOMREQUEST });
@@ -53,18 +54,7 @@ namespace AGrail
             {
                 case MessageType.ROOMLISTRESPONSE:
                     var roomListProto = parameters[0] as network.RoomListResponse;
-                    roomListProto.rooms.Sort(
-                        (x,y)=> 
-                        {
-                            if (x.playing && !y.playing)
-                                return 1;
-                            if (!x.playing && y.playing)
-                                return -1;
-                            if (x.room_id > y.room_id)
-                                return 1;
-                            else return -1;                            
-                        });
-                    RoomInfo = roomListProto.rooms;                    
+                    RoomInfo = roomListProto.rooms.OrderBy(t => t.playing).ThenBy(t => t.room_id).ToList();
                     MessageSystem<MessageType>.Notify(MessageType.RoomList);
                     break;
             }

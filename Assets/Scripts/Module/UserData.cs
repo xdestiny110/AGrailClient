@@ -35,7 +35,7 @@ namespace AGrail
 
         public void Login(string userName, string password)
         {
-            var request = new network.LoginRequest() { asGuest = false, user_id = userName, user_password = password, version = GameManager.Version };
+            var request = new network.LoginRequest() { asGuest = false, user_id = userName, user_password = password, version = GameManager.Version };            
             GameManager.TCPInstance.Send(new Protobuf() { Proto = request, ProtoID = ProtoNameIds.LOGINREQUEST });
         }
 

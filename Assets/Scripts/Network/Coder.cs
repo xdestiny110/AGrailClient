@@ -88,7 +88,9 @@ namespace AGrail
                 sendStream.Write(BitConverter.GetBytes((short)serializeStream.Length + 4), 0, 2);
                 sendStream.Write(BitConverter.GetBytes((short)protobuf.ProtoID), 0, 2);
                 sendStream.Write(serializeStream.GetBuffer(), 0, (int)serializeStream.Length);
-                return sendStream.GetBuffer();
+                var res = new byte[sendStream.Length];
+                Array.Copy(sendStream.GetBuffer(), res, sendStream.Length);
+                return res;
             }
             catch(Exception ex)
             {
