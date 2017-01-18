@@ -74,7 +74,7 @@ namespace AGrail
                 if (value.room_idSpecified)
                 {
                     RoomID = value.room_id;
-                    
+                    MessageSystem<MessageType>.Notify(MessageType.EnterRoom);
                 }                
                 PlayerID = value.player_idSpecified ? value.player_id : PlayerID;
                 Pile = value.pileSpecified ? value.pile : Pile;

@@ -2,6 +2,7 @@
 using Framework.UI;
 using Framework.Message;
 using DG.Tweening;
+using System;
 using System.Collections.Generic;
 using System.Collections;
 
@@ -46,6 +47,7 @@ namespace AGrail
         {
             MessageSystem<MessageType>.Regist(MessageType.RoomList, this);
             MessageSystem<MessageType>.Regist(MessageType.EnterRoom, this);
+            MessageSystem<MessageType>.Regist(MessageType.ERROR, this);
             root.localPosition = new Vector3(1280, 0, 0);
             root.DOLocalMoveX(0, 1.0f);
             if(Lobby.Instance.RoomInfo == null)
@@ -59,6 +61,7 @@ namespace AGrail
         {
             MessageSystem<MessageType>.UnRegist(MessageType.RoomList, this);
             MessageSystem<MessageType>.UnRegist(MessageType.EnterRoom, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.ERROR, this);
             base.OnDestroy();
         }
 
@@ -66,6 +69,7 @@ namespace AGrail
         {
             MessageSystem<MessageType>.UnRegist(MessageType.RoomList, this);
             MessageSystem<MessageType>.UnRegist(MessageType.EnterRoom, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.ERROR, this);
             root.DOLocalMoveX(-1280, 1.0f).OnComplete(() => { gameObject.SetActive(false); base.OnHide(); });            
         }
 
@@ -73,6 +77,7 @@ namespace AGrail
         {
             MessageSystem<MessageType>.Regist(MessageType.RoomList, this);
             MessageSystem<MessageType>.Regist(MessageType.EnterRoom, this);
+            MessageSystem<MessageType>.Regist(MessageType.ERROR, this);
             gameObject.SetActive(true);
             root.localPosition = new Vector3(1280, 0, 0);
             root.DOLocalMoveX(0, 1.0f);
@@ -103,7 +108,15 @@ namespace AGrail
                     roomInfos = Lobby.Instance.RoomInfo;
                     break;
                 case MessageType.EnterRoom:
-                    //GameManager.UIInstance.PushWindow(WindowType)
+                    GameManager.UIInstance.PushWindow(WindowType.Battle, WinMsg.Hide);
+                    break;
+                case MessageType.ERROR:
+                    var errorProto = parameters[0] as network.Error;
+                    if (errorProto.id == 31)
+                        GameManager.UIInstance.PushWindow(Framework.UI.WindowType.InputBox, Framework.UI.WinMsg.Pause, Vector3.zero,
+                            new Action<string>((str) => { GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.Resume); }),
+                            new Action<string>((str) => { GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.Resume); }),
+                    "瞎蒙果然是不行的~");
                     break;
             }
         }

@@ -3,6 +3,7 @@ using Framework.Network;
 using Framework.Message;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace AGrail
 {
@@ -51,8 +52,8 @@ namespace AGrail
             switch (eventType)
             {
                 case MessageType.ROOMLISTRESPONSE:
-                    var proto = parameters[0] as network.RoomListResponse;
-                    proto.rooms.Sort(
+                    var roomListProto = parameters[0] as network.RoomListResponse;
+                    roomListProto.rooms.Sort(
                         (x,y)=> 
                         {
                             if (x.playing && !y.playing)
@@ -63,7 +64,7 @@ namespace AGrail
                                 return 1;
                             else return -1;                            
                         });
-                    RoomInfo = proto.rooms;                    
+                    RoomInfo = roomListProto.rooms;                    
                     MessageSystem<MessageType>.Notify(MessageType.RoomList);
                     break;
             }
