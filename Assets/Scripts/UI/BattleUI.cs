@@ -10,6 +10,8 @@ namespace AGrail
     public class BattleUI : WindowsBase
     {
         [SerializeField]
+        private Transform root;
+        [SerializeField]
         private Text turn;
         [SerializeField]
         private Transform[] morales = new Transform[2];
@@ -19,6 +21,8 @@ namespace AGrail
         private Transform[] grail = new Transform[2];
         [SerializeField]
         private Transform leftPlayerStatus;
+        [SerializeField]
+        private Transform rightPlayerStatus;
         [SerializeField]
         private GameObject playerStatusPrefab;
 
@@ -37,15 +41,20 @@ namespace AGrail
 
         public override void Awake()
         {
-            players.Clear();
+            players.Clear();            
             MessageSystem<MessageType>.Regist(MessageType.MoraleChange, this);
             MessageSystem<MessageType>.Regist(MessageType.GemChange, this);
             MessageSystem<MessageType>.Regist(MessageType.CrystalChange, this);
             MessageSystem<MessageType>.Regist(MessageType.GrailChange, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerIsReady, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerNickName, this);
+
+            GameManager.AddUpdateAction(onESCClick);
+
+            root.localPosition = new Vector3(1280, 0, 0);
+            root.DOLocalMoveX(0, 1.0f);
             base.Awake();
-        }
+        }        
 
         public override void OnDestroy()
         {
@@ -56,6 +65,9 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.GrailChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerIsReady, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerNickName, this);
+
+            GameManager.RemoveUpdateAciont(onESCClick);
+
             base.OnDestroy();
         }
 
@@ -64,21 +76,84 @@ namespace AGrail
             switch (eventType)
             {
                 case MessageType.MoraleChange:
-                    morales[(int)parameters[0]].DOScaleX(BattleData.Instance.Morale[(int)parameters[0]] / 15.0f, 0.2f);
+                    morales[(int)parameters[0]].DOScaleX((int)parameters[1] / 15.0f, 0.2f);
                     break;
                 case MessageType.GemChange:
+                    int diffGem = (int)parameters[1];
+                    if (diffGem > 0)
+                    {
+                        for (int i = 0; i < diffGem; i++)
+                        {
+                            var go = new GameObject();
+                            go.AddComponent<RawImage>().texture = icons[0];
+                            go.transform.parent = energy[(int)parameters[0]];
+                            go.transform.SetSiblingIndex(0);
+                        }
+                    }
+                    else
+                    {
+
+                        for (int i = 0; i < diffGem; i++)
+                            Destroy(energy[(int)parameters[0]].GetChild(i).gameObject);
+                    }
                     break;
                 case MessageType.CrystalChange:
+                    int diffCrystal = (int)parameters[1];
+                    if (diffCrystal > 0)
+                    {
+                        for (int i = 0; i < diffCrystal; i++)
+                        {
+                            var go = new GameObject();
+                            go.AddComponent<RawImage>().texture = icons[1];
+                            go.transform.parent = energy[(int)parameters[0]];
+                            go.transform.SetSiblingIndex(energy[(int)parameters[0]].childCount - 1);
+                        }
+                    }
+                    else
+                    {
+                        for (int i = energy[(int)parameters[0]].childCount - 1; i < energy[(int)parameters[0]].childCount - 1 + diffCrystal; i++)
+                            Destroy(energy[(int)parameters[0]].GetChild(i).gameObject);
+                    }
                     break;
                 case MessageType.GrailChange:
+                    for(int i = 0; i < (int)parameters[1]; i++)
+                    {
+                        var go = new GameObject();
+                        go.AddComponent<RawImage>().texture = icons[2];
+                        go.transform.parent = grail[(int)parameters[0]];
+                    }
                     break;
                 case MessageType.PlayerIsReady:
+                    checkPlayer((int)parameters[0]);
+                    players[(int)parameters[0]].IsReady = (bool)parameters[1];
                     break;
                 case MessageType.PlayerNickName:
-                    break;
+                    players[(int)parameters[0]].UserName = (string)parameters[1];
+                    break;                    
             }
         }
 
+        private void onESCClick()
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                Lobby.Instance.LeaveRoom();
+                GameManager.UIInstance.PopWindow(WinMsg.Show);
+            }
+        }
+
+        private void checkPlayer(int idx)
+        {
+            while(players.Count<= idx)
+            {
+                var go = Instantiate(playerStatusPrefab);
+                players.Add(go.GetComponent<PlayerStatus>());
+                if (players.Count > Lobby.Instance.SelectRoom.max_player / 2)
+                    go.transform.parent = rightPlayerStatus;
+                else
+                    go.transform.parent = leftPlayerStatus;
+            }
+        }
     }
 }
 

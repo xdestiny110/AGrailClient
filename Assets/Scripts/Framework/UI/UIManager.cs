@@ -26,7 +26,7 @@ namespace Framework.UI
         {
             WindowsBase topWin;
             if (winStack.TryPop(out topWin))
-            {
+            {                
                 GameObject.Destroy(topWin.gameObject);
                 if (winStack.TryPeek(out topWin))                
                     dealWinMsg(topWin, msg);

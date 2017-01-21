@@ -49,7 +49,13 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.EnterRoom, this);
             MessageSystem<MessageType>.Regist(MessageType.ERROR, this);
             root.localPosition = new Vector3(1280, 0, 0);
-            root.DOLocalMoveX(0, 1.0f);
+            root.DOLocalMoveX(0, 1.0f).OnComplete(
+                () =>
+                {
+                    var go = GameObject.Find("GameTitle");
+                    go.transform.GetChild(0).parent = root;
+                    Destroy(go);
+                });
             if(Lobby.Instance.RoomInfo == null)
                 Lobby.Instance.GetRoomList();
             else
@@ -79,7 +85,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.EnterRoom, this);
             MessageSystem<MessageType>.Regist(MessageType.ERROR, this);
             gameObject.SetActive(true);
-            root.localPosition = new Vector3(1280, 0, 0);
+            root.localPosition = new Vector3(-1280, 0, 0);            
             root.DOLocalMoveX(0, 1.0f);
             if (Lobby.Instance.RoomInfo == null)
                 Lobby.Instance.GetRoomList();
@@ -119,6 +125,11 @@ namespace AGrail
                     "瞎蒙果然是不行的~");
                     break;
             }
+        }
+
+        public void OnBtnRefreshClick()
+        {
+            Lobby.Instance.GetRoomList();
         }
 
         private Coroutine coroHandle = null;

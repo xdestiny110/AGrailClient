@@ -52,6 +52,7 @@ namespace AGrail
         public override void OnHide()
         {
             var go = new GameObject();
+            go.name = "GameTitle";
             var canvas = go.AddComponent<Canvas>();
             canvas.sortingOrder = 99;
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;

@@ -38,6 +38,9 @@ namespace AGrail
         private Texture2D[] handAndHealIcons = new Texture2D[2];
 
         public string UserName { set { userName.text = value; } }
+        public Team Team { set { teamBG.texture = teamBGs[(int)value]; } }
+        public string HeroName { set { heroName.text = value; } }
+        public bool IsReady { set { readyIcon.enabled = value; } }
     }
 }
 
