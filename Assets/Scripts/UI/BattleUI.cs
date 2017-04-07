@@ -25,7 +25,6 @@ namespace AGrail
         private Transform rightPlayerStatus;
         [SerializeField]
         private GameObject playerStatusPrefab;
-
         [SerializeField]
         private Texture2D[] icons = new Texture2D[3];
 
@@ -49,6 +48,11 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.PlayerIsReady, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerNickName, this);
 
+            MessageSystem<MessageType>.Regist(MessageType.HITMSG, this);
+            MessageSystem<MessageType>.Regist(MessageType.HURTMSG, this);
+            MessageSystem<MessageType>.Regist(MessageType.CARDMSG, this);
+            MessageSystem<MessageType>.Regist(MessageType.SKILLMSG, this);
+
             GameManager.AddUpdateAction(onESCClick);
 
             root.localPosition = new Vector3(1280, 0, 0);
@@ -66,6 +70,11 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerIsReady, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerNickName, this);
 
+            MessageSystem<MessageType>.UnRegist(MessageType.HITMSG, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.HURTMSG, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.CARDMSG, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.SKILLMSG, this);
+
             GameManager.RemoveUpdateAciont(onESCClick);
 
             base.OnDestroy();
@@ -76,52 +85,16 @@ namespace AGrail
             switch (eventType)
             {
                 case MessageType.MoraleChange:
-                    morales[(int)parameters[0]].DOScaleX((int)parameters[1] / 15.0f, 0.2f);
+                    moraleChange((Team)parameters[0], (int)parameters[1]);
                     break;
                 case MessageType.GemChange:
-                    int diffGem = (int)parameters[1];
-                    if (diffGem > 0)
-                    {
-                        for (int i = 0; i < diffGem; i++)
-                        {
-                            var go = new GameObject();
-                            go.AddComponent<RawImage>().texture = icons[0];
-                            go.transform.parent = energy[(int)parameters[0]];
-                            go.transform.SetSiblingIndex(0);
-                        }
-                    }
-                    else
-                    {
-
-                        for (int i = 0; i < diffGem; i++)
-                            Destroy(energy[(int)parameters[0]].GetChild(i).gameObject);
-                    }
+                    gemChange((Team)parameters[0], (int)parameters[1]);
                     break;
                 case MessageType.CrystalChange:
-                    int diffCrystal = (int)parameters[1];
-                    if (diffCrystal > 0)
-                    {
-                        for (int i = 0; i < diffCrystal; i++)
-                        {
-                            var go = new GameObject();
-                            go.AddComponent<RawImage>().texture = icons[1];
-                            go.transform.parent = energy[(int)parameters[0]];
-                            go.transform.SetSiblingIndex(energy[(int)parameters[0]].childCount - 1);
-                        }
-                    }
-                    else
-                    {
-                        for (int i = energy[(int)parameters[0]].childCount - 1; i < energy[(int)parameters[0]].childCount - 1 + diffCrystal; i++)
-                            Destroy(energy[(int)parameters[0]].GetChild(i).gameObject);
-                    }
+                    crystalChange((Team)parameters[0], (int)parameters[1]);                    
                     break;
                 case MessageType.GrailChange:
-                    for(int i = 0; i < (int)parameters[1]; i++)
-                    {
-                        var go = new GameObject();
-                        go.AddComponent<RawImage>().texture = icons[2];
-                        go.transform.parent = grail[(int)parameters[0]];
-                    }
+                    grailChange((Team)parameters[0], (int)parameters[1]);
                     break;
                 case MessageType.PlayerIsReady:
                     checkPlayer((int)parameters[0]);
@@ -129,7 +102,15 @@ namespace AGrail
                     break;
                 case MessageType.PlayerNickName:
                     players[(int)parameters[0]].UserName = (string)parameters[1];
-                    break;                    
+                    break;
+                case MessageType.HITMSG:
+                    break;
+                case MessageType.HURTMSG:
+                    break;
+                case MessageType.CARDMSG:
+                    break;
+                case MessageType.SKILLMSG:
+                    break;
             }
         }
 
@@ -154,6 +135,65 @@ namespace AGrail
                     go.transform.parent = leftPlayerStatus;
             }
         }
+
+        private void moraleChange(Team team, int morale)
+        {
+            morales[(int)team].DOScaleX(morale / 15.0f, 0.2f);
+        }
+
+        private void gemChange(Team team, int diffGem)
+        {
+            if (diffGem > 0)
+            {
+                for (int i = 0; i < diffGem; i++)
+                {
+                    var go = new GameObject();
+                    go.AddComponent<RawImage>().texture = icons[0];
+                    go.transform.parent = energy[(int)team];
+                    go.transform.SetSiblingIndex(0);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < diffGem; i++)
+                    Destroy(energy[(int)team].GetChild(i).gameObject);
+            }
+        }
+
+        private void crystalChange(Team team, int diffCrystal)
+        {
+            if (diffCrystal > 0)
+            {
+                for (int i = 0; i < diffCrystal; i++)
+                {
+                    var go = new GameObject();
+                    go.AddComponent<RawImage>().texture = icons[1];
+                    go.transform.parent = energy[(int)team];
+                    go.transform.SetSiblingIndex(energy[(int)team].childCount - 1);
+                }
+            }
+            else
+            {
+                for (int i = energy[(int)team].childCount - 1; i < energy[(int)team].childCount - 1 + diffCrystal; i++)
+                    Destroy(energy[(int)team].GetChild(i).gameObject);
+            }
+        }
+
+        private void grailChange(Team team, int diffGrail)
+        {
+            for (int i = 0; i < diffGrail; i++)
+            {
+                var go = new GameObject();
+                go.AddComponent<RawImage>().texture = icons[2];
+                go.transform.parent = grail[(int)team];
+            }
+        }
+
+        private void cardMsg()
+        {
+
+        }
+
     }
 }
 

@@ -63,9 +63,7 @@ namespace AGrail
             Crystal = new uint[2];
             Grail = new uint[2];
             PlayerInfos.Clear();
-        }
-
-        
+        }        
 
         private network.GameInfo gameInfo
         {
