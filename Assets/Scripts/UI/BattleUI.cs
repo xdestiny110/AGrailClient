@@ -52,6 +52,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.HURTMSG, this);
             MessageSystem<MessageType>.Regist(MessageType.CARDMSG, this);
             MessageSystem<MessageType>.Regist(MessageType.SKILLMSG, this);
+            MessageSystem<MessageType>.Regist(MessageType.GOSSIP, this);
 
             GameManager.AddUpdateAction(onESCClick);
 
@@ -74,6 +75,7 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.HURTMSG, this);
             MessageSystem<MessageType>.UnRegist(MessageType.CARDMSG, this);
             MessageSystem<MessageType>.UnRegist(MessageType.SKILLMSG, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.GOSSIP, this);
 
             GameManager.RemoveUpdateAciont(onESCClick);
 
