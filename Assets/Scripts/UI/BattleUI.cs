@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using DG.Tweening;
+using System.Linq;
 
 namespace AGrail
 {
@@ -24,7 +25,11 @@ namespace AGrail
         [SerializeField]
         private Transform rightPlayerStatus;
         [SerializeField]
+        private Text dialog;
+        [SerializeField]
         private GameObject playerStatusPrefab;
+
+
         [SerializeField]
         private Texture2D[] icons = new Texture2D[3];
 
@@ -47,12 +52,9 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.GrailChange, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerIsReady, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerNickName, this);
-
-            MessageSystem<MessageType>.Regist(MessageType.HITMSG, this);
-            MessageSystem<MessageType>.Regist(MessageType.HURTMSG, this);
-            MessageSystem<MessageType>.Regist(MessageType.CARDMSG, this);
-            MessageSystem<MessageType>.Regist(MessageType.SKILLMSG, this);
-            MessageSystem<MessageType>.Regist(MessageType.GOSSIP, this);
+            MessageSystem<MessageType>.Regist(MessageType.PlayerEnergeChange, this);
+            MessageSystem<MessageType>.Regist(MessageType.PlayerBasicAndExCardChange, this);
+            MessageSystem<MessageType>.Regist(MessageType.LogChange, this);
 
             GameManager.AddUpdateAction(onESCClick);
 
@@ -70,12 +72,9 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.GrailChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerIsReady, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerNickName, this);
-
-            MessageSystem<MessageType>.UnRegist(MessageType.HITMSG, this);
-            MessageSystem<MessageType>.UnRegist(MessageType.HURTMSG, this);
-            MessageSystem<MessageType>.UnRegist(MessageType.CARDMSG, this);
-            MessageSystem<MessageType>.UnRegist(MessageType.SKILLMSG, this);
-            MessageSystem<MessageType>.UnRegist(MessageType.GOSSIP, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.PlayerEnergeChange, this);            
+            MessageSystem<MessageType>.UnRegist(MessageType.PlayerBasicAndExCardChange, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.LogChange, this);
 
             GameManager.RemoveUpdateAciont(onESCClick);
 
@@ -87,31 +86,33 @@ namespace AGrail
             switch (eventType)
             {
                 case MessageType.MoraleChange:
-                    moraleChange((Team)parameters[0], (int)parameters[1]);
+                    moraleChange((Team)parameters[0], (uint)parameters[1]);
                     break;
                 case MessageType.GemChange:
-                    gemChange((Team)parameters[0], (int)parameters[1]);
+                    gemChange((Team)parameters[0], (uint)parameters[1]);
                     break;
                 case MessageType.CrystalChange:
-                    crystalChange((Team)parameters[0], (int)parameters[1]);                    
+                    crystalChange((Team)parameters[0], (uint)parameters[1]);                    
                     break;
                 case MessageType.GrailChange:
-                    grailChange((Team)parameters[0], (int)parameters[1]);
+                    grailChange((Team)parameters[0], (uint)parameters[1]);
                     break;
                 case MessageType.PlayerIsReady:
                     checkPlayer((int)parameters[0]);
                     players[(int)parameters[0]].IsReady = (bool)parameters[1];
                     break;
                 case MessageType.PlayerNickName:
+                    checkPlayer((int)parameters[0]);
                     players[(int)parameters[0]].UserName = (string)parameters[1];
                     break;
-                case MessageType.HITMSG:
+                case MessageType.PlayerBasicAndExCardChange:
+                    players[(int)parameters[0]].BasicAndExCards = (parameters[1] as List<uint>).Union(parameters[2] as List<uint>).ToList();
                     break;
-                case MessageType.HURTMSG:
+                case MessageType.PlayerEnergeChange:
+                    players[(int)parameters[0]].Energy = new KeyValuePair<uint, uint>((uint)parameters[1], (uint)parameters[2]);
                     break;
-                case MessageType.CARDMSG:
-                    break;
-                case MessageType.SKILLMSG:
+                case MessageType.LogChange:
+                    dialog.text = Dialog.Instance.Log;
                     break;
             }
         }
@@ -126,7 +127,7 @@ namespace AGrail
         }
 
         private void checkPlayer(int idx)
-        {
+        {            
             while(players.Count<= idx)
             {
                 var go = Instantiate(playerStatusPrefab);
@@ -138,12 +139,12 @@ namespace AGrail
             }
         }
 
-        private void moraleChange(Team team, int morale)
+        private void moraleChange(Team team, uint morale)
         {
             morales[(int)team].DOScaleX(morale / 15.0f, 0.2f);
         }
 
-        private void gemChange(Team team, int diffGem)
+        private void gemChange(Team team, uint diffGem)
         {
             if (diffGem > 0)
             {
@@ -162,7 +163,7 @@ namespace AGrail
             }
         }
 
-        private void crystalChange(Team team, int diffCrystal)
+        private void crystalChange(Team team, uint diffCrystal)
         {
             if (diffCrystal > 0)
             {
@@ -181,7 +182,7 @@ namespace AGrail
             }
         }
 
-        private void grailChange(Team team, int diffGrail)
+        private void grailChange(Team team, uint diffGrail)
         {
             for (int i = 0; i < diffGrail; i++)
             {

@@ -39,6 +39,7 @@ namespace AGrail
             var userDataInst = UserData.Instance;
             var roomInst = Lobby.Instance;
             var battleInst = BattleData.Instance;
+            var dialogInst = Dialog.Instance;
 
             SceneManager.LoadScene(1);
         }

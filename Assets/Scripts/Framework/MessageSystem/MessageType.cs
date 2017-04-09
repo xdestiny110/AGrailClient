@@ -59,8 +59,7 @@
         PlayerTeamChange,
         PlayerHandChange,
         PlayerHealChange,
-        PlayerGemChange,
-        PlayerCrystalChange,
+        PlayerEnergeChange,
         PlayerYellowChange,
         PlayerBlueChange,
         PlayerCoveredChange,
@@ -68,5 +67,7 @@
         PlayerHandMaxChange,
         PlayerNickName,
         PlayerIsReady,
+        PlayerBasicAndExCardChange,
+        LogChange,
     }
 }

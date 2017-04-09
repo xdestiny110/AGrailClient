@@ -167,16 +167,28 @@ namespace AGrail
                         player.heal_count = v.heal_count;
                         MessageSystem<MessageType>.Notify(MessageType.PlayerHealChange, idx, player.heal_count);
                     }
-                    if (v.gemSpecified)
-                    {
+                    if (v.gemSpecified)                    
                         player.gem = v.gem;
-                        MessageSystem<MessageType>.Notify(MessageType.PlayerGemChange, idx);
-                    }
-                    if (v.crystalSpecified)
+                    if (v.crystalSpecified)                    
+                        player.crystal = v.crystal;                        
+                    if(v.gemSpecified || v.crystalSpecified)
+                        MessageSystem<MessageType>.Notify(MessageType.PlayerEnergeChange, idx, player.gem, player.crystal);
+                    if (v.basic_cards.Count > 0)
+                        player.basic_cards = v.basic_cards;
+                    if(v.ex_cards.Count > 0)
+                        player.ex_cards = v.ex_cards;
+                    if(v.delete_field.Count > 0)
                     {
-                        player.crystal = v.crystal;
-                        MessageSystem<MessageType>.Notify(MessageType.PlayerCrystalChange, idx);
+                        foreach(var u in v.delete_field)
+                        {
+                            if (u == "ex_cards")
+                                player.ex_cards = new List<uint>();
+                            if (u == "basic_cards")
+                                player.basic_cards = new List<uint>();
+                        }
                     }
+                    if(v.basic_cards.Count > 0 || v.ex_cards.Count > 0 || v.delete_field.Count > 0)
+                        MessageSystem<MessageType>.Notify(MessageType.PlayerBasicAndExCardChange, idx, player.basic_cards, player.ex_cards);
                 }
             }
         }

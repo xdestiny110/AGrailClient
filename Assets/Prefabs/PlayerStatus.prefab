@@ -378,9 +378,9 @@ MonoBehaviour:
   - {fileID: 2800000, guid: a948c3b693d9527469364ba54e76b973, type: 3}
   - {fileID: 2800000, guid: c8f7dab84a103c540934f44abb22c384, type: 3}
   - {fileID: 2800000, guid: c7431c5db58df97409de100a1ac8617a, type: 3}
-  handAndHealIcons:
-  - {fileID: 0}
-  - {fileID: 0}
+  energeIcons:
+  - {fileID: 2800000, guid: 0940d67551077b54db67e90d3eb1961b, type: 3}
+  - {fileID: 2800000, guid: ba4a40ee0bb3d6c4695d16b33f96b654, type: 3}
 --- !u!114 &114000012516921968
 MonoBehaviour:
   m_ObjectHideFlags: 1
