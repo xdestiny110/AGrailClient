@@ -55,6 +55,7 @@
         GemChange,
         CrystalChange,
         GrailChange,
+        PlayerHeroName,
         PlayerRoleChange,
         PlayerTeamChange,
         PlayerHandChange,

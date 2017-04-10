@@ -93,7 +93,7 @@ namespace Framework.Network
         }
 
         public void Close()
-        {
+        {            
             if(socket!=null && socket.Connected)
             {
                 socket.Shutdown(SocketShutdown.Both);
@@ -101,6 +101,7 @@ namespace Framework.Network
             }
             actions.clear();
             startReconnect = false;
+            UnityEngine.Debug.Log("Disconnect.");
         }
 
         public void Send(Protobuf protobuf)

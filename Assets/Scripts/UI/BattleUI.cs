@@ -52,6 +52,15 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.GrailChange, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerIsReady, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerNickName, this);
+            MessageSystem<MessageType>.Regist(MessageType.PlayerHeroName, this);
+            MessageSystem<MessageType>.Regist(MessageType.PlayerTeamChange, this);
+            MessageSystem<MessageType>.Regist(MessageType.PlayerHandMaxChange, this);
+            MessageSystem<MessageType>.Regist(MessageType.PlayerHandChange, this);
+            MessageSystem<MessageType>.Regist(MessageType.PlayerHealChange, this);
+            MessageSystem<MessageType>.Regist(MessageType.PlayerYellowChange, this);
+            MessageSystem<MessageType>.Regist(MessageType.PlayerBlueChange, this);
+            MessageSystem<MessageType>.Regist(MessageType.PlayerCoveredChange, this);
+            MessageSystem<MessageType>.Regist(MessageType.PlayerKneltChange, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerEnergeChange, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerBasicAndExCardChange, this);
             MessageSystem<MessageType>.Regist(MessageType.LogChange, this);
@@ -72,6 +81,15 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.GrailChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerIsReady, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerNickName, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.PlayerHeroName, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.PlayerTeamChange, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.PlayerHandMaxChange, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.PlayerHandChange, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.PlayerHealChange, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.PlayerYellowChange, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.PlayerBlueChange, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.PlayerCoveredChange, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.PlayerKneltChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerEnergeChange, this);            
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerBasicAndExCardChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.LogChange, this);
@@ -104,6 +122,12 @@ namespace AGrail
                 case MessageType.PlayerNickName:
                     checkPlayer((int)parameters[0]);
                     players[(int)parameters[0]].UserName = (string)parameters[1];
+                    break;
+                case MessageType.PlayerHeroName:
+                    break;
+                case MessageType.PlayerTeamChange:
+                    checkPlayer((int)parameters[0]);
+                    players[(int)parameters[0]].Team = (Team)(uint)parameters[1];
                     break;
                 case MessageType.PlayerBasicAndExCardChange:
                     players[(int)parameters[0]].BasicAndExCards = (parameters[1] as List<uint>).Union(parameters[2] as List<uint>).ToList();

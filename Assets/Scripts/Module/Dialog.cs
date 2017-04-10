@@ -53,14 +53,21 @@ namespace AGrail
                     var cardMsg = parameters[0] as network.CardMsg;
                     Log += string.Format(
                         (cardMsg.type == (uint)network.CardMsgType.CM_SHOW) ?
-                        "{0}对{1}展示了{2}." + Environment.NewLine : "{0}对{1}使用了{2}." + Environment.NewLine,
+                        "{0}对{1}展示了" : "{0}对{1}使用了",
                         BattleData.Instance.PlayerInfos[(int)cardMsg.src_id].nickname,
-                        cardMsg.dst_idSpecified ? BattleData.Instance.PlayerInfos[(int)cardMsg.dst_id].nickname : "自己",
-                        cardMsg.card_ids);
+                        cardMsg.dst_idSpecified ? BattleData.Instance.PlayerInfos[(int)cardMsg.dst_id].nickname : "自己");
+                    Log += "Card ID = ";
+                    foreach (var v in cardMsg.card_ids)
+                        Log += v.ToString() + ",";
+                    Log += Environment.NewLine;
                     break;
                 case MessageType.SKILLMSG:
-                    var skillMsg = parameters[0] as network.SkillMsg;
-                    Log += string.Format("{0}对{1}使用了技能{2}" + Environment.NewLine, skillMsg.src_id, skillMsg.dst_ids[0], skillMsg.skill_id);
+                    var skillMsg = parameters[0] as network.SkillMsg;                    
+                    Log += BattleData.Instance.PlayerInfos[(int)skillMsg.src_id].nickname;
+                    if (skillMsg.dst_ids.Count > 0) Log += "对";
+                    foreach (var v in skillMsg.dst_ids)
+                        Log += BattleData.Instance.PlayerInfos[(int)v].nickname + ",";
+                    Log += string.Format("使用了技能{0}" + Environment.NewLine, skillMsg.skill_id);                    
                     break;
                 case MessageType.GOSSIP:
                     var gossip = parameters[0] as network.Gossip;
