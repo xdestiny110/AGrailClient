@@ -53,8 +53,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.PlayerIsReady, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerNickName, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerHeroName, this);
-            MessageSystem<MessageType>.Regist(MessageType.PlayerTeamChange, this);
-            MessageSystem<MessageType>.Regist(MessageType.PlayerHandMaxChange, this);
+            MessageSystem<MessageType>.Regist(MessageType.PlayerTeamChange, this);            
             MessageSystem<MessageType>.Regist(MessageType.PlayerHandChange, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerHealChange, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerYellowChange, this);
@@ -82,8 +81,7 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerIsReady, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerNickName, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerHeroName, this);
-            MessageSystem<MessageType>.UnRegist(MessageType.PlayerTeamChange, this);
-            MessageSystem<MessageType>.UnRegist(MessageType.PlayerHandMaxChange, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.PlayerTeamChange, this);            
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerHandChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerHealChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerYellowChange, this);
@@ -107,10 +105,10 @@ namespace AGrail
                     moraleChange((Team)parameters[0], (uint)parameters[1]);
                     break;
                 case MessageType.GemChange:
-                    gemChange((Team)parameters[0], (uint)parameters[1]);
+                    gemChange((Team)parameters[0], (int)parameters[1]);
                     break;
                 case MessageType.CrystalChange:
-                    crystalChange((Team)parameters[0], (uint)parameters[1]);                    
+                    crystalChange((Team)parameters[0], (int)parameters[1]);                    
                     break;
                 case MessageType.GrailChange:
                     grailChange((Team)parameters[0], (uint)parameters[1]);
@@ -134,6 +132,12 @@ namespace AGrail
                     break;
                 case MessageType.PlayerEnergeChange:
                     players[(int)parameters[0]].Energy = new KeyValuePair<uint, uint>((uint)parameters[1], (uint)parameters[2]);
+                    break;
+                case MessageType.PlayerHandChange:
+                    players[(int)parameters[0]].HandCount = new KeyValuePair<uint, uint>((uint)parameters[1], (uint)parameters[2]);
+                    break;
+                case MessageType.PlayerHealChange:
+                    players[(int)parameters[0]].HealCount = (uint)parameters[1];
                     break;
                 case MessageType.LogChange:
                     dialog.text = Dialog.Instance.Log;
@@ -168,7 +172,7 @@ namespace AGrail
             morales[(int)team].DOScaleX(morale / 15.0f, 0.2f);
         }
 
-        private void gemChange(Team team, uint diffGem)
+        private void gemChange(Team team, int diffGem)
         {
             if (diffGem > 0)
             {
@@ -182,12 +186,12 @@ namespace AGrail
             }
             else
             {
-                for (int i = 0; i < diffGem; i++)
+                for (int i = 0; i < Mathf.Abs(diffGem); i++)
                     Destroy(energy[(int)team].GetChild(i).gameObject);
             }
         }
 
-        private void crystalChange(Team team, uint diffCrystal)
+        private void crystalChange(Team team, int diffCrystal)
         {
             if (diffCrystal > 0)
             {
@@ -201,7 +205,7 @@ namespace AGrail
             }
             else
             {
-                for (int i = energy[(int)team].childCount - 1; i < energy[(int)team].childCount - 1 + diffCrystal; i++)
+                for (int i = energy[(int)team].childCount - 1; i > energy[(int)team].childCount - 1 + diffCrystal; i--)
                     Destroy(energy[(int)team].GetChild(i).gameObject);
             }
         }

@@ -91,22 +91,22 @@ namespace AGrail
                 }
                 if (value.blue_gemSpecified)
                 {                    
-                    MessageSystem<MessageType>.Notify(MessageType.GemChange, Team.Blue, value.blue_gem - Gem[(int)Team.Blue]);
+                    MessageSystem<MessageType>.Notify(MessageType.GemChange, Team.Blue, (int)value.blue_gem - (int)Gem[(int)Team.Blue]);
                     Gem[(int)Team.Blue] = value.blue_gem;
                 }
                 if (value.red_gemSpecified)
                 {
-                    MessageSystem<MessageType>.Notify(MessageType.GemChange, Team.Red, value.red_gem - Gem[(int)Team.Red]);
+                    MessageSystem<MessageType>.Notify(MessageType.GemChange, Team.Red, (int)value.red_gem - (int)Gem[(int)Team.Red]);
                     Gem[(int)Team.Red] = value.red_gem;
                 }
                 if (value.blue_crystalSpecified)
-                {                    
-                    MessageSystem<MessageType>.Notify(MessageType.CrystalChange, Team.Blue, value.blue_crystal-Crystal[(int)Team.Blue]);
+                {
+                    MessageSystem<MessageType>.Notify(MessageType.CrystalChange, Team.Blue, (int)value.blue_crystal - (int)Crystal[(int)Team.Blue]);
                     Crystal[(int)Team.Blue] = value.blue_crystal;
                 }
                 if (value.red_crystalSpecified)
                 {
-                    MessageSystem<MessageType>.Notify(MessageType.CrystalChange, Team.Red, value.red_crystal - Crystal[(int)Team.Red]);
+                    MessageSystem<MessageType>.Notify(MessageType.CrystalChange, Team.Red, (int)value.red_crystal - (int)Crystal[(int)Team.Red]);
                     Crystal[(int)Team.Red] = value.red_crystal;
                 }
                 if (value.blue_grailSpecified)
@@ -152,16 +152,12 @@ namespace AGrail
                         player.nickname = v.nickname;
                         MessageSystem<MessageType>.Notify(MessageType.PlayerNickName, idx, player.nickname);
                     }
-                    if (v.hand_countSpecified)
-                    {
-                        player.hand_count = v.hand_count;
-                        MessageSystem<MessageType>.Notify(MessageType.PlayerHandChange, idx, player.hand_count);
-                    }
-                    if (v.max_handSpecified)
-                    {
-                        player.max_hand = v.max_hand;
-                        MessageSystem<MessageType>.Notify(MessageType.PlayerHandMaxChange, idx, player.max_hand);
-                    }
+                    if (v.max_handSpecified)                    
+                        player.max_hand = v.max_hand;                                            
+                    if (v.hand_countSpecified)                    
+                        player.hand_count = v.hand_count;                        
+                    if(v.max_handSpecified || v.hand_countSpecified)                    
+                        MessageSystem<MessageType>.Notify(MessageType.PlayerHandChange, idx, player.hand_count, player.max_hand);                    
                     if (v.heal_countSpecified)
                     {
                         player.heal_count = v.heal_count;

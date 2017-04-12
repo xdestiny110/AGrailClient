@@ -65,7 +65,6 @@
         PlayerBlueChange,
         PlayerCoveredChange,
         PlayerKneltChange,
-        PlayerHandMaxChange,
         PlayerNickName,
         PlayerIsReady,
         PlayerBasicAndExCardChange,

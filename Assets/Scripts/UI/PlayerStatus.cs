@@ -62,6 +62,7 @@ namespace AGrail
                 }
             }
         }
+
         public List<uint> BasicAndExCards
         {
             set
@@ -72,6 +73,50 @@ namespace AGrail
                 //{
 
                 //}
+            }
+        }
+
+        public KeyValuePair<uint, uint> HandCount
+        {
+            set
+            {
+                for (int i = 0; i < handCard.childCount; i++)
+                    Destroy(handCard.GetChild(i).gameObject);
+                for(int i = 0;i<Mathf.Min(value.Key, value.Value); i++)
+                {
+                    var go = new GameObject();
+                    go.transform.parent = handCard;
+                    go.AddComponent<RawImage>().texture = healIcons[1];
+                }
+                for (int i = 0; i < (int)value.Value - (int)value.Key; i++)
+                {
+                    var go = new GameObject();
+                    go.transform.parent = handCard;
+                    go.AddComponent<RawImage>().texture = healIcons[0];
+                }
+                for (int i = 0; i < (int)value.Key - (int)value.Value; i++)
+                {
+                    var go = new GameObject();
+                    go.transform.parent = handCard;
+                    var ri = go.AddComponent<RawImage>();
+                    ri.texture = healIcons[0];
+                    ri.color = Color.red;
+                }
+            }
+        }
+
+        public uint HealCount
+        {
+            set
+            {
+                for (int i = 0; i < heal.childCount; i++)
+                    Destroy(heal.GetChild(i).gameObject);
+                for(int i = 0; i < value; i++)
+                {
+                    var go = new GameObject();
+                    go.transform.parent = heal;
+                    go.AddComponent<RawImage>().texture = healIcons[2];
+                }
             }
         }
 
