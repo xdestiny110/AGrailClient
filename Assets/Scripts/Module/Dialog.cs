@@ -40,7 +40,9 @@ namespace AGrail
             {
                 case MessageType.HITMSG:
                     var hitMsg = parameters[0] as network.HitMsg;                    
-                    Log += string.Format("{0}攻击了{1}" + Environment.NewLine, hitMsg.src_id, hitMsg.dst_id);
+                    Log += string.Format("{0}攻击了{1}" + Environment.NewLine, 
+                        BattleData.Instance.PlayerInfos[(int)hitMsg.src_id].nickname,
+                        BattleData.Instance.PlayerInfos[(int)hitMsg.dst_id].nickname);
                     break;
                 case MessageType.HURTMSG:
                     var hurtMsg = parameters[0] as network.HurtMsg;
@@ -55,10 +57,12 @@ namespace AGrail
                         (cardMsg.type == (uint)network.CardMsgType.CM_SHOW) ?
                         "{0}对{1}展示了" : "{0}对{1}使用了",
                         BattleData.Instance.PlayerInfos[(int)cardMsg.src_id].nickname,
-                        cardMsg.dst_idSpecified ? BattleData.Instance.PlayerInfos[(int)cardMsg.dst_id].nickname : "自己");
-                    Log += "Card ID = ";
+                        cardMsg.dst_idSpecified ? BattleData.Instance.PlayerInfos[(int)cardMsg.dst_id].nickname : "自己");                    
                     foreach (var v in cardMsg.card_ids)
-                        Log += v.ToString() + ",";
+                    {
+                        var c = new Card(v);
+                        Log += c.Name + ",";
+                    }                        
                     Log += Environment.NewLine;
                     break;
                 case MessageType.SKILLMSG:

@@ -52,6 +52,7 @@
         EnterRoom,
         ChooseRole,
         MoraleChange,
+        ShowCardChange,
         GemChange,
         CrystalChange,
         GrailChange,

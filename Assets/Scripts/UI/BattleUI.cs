@@ -25,7 +25,9 @@ namespace AGrail
         [SerializeField]
         private Transform rightPlayerStatus;
         [SerializeField]
-        private Text dialog;
+        private Transform ShowCardArea;
+        [SerializeField]
+        private Text dialog;        
         [SerializeField]
         private GameObject playerStatusPrefab;
 
@@ -63,6 +65,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.PlayerEnergeChange, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerBasicAndExCardChange, this);
             MessageSystem<MessageType>.Regist(MessageType.LogChange, this);
+            MessageSystem<MessageType>.Regist(MessageType.CARDMSG, this);
 
             GameManager.AddUpdateAction(onESCClick);
 
@@ -91,6 +94,7 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerEnergeChange, this);            
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerBasicAndExCardChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.LogChange, this);
+            MessageSystem<MessageType>.Regist(MessageType.CARDMSG, this);
 
             GameManager.RemoveUpdateAciont(onESCClick);
 
@@ -141,6 +145,18 @@ namespace AGrail
                     break;
                 case MessageType.LogChange:
                     dialog.text = Dialog.Instance.Log;
+                    break;
+                case MessageType.CARDMSG:
+                    var cardMsg = parameters[0] as network.CardMsg;
+                    for (int i = 0; i < ShowCardArea.childCount; i++)
+                        Destroy(ShowCardArea.GetChild(i).gameObject);
+                    foreach(var v in cardMsg.card_ids)
+                    {
+                        var card = new Card(v);
+                        var go = new GameObject();
+                        go.transform.parent = ShowCardArea;
+                        go.AddComponent<RawImage>().texture = Resources.Load<Texture2D>(card.AssetPath);
+                    }
                     break;
             }
         }
