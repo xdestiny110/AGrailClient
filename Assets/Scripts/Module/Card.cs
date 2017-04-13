@@ -13,6 +13,9 @@ namespace AGrail
         public CardProperty Property { get; private set; }
         public CardName Name { get; private set; }
         public string AssetPath { get; private set; }
+        public string Description { get; private set; }
+        public int SkillNum { get; private set; }
+        public List<string> SkillNames = new List<string>();
 
         private static List<string[]> cardStr = new List<string[]>();
         static Card()
@@ -32,6 +35,10 @@ namespace AGrail
             Property = (CardProperty)Enum.Parse(typeof(CardProperty), t[3], true);
             Name = (CardName)Enum.Parse(typeof(CardName), t[4], true);
             AssetPath = t[5];
+            Description = t[6];
+            SkillNum = int.Parse(t[7]);
+            for (int i = 0; i < SkillNum; i++)
+                SkillNames.Add(t[8 + i]);            
         }
 
         public enum CardType
