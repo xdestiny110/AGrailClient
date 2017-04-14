@@ -44,6 +44,7 @@ namespace Framework
 
         public static string SystemPathToUnityPath(string systemPath)
         {
+            Debug.Log(systemPath);
             systemPath = systemPath.Replace("\\", "/");
             return systemPath.Substring(systemPath.IndexOf("Assets/"));
         }   

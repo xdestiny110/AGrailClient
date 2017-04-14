@@ -1,6 +1,5 @@
 ﻿namespace Framework.Message
 {
-#if UNITY_EDITOR
     using UnityEngine;
     using UnityEditor;
     using System.Collections.Generic;
@@ -10,7 +9,7 @@
     [InitializeOnLoad]
     public class MsgCodeGenerator : ScriptableObject
     {
-        public const string ConfigPath = "Assets/Editor/MessageCodeGenerator/Config.asset";
+        public const string ConfigPath = "Assets/Scripts/Framework/MessageSystem/Editor/Config.asset";
         public const string MessageTypePath = "Assets/Scripts/Framework/MessageSystem/MessageType.cs";
 
         private static MsgCodeGenerator instance;
@@ -55,7 +54,6 @@
         public List<string> msgTypes = new List<string>();
 
     }
-#endif
 }
 
 
