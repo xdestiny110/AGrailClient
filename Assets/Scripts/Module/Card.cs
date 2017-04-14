@@ -41,6 +41,21 @@ namespace AGrail
                 SkillNames.Add(t[8 + i]);            
         }
 
+        public bool HasSkill(string skillName)
+        {
+            foreach(var v in SkillNames)
+            {
+                if (v == skillName)
+                    return true;
+            }
+            return false;
+        }
+
+        public bool HasSkill(uint skillID)
+        {
+            return false;
+        }
+
         public enum CardType
         {
             magic,

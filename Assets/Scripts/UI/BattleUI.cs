@@ -154,7 +154,7 @@ namespace AGrail
                     {
                         var card = new Card(v);
                         var go = new GameObject();
-                        go.transform.parent = ShowCardArea;
+                        go.transform.SetParent(ShowCardArea);
                         go.AddComponent<RawImage>().texture = Resources.Load<Texture2D>(card.AssetPath);
                     }
                     break;
@@ -177,9 +177,9 @@ namespace AGrail
                 var go = Instantiate(playerStatusPrefab);
                 players.Add(go.GetComponent<PlayerStatus>());
                 if (players.Count > Lobby.Instance.SelectRoom.max_player / 2)
-                    go.transform.parent = rightPlayerStatus;
+                    go.transform.SetParent(rightPlayerStatus);
                 else
-                    go.transform.parent = leftPlayerStatus;
+                    go.transform.SetParent(leftPlayerStatus);
             }
         }
 
@@ -196,7 +196,7 @@ namespace AGrail
                 {
                     var go = new GameObject();
                     go.AddComponent<RawImage>().texture = icons[0];
-                    go.transform.parent = energy[(int)team];
+                    go.transform.SetParent(energy[(int)team]);
                     go.transform.SetSiblingIndex(0);
                 }
             }
@@ -215,7 +215,7 @@ namespace AGrail
                 {
                     var go = new GameObject();
                     go.AddComponent<RawImage>().texture = icons[1];
-                    go.transform.parent = energy[(int)team];
+                    go.transform.SetParent(energy[(int)team]);
                     go.transform.SetSiblingIndex(energy[(int)team].childCount - 1);
                 }
             }
@@ -232,7 +232,7 @@ namespace AGrail
             {
                 var go = new GameObject();
                 go.AddComponent<RawImage>().texture = icons[2];
-                go.transform.parent = grail[(int)team];
+                go.transform.SetParent(grail[(int)team]);
             }
         }
 

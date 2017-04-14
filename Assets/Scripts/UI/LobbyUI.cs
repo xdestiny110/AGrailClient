@@ -53,7 +53,7 @@ namespace AGrail
                 () =>
                 {
                     var go = GameObject.Find("GameTitle");
-                    go.transform.GetChild(0).parent = root;
+                    go.transform.GetChild(0).SetParent(root);
                     Destroy(go);
                 });
             if(Lobby.Instance.RoomInfo == null)
@@ -139,7 +139,7 @@ namespace AGrail
             foreach (var v in roomInfos)
             {
                 var go = Instantiate(roomItemPrefab);
-                go.transform.parent = content;
+                go.transform.SetParent(content);
                 go.SetActive(false);
                 var script = go.GetComponent<RoomItem>();
                 script.RoomInfo = v;

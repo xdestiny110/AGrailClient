@@ -56,7 +56,7 @@ namespace AGrail
             var canvas = go.AddComponent<Canvas>();
             canvas.sortingOrder = 99;
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            titleImg.parent = go.transform;
+            titleImg.SetParent(go.transform);
             titleImg.transform.DOLocalMoveY(330, 1);
             titleImg.transform.DOScaleX(0.8f, 1);
             titleImg.transform.DOScaleY(0.8f, 1);
