@@ -25,7 +25,9 @@ namespace AGrail
         [SerializeField]
         private Transform basicAndExCards;
         [SerializeField]
-        private Image border;
+        private Image turnBorder;
+        [SerializeField]
+        private Image selectBorder;
         [SerializeField]
         private Image readyIcon;
 
@@ -38,10 +40,35 @@ namespace AGrail
         [SerializeField]
         private Texture2D[] energeIcons = new Texture2D[2];
 
+        private RoleBase role;
+
         public string UserName { set { userName.text = value; } }
-        public Team Team { set { teamBG.texture = teamBGs[(int)value]; } }
-        public string HeroName { set { heroName.text = value; } }
+        public Team Team { set { teamBG.texture = teamBGs[(int)value]; } }        
         public bool IsReady { set { readyIcon.enabled = value; } }
+        
+        
+        public uint RoleID
+        {
+            set
+            {
+                role = RoleFactory.Create(value);
+                heroName.text = role.RoleName;
+                heroProperty.texture = properties[(int)role.RoleProperty];
+                if (role.HasYellow)
+                {
+
+                }
+                if (role.HasBlue)
+                {
+
+                }
+                if (role.HasCoverd)
+                {
+
+                }
+            }
+        }
+
         public KeyValuePair<uint, uint> Energy
         {
             set

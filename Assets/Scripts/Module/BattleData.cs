@@ -25,7 +25,6 @@ namespace AGrail
         {
             MessageSystem<MessageType>.Regist(MessageType.GAMEINFO, this);
             MessageSystem<MessageType>.Regist(MessageType.COMMANDREQUEST, this);
-            MessageSystem<MessageType>.Regist(MessageType.TURNBEGIN, this);
             reset();
             var inst = RoleChoose.Instance;
         }
@@ -47,8 +46,6 @@ namespace AGrail
             {
                 case MessageType.GAMEINFO:
                     gameInfo = parameters[0] as network.GameInfo;
-                    break;
-                case MessageType.TURNBEGIN:
                     break;
                 case MessageType.COMMANDREQUEST:
                     cmdReq = parameters[0] as network.CommandRequest;                    

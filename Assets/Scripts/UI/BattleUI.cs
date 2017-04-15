@@ -54,7 +54,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.GrailChange, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerIsReady, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerNickName, this);
-            MessageSystem<MessageType>.Regist(MessageType.PlayerHeroName, this);
+            MessageSystem<MessageType>.Regist(MessageType.PlayerRoleChange, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerTeamChange, this);            
             MessageSystem<MessageType>.Regist(MessageType.PlayerHandChange, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerHealChange, this);
@@ -66,12 +66,13 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.PlayerBasicAndExCardChange, this);
             MessageSystem<MessageType>.Regist(MessageType.LogChange, this);
             MessageSystem<MessageType>.Regist(MessageType.CARDMSG, this);
+            MessageSystem<MessageType>.Regist(MessageType.TURNBEGIN, this);
 
             GameManager.AddUpdateAction(onESCClick);
 
             root.localPosition = new Vector3(1280, 0, 0);
             root.DOLocalMoveX(0, 1.0f);
-            base.Awake();
+            base.Awake();            
         }        
 
         public override void OnDestroy()
@@ -83,7 +84,7 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.GrailChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerIsReady, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerNickName, this);
-            MessageSystem<MessageType>.UnRegist(MessageType.PlayerHeroName, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.PlayerRoleChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerTeamChange, this);            
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerHandChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerHealChange, this);
@@ -94,7 +95,8 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerEnergeChange, this);            
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerBasicAndExCardChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.LogChange, this);
-            MessageSystem<MessageType>.Regist(MessageType.CARDMSG, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.CARDMSG, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.TURNBEGIN, this);
 
             GameManager.RemoveUpdateAciont(onESCClick);
 
@@ -125,7 +127,8 @@ namespace AGrail
                     checkPlayer((int)parameters[0]);
                     players[(int)parameters[0]].UserName = (string)parameters[1];
                     break;
-                case MessageType.PlayerHeroName:
+                case MessageType.PlayerRoleChange:
+                    players[(int)parameters[0]].RoleID = (uint)parameters[1];
                     break;
                 case MessageType.PlayerTeamChange:
                     checkPlayer((int)parameters[0]);
@@ -156,6 +159,19 @@ namespace AGrail
                         var go = new GameObject();
                         go.transform.SetParent(ShowCardArea);
                         go.AddComponent<RawImage>().texture = Resources.Load<Texture2D>(card.AssetPath);
+                    }
+                    break;
+                case MessageType.TURNBEGIN:
+                    var tb = parameters[0] as network.TurnBegin;
+                    if(tb.roundSpecified)
+                        turn.text = tb.round.ToString();
+                    if (tb.idSpecified)
+                    {
+                        var player = BattleData.Instance.PlayerInfos.DefaultIfEmpty(null).FirstOrDefault(
+                        u => {
+                            return u != null && u.id == tb.id;
+                        });
+                        var idx = BattleData.Instance.PlayerInfos.IndexOf(player);                        
                     }
                     break;
             }
