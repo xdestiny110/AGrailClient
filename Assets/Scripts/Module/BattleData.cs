@@ -149,6 +149,11 @@ namespace AGrail
                         player.nickname = v.nickname;
                         MessageSystem<MessageType>.Notify(MessageType.PlayerNickName, idx, player.nickname);
                     }
+                    if (v.is_kneltSpecified)
+                    {
+                        player.is_knelt = v.is_knelt;
+                        MessageSystem<MessageType>.Notify(MessageType.PlayerKneltChange, idx, player.is_knelt);
+                    }
                     if (v.max_handSpecified)                    
                         player.max_hand = v.max_hand;                                            
                     if (v.hand_countSpecified)                    

@@ -12,5 +12,6 @@ namespace AGrail
         public virtual bool HasYellow { get { return false; } }
         public virtual bool HasBlue { get { return false; } }
         public virtual bool HasCoverd { get { return false; } }
+        public virtual string Knelt { get { return null; } }
     }
 }

@@ -37,5 +37,13 @@ namespace AGrail
                 return true;
             }
         }
+
+        public override string Knelt
+        {
+            get
+            {
+                return "ShenPan";
+            }
+        }
     }
 }

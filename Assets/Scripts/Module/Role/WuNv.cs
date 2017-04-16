@@ -29,5 +29,13 @@ namespace AGrail
                 return Card.CardProperty.血;
             }
         }
+
+        public override string Knelt
+        {
+            get
+            {
+                return "LiuXue";
+            }
+        }
     }
 }

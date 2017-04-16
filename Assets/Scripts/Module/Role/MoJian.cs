@@ -29,5 +29,13 @@ namespace AGrail
                 return Card.CardProperty.幻;
             }
         }
+
+        public override string Knelt
+        {
+            get
+            {
+                return "AnYing";
+            }
+        }
     }
 }

@@ -29,6 +29,8 @@ namespace AGrail
         [SerializeField]
         private Image selectBorder;
         [SerializeField]
+        private RawImage kneltIcon;
+        [SerializeField]
         private Image readyIcon;
 
         [SerializeField]
@@ -123,6 +125,20 @@ namespace AGrail
                 token1.GetChild(0).GetComponent<Text>().text = blue.ToString();
             if (token2 != null)
                 token2.GetChild(0).GetComponent<Text>().text = coverd.ToString();
+        }
+
+        public bool Knelt
+        {
+            set
+            {
+                if (value)
+                {
+                    kneltIcon.texture = Resources.Load<Texture2D>("Icons/" + role.Knelt);
+                    kneltIcon.enabled = true;
+                }
+                else
+                    kneltIcon.enabled = false;
+            }
         }
 
         public List<uint> BasicAndExCards

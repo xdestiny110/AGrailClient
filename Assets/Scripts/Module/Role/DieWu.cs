@@ -30,11 +30,27 @@ namespace AGrail
             }
         }
 
+        public override bool HasYellow
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         public override bool HasCoverd
         {
             get
             {
                 return true;
+            }
+        }
+
+        public override string Knelt
+        {
+            get
+            {
+                return "DiaoLing";
             }
         }
     }

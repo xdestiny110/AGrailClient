@@ -131,6 +131,9 @@ namespace AGrail
                 case MessageType.PlayerTokenChange:
                     players[(int)parameters[0]].Token((uint)parameters[1], (uint)parameters[2], (uint)parameters[3]);
                     break;
+                case MessageType.PlayerKneltChange:
+                    players[(int)parameters[0]].Knelt = (bool)parameters[1];
+                    break;
                 case MessageType.PlayerBasicAndExCardChange:
                     players[(int)parameters[0]].BasicAndExCards = (parameters[1] as List<uint>).Union(parameters[2] as List<uint>).ToList();
                     break;
