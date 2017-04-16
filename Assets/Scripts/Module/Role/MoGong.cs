@@ -29,6 +29,14 @@ namespace AGrail
                 return Card.CardProperty.幻;
             }
         }
+
+        public override bool HasCoverd
+        {
+            get
+            {
+                return true;
+            }
+        }
     }
 }
 

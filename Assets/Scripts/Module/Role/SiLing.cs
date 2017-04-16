@@ -4,7 +4,7 @@ using System;
 
 namespace AGrail
 {
-    public class SiLIng : RoleBase
+    public class SiLing : RoleBase
     {
         public override RoleID RoleID
         {
@@ -27,6 +27,14 @@ namespace AGrail
             get
             {
                 return Card.CardProperty.幻;
+            }
+        }
+
+        public override bool HasYellow
+        {
+            get
+            {
+                return true;
             }
         }
     }

@@ -30,8 +30,6 @@ namespace AGrail
         private Text dialog;        
         [SerializeField]
         private GameObject playerStatusPrefab;
-
-
         [SerializeField]
         private Texture2D[] icons = new Texture2D[3];
 
@@ -58,9 +56,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.PlayerTeamChange, this);            
             MessageSystem<MessageType>.Regist(MessageType.PlayerHandChange, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerHealChange, this);
-            MessageSystem<MessageType>.Regist(MessageType.PlayerYellowChange, this);
-            MessageSystem<MessageType>.Regist(MessageType.PlayerBlueChange, this);
-            MessageSystem<MessageType>.Regist(MessageType.PlayerCoveredChange, this);
+            MessageSystem<MessageType>.Regist(MessageType.PlayerTokenChange, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerKneltChange, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerEnergeChange, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerBasicAndExCardChange, this);
@@ -88,9 +84,7 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerTeamChange, this);            
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerHandChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerHealChange, this);
-            MessageSystem<MessageType>.UnRegist(MessageType.PlayerYellowChange, this);
-            MessageSystem<MessageType>.UnRegist(MessageType.PlayerBlueChange, this);
-            MessageSystem<MessageType>.UnRegist(MessageType.PlayerCoveredChange, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.PlayerTokenChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerKneltChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerEnergeChange, this);            
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerBasicAndExCardChange, this);
@@ -134,6 +128,9 @@ namespace AGrail
                     checkPlayer((int)parameters[0]);
                     players[(int)parameters[0]].Team = (Team)(uint)parameters[1];
                     break;
+                case MessageType.PlayerTokenChange:
+                    players[(int)parameters[0]].Token((uint)parameters[1], (uint)parameters[2], (uint)parameters[3]);
+                    break;
                 case MessageType.PlayerBasicAndExCardChange:
                     players[(int)parameters[0]].BasicAndExCards = (parameters[1] as List<uint>).Union(parameters[2] as List<uint>).ToList();
                     break;
@@ -151,15 +148,9 @@ namespace AGrail
                     break;
                 case MessageType.CARDMSG:
                     var cardMsg = parameters[0] as network.CardMsg;
-                    for (int i = 0; i < ShowCardArea.childCount; i++)
-                        Destroy(ShowCardArea.GetChild(i).gameObject);
-                    foreach(var v in cardMsg.card_ids)
-                    {
-                        var card = new Card(v);
-                        var go = new GameObject();
-                        go.transform.SetParent(ShowCardArea);
-                        go.AddComponent<RawImage>().texture = Resources.Load<Texture2D>(card.AssetPath);
-                    }
+                    showCard(cardMsg.card_ids);
+                    if (cardMsg.dst_idSpecified && cardMsg.src_idSpecified)
+                        actionAnim(cardMsg.src_id, cardMsg.dst_id);
                     break;
                 case MessageType.TURNBEGIN:
                     var tb = parameters[0] as network.TurnBegin;
@@ -167,11 +158,8 @@ namespace AGrail
                         turn.text = tb.round.ToString();
                     if (tb.idSpecified)
                     {
-                        var player = BattleData.Instance.PlayerInfos.DefaultIfEmpty(null).FirstOrDefault(
-                        u => {
-                            return u != null && u.id == tb.id;
-                        });
-                        var idx = BattleData.Instance.PlayerInfos.IndexOf(player);                        
+                        for(int i = 0; i < players.Count; i++)                        
+                            players[i].IsTurn = (BattleData.Instance.PlayerInfos[i].id == tb.id) ? true : false;                        
                     }
                     break;
             }
@@ -250,13 +238,33 @@ namespace AGrail
                 go.AddComponent<RawImage>().texture = icons[2];
                 go.transform.SetParent(grail[(int)team]);
             }
+        }        
+
+        private void showCard(List<uint> card_ids)
+        {            
+            for (int i = 0; i < ShowCardArea.childCount; i++)
+                Destroy(ShowCardArea.GetChild(i).gameObject);
+            foreach (var v in card_ids)
+            {
+                var card = new Card(v);
+                var go = new GameObject();
+                go.transform.SetParent(ShowCardArea);
+                go.AddComponent<RawImage>().texture = Resources.Load<Texture2D>(card.AssetPath);
+            }
         }
 
-        private void cardMsg()
+        private void actionAnim(uint src_id, uint dst_id)
         {
-
+            int srcIdx, dstIdx;
+            for(int i = 0; i < players.Count; i++)
+            {
+                if (BattleData.Instance.PlayerInfos[i].id == src_id)
+                    srcIdx = i;
+                if (BattleData.Instance.PlayerInfos[i].id == dst_id)
+                    dstIdx = i;
+            }
+            //players[srcIdx].transform.position.x
         }
-
     }
 }
 

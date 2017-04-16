@@ -29,5 +29,13 @@ namespace AGrail
                 return Card.CardProperty.技;
             }
         }
+
+        public override bool HasCoverd
+        {
+            get
+            {
+                return true;
+            }
+        }        
     }
 }

@@ -29,6 +29,14 @@ namespace AGrail
                 return Card.CardProperty.血;
             }
         }
+
+        public override bool HasYellow
+        {
+            get
+            {
+                return true;
+            }
+        }
     }
 }
 

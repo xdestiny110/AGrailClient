@@ -391,14 +391,16 @@ MonoBehaviour:
   - {fileID: 2800000, guid: 5348f767db456164cbfb419df0aeb66e, type: 3}
   - {fileID: 2800000, guid: 1de9a601db257c04f9c02b606389f95d, type: 3}
   properties:
+  - {fileID: 2800000, guid: c8f7dab84a103c540934f44abb22c384, type: 3}
   - {fileID: 2800000, guid: c98b8da7b845bb147b7599aa011fa7e2, type: 3}
+  - {fileID: 2800000, guid: c7431c5db58df97409de100a1ac8617a, type: 3}
   - {fileID: 2800000, guid: 5c09576e76245da42bb375c553fb72b0, type: 3}
   - {fileID: 2800000, guid: a948c3b693d9527469364ba54e76b973, type: 3}
-  - {fileID: 2800000, guid: c8f7dab84a103c540934f44abb22c384, type: 3}
-  - {fileID: 2800000, guid: c7431c5db58df97409de100a1ac8617a, type: 3}
   energeIcons:
   - {fileID: 2800000, guid: 0940d67551077b54db67e90d3eb1961b, type: 3}
   - {fileID: 2800000, guid: ba4a40ee0bb3d6c4695d16b33f96b654, type: 3}
+  tokenPrefab: {fileID: 1000011376391882, guid: 4dccf20167605914c85c3ee5a5e23a2b,
+    type: 2}
 --- !u!114 &114000012516921968
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -613,7 +615,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 0130ff8812851de45947494a4b7b20d0, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -659,7 +661,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:

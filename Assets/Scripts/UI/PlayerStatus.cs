@@ -39,8 +39,11 @@ namespace AGrail
         private Texture2D[] properties = new Texture2D[5];
         [SerializeField]
         private Texture2D[] energeIcons = new Texture2D[2];
+        [SerializeField]
+        private GameObject tokenPrefab;
 
         private RoleBase role;
+        private Transform token0, token1, token2;
 
         public string UserName { set { userName.text = value; } }
         public Team Team { set { teamBG.texture = teamBGs[(int)value]; } }        
@@ -55,16 +58,39 @@ namespace AGrail
                 heroProperty.texture = properties[(int)role.RoleProperty];
                 if (role.HasYellow)
                 {
-
+                    var go = Instantiate(tokenPrefab);
+                    go.GetComponent<RawImage>().texture = Resources.Load<Texture2D>("Icons/token0");
+                    go.name = "token0";
+                    go.transform.SetParent(basicAndExCards);
+                    go.transform.GetChild(0).GetComponent<Text>().text = "0";
+                    token0 = go.transform;
                 }
                 if (role.HasBlue)
                 {
-
+                    var go = Instantiate(tokenPrefab);
+                    go.GetComponent<RawImage>().texture = Resources.Load<Texture2D>("Icons/token1");
+                    go.name = "token1";
+                    go.transform.SetParent(basicAndExCards);
+                    go.transform.GetChild(0).GetComponent<Text>().text = "0";
+                    token1 = go.transform;
                 }
                 if (role.HasCoverd)
                 {
-
+                    var go = Instantiate(tokenPrefab);
+                    go.GetComponent<RawImage>().texture = Resources.Load<Texture2D>("Icons/token2");
+                    go.name = "token2";
+                    go.transform.SetParent(basicAndExCards);
+                    go.transform.GetChild(0).GetComponent<Text>().text = "0";
+                    token2 = go.transform;
                 }
+            }
+        }
+
+        public bool IsTurn
+        {
+            set
+            {
+                turnBorder.enabled = value;
             }
         }
 
@@ -78,7 +104,7 @@ namespace AGrail
                 {
                     var go = new GameObject();
                     go.transform.SetParent(energy);
-                    go.AddComponent<RawImage>().texture = energeIcons[0];
+                    go.AddComponent<RawImage>().texture = energeIcons[0];                    
                 }
                 for(int i = 0; i < value.Value; i++)
                 {
@@ -89,12 +115,26 @@ namespace AGrail
             }
         }
 
+        public void Token(uint yellow, uint blue, uint coverd)
+        {
+            if (token0 != null)
+                token0.GetChild(0).GetComponent<Text>().text = yellow.ToString();
+            if (token1 != null)
+                token1.GetChild(0).GetComponent<Text>().text = blue.ToString();
+            if (token2 != null)
+                token2.GetChild(0).GetComponent<Text>().text = coverd.ToString();
+        }
+
         public List<uint> BasicAndExCards
         {
             set
             {
                 for (int i = 0; i < basicAndExCards.childCount; i++)
+                {
+                    if (basicAndExCards.GetChild(i).name.StartsWith("token")) continue;
                     Destroy(basicAndExCards.GetChild(i).gameObject);
+                }
+                    
                 foreach (var v in value)
                 {
                     Texture2D icon = new Texture2D(0, 0);
