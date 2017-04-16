@@ -30,6 +30,14 @@ namespace AGrail
             }
         }
 
+        public override bool HasYellow
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         public override bool HasCoverd
         {
             get

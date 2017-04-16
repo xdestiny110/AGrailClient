@@ -1,12 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
 namespace Framework.UI
 {
-    [InitializeOnLoad]
     public sealed class WindowFactory : Singleton<WindowFactory>
     {
         public WindowFactory() { }
