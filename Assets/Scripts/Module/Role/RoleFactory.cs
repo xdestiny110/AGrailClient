@@ -8,7 +8,9 @@ namespace AGrail
     {
         public static RoleBase Create(string roleName)
         {
-            var type = Type.GetType(roleName);
+            var type = Type.GetType("AGrail." + roleName);
+            if(type == null)
+                Debug.LogWarningFormat("Cannot create role! Rolename = {0}", roleName);            
             return (type == null) ? new Blank() : Activator.CreateInstance(type) as RoleBase;
         }
 
@@ -34,6 +36,30 @@ namespace AGrail
         ShengNv,
         TianShi,
         MoDao,
+        MoJian,
+        ShengQiang,
+        YuanSu,
+        MaoXian,
+        SiLing,
+        ZhongCai,
+        ShenGuan,
+        QiDao,
+        XianZhe,
+        LingFu,
+        JianDi,
+        GeDouJia,
+        YongZhe,
+        LingHun,
+        WuNv,
+        DieWu,
+        NvWuShen,
+        MoGong,
+        YingLingRenXing,
+        HongLian,
+        MoQiang,
+        MoNv,
+        ShiRen,
+        spMoDao,
     }
 }
 

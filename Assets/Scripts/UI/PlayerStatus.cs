@@ -44,8 +44,7 @@ namespace AGrail
 
         public string UserName { set { userName.text = value; } }
         public Team Team { set { teamBG.texture = teamBGs[(int)value]; } }        
-        public bool IsReady { set { readyIcon.enabled = value; } }
-        
+        public bool IsReady { set { readyIcon.enabled = value; } }        
         
         public uint RoleID
         {

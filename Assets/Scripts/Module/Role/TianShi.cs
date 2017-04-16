@@ -1,16 +1,16 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System;
 
 namespace AGrail
 {
-    public class Blank : RoleBase
+    public class TianShi : RoleBase
     {
         public override RoleID RoleID
         {
             get
             {
-                return RoleID.Blank;
+                return RoleID.TianShi;
             }
         }
 
@@ -18,7 +18,7 @@ namespace AGrail
         {
             get
             {
-                return "白板";
+                return "天使";
             }
         }
 
@@ -26,7 +26,7 @@ namespace AGrail
         {
             get
             {
-                return Card.CardProperty.血;
+                return Card.CardProperty.圣;
             }
         }
     }
