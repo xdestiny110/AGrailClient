@@ -9,7 +9,8 @@ namespace Framework.UI
     {
         public abstract WindowType Type { get; }
 
-        protected CanvasGroup canvasGroup = null;        
+        protected CanvasGroup canvasGroup = null;
+        protected Canvas canvas = null;
 
         private object[] parameters;
         public virtual object[] Parameters
@@ -48,6 +49,9 @@ namespace Framework.UI
         {
             MessageSystem<MessageType>.Notify(MessageType.OnUICreate, this);
             canvasGroup = GetComponent<CanvasGroup>();
+            canvas = GetComponent<Canvas>();
+            if (canvas.renderMode == RenderMode.ScreenSpaceCamera)
+                canvas.worldCamera = Camera.main;
         }
 
         public virtual void OnDestroy()
