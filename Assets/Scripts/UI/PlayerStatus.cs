@@ -118,6 +118,8 @@ namespace AGrail
                 {
                     var go = new GameObject();
                     go.transform.SetParent(energy);
+                    go.transform.localPosition = Vector3.zero;
+                    go.transform.localRotation = Quaternion.identity;
                     go.transform.localScale = Vector3.one;
                     go.AddComponent<RawImage>().texture = energeIcons[0];                    
                 }
@@ -125,6 +127,8 @@ namespace AGrail
                 {
                     var go = new GameObject();
                     go.transform.SetParent(energy);
+                    go.transform.localPosition = Vector3.zero;
+                    go.transform.localRotation = Quaternion.identity;
                     go.transform.localScale = Vector3.one;
                     go.AddComponent<RawImage>().texture = energeIcons[1];
                 }
@@ -194,6 +198,8 @@ namespace AGrail
                         Debug.LogErrorFormat("Basic card is error! CardID = {0}", v);
                     var go = new GameObject();
                     go.transform.SetParent(basicAndExCards);
+                    go.transform.localPosition = Vector3.zero;
+                    go.transform.localRotation = Quaternion.identity;
                     go.transform.localScale = Vector3.one;
                     go.AddComponent<RawImage>().texture = icon;
                 }
@@ -210,6 +216,8 @@ namespace AGrail
                 {
                     var go = new GameObject();
                     go.transform.SetParent(handCard);
+                    go.transform.localPosition = Vector3.zero;
+                    go.transform.localRotation = Quaternion.identity;
                     go.transform.localScale = Vector3.one;
                     go.AddComponent<RawImage>().texture = healIcons[1];
                 }
@@ -217,6 +225,8 @@ namespace AGrail
                 {
                     var go = new GameObject();
                     go.transform.SetParent(handCard);
+                    go.transform.localPosition = Vector3.zero;
+                    go.transform.localRotation = Quaternion.identity;
                     go.transform.localScale = Vector3.one;
                     go.AddComponent<RawImage>().texture = healIcons[0];
                 }
@@ -224,6 +234,8 @@ namespace AGrail
                 {
                     var go = new GameObject();
                     go.transform.SetParent(handCard);
+                    go.transform.localPosition = Vector3.zero;
+                    go.transform.localRotation = Quaternion.identity;
                     go.transform.localScale = Vector3.one;
                     var ri = go.AddComponent<RawImage>();
                     ri.texture = healIcons[0];
@@ -242,6 +254,8 @@ namespace AGrail
                 {
                     var go = new GameObject();
                     go.transform.SetParent(heal);
+                    go.transform.localPosition = Vector3.zero;
+                    go.transform.localRotation = Quaternion.identity;
                     go.transform.localScale = Vector3.one;
                     go.AddComponent<RawImage>().texture = healIcons[2];
                 }

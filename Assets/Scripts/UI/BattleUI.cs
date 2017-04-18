@@ -209,6 +209,8 @@ namespace AGrail
                     var go = new GameObject();
                     go.AddComponent<RawImage>().texture = icons[0];
                     go.transform.SetParent(energy[(int)team]);
+                    go.transform.localPosition = Vector3.zero;
+                    go.transform.localRotation = Quaternion.identity;
                     go.transform.localScale = Vector3.one;
                     go.transform.SetSiblingIndex(0);
                 }
@@ -229,6 +231,8 @@ namespace AGrail
                     var go = new GameObject();
                     go.AddComponent<RawImage>().texture = icons[1];
                     go.transform.SetParent(energy[(int)team]);
+                    go.transform.localPosition = Vector3.zero;
+                    go.transform.localRotation = Quaternion.identity;
                     go.transform.localScale = Vector3.one;
                     go.transform.SetSiblingIndex(energy[(int)team].childCount - 1);
                 }
@@ -247,6 +251,8 @@ namespace AGrail
                 var go = new GameObject();
                 go.AddComponent<RawImage>().texture = icons[2];                
                 go.transform.SetParent(grail[(int)team]);
+                go.transform.localPosition = Vector3.zero;
+                go.transform.localRotation = Quaternion.identity;
                 go.transform.localScale = Vector3.one;
             }
         }        
