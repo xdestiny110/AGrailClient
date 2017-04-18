@@ -50,8 +50,8 @@ namespace Framework.UI
             MessageSystem<MessageType>.Notify(MessageType.OnUICreate, this);
             canvasGroup = GetComponent<CanvasGroup>();
             canvas = GetComponent<Canvas>();
-            if (canvas.renderMode == RenderMode.ScreenSpaceCamera)
-                canvas.worldCamera = Camera.main;
+            canvas.renderMode = RenderMode.ScreenSpaceCamera;
+            canvas.worldCamera = Camera.main;
         }
 
         public virtual void OnDestroy()

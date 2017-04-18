@@ -52,10 +52,12 @@ namespace AGrail
         public override void OnHide()
         {
             var go = new GameObject();
+            go.transform.localPosition = Vector3.zero;
             go.name = "GameTitle";
             var canvas = go.AddComponent<Canvas>();
             canvas.sortingOrder = 99;
-            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.renderMode = RenderMode.ScreenSpaceCamera;
+            canvas.worldCamera = Camera.main;
             titleImg.SetParent(go.transform);
             titleImg.transform.DOLocalMoveY(330, 1);
             titleImg.transform.DOScaleX(0.8f, 1);

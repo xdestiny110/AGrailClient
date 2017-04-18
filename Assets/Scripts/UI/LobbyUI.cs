@@ -141,7 +141,10 @@ namespace AGrail
                 var go = Instantiate(roomItemPrefab);
                 go.transform.SetParent(content);
                 go.SetActive(false);
-                var script = go.GetComponent<RoomItem>();
+                go.transform.localPosition = roomItemPrefab.transform.localPosition;
+                go.transform.localRotation = roomItemPrefab.transform.localRotation;
+                go.transform.localScale = roomItemPrefab.transform.localScale;
+                var script = go.GetComponent<RoomItem>();                
                 script.RoomInfo = v;
                 //怒了，一帧只允许创建一个
                 //在没有统一管理的资源池与协程池前先这么凑合着

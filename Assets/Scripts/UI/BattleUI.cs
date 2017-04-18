@@ -62,6 +62,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.PlayerBasicAndExCardChange, this);
             MessageSystem<MessageType>.Regist(MessageType.LogChange, this);
             MessageSystem<MessageType>.Regist(MessageType.CARDMSG, this);
+            MessageSystem<MessageType>.Regist(MessageType.SKILLMSG, this);
             MessageSystem<MessageType>.Regist(MessageType.TURNBEGIN, this);
 
             GameManager.AddUpdateAction(onESCClick);
@@ -90,6 +91,7 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerBasicAndExCardChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.LogChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.CARDMSG, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.SKILLMSG, this);
             MessageSystem<MessageType>.UnRegist(MessageType.TURNBEGIN, this);
 
             GameManager.RemoveUpdateAciont(onESCClick);
@@ -187,6 +189,9 @@ namespace AGrail
                     go.transform.SetParent(rightPlayerStatus);
                 else
                     go.transform.SetParent(leftPlayerStatus);
+                go.transform.localPosition = playerStatusPrefab.transform.localPosition;
+                go.transform.localRotation = playerStatusPrefab.transform.localRotation;
+                go.transform.localScale = playerStatusPrefab.transform.localScale;
             }
         }
 
@@ -204,6 +209,7 @@ namespace AGrail
                     var go = new GameObject();
                     go.AddComponent<RawImage>().texture = icons[0];
                     go.transform.SetParent(energy[(int)team]);
+                    go.transform.localScale = Vector3.one;
                     go.transform.SetSiblingIndex(0);
                 }
             }
@@ -223,6 +229,7 @@ namespace AGrail
                     var go = new GameObject();
                     go.AddComponent<RawImage>().texture = icons[1];
                     go.transform.SetParent(energy[(int)team]);
+                    go.transform.localScale = Vector3.one;
                     go.transform.SetSiblingIndex(energy[(int)team].childCount - 1);
                 }
             }
@@ -238,8 +245,9 @@ namespace AGrail
             for (int i = 0; i < diffGrail; i++)
             {
                 var go = new GameObject();
-                go.AddComponent<RawImage>().texture = icons[2];
+                go.AddComponent<RawImage>().texture = icons[2];                
                 go.transform.SetParent(grail[(int)team]);
+                go.transform.localScale = Vector3.one;
             }
         }        
 
@@ -252,6 +260,9 @@ namespace AGrail
                 var card = new Card(v);
                 var go = new GameObject();
                 go.transform.SetParent(ShowCardArea);
+                go.transform.localScale = Vector3.one;
+                go.transform.localPosition = Vector3.zero;
+                go.transform.localRotation = Quaternion.identity;
                 go.AddComponent<RawImage>().texture = Resources.Load<Texture2D>(card.AssetPath);
             }
         }
