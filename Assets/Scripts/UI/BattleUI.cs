@@ -66,6 +66,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.TURNBEGIN, this);
 
             GameManager.AddUpdateAction(onESCClick);
+            Dialog.Instance.Reset();
 
             root.localPosition = new Vector3(1280, 0, 0);
             root.DOLocalMoveX(0, 1.0f);
@@ -156,6 +157,11 @@ namespace AGrail
                     showCard(cardMsg.card_ids);
                     if (cardMsg.dst_idSpecified && cardMsg.src_idSpecified)
                         actionAnim(cardMsg.src_id, cardMsg.dst_id);
+                    break;
+                case MessageType.SKILLMSG:
+                    var skillMsg = parameters[0] as network.SkillMsg;
+                    foreach (var v in skillMsg.dst_ids)
+                        actionAnim(skillMsg.src_id, v);
                     break;
                 case MessageType.TURNBEGIN:
                     var tb = parameters[0] as network.TurnBegin;
@@ -275,7 +281,7 @@ namespace AGrail
 
         private void actionAnim(uint src_id, uint dst_id)
         {
-            int srcIdx, dstIdx;
+            int srcIdx = -1, dstIdx = -1;
             for(int i = 0; i < players.Count; i++)
             {
                 if (BattleData.Instance.PlayerInfos[i].id == src_id)
@@ -283,7 +289,7 @@ namespace AGrail
                 if (BattleData.Instance.PlayerInfos[i].id == dst_id)
                     dstIdx = i;
             }
-            //players[srcIdx].transform.position.x
+            players[srcIdx].DrawLine(players[srcIdx].animAnchor.position, players[dstIdx].animAnchor.position);
         }
     }
 }

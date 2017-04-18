@@ -10,6 +10,12 @@ namespace Framework
         {
             PlayerPrefs.DeleteAll();
         }
+        [MenuItem("Framework/Get world position")]
+        public static void GetWorldPos()
+        {
+            var go = Selection.activeGameObject;
+            Debug.LogFormat("World postion = {0}", go.transform.position);
+        }
     }
 
 }

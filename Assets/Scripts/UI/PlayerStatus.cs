@@ -32,8 +32,7 @@ namespace AGrail
         private RawImage kneltIcon;
         [SerializeField]
         private Image readyIcon;
-        [SerializeField]
-        private Transform animAnchor;
+        public Transform animAnchor;
 
         [SerializeField]
         private Texture2D[] teamBGs = new Texture2D[3];
@@ -95,8 +94,7 @@ namespace AGrail
                     go.transform.localScale = tokenPrefab.transform.localScale;
                     go.transform.GetChild(0).GetComponent<Text>().text = "0";
                     token2 = go.transform;
-                }
-                Debug.LogFormat("Anim anchor = {0}", animAnchor.position);
+                }                
             }
         }
 
@@ -260,6 +258,11 @@ namespace AGrail
                     go.AddComponent<RawImage>().texture = healIcons[2];
                 }
             }
+        }
+
+        public void DrawLine(Vector3 pos1, Vector3 pos2)
+        {
+            //animAnchor.GetComponent<LineRenderer>().enabled = true;            
         }
 
     }
