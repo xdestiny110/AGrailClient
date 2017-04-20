@@ -70,7 +70,7 @@ namespace AGrail
 
             root.localPosition = new Vector3(1280, 0, 0);
             root.DOLocalMoveX(0, 1.0f);
-            base.Awake();            
+            base.Awake();
         }        
 
         public override void OnDestroy()
