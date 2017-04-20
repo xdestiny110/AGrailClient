@@ -4,6 +4,7 @@
     {
         None = 0,
         Battle,
+        BattleQT,
         InputBox,
         Lobby,
         LoginBox,
