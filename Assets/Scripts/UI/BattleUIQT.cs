@@ -5,6 +5,7 @@ using DG.Tweening;
 using Framework.Message;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace AGrail
 {
@@ -120,12 +121,41 @@ namespace AGrail
                 case MessageType.GrailChange:
                     grailChange((Team)parameters[0], (uint)parameters[1]);
                     break;
+                case MessageType.PlayerNickName:
+                    checkPlayer((int)parameters[0]);
+                    players[(int)parameters[0]].PlayerName = (string)parameters[1];
+                    break;
+                case MessageType.PlayerRoleChange:
+                    players[(int)parameters[0]].RoleID = (uint)parameters[1];
+                    break;
                 case MessageType.PlayerIsReady:
                     checkPlayer((int)parameters[0]);
-                    //players[(int)parameters[0]].IsReady = (bool)parameters[1];
+                    players[(int)parameters[0]].IsReady = (bool)parameters[1];
                     break;
                 case MessageType.PlayerTeamChange:
                     checkPlayer((int)parameters[0]);
+                    players[(int)parameters[0]].Team = (Team)(uint)parameters[1];
+                    break;
+                case MessageType.PlayerTokenChange:
+                    var idx = (int)parameters[0];
+                    players[(int)parameters[0]].YellowToken = (uint)parameters[1];
+                    players[(int)parameters[0]].BlueToken = (uint)parameters[2];
+                    players[(int)parameters[0]].Covered = (uint)parameters[3];                    
+                    break;
+                case MessageType.PlayerKneltChange:
+                    players[(int)parameters[0]].Knelt = (bool)parameters[1];
+                    break;
+                case MessageType.PlayerBasicAndExCardChange:
+                    players[(int)parameters[0]].BasicAndExCards = (parameters[1] as List<uint>).Union(parameters[2] as List<uint>).ToList();
+                    break;
+                case MessageType.PlayerEnergeChange:
+                    players[(int)parameters[0]].Energy = new KeyValuePair<uint, uint>((uint)parameters[1], (uint)parameters[2]);
+                    break;
+                case MessageType.PlayerHandChange:
+                    players[(int)parameters[0]].HandCount = new KeyValuePair<uint, uint>((uint)parameters[1], (uint)parameters[2]);
+                    break;
+                case MessageType.PlayerHealChange:
+                    players[(int)parameters[0]].HealCount = (uint)parameters[1];
                     break;
             }
         }
@@ -141,17 +171,59 @@ namespace AGrail
 
         private void gemChange(Team team, int diffGem)
         {
-
+            if (diffGem > 0)
+            {
+                for (int i = 0; i < diffGem; i++)
+                {
+                    var go = new GameObject();
+                    go.AddComponent<RawImage>().texture = Resources.Load<Texture2D>("Icons/gem");
+                    go.transform.SetParent(energy[(int)team]);
+                    go.transform.localPosition = Vector3.zero;
+                    go.transform.localRotation = Quaternion.identity;
+                    go.transform.localScale = Vector3.one;
+                    go.transform.SetSiblingIndex(0);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < Mathf.Abs(diffGem); i++)
+                    Destroy(energy[(int)team].GetChild(i).gameObject);
+            }
         }
 
         private void crystalChange(Team team, int diffCrystal)
         {
-
+            if (diffCrystal > 0)
+            {
+                for (int i = 0; i < diffCrystal; i++)
+                {
+                    var go = new GameObject();
+                    go.AddComponent<RawImage>().texture = Resources.Load<Texture2D>("Icons/crystal");
+                    go.transform.SetParent(energy[(int)team]);
+                    go.transform.localPosition = Vector3.zero;
+                    go.transform.localRotation = Quaternion.identity;
+                    go.transform.localScale = Vector3.one;
+                    go.transform.SetSiblingIndex(energy[(int)team].childCount - 1);
+                }
+            }
+            else
+            {
+                for (int i = energy[(int)team].childCount - 1; i > energy[(int)team].childCount - 1 + diffCrystal; i--)
+                    Destroy(energy[(int)team].GetChild(i).gameObject);
+            }
         }
 
-        private void grailChange(Team team, uint grail)
+        private void grailChange(Team team, uint diffGrail)
         {
-
+            for (int i = 0; i < diffGrail; i++)
+            {
+                var go = new GameObject();
+                go.AddComponent<RawImage>().texture = Resources.Load<Texture2D>("Icons/grail");
+                go.transform.SetParent(grail[(int)team]);
+                go.transform.localPosition = Vector3.zero;
+                go.transform.localRotation = Quaternion.identity;
+                go.transform.localScale = Vector3.one;
+            }
         }
 
         private void checkPlayer(int playerIdx)
@@ -159,14 +231,19 @@ namespace AGrail
             if (!players.ContainsKey(playerIdx))
             {
                 var go = Instantiate(playerStatusPrefab);
-                go.transform.SetParent(battleRoot);
-                players.Add(playerIdx, go.GetComponent<PlayerStatusQT>());
+                var status = go.GetComponent<PlayerStatusQT>();                
                 //依据id确定transform                
                 var id = BattleData.Instance.PlayerInfos[playerIdx].id;
-                var anchor = playerAnchor[(((int)id % 9) - BattleData.Instance.PlayerID) % playerAnchor.Count];
-                go.transform.position = anchor.position;
+                var anchorIdx = ((int)id - (BattleData.Instance.PlayerID % 9));
+                anchorIdx = (anchorIdx < 0) ? anchorIdx + playerAnchor.Count : anchorIdx;
+                var anchor = playerAnchor[anchorIdx];
+                go.transform.SetParent(anchor);
+                go.transform.localPosition = Vector3.zero;
                 go.transform.localRotation = Quaternion.identity;
-                go.transform.localScale = Vector3.one;                
+                go.transform.localScale = Vector3.one;
+
+                status.PlayerID = id;
+                players.Add(playerIdx, status);
             }
         }
     }

@@ -474,6 +474,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   root: {fileID: 224000010440487242}
+  battleRoot: {fileID: 224000011005995690}
   turn: {fileID: 114000010081576230}
   morales:
   - {fileID: 114000012553855564}
@@ -485,7 +486,7 @@ MonoBehaviour:
   - {fileID: 224000011704058852}
   - {fileID: 224000010054693538}
   playerAnchor:
-  - {fileID: 224000011193646470}
+  - {fileID: 224000010190717590}
   - {fileID: 224000013020865526}
   - {fileID: 224000011601653624}
   - {fileID: 224000011193646470}
@@ -641,7 +642,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!224 &224000010054693538
 RectTransform:

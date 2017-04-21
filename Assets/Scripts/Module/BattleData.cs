@@ -172,8 +172,7 @@ namespace AGrail
                     if(v.gemSpecified || v.crystalSpecified)
                         MessageSystem<MessageType>.Notify(MessageType.PlayerEnergeChange, idx, player.gem, player.crystal);
                     if (v.yellow_tokenSpecified)
-                        player.yellow_token = v.yellow_token;                    
-                        
+                        player.yellow_token = v.yellow_token;                        
                     if (v.blue_tokenSpecified)
                         player.blue_token = v.blue_token;
                     if (v.covered_countSpecified)
@@ -181,7 +180,7 @@ namespace AGrail
                     if (v.yellow_tokenSpecified || v.blue_tokenSpecified || v.covered_countSpecified)
                     {
                         MessageSystem<MessageType>.Notify(MessageType.PlayerTokenChange, idx, player.yellow_token, player.blue_token, player.covered_count);
-                        UnityEngine.Debug.LogFormat("yellow token = {0}, blue token = {1}, cover = {2}, idx = {3}", player.yellow_token, player.blue_token, player.covered_count, idx);
+                        //UnityEngine.Debug.LogFormat("yellow token = {0}, blue token = {1}, cover = {2}, idx = {3}", player.yellow_token, player.blue_token, player.covered_count, idx);
                     }                        
                     if (v.basic_cards.Count > 0)
                         player.basic_cards = v.basic_cards;

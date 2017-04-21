@@ -114,7 +114,8 @@ namespace AGrail
                     roomInfos = Lobby.Instance.RoomInfo;
                     break;
                 case MessageType.EnterRoom:
-                    GameManager.UIInstance.PushWindow(WindowType.Battle, WinMsg.Hide);
+                    //GameManager.UIInstance.PushWindow(WindowType.Battle, WinMsg.Hide);
+                    GameManager.UIInstance.PushWindow(WindowType.BattleQT, WinMsg.Hide);
                     break;
                 case MessageType.ERROR:
                     var errorProto = parameters[0] as network.Error;
