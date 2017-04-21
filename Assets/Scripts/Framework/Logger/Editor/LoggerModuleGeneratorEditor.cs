@@ -8,30 +8,34 @@ namespace Framework.Log
     [CustomEditor(typeof(LoggerModuleGenerator))]
     public class LoggerModuleGeneratorEditor : Editor
     {
-        private ReorderableList moduleList;
-        private bool foldModuleList;
+        private ReorderableList moduleList, frameworkModuleList;
+        private bool foldModuleList, foldFrameworkModuleList;
 
         [MenuItem("Framework/Logger Module")]
         public static void generateCode()
         {
             Selection.activeObject = LoggerModuleGenerator.Instance;
         }
-
+        
         void OnEnable()
         {
+            buildReorderableList(ref frameworkModuleList, "frameworkLoggerModules", "Framework Logger Module");
             buildReorderableList(ref moduleList, "loggerModules", "Logger Module");            
         }
-
+        
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
             serializedObject.Update();
-            foldModuleList = EditorGUILayout.Foldout(foldModuleList, "Const Message Type");
+            foldModuleList = EditorGUILayout.Foldout(foldModuleList, "User Define Logger Type");
             if (foldModuleList)
                 moduleList.DoLayoutList();
+            foldFrameworkModuleList = EditorGUILayout.Foldout(foldFrameworkModuleList, "Framework Logger Type");
+            if (foldFrameworkModuleList)
+                frameworkModuleList.DoLayoutList();
             serializedObject.ApplyModifiedProperties();
 
-            if (GUILayout.Button("Generate Code"))
+            if(GUILayout.Button("Generate Logger Module Type"))
             {
                 writeCode();
             }
@@ -59,13 +63,30 @@ namespace Framework.Log
         {
             using (var fw = new FileWriter(EditorTool.UnityPathToSystemPath(LoggerModuleGenerator.LoggerModulePath)))
             {
-                fw.Append("namespace Framework.Message");
+                fw.Append("using System;");
+                fw.Append("");
+                fw.Append("namespace Framework.Log");
                 fw.Append("{");
-                fw.Append("    public enum MessageType");
+                fw.Append("    [Serializable]");
+                fw.Append("    public class LoggerModule");
                 fw.Append("    {");
-                fw.Append("        // Logger Module");
-                //foreach (var v in MsgCodeGenerator.Instance.msgTypesConst)
-                //    fw.Append("        " + v.ToString() + ",");
+                fw.Append("        public string moduleName;");
+                fw.Append("        public bool flag = true;");
+                fw.Append("    }");
+                fw.Append("");
+                fw.Append("    public enum LoggerModuleType");
+                fw.Append("    {");
+                fw.Append("        //Framework");
+                foreach(var v in LoggerModuleGenerator.Instance.frameworkLoggerModules)
+                {
+                    fw.Append("        " + v.moduleName + ",");
+                }
+                fw.Append("");
+                fw.Append("        //Custom");
+                foreach(var v in LoggerModuleGenerator.Instance.loggerModules)
+                {
+                    fw.Append("        " + v.moduleName + ",");
+                }
                 fw.Append("    }");
                 fw.Append("}");
             }

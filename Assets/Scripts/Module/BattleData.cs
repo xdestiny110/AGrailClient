@@ -6,9 +6,9 @@ using Framework.Network;
 using System.Collections.Generic;
 
 namespace AGrail
-{
+{   
     public class BattleData : Singleton<BattleData>, IMessageListener<MessageType>
-    {
+    {        
         public int RoomID { get; private set; }
         public int PlayerID { get; private set; }
         public uint Pile { get; private set; }
@@ -28,7 +28,7 @@ namespace AGrail
             reset();
             var inst = RoleChoose.Instance;
         }
-
+        
         public void Ready(bool flag)
         {
             var proto = new network.ReadyForGameRequest() { type = flag ? network.ReadyForGameRequest.Type.START_READY : network.ReadyForGameRequest.Type.CANCEL_START_REDAY };
