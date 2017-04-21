@@ -13,10 +13,9 @@ namespace Framework.Log
     {
         //Framework
         Net,
-        MessageSystem,
-        FSM,
         UI,
-        Util,
+        FSM,
+        MessageSystem,
 
         //Custom
     }
