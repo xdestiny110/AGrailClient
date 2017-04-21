@@ -28,6 +28,8 @@ namespace AGrail
         [SerializeField]
         private Transform ShowCardArea;
         [SerializeField]
+        private Text dialog;
+        [SerializeField]
         private GameObject playerStatusPrefab;
 
         private Dictionary<int, PlayerStatusQT> players = new Dictionary<int, PlayerStatusQT>();
@@ -157,6 +159,30 @@ namespace AGrail
                 case MessageType.PlayerHealChange:
                     players[(int)parameters[0]].HealCount = (uint)parameters[1];
                     break;
+                case MessageType.LogChange:
+                    dialog.text = Dialog.Instance.Log;
+                    break;
+                case MessageType.CARDMSG:
+                    var cardMsg = parameters[0] as network.CardMsg;
+                    showCard(cardMsg.card_ids);
+                    if (cardMsg.dst_idSpecified && cardMsg.src_idSpecified)
+                        actionAnim(cardMsg.src_id, cardMsg.dst_id);
+                    break;
+                case MessageType.SKILLMSG:
+                    var skillMsg = parameters[0] as network.SkillMsg;
+                    foreach (var v in skillMsg.dst_ids)
+                        actionAnim(skillMsg.src_id, v);
+                    break;
+                case MessageType.TURNBEGIN:
+                    var tb = parameters[0] as network.TurnBegin;
+                    if (tb.roundSpecified)
+                        turn.text = tb.round.ToString();
+                    if (tb.idSpecified)
+                    {
+                        for (int i = 0; i < players.Count; i++)
+                            players[i].IsTurn = (BattleData.Instance.PlayerInfos[i].id == tb.id) ? true : false;
+                    }
+                    break;
             }
         }
 
@@ -245,6 +271,35 @@ namespace AGrail
                 status.PlayerID = id;
                 players.Add(playerIdx, status);
             }
+        }
+
+        private void showCard(List<uint> card_ids)
+        {
+            for (int i = 0; i < ShowCardArea.childCount; i++)
+                Destroy(ShowCardArea.GetChild(i).gameObject);
+            foreach (var v in card_ids)
+            {
+                var card = new Card(v);
+                var go = new GameObject();
+                go.transform.SetParent(ShowCardArea);
+                go.transform.localScale = Vector3.one;
+                go.transform.localPosition = Vector3.zero;
+                go.transform.localRotation = Quaternion.identity;
+                go.AddComponent<RawImage>().texture = Resources.Load<Texture2D>(card.AssetPath);
+            }
+        }
+
+        private void actionAnim(uint src_id, uint dst_id)
+        {
+            //int srcIdx = -1, dstIdx = -1;
+            //for (int i = 0; i < players.Count; i++)
+            //{
+            //    if (BattleData.Instance.PlayerInfos[i].id == src_id)
+            //        srcIdx = i;
+            //    if (BattleData.Instance.PlayerInfos[i].id == dst_id)
+            //        dstIdx = i;
+            //}
+            //players[srcIdx].DrawLine(players[srcIdx].animAnchor.position, players[dstIdx].animAnchor.position);
         }
     }
 }

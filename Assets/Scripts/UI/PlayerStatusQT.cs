@@ -272,7 +272,7 @@ namespace AGrail
                     go.transform.localRotation = Quaternion.identity;
                     go.transform.localScale = Vector3.one;
                     var ri = go.AddComponent<RawImage>();
-                    go.AddComponent<RawImage>().texture = Resources.Load<Texture2D>("Icons/UI6-23");
+                    ri.texture = Resources.Load<Texture2D>("Icons/UI6-23");
                     ri.color = Color.red;
                 }
             }
