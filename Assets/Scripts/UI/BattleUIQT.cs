@@ -31,6 +31,8 @@ namespace AGrail
         private Text dialog;
         [SerializeField]
         private GameObject playerStatusPrefab;
+        [SerializeField]
+        private GameObject arrowPrefab;
 
         private Dictionary<int, PlayerStatusQT> players = new Dictionary<int, PlayerStatusQT>();
 
@@ -291,15 +293,26 @@ namespace AGrail
 
         private void actionAnim(uint src_id, uint dst_id)
         {
-            //int srcIdx = -1, dstIdx = -1;
-            //for (int i = 0; i < players.Count; i++)
-            //{
-            //    if (BattleData.Instance.PlayerInfos[i].id == src_id)
-            //        srcIdx = i;
-            //    if (BattleData.Instance.PlayerInfos[i].id == dst_id)
-            //        dstIdx = i;
-            //}
-            //players[srcIdx].DrawLine(players[srcIdx].animAnchor.position, players[dstIdx].animAnchor.position);
+            int srcIdx = -1, dstIdx = -1;
+            for (int i = 0; i < players.Count; i++)
+            {
+                if (BattleData.Instance.PlayerInfos[i].id == src_id)
+                    srcIdx = i;
+                if (BattleData.Instance.PlayerInfos[i].id == dst_id)
+                    dstIdx = i;
+            }
+
+            var arrow = Instantiate(arrowPrefab);
+            arrow.transform.SetParent(battleRoot);
+            arrow.transform.position = players[srcIdx].transform.position;
+            arrow.transform.localScale = Vector3.one;
+            arrow.GetComponent<Arrow>().SetParms(players[srcIdx].transform.position, players[dstIdx].transform.position);            
         }
+
+        public void OnDialogInputSubmit(string str)
+        {
+            Dialog.Instance.SendTalk(str);
+        }
+
     }
 }
