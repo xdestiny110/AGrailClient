@@ -56,6 +56,7 @@
         GemChange,
         CrystalChange,
         GrailChange,
+        PlayerLeave,
         PlayerHeroName,
         PlayerRoleChange,
         PlayerTeamChange,

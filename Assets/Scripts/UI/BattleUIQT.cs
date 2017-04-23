@@ -64,6 +64,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.GemChange, this);
             MessageSystem<MessageType>.Regist(MessageType.CrystalChange, this);
             MessageSystem<MessageType>.Regist(MessageType.GrailChange, this);
+            MessageSystem<MessageType>.Regist(MessageType.PlayerLeave, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerIsReady, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerNickName, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerRoleChange, this);
@@ -91,6 +92,7 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.GemChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.CrystalChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.GrailChange, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.PlayerLeave, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerIsReady, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerNickName, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerRoleChange, this);
@@ -136,6 +138,14 @@ namespace AGrail
                 case MessageType.PlayerIsReady:
                     checkPlayer((int)parameters[0]);
                     players[(int)parameters[0]].IsReady = (bool)parameters[1];
+                    break;
+                case MessageType.PlayerLeave:
+                    if (!BattleData.Instance.IsStarted)
+                    {
+                        //游戏未开始
+                        Destroy(players[(int)parameters[1]].gameObject);
+                        players.Remove((int)parameters[1]);
+                    }
                     break;
                 case MessageType.PlayerTeamChange:
                     checkPlayer((int)parameters[0]);
@@ -260,7 +270,8 @@ namespace AGrail
             if (!players.ContainsKey(playerIdx))
             {
                 var go = Instantiate(playerStatusPrefab);
-                if(BattleData.Instance.PlayerInfos[playerIdx].id % 9 == 0)
+                if((BattleData.Instance.PlayerID == 9 && BattleData.Instance.PlayerInfos[playerIdx].id == 0) || 
+                    BattleData.Instance.PlayerID == BattleData.Instance.PlayerInfos[playerIdx].id)
                 {
                     //如果是主视角玩家
                     offset = playerIdx;
@@ -274,9 +285,9 @@ namespace AGrail
                     }
                 }
                 var id = BattleData.Instance.PlayerInfos[playerIdx].id;
-                var anchorIdx = ((int)id - (BattleData.Instance.PlayerID % 9));
                 var status = go.GetComponent<PlayerStatusQT>();
-                var anchor = playerAnchor[playerIdx - offset];
+
+                var anchor = playerAnchor[(playerIdx - offset < 0) ? playerIdx + playerAnchor.Count - offset : playerIdx - offset];
                 go.transform.SetParent(anchor);
                 go.transform.localPosition = Vector3.zero;
                 go.transform.localRotation = Quaternion.identity;

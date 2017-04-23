@@ -28,6 +28,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.HITMSG, this);
             MessageSystem<MessageType>.Regist(MessageType.HURTMSG, this);
             MessageSystem<MessageType>.Regist(MessageType.GOSSIP, this);
+            MessageSystem<MessageType>.Regist(MessageType.PlayerLeave, this);
             Reset();
         }
 
@@ -123,6 +124,9 @@ namespace AGrail
                     else
                         Log += string.Format("[{0}]: {1}" + Environment.NewLine, srcPlayer.nickname, gossip.txt);
 
+                    break;
+                case MessageType.PlayerLeave:
+                    Log += string.Format("玩家[{0}]离开房间" + Environment.NewLine, (int)parameters[0]);
                     break;
             }
         }

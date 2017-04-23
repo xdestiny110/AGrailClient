@@ -25,6 +25,7 @@ namespace AGrail
         {
             MessageSystem<MessageType>.Regist(MessageType.GAMEINFO, this);
             MessageSystem<MessageType>.Regist(MessageType.COMMANDREQUEST, this);
+            MessageSystem<MessageType>.Regist(MessageType.ERROR, this);
             reset();
             var inst = RoleChoose.Instance;
         }
@@ -50,6 +51,18 @@ namespace AGrail
                 case MessageType.COMMANDREQUEST:
                     cmdReq = parameters[0] as network.CommandRequest;                    
                     break;
+                case MessageType.ERROR:
+                    var error = parameters[0] as network.Error;
+                    if(error.id == 29)
+                    {
+                        //离开房间
+                        var idx = PlayerInfos.FindIndex(u =>
+                        {
+                            return u != null && u.id == error.dst_id;
+                        });
+                        MessageSystem<MessageType>.Notify(MessageType.PlayerLeave, error.dst_id, idx);
+                    }
+                    break;
             }
         }
 
@@ -65,7 +78,7 @@ namespace AGrail
         private network.GameInfo gameInfo
         {
             set
-            {
+            {                
                 if (value.room_idSpecified)
                 {
                     reset();
