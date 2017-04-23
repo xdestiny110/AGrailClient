@@ -257,19 +257,17 @@ namespace AGrail
         private void checkPlayer(int playerIdx)
         {
             if (!players.ContainsKey(playerIdx))
-            {
+            {                
                 var go = Instantiate(playerStatusPrefab);
-                var status = go.GetComponent<PlayerStatusQT>();                
-                //依据id确定transform                
                 var id = BattleData.Instance.PlayerInfos[playerIdx].id;
                 var anchorIdx = ((int)id - (BattleData.Instance.PlayerID % 9));
-                anchorIdx = (anchorIdx < 0) ? anchorIdx + playerAnchor.Count : anchorIdx;
-                var anchor = playerAnchor[anchorIdx];
+                var status = go.GetComponent<PlayerStatusQT>();
+                var anchor = playerAnchor[playerIdx];
                 go.transform.SetParent(anchor);
                 go.transform.localPosition = Vector3.zero;
                 go.transform.localRotation = Quaternion.identity;
                 go.transform.localScale = Vector3.one;
-
+                
                 status.PlayerID = id;
                 players.Add(playerIdx, status);
             }
