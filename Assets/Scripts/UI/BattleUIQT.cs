@@ -35,6 +35,7 @@ namespace AGrail
         private GameObject arrowPrefab;
 
         private Dictionary<int, PlayerStatusQT> players = new Dictionary<int, PlayerStatusQT>();
+        private int offset = 0;
 
         public override WindowType Type
         {
@@ -257,12 +258,25 @@ namespace AGrail
         private void checkPlayer(int playerIdx)
         {
             if (!players.ContainsKey(playerIdx))
-            {                
+            {
                 var go = Instantiate(playerStatusPrefab);
+                if(BattleData.Instance.PlayerInfos[playerIdx].id % 9 == 0)
+                {
+                    //如果是主视角玩家
+                    offset = playerIdx;
+                    //调整现有的位置
+                    for(int i = 0; i < players.Count; i++)
+                    {
+                        players[i].transform.SetParent(playerAnchor[i + playerAnchor.Count - offset]);
+                        players[i].transform.localPosition = Vector3.zero;
+                        players[i].transform.localRotation = Quaternion.identity;
+                        players[i].transform.localScale = Vector3.one;
+                    }
+                }
                 var id = BattleData.Instance.PlayerInfos[playerIdx].id;
                 var anchorIdx = ((int)id - (BattleData.Instance.PlayerID % 9));
                 var status = go.GetComponent<PlayerStatusQT>();
-                var anchor = playerAnchor[playerIdx];
+                var anchor = playerAnchor[playerIdx - offset];
                 go.transform.SetParent(anchor);
                 go.transform.localPosition = Vector3.zero;
                 go.transform.localRotation = Quaternion.identity;
