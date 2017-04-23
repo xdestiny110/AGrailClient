@@ -1,12 +1,18 @@
 ﻿using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace Framework.Log
 {
     public class LoggerModuleGenerator : ScriptableObject
     {
-        public const string ConfigPath = "Assets/Scripts/Framework/Logger/Editor/Config.asset";
+#if UNITY_EDITOR
+        public const string ConfigPath = "Assets/Scripts/Framework/Logger/Resources/Config.asset";
+#else
+        public const string ConfigPath = "Config";
+#endif
         public const string LoggerModulePath = "Assets/Scripts/Framework/Logger/LoggerModule.cs";
 
         private static LoggerModuleGenerator instance;
@@ -16,12 +22,16 @@ namespace Framework.Log
             {
                 if (instance == null)
                 {
-                    instance = AssetDatabase.LoadAssetAtPath<LoggerModuleGenerator>(ConfigPath);
+                    instance = Resources.Load<LoggerModuleGenerator>(ConfigPath);
                     if (instance == null)
                     {
+#if UNITY_EDITOR
                         instance = CreateInstance<LoggerModuleGenerator>();
                         AssetDatabase.CreateAsset(instance, ConfigPath);
                         AssetDatabase.Refresh();
+#else
+                        Debug.LogError("Can not open logger module generator");
+#endif
                     }
                 }
                 return instance;
