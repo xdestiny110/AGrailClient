@@ -69,5 +69,8 @@
         PlayerIsReady,
         PlayerBasicAndExCardChange,
         LogChange,
+        SelectCard,
+        SelectPlayer,
+        SelectSkill,
     }
 }
