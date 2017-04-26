@@ -3,6 +3,7 @@ using System.Collections;
 using network;
 using System.Collections.Generic;
 using Framework.Network;
+using Framework.Message;
 
 namespace AGrail
 {
@@ -105,6 +106,39 @@ namespace AGrail
         public virtual void UseSkill(uint skillID, uint srcID, List<uint> dstID = null, List<uint> cardIds = null, List<uint> args = null)
         {
 
+        }
+
+        public virtual void Check(int agentState ,List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
+        {
+            if((agentState | (int)PlayerAgentState.CanAttack) != 0)
+            {
+                //是攻击牌，是敌方，且能够攻击（潜行之类的）
+                if(skillID == null && cardIDs.Count == 1 && playerIDs.Count == 1)
+                {
+                    var card = new Card(cardIDs[0]);
+                    var player = BattleData.Instance.PlayerInfos.Find(p => { return p.id == playerIDs[0]; });
+                    if(card.Type == Card.CardType.attack && player.team != BattleData.Instance.MainPlayer.team &&
+                        !(player.role_id == (uint)RoleID.AnSha && player.is_knelt))
+                    {
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetOKCallback, true,
+                            new System.Action(() => 
+                            {
+                            }));
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetCancelCallback, true,
+                            new System.Action(() => 
+                            {
+                            }));
+                    }
+                }
+            }
+            if((agentState | (int)PlayerAgentState.CanMagic) != 0)
+            {
+
+            }
+
+            //啥都不满足...
+            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetOKCallback, false);
+            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetCancelCallback, false);
         }
 
         protected void sendActionMsg(BasicActionType actionType, uint srcID, List<uint> dstID = null, List<uint> cardIDs = null, uint? actionID = null, List<uint> args = null)

@@ -76,3 +76,9 @@ MonoBehaviour:
   - PlayerIsReady
   - PlayerBasicAndExCardChange
   - LogChange
+  - AgentSelectCard
+  - AgentSelectPlayer
+  - AgentSelectSkill
+  - AgentSetOKCallback
+  - AgentSetCancelCallback
+  - AgentStateChange

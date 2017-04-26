@@ -69,8 +69,11 @@
         PlayerIsReady,
         PlayerBasicAndExCardChange,
         LogChange,
-        SelectCard,
-        SelectPlayer,
-        SelectSkill,
+        AgentSelectCard,
+        AgentSelectPlayer,
+        AgentSelectSkill,
+        AgentSetOKCallback,
+        AgentSetCancelCallback,
+        AgentStateChange,
     }
 }

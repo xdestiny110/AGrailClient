@@ -46,6 +46,7 @@ namespace AGrail
             var proto = new network.LeaveRoomRequest();
             GameManager.TCPInstance.Send(new Protobuf() { Proto = proto, ProtoID = ProtoNameIds.LEAVEROOMREQUEST });
             SelectRoom = null;
+            BattleData.Instance.Reset();
         }
 
         public void OnEventTrigger(MessageType eventType, params object[] parameters)

@@ -7,39 +7,37 @@ using System.Collections.Generic;
 
 namespace AGrail
 {
-    public class PlayerAgent : Singleton<PlayerAgent>, IMessageListener<MessageType>
+    public class PlayerAgent : IMessageListener<MessageType>, IDisposable
     {
-        public List<uint> SelectPlayers = new List<uint>();
-        public List<uint> SelectCards = new List<uint>();
-        public uint? SelectSkill = null;
-
-        private RoleBase playerRole = null;
-        public RoleBase PlayerRole
+        private List<uint> selectPlayers = new List<uint>();
+        private List<uint> selectCards = new List<uint>();
+        private uint? selectSkill = null;
+        private int agentState = 0;
+        public int AgentState
         {
-            get
+            get { return agentState; }
+            set
             {
-                if(playerRole == null)
-                {
-                    var s = BattleData.Instance.PlayerInfos.Find(p => { return p.id == BattleData.Instance.PlayerID; });
-                    if(s != null)
-                        playerRole = RoleFactory.Create(s.role_id);
-                }
-                return playerRole;
+                agentState = value;
+                MessageSystem<MessageType>.Notify(MessageType.AgentStateChange, agentState);
             }
         }
+        
+        public RoleBase PlayerRole { get; private set; }
 
-        public PlayerAgent() : base()
+        public PlayerAgent(uint roleID) : base()
         {
-            MessageSystem<MessageType>.Regist(MessageType.SelectCard, this);
-            MessageSystem<MessageType>.Regist(MessageType.SelectPlayer, this);
-            MessageSystem<MessageType>.Regist(MessageType.SelectSkill, this);
+            PlayerRole = RoleFactory.Create(roleID);
+            MessageSystem<MessageType>.Regist(MessageType.AgentSelectCard, this);
+            MessageSystem<MessageType>.Regist(MessageType.AgentSelectPlayer, this);
+            MessageSystem<MessageType>.Regist(MessageType.AgentSelectSkill, this);
         }
 
         public void Reset()
         {
-            SelectPlayers.Clear();
-            SelectCards.Clear();
-            SelectSkill = null;
+            selectPlayers.Clear();
+            selectCards.Clear();
+            selectSkill = null;
         }
 
         public void OnEventTrigger(MessageType eventType, params object[] parameters)
@@ -47,51 +45,55 @@ namespace AGrail
             int it;
             switch (eventType)
             {
-                case MessageType.SelectCard:
+                case MessageType.AgentSelectCard:
                     var cardID = (uint)parameters[0];
-                    it = SelectCards.FindIndex(c => { return c == cardID; });
+                    it = selectCards.FindIndex(c => { return c == cardID; });
                     if (it > 0)
-                    {
-                        SelectCards.RemoveAt(it);
-                    }
+                        selectCards.RemoveAt(it);
                     else
-                    {
-                        SelectCards.Add(cardID);
-                    }                        
+                        selectCards.Add(cardID);
+                    PlayerRole.Check(AgentState, selectCards, selectPlayers, selectSkill);
                     break;
-                case MessageType.SelectPlayer:
+                case MessageType.AgentSelectPlayer:
                     var playerID = (uint)parameters[0];
-                    it = SelectPlayers.FindIndex(c => { return c == playerID; });
+                    it = selectPlayers.FindIndex(c => { return c == playerID; });
                     if (it > 0)
-                    {
-                        SelectCards.RemoveAt(it);
-                    }
+                        selectPlayers.RemoveAt(it);
                     else
-                    {
-                        SelectCards.Add(playerID);
-                    }
+                        selectPlayers.Add(playerID);
+                    PlayerRole.Check(AgentState, selectCards, selectPlayers, selectSkill);
                     break;
-                case MessageType.SelectSkill:
+                case MessageType.AgentSelectSkill:
                     break;
             }
         }
-    }
 
-    public enum PlayerAgentState
-    {
-        Idle = 0x1,
-        Attacked = 0x2,
-        MoDaned = 0x4,
-        Weaken = 0x8,
-        HealCost = 0x10,
-        Discard = 0x20,
-        StartUp = 0x40,
+        private bool IsDisposed = false;
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
-        CanSpecial = 0x80,
-        CanAttack = 0x100,
-        CanMagic = 0x200,
-        CanSkill = 0x400,
-        
+        protected void Dispose(bool Disposing)
+        {
+            if (!IsDisposed)
+            {
+                if (Disposing)
+                {
+
+                }
+                MessageSystem<MessageType>.UnRegist(MessageType.AgentSelectCard, this);
+                MessageSystem<MessageType>.UnRegist(MessageType.AgentSelectPlayer, this);
+                MessageSystem<MessageType>.UnRegist(MessageType.AgentSelectSkill, this);
+            }
+            IsDisposed = true;
+        }
+
+        ~PlayerAgent()
+        {
+            Dispose(false);
+        }
     }
 }
 

@@ -21,12 +21,15 @@ namespace AGrail
         public uint[] Grail = new uint[2];
         public List<network.SinglePlayerInfo> PlayerInfos = new List<network.SinglePlayerInfo>();
 
+        public PlayerAgent Agent { get; private set; }
+        public network.SinglePlayerInfo MainPlayer { get; private set; }
+
         public BattleData() : base()
         {
             MessageSystem<MessageType>.Regist(MessageType.GAMEINFO, this);
             MessageSystem<MessageType>.Regist(MessageType.COMMANDREQUEST, this);
             MessageSystem<MessageType>.Regist(MessageType.ERROR, this);
-            reset();
+            Reset();
             var inst = RoleChoose.Instance;
         }
         
@@ -66,14 +69,16 @@ namespace AGrail
             }
         }
 
-        private void reset()
+        public void Reset()
         {
             Morale = new uint[2];
             Gem = new uint[2];
             Crystal = new uint[2];
             Grail = new uint[2];
-            PlayerInfos.Clear();
-        }        
+            PlayerInfos.Clear();            
+            Agent = null;
+            MainPlayer = null;
+        }
 
         private network.GameInfo gameInfo
         {
@@ -81,7 +86,7 @@ namespace AGrail
             {                
                 if (value.room_idSpecified)
                 {
-                    reset();
+                    Reset();
                     RoomID = value.room_id;
                     MessageSystem<MessageType>.Notify(MessageType.EnterRoom);
                 }                
@@ -156,6 +161,11 @@ namespace AGrail
                     {
                         player.role_id = v.role_id;
                         MessageSystem<MessageType>.Notify(MessageType.PlayerRoleChange, idx, player.role_id);
+                        if(player.id == PlayerID)
+                        {
+                            Agent = new PlayerAgent(player.role_id);
+                            MainPlayer = player;
+                        }                            
                     }
                     if (v.nicknameSpecified)
                     {
