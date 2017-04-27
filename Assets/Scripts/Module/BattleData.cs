@@ -146,6 +146,9 @@ namespace AGrail
                     {
                         PlayerInfos.Add(v);
                         player = v;
+                        player.max_hand = 6;                            
+                        if (player.id == PlayerID)
+                            MainPlayer = player;
                     }
                     var idx = PlayerInfos.IndexOf(player);
                     if (v.readySpecified)
@@ -162,11 +165,8 @@ namespace AGrail
                     {
                         player.role_id = v.role_id;
                         MessageSystem<MessageType>.Notify(MessageType.PlayerRoleChange, idx, player.role_id);
-                        if(player.id == PlayerID)
-                        {
-                            Agent = new PlayerAgent(player.role_id);
-                            MainPlayer = player;
-                        }                            
+                        if(player.id == PlayerID)                        
+                            Agent = new PlayerAgent(player.role_id);                            
                     }
                     if (v.nicknameSpecified)
                     {
@@ -178,7 +178,7 @@ namespace AGrail
                         player.is_knelt = v.is_knelt;
                         MessageSystem<MessageType>.Notify(MessageType.PlayerKneltChange, idx, player.is_knelt);
                     }
-                    if (v.max_handSpecified)                    
+                    if (v.max_handSpecified)
                         player.max_hand = v.max_hand;                                            
                     if (v.hand_countSpecified)                    
                         player.hand_count = v.hand_count;                        

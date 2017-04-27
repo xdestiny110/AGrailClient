@@ -345,11 +345,5 @@ namespace AGrail
             arrow.transform.localScale = Vector3.one;
             arrow.GetComponent<Arrow>().SetParms(players[srcIdx].transform.position, players[dstIdx].transform.position);            
         }
-
-        public void OnDialogInputSubmit(string str)
-        {
-            Dialog.Instance.SendTalk(str);
-        }
-
     }
 }

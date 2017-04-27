@@ -39,7 +39,8 @@ namespace AGrail
 
         public void SendTalk(string str)
         {
-            var proto = new network.Talk() { txt = str, txtSpecified = true };
+            Debug.LogFormat("talk str = {0}", str);
+            var proto = new network.Talk() { txt = str };
             GameManager.TCPInstance.Send(new Protobuf() { Proto = proto, ProtoID = ProtoNameIds.TALK });
         }
 

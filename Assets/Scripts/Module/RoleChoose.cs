@@ -2,6 +2,7 @@
 using Framework;
 using Framework.Message;
 using System.Collections.Generic;
+using Framework.Network;
 
 namespace AGrail
 {
@@ -19,7 +20,8 @@ namespace AGrail
         public void Choose(uint roleID)
         {
             var proto = new network.PickBan() { strategy = (uint)RoleStrategy, is_pick = true };
-            proto.role_ids.Add(roleID);            
+            proto.role_ids.Add(roleID);
+            GameManager.TCPInstance.Send(new Protobuf() { Proto = proto, ProtoID = ProtoNameIds.PICKBAN });
         }
 
         public void OnEventTrigger(MessageType eventType, params object[] parameters)

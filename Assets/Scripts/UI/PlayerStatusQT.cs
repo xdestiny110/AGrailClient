@@ -77,6 +77,8 @@ namespace AGrail
             set
             {
                 role = RoleFactory.Create(value);
+                hero.enabled = true;
+                readyIcon.enabled = false;
                 hero.texture = Resources.Load<Texture2D>("Hero/" + value.ToString());
                 if (role.HasYellow)
                 {
