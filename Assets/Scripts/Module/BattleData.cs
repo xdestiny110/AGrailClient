@@ -232,20 +232,25 @@ namespace AGrail
                 UnityEngine.Debug.Log(string.Format("cmd request call back: {0}", (value.cmd_type == network.CmdType.CMD_ACTION) ?
                     ((network.BasicActionType)value.commands[0].respond_id).ToString() : ((network.BasicRespondType)value.commands[0].respond_id).ToString()));
                 foreach(var v in value.commands)
-                {
+                {                    
                     switch (v.respond_id)
                     {
                         case (uint)network.BasicRespondType.RESPOND_REPLY_ATTACK:
+                            Agent.AgentState = (int)PlayerAgentState.Attacked;                            
                             break;
                         case (uint)network.BasicRespondType.RESPOND_DISCARD:
+                            Agent.AgentState = (int)PlayerAgentState.Discard;
                             break;
                         case (uint)network.BasicRespondType.RESPOND_DISCARD_COVER:
                             break;
                         case (uint)network.BasicRespondType.RESPOND_HEAL:
+                            Agent.AgentState = (int)PlayerAgentState.HealCost;
                             break;
                         case (uint)network.BasicRespondType.RESPOND_WEAKEN:
+                            Agent.AgentState = (int)PlayerAgentState.Weaken;
                             break;
                         case (uint)network.BasicRespondType.RESPOND_BULLET:
+                            Agent.AgentState = (int)PlayerAgentState.MoDaned;
                             break;
                         case (uint)network.BasicRespondType.RESPOND_ADDITIONAL_ACTION:
                             break;

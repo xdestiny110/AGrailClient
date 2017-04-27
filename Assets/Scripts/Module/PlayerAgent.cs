@@ -24,6 +24,7 @@ namespace AGrail
         }
         
         public RoleBase PlayerRole { get; private set; }
+        public network.Command RespCmd { get; set; }        
 
         public PlayerAgent(uint roleID) : base()
         {

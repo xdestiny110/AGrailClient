@@ -110,6 +110,7 @@ namespace AGrail
 
         public virtual void Check(int agentState ,List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
         {
+            //基础攻击
             if((agentState | (int)PlayerAgentState.CanAttack) != 0)
             {
                 //是攻击牌，是敌方，且能够攻击（潜行之类的）
@@ -124,16 +125,90 @@ namespace AGrail
                             new System.Action(() => 
                             {
                             }));
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetCancelCallback, true,
-                            new System.Action(() => 
-                            {
-                            }));
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetCancelCallback, false);
                     }
                 }
             }
+            //基础魔法
             if((agentState | (int)PlayerAgentState.CanMagic) != 0)
             {
+                if(skillID == null && cardIDs.Count == 1 && playerIDs.Count == 1)
+                {
+                    var card = new Card(cardIDs[0]);
+                    var player = BattleData.Instance.PlayerInfos.Find(p => { return p.id == playerIDs[0]; });
+                    if(card.Type == Card.CardType.magic && card.Element != Card.CardElement.light)
+                    {
+                        if(card.Name != Card.CardName.魔弹)
+                        {
+                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetOKCallback, true,
+                                new System.Action(() =>
+                                {
+                                }));                            
+                        }
+                        else
+                        {
+                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetOKCallback, true,
+                                new System.Action(() =>
+                                {
+                                }));                            
+                        }
+                    }
+                }
+            }
+            //特殊行动
+            if((agentState | (int)PlayerAgentState.CanSpecial) != 0)
+            {
+                var mainPlayer = BattleData.Instance.MainPlayer;
+                if (mainPlayer.max_hand - mainPlayer.hands.Count >= 3)
+                {
+                    //可以买
+                    if (BattleData.Instance.Gem[(int)mainPlayer.team] + BattleData.Instance.Crystal[(int)mainPlayer.team] > 0)
+                    {
+                        //可以合
+                    }
+                }
+                if (BattleData.Instance.Gem[(int)mainPlayer.team] + BattleData.Instance.Crystal[(int)mainPlayer.team] > 0)
+                {
+                    //可以提
+                }
+            }
 
+            //应战
+            if ((agentState | (int)PlayerAgentState.Attacked) != 0)
+            {
+
+            }
+
+            //魔弹响应
+            if ((agentState | (int)PlayerAgentState.MoDaned) != 0)
+            {
+                var card = new Card(cardIDs[0]);                
+                if(card.Name == Card.CardName.魔弹)
+                {
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetOKCallback, true,
+                        new System.Action(() =>
+                        {
+                        }));
+                }
+                else if(card.Name == Card.CardName.圣光)
+                {
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetOKCallback, true,
+                        new System.Action(() =>
+                        {
+                        }));
+                }
+            }
+
+            //弃牌
+            if((agentState | (int)PlayerAgentState.Discard) != 0)
+            {
+                if(cardIDs.Count > 0)
+                {
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetOKCallback, true,
+                        new System.Action(() =>
+                        {
+                        }));
+                }
             }
 
             //啥都不满足...
