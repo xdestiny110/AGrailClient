@@ -8,5 +8,6 @@
         InputBox,
         Lobby,
         LoginBox,
+        RoleChoose31,
     }
 }

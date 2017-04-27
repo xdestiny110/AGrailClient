@@ -60,6 +60,7 @@ namespace AGrail
             Dialog.Instance.Reset();
             players.Clear();
 
+            MessageSystem<MessageType>.Regist(MessageType.ChooseRole, this);
             MessageSystem<MessageType>.Regist(MessageType.MoraleChange, this);
             MessageSystem<MessageType>.Regist(MessageType.GemChange, this);
             MessageSystem<MessageType>.Regist(MessageType.CrystalChange, this);
@@ -88,6 +89,7 @@ namespace AGrail
         public override void OnDestroy()
         {
             players.Clear();
+            MessageSystem<MessageType>.UnRegist(MessageType.ChooseRole, this);
             MessageSystem<MessageType>.UnRegist(MessageType.MoraleChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.GemChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.CrystalChange, this);
@@ -116,6 +118,18 @@ namespace AGrail
         {
             switch (eventType)
             {
+                case MessageType.ChooseRole:
+                    var roleStrategy = (network.ROLE_STRATEGY)parameters[0];
+                    switch (roleStrategy)
+                    {
+                        case network.ROLE_STRATEGY.ROLE_STRATEGY_31:
+                            GameManager.UIInstance.PushWindow(WindowType.RoleChoose31, WinMsg.Pause);
+                            break;
+                        default:
+                            Debug.LogError("不支持的选将模式");
+                            break;
+                    }
+                    break;
                 case MessageType.MoraleChange:
                     morales[(int)parameters[0]].text = parameters[1].ToString();
                     break;

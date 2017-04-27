@@ -19,8 +19,7 @@ namespace AGrail
         public void Choose(uint roleID)
         {
             var proto = new network.PickBan() { strategy = (uint)RoleStrategy, is_pick = true };
-            proto.role_ids.Add(roleID);
-            MessageSystem<MessageType>.Notify(MessageType.ChooseRole, true);
+            proto.role_ids.Add(roleID);            
         }
 
         public void OnEventTrigger(MessageType eventType, params object[] parameters)
@@ -32,7 +31,7 @@ namespace AGrail
                     RoleStrategy = proto.strategy;
                     CanIChoose = proto.id == BattleData.Instance.PlayerID;
                     RoleIDs = proto.role_ids;
-                    MessageSystem<MessageType>.Notify(MessageType.ChooseRole, false);
+                    MessageSystem<MessageType>.Notify(MessageType.ChooseRole, RoleStrategy);
                     break;
             }
         }

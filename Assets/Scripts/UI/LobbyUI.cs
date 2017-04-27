@@ -133,6 +133,11 @@ namespace AGrail
             Lobby.Instance.GetRoomList();
         }
 
+        public void OnBtnCreateClick()
+        {
+            Lobby.Instance.CreateRoom();
+        }
+
         private Coroutine coroHandle = null;
         private IEnumerator addRoomItem(List<network.RoomListResponse.RoomInfo> roomInfos)
         {

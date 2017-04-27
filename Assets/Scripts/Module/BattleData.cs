@@ -27,6 +27,7 @@ namespace AGrail
         public BattleData() : base()
         {
             MessageSystem<MessageType>.Regist(MessageType.GAMEINFO, this);
+            MessageSystem<MessageType>.Regist(MessageType.ROLEREQUEST, this);
             MessageSystem<MessageType>.Regist(MessageType.COMMANDREQUEST, this);
             MessageSystem<MessageType>.Regist(MessageType.ERROR, this);
             Reset();
@@ -42,7 +43,7 @@ namespace AGrail
         public void ChooseTeam()
         {
 
-        }        
+        }
 
         public void OnEventTrigger(MessageType eventType, params object[] parameters)
         {
@@ -232,11 +233,14 @@ namespace AGrail
                 UnityEngine.Debug.Log(string.Format("cmd request call back: {0}", (value.cmd_type == network.CmdType.CMD_ACTION) ?
                     ((network.BasicActionType)value.commands[0].respond_id).ToString() : ((network.BasicRespondType)value.commands[0].respond_id).ToString()));
                 foreach(var v in value.commands)
-                {                    
+                {
+                    //从proto上来看能够有多重响应
+                    //但逻辑上说不通啊...
                     switch (v.respond_id)
                     {
                         case (uint)network.BasicRespondType.RESPOND_REPLY_ATTACK:
-                            Agent.AgentState = (int)PlayerAgentState.Attacked;                            
+                            Agent.AgentState = (int)PlayerAgentState.Attacked;
+                            Agent.RespCmd = v;
                             break;
                         case (uint)network.BasicRespondType.RESPOND_DISCARD:
                             Agent.AgentState = (int)PlayerAgentState.Discard;
