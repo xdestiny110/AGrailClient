@@ -59,6 +59,8 @@ namespace AGrail
             switch (eventType)
             {
                 case MessageType.AgentHandChange:
+                    for(int i = 0; i < handArea.childCount; i++)                    
+                        Destroy(handArea.GetChild(i).gameObject);                    
                     foreach(var v in BattleData.Instance.MainPlayer.hands)
                     {
                         var go = Instantiate(cardPrefab);

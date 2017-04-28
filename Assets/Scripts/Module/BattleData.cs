@@ -9,7 +9,7 @@ namespace AGrail
 {   
     public class BattleData : Singleton<BattleData>, IMessageListener<MessageType>
     {        
-        public int RoomID { get; private set; }
+        public int? RoomID { get; private set; }
         public int PlayerID { get; private set; }
         public uint Pile { get; private set; }
         public uint Discard { get; private set; }
@@ -79,15 +79,15 @@ namespace AGrail
             PlayerInfos.Clear();            
             Agent = null;
             MainPlayer = null;
+            RoomID = null;
         }
 
         private network.GameInfo gameInfo
         {
             set
             {                
-                if (value.room_idSpecified)
-                {
-                    Reset();
+                if (value.room_idSpecified && !RoomID.HasValue)
+                {                    
                     RoomID = value.room_id;
                     MessageSystem<MessageType>.Notify(MessageType.EnterRoom);
                 }                
@@ -135,20 +135,22 @@ namespace AGrail
                     MessageSystem<MessageType>.Notify(MessageType.GrailChange, Team.Red, value.red_crystal - Grail[(int)Team.Red]);
                     Grail[(int)Team.Red] = value.red_grail;
                 }                
-
+                
                 foreach(var v in value.player_infos)
                 {
                     var player = PlayerInfos.DefaultIfEmpty(null).FirstOrDefault(
                         u => {
                             return u != null && u.id == v.id;
                         });
-                    if(player == null)
+                    bool isInit = false;
+                    if (player == null)
                     {
                         PlayerInfos.Add(v);
                         player = v;
                         player.max_hand = 6;                            
                         if (player.id == PlayerID)
                             MainPlayer = player;
+                        isInit = true;
                     }
                     var idx = PlayerInfos.IndexOf(player);
                     if (v.readySpecified)
@@ -185,8 +187,17 @@ namespace AGrail
                     if (v.max_handSpecified || v.hand_countSpecified)
                     {
                         MessageSystem<MessageType>.Notify(MessageType.PlayerHandChange, idx, player.hand_count, player.max_hand);
-                        if (player.id == MainPlayer.id)
+                        if (MainPlayer != null && player.id == MainPlayer.id && v.hand_countSpecified)
+                        {
+                            //第一次的时候不用更新手牌
+                            if (!isInit)
+                            {
+                                player.hands.Clear();
+                                foreach (var u in v.hands)
+                                    player.hands.Add(u);
+                            }                            
                             MessageSystem<MessageType>.Notify(MessageType.AgentHandChange);
+                        }                            
                     }                                   
                     if (v.heal_countSpecified)
                     {

@@ -29,7 +29,7 @@ namespace Framework
             }
 
             public static void Notify(T eventType, params object[] parameters)
-            {
+            {                
                 if (maps.ContainsKey(eventType))
                 {
                     var listeners = new List<IMessageListener<T>>(maps[eventType]);

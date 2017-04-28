@@ -818,6 +818,7 @@ MonoBehaviour:
   btnBuy: {fileID: 0}
   btnExtract: {fileID: 0}
   btnSynthetize: {fileID: 0}
+  cardPrefab: {fileID: 1000010277060758, guid: 34d948f847e0f4a49a398b37d7c3b065, type: 2}
 --- !u!114 &114000011512818014
 MonoBehaviour:
   m_ObjectHideFlags: 1
