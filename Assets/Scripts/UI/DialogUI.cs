@@ -11,7 +11,8 @@ namespace AGrail
 
         public void OnDialogInputSubmit(string str)
         {
-            Dialog.Instance.SendTalk(inpt.text);
+            if(inpt.text != string.Empty)
+                Dialog.Instance.SendTalk(inpt.text);
             inpt.text = string.Empty;
         }
 
