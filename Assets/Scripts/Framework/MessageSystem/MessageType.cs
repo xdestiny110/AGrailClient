@@ -75,5 +75,6 @@
         AgentSetOKCallback,
         AgentSetCancelCallback,
         AgentStateChange,
+        AgentHandChange,
     }
 }

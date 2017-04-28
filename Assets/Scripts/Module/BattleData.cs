@@ -181,9 +181,13 @@ namespace AGrail
                     if (v.max_handSpecified)
                         player.max_hand = v.max_hand;                                            
                     if (v.hand_countSpecified)                    
-                        player.hand_count = v.hand_count;                        
-                    if(v.max_handSpecified || v.hand_countSpecified)                    
-                        MessageSystem<MessageType>.Notify(MessageType.PlayerHandChange, idx, player.hand_count, player.max_hand);                    
+                        player.hand_count = v.hand_count;
+                    if (v.max_handSpecified || v.hand_countSpecified)
+                    {
+                        MessageSystem<MessageType>.Notify(MessageType.PlayerHandChange, idx, player.hand_count, player.max_hand);
+                        if (player.id == MainPlayer.id)
+                            MessageSystem<MessageType>.Notify(MessageType.AgentHandChange);
+                    }                                   
                     if (v.heal_countSpecified)
                     {
                         player.heal_count = v.heal_count;
