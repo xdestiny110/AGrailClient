@@ -2,12 +2,12 @@
 using System.Collections;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using Framework.Message;
 
 namespace AGrail
 {
     public class PlayerStatusQT : MonoBehaviour
     {
-
         [SerializeField]
         private Transform teamBG;
         [SerializeField]
@@ -34,6 +34,8 @@ namespace AGrail
         private Image readyIcon;
         [SerializeField]
         private GameObject tokenPrefab;
+        [SerializeField]
+        private Button btnPlayer;
 
         private RoleBase role;
         private Text token0, token1, token2;
@@ -296,6 +298,17 @@ namespace AGrail
                     go.AddComponent<RawImage>().texture = Resources.Load<Texture2D>("Icons/UI6-24");
                 }
             }
+        }
+
+        public void AddBtnPlayerCallback(uint id)
+        {
+            btnPlayer.onClick.AddListener(()=>
+            {
+                selectBorder.enabled = !selectBorder.enabled;
+                MessageSystem<MessageType>.Notify(MessageType.AgentSelectPlayer, id);
+            });
+            btnPlayer.interactable = false;
+            selectBorder.enabled = false;
         }
     }
 }

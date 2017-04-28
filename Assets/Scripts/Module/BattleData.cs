@@ -216,11 +216,9 @@ namespace AGrail
                         player.blue_token = v.blue_token;
                     if (v.covered_countSpecified)
                         player.covered_count = v.covered_count;
-                    if (v.yellow_tokenSpecified || v.blue_tokenSpecified || v.covered_countSpecified)
-                    {
-                        MessageSystem<MessageType>.Notify(MessageType.PlayerTokenChange, idx, player.yellow_token, player.blue_token, player.covered_count);
-                        //UnityEngine.Debug.LogFormat("yellow token = {0}, blue token = {1}, cover = {2}, idx = {3}", player.yellow_token, player.blue_token, player.covered_count, idx);
-                    }                        
+                    if (v.yellow_tokenSpecified || v.blue_tokenSpecified || v.covered_countSpecified)                    
+                        MessageSystem<MessageType>.Notify(MessageType.PlayerTokenChange, 
+                            idx, player.yellow_token, player.blue_token, player.covered_count);
                     if (v.basic_cards.Count > 0)
                         player.basic_cards = v.basic_cards;
                     if(v.ex_cards.Count > 0)

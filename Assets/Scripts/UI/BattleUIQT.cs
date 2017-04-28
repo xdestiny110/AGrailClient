@@ -33,7 +33,7 @@ namespace AGrail
         private GameObject playerStatusPrefab;
         [SerializeField]
         private GameObject arrowPrefab;
-
+        
         private Dictionary<int, PlayerStatusQT> players = new Dictionary<int, PlayerStatusQT>();
         private int offset = 0;
 
@@ -309,6 +309,7 @@ namespace AGrail
                 
                 status.PlayerID = id;
                 players.Add(playerIdx, status);
+                status.AddBtnPlayerCallback(id);
             }
         }
 

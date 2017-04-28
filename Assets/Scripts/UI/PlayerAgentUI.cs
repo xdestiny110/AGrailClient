@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 using Framework.Message;
 using System;
+using System.Collections.Generic;
 
 namespace AGrail
 {
@@ -19,7 +20,7 @@ namespace AGrail
         [SerializeField]
         private Button btnExtract;
         [SerializeField]
-        private Button btnSynthetize;
+        private Button btnSynthetize;        
         [SerializeField]
         private GameObject cardPrefab;
 
@@ -28,6 +29,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.AgentSetOKCallback, this);
             MessageSystem<MessageType>.Regist(MessageType.AgentSetCancelCallback, this);
             MessageSystem<MessageType>.Regist(MessageType.AgentHandChange, this);
+            MessageSystem<MessageType>.Regist(MessageType.AgentStateChange, this);
             
             //先将确认键初始化为准备按钮
             if(BattleData.Instance.PlayerID != 9)
@@ -52,6 +54,7 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.AgentSetOKCallback, this);
             MessageSystem<MessageType>.UnRegist(MessageType.AgentSetCancelCallback, this);
             MessageSystem<MessageType>.UnRegist(MessageType.AgentHandChange, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.AgentStateChange, this);
         }
 
         public void OnEventTrigger(MessageType eventType, params object[] parameters)
@@ -71,6 +74,15 @@ namespace AGrail
                         var cardUI = go.GetComponent<CardUI>();
                         cardUI.Card = new Card(v);
                     }                    
+                    break;
+                case MessageType.AgentStateChange:
+                    //卡牌、人物是否能够选中
+                    //确认、取消、特殊行动按钮能否显示
+                    //技能能否选中
+                    if(BattleData.Instance.Agent.AgentState == (int)PlayerAgentState.Idle)
+                    {
+                           
+                    }
                     break;
             }
         }

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using Framework.Message;
 
 namespace AGrail
 {
@@ -14,6 +15,8 @@ namespace AGrail
         private Text txtSkill2;
         [SerializeField]
         private RawImage image;
+        [SerializeField]
+        private Image selectBorder;
 
         private Card card;
         public Card Card
@@ -29,6 +32,12 @@ namespace AGrail
                         txtSkill2.text = card.SkillNames[1];
                 }                    
             }
+        }
+
+        public void OnCardClick()
+        {
+            selectBorder.enabled = !selectBorder.enabled;
+            MessageSystem<MessageType>.Notify(MessageType.AgentSelectCard, card.ID);            
         }
 
     }
