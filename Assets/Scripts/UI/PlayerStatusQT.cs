@@ -299,6 +299,12 @@ namespace AGrail
                 }
             }
         }
+        
+        public bool IsEnable
+        {
+            get { return btnPlayer.interactable; }
+            set { btnPlayer.interactable = value; }
+        }
 
         public void AddBtnPlayerCallback(uint id)
         {
