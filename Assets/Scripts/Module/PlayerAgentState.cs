@@ -13,10 +13,19 @@
         CanSpecial = 0x80,
         CanAttack = 0x100,
         CanMagic = 0x200,
-        CanSkill = 0x400,
-
-
+        CanSkill = 0x400,        
 
     }
+
+    public static class PlayerAgentStateExtension
+    {
+        public static bool Check(this int agent, PlayerAgentState state)
+        {
+            if ((agent | (int)state) != 0)
+                return true;
+            return false;
+        }
+    }
+    
 }
 

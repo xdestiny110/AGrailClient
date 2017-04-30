@@ -272,14 +272,21 @@ namespace AGrail
                         case (uint)network.BasicRespondType.RESPOND_ADDITIONAL_ACTION:
                             break;
                         case (uint)network.BasicActionType.ACTION_ANY:
+                            Agent.AgentState =
+                                (int)PlayerAgentState.CanAttack | (int)PlayerAgentState.CanMagic |
+                                (int)PlayerAgentState.CanSkill | (int)PlayerAgentState.CanSpecial;
                             break;
                         case (uint)network.BasicActionType.ACTION_ATTACK_MAGIC:
+                            Agent.AgentState = (int)PlayerAgentState.CanMagic | (int)PlayerAgentState.CanAttack;
                             break;
                         case (uint)network.BasicActionType.ACTION_ATTACK:
+                            Agent.AgentState = (int)PlayerAgentState.CanAttack;
                             break;
                         case (uint)network.BasicActionType.ACTION_MAGIC:
+                            Agent.AgentState = (int)PlayerAgentState.CanMagic;
                             break;
                         case (uint)network.BasicActionType.ACTION_NONE:
+                            //无法行动
                             break;
                     }
                 }

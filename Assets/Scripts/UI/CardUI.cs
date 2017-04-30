@@ -22,7 +22,16 @@ namespace AGrail
         [SerializeField]
         private Image selectBorder;
 
-        public bool IsEnable { get; set; }
+        private bool isEnable = false;
+        public bool IsEnable
+        {
+            set
+            {
+                isEnable = value;
+                if (!isEnable)                
+                    selectBorder.enabled = false;                
+            }
+        }
 
         private Card card;
         public Card Card
@@ -43,7 +52,7 @@ namespace AGrail
 
         public void OnCardClick()
         {
-            if (IsEnable)
+            if (isEnable)
             {
                 selectBorder.enabled = !selectBorder.enabled;
                 MessageSystem<MessageType>.Notify(MessageType.AgentSelectCard, card.ID);

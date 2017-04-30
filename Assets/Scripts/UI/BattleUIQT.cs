@@ -34,7 +34,7 @@ namespace AGrail
         [SerializeField]
         private GameObject arrowPrefab;
         
-        private Dictionary<int, PlayerStatusQT> players = new Dictionary<int, PlayerStatusQT>();
+        public Dictionary<int, PlayerStatusQT> PlayersStatus = new Dictionary<int, PlayerStatusQT>();
         private int offset = 0;
 
         public override WindowType Type
@@ -58,7 +58,7 @@ namespace AGrail
             //最好是能够在Awake中先依据BattleData的数据初始化一遍
             GameManager.AddUpdateAction(onESCClick);
             Dialog.Instance.Reset();
-            players.Clear();
+            PlayersStatus.Clear();
 
             MessageSystem<MessageType>.Regist(MessageType.ChooseRole, this);
             MessageSystem<MessageType>.Regist(MessageType.MoraleChange, this);
@@ -88,7 +88,7 @@ namespace AGrail
 
         public override void OnDestroy()
         {
-            players.Clear();
+            PlayersStatus.Clear();
             MessageSystem<MessageType>.UnRegist(MessageType.ChooseRole, this);
             MessageSystem<MessageType>.UnRegist(MessageType.MoraleChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.GemChange, this);
@@ -144,47 +144,47 @@ namespace AGrail
                     break;
                 case MessageType.PlayerNickName:
                     checkPlayer((int)parameters[0]);
-                    players[(int)parameters[0]].PlayerName = (string)parameters[1];
+                    PlayersStatus[(int)parameters[0]].PlayerName = (string)parameters[1];
                     break;
                 case MessageType.PlayerRoleChange:
-                    players[(int)parameters[0]].RoleID = (uint)parameters[1];
+                    PlayersStatus[(int)parameters[0]].RoleID = (uint)parameters[1];
                     break;
                 case MessageType.PlayerIsReady:
                     checkPlayer((int)parameters[0]);
-                    players[(int)parameters[0]].IsReady = (bool)parameters[1];
+                    PlayersStatus[(int)parameters[0]].IsReady = (bool)parameters[1];
                     break;
                 case MessageType.PlayerLeave:
                     if (!BattleData.Instance.IsStarted)
                     {
                         //游戏未开始
-                        Destroy(players[(int)parameters[1]].gameObject);
-                        players.Remove((int)parameters[1]);
+                        Destroy(PlayersStatus[(int)parameters[1]].gameObject);
+                        PlayersStatus.Remove((int)parameters[1]);
                     }
                     break;
                 case MessageType.PlayerTeamChange:
                     checkPlayer((int)parameters[0]);
-                    players[(int)parameters[0]].Team = (Team)(uint)parameters[1];
+                    PlayersStatus[(int)parameters[0]].Team = (Team)(uint)parameters[1];
                     break;
                 case MessageType.PlayerTokenChange:
                     var idx = (int)parameters[0];
-                    players[(int)parameters[0]].YellowToken = (uint)parameters[1];
-                    players[(int)parameters[0]].BlueToken = (uint)parameters[2];
-                    players[(int)parameters[0]].Covered = (uint)parameters[3];                    
+                    PlayersStatus[(int)parameters[0]].YellowToken = (uint)parameters[1];
+                    PlayersStatus[(int)parameters[0]].BlueToken = (uint)parameters[2];
+                    PlayersStatus[(int)parameters[0]].Covered = (uint)parameters[3];                    
                     break;
                 case MessageType.PlayerKneltChange:
-                    players[(int)parameters[0]].Knelt = (bool)parameters[1];
+                    PlayersStatus[(int)parameters[0]].Knelt = (bool)parameters[1];
                     break;
                 case MessageType.PlayerBasicAndExCardChange:
-                    players[(int)parameters[0]].BasicAndExCards = (parameters[1] as List<uint>).Union(parameters[2] as List<uint>).ToList();
+                    PlayersStatus[(int)parameters[0]].BasicAndExCards = (parameters[1] as List<uint>).Union(parameters[2] as List<uint>).ToList();
                     break;
                 case MessageType.PlayerEnergeChange:
-                    players[(int)parameters[0]].Energy = new KeyValuePair<uint, uint>((uint)parameters[1], (uint)parameters[2]);
+                    PlayersStatus[(int)parameters[0]].Energy = new KeyValuePair<uint, uint>((uint)parameters[1], (uint)parameters[2]);
                     break;
                 case MessageType.PlayerHandChange:
-                    players[(int)parameters[0]].HandCount = new KeyValuePair<uint, uint>((uint)parameters[1], (uint)parameters[2]);
+                    PlayersStatus[(int)parameters[0]].HandCount = new KeyValuePair<uint, uint>((uint)parameters[1], (uint)parameters[2]);
                     break;
                 case MessageType.PlayerHealChange:
-                    players[(int)parameters[0]].HealCount = (uint)parameters[1];
+                    PlayersStatus[(int)parameters[0]].HealCount = (uint)parameters[1];
                     break;
                 case MessageType.LogChange:
                     dialog.text = Dialog.Instance.Log;
@@ -206,8 +206,8 @@ namespace AGrail
                         turn.text = tb.round.ToString();
                     if (tb.idSpecified)
                     {
-                        for (int i = 0; i < players.Count; i++)
-                            players[i].IsTurn = (BattleData.Instance.PlayerInfos[i].id == tb.id) ? true : false;
+                        for (int i = 0; i < PlayersStatus.Count; i++)
+                            PlayersStatus[i].IsTurn = (BattleData.Instance.PlayerInfos[i].id == tb.id) ? true : false;
                     }
                     break;
             }
@@ -281,7 +281,7 @@ namespace AGrail
 
         private void checkPlayer(int playerIdx)
         {
-            if (!players.ContainsKey(playerIdx))
+            if (!PlayersStatus.ContainsKey(playerIdx))
             {
                 var go = Instantiate(playerStatusPrefab);
                 if((BattleData.Instance.PlayerID == 9 && BattleData.Instance.PlayerInfos[playerIdx].id == 0) || 
@@ -290,12 +290,12 @@ namespace AGrail
                     //如果是主视角玩家
                     offset = playerIdx;
                     //调整现有的位置
-                    for(int i = 0; i < players.Count; i++)
+                    for(int i = 0; i < PlayersStatus.Count; i++)
                     {
-                        players[i].transform.SetParent(playerAnchor[i + playerAnchor.Count - offset]);
-                        players[i].transform.localPosition = Vector3.zero;
-                        players[i].transform.localRotation = Quaternion.identity;
-                        players[i].transform.localScale = Vector3.one;
+                        PlayersStatus[i].transform.SetParent(playerAnchor[i + playerAnchor.Count - offset]);
+                        PlayersStatus[i].transform.localPosition = Vector3.zero;
+                        PlayersStatus[i].transform.localRotation = Quaternion.identity;
+                        PlayersStatus[i].transform.localScale = Vector3.one;
                     }
                 }
                 var id = BattleData.Instance.PlayerInfos[playerIdx].id;
@@ -308,7 +308,7 @@ namespace AGrail
                 go.transform.localScale = Vector3.one;
                 
                 status.PlayerID = id;
-                players.Add(playerIdx, status);
+                PlayersStatus.Add(playerIdx, status);
                 status.AddBtnPlayerCallback(id);
             }
         }
@@ -332,7 +332,7 @@ namespace AGrail
         private void actionAnim(uint src_id, uint dst_id)
         {
             int srcIdx = -1, dstIdx = -1;
-            for (int i = 0; i < players.Count; i++)
+            for (int i = 0; i < PlayersStatus.Count; i++)
             {
                 if (BattleData.Instance.PlayerInfos[i].id == src_id)
                     srcIdx = i;
@@ -342,9 +342,9 @@ namespace AGrail
 
             var arrow = Instantiate(arrowPrefab);
             arrow.transform.SetParent(battleRoot);
-            arrow.transform.position = players[srcIdx].transform.position;
+            arrow.transform.position = PlayersStatus[srcIdx].transform.position;
             arrow.transform.localScale = Vector3.one;
-            arrow.GetComponent<Arrow>().SetParms(players[srcIdx].transform.position, players[dstIdx].transform.position);            
+            arrow.GetComponent<Arrow>().SetParms(PlayersStatus[srcIdx].transform.position, PlayersStatus[dstIdx].transform.position);            
         }
     }
 }
