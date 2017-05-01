@@ -60,6 +60,7 @@ namespace AGrail
             Dialog.Instance.Reset();
             PlayersStatus.Clear();
 
+            MessageSystem<MessageType>.Regist(MessageType.GameStart, this);
             MessageSystem<MessageType>.Regist(MessageType.ChooseRole, this);
             MessageSystem<MessageType>.Regist(MessageType.MoraleChange, this);
             MessageSystem<MessageType>.Regist(MessageType.GemChange, this);
@@ -89,6 +90,7 @@ namespace AGrail
         public override void OnDestroy()
         {
             PlayersStatus.Clear();
+            MessageSystem<MessageType>.UnRegist(MessageType.GameStart, this);
             MessageSystem<MessageType>.UnRegist(MessageType.ChooseRole, this);
             MessageSystem<MessageType>.UnRegist(MessageType.MoraleChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.GemChange, this);
@@ -118,6 +120,9 @@ namespace AGrail
         {
             switch (eventType)
             {
+                case MessageType.GameStart:
+                    adjustPlayerPosition(parameters[0] as List<int>);
+                    break;
                 case MessageType.ChooseRole:
                     var roleStrategy = (network.ROLE_STRATEGY)parameters[0];
                     switch (roleStrategy)
@@ -310,6 +315,17 @@ namespace AGrail
                 status.PlayerID = id;
                 PlayersStatus.Add(playerIdx, status);
                 status.AddBtnPlayerCallback(id);
+            }
+        }
+
+        private void adjustPlayerPosition(List<int> playerIdxes)
+        {
+            for(int i = 0; i < playerIdxes.Count; i++)
+            {
+                PlayersStatus[playerIdxes[i]].transform.SetParent(playerAnchor[i]);
+                PlayersStatus[playerIdxes[i]].transform.localPosition = Vector3.zero;
+                PlayersStatus[playerIdxes[i]].transform.localRotation = Quaternion.identity;
+                PlayersStatus[playerIdxes[i]].transform.localScale = Vector3.one;
             }
         }
 

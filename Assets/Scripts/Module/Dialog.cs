@@ -52,24 +52,20 @@ namespace AGrail
             {
                 case MessageType.HITMSG:
                     var hitMsg = parameters[0] as network.HitMsg;
-                    srcPlayer = BattleData.Instance.PlayerInfos.DefaultIfEmpty(null).FirstOrDefault(
-                        u => { return u != null && u.id == hitMsg.src_id; });
-                    dstPlayer = BattleData.Instance.PlayerInfos.DefaultIfEmpty(null).FirstOrDefault(
-                        u => { return u != null && u.id == hitMsg.dst_id; });
+                    srcPlayer = BattleData.Instance.GetPlayerInfo(hitMsg.src_id);
+                    dstPlayer = BattleData.Instance.GetPlayerInfo(hitMsg.dst_id);
                     r1 = RoleFactory.Create(srcPlayer.role_id);
                     r2 = RoleFactory.Create(dstPlayer.role_id);
                     Log += string.Format("{0}攻击了{1}" + Environment.NewLine, r1.RoleName, r2.RoleName);
                     break;
                 case MessageType.HURTMSG:
                     var hurtMsg = parameters[0] as network.HurtMsg;
-                    srcPlayer = BattleData.Instance.PlayerInfos.DefaultIfEmpty(null).FirstOrDefault(
-                        u => { return u != null && u.id == hurtMsg.src_id; });
+                    srcPlayer = BattleData.Instance.GetPlayerInfo(hurtMsg.src_id);
                     r1 = RoleFactory.Create(srcPlayer.role_id);
                     Log += r1.RoleName;
                     if (hurtMsg.dst_idSpecified)
                     {
-                        dstPlayer = BattleData.Instance.PlayerInfos.DefaultIfEmpty(null).FirstOrDefault(
-                            u => { return u != null && u.id == hurtMsg.dst_id; });
+                        dstPlayer = BattleData.Instance.GetPlayerInfo(hurtMsg.dst_id);
                         r2 = RoleFactory.Create(dstPlayer.role_id);
                         Log += "对" + r2.RoleName;
                     }
@@ -77,14 +73,12 @@ namespace AGrail
                     break;
                 case MessageType.CARDMSG:
                     var cardMsg = parameters[0] as network.CardMsg;
-                    srcPlayer = BattleData.Instance.PlayerInfos.DefaultIfEmpty(null).FirstOrDefault(
-                        u => { return u != null && u.id == cardMsg.src_id; });
+                    srcPlayer = BattleData.Instance.GetPlayerInfo(cardMsg.src_id);
                     r1 = RoleFactory.Create(srcPlayer.role_id);
                     Log += r1.RoleName;
                     if (cardMsg.dst_idSpecified)
                     {
-                        dstPlayer = BattleData.Instance.PlayerInfos.DefaultIfEmpty(null).FirstOrDefault(
-                            u => { return u != null && u.id == cardMsg.dst_id; });
+                        dstPlayer = BattleData.Instance.GetPlayerInfo(cardMsg.dst_id);
                         r2 = RoleFactory.Create(dstPlayer.role_id);
                         Log += "对" + r2.RoleName + "使用了";
                     }
@@ -99,15 +93,13 @@ namespace AGrail
                     break;
                 case MessageType.SKILLMSG:
                     var skillMsg = parameters[0] as network.SkillMsg;
-                    srcPlayer = BattleData.Instance.PlayerInfos.DefaultIfEmpty(null).FirstOrDefault(
-                        u => { return u != null && u.id == skillMsg.src_id; });
+                    srcPlayer = BattleData.Instance.GetPlayerInfo(skillMsg.src_id);
                     r1 = RoleFactory.Create(srcPlayer.role_id);
                     Log += r1.RoleName;
                     if (skillMsg.dst_ids.Count > 0) Log += "对";
                     foreach (var v in skillMsg.dst_ids)
                     {
-                        dstPlayer = BattleData.Instance.PlayerInfos.DefaultIfEmpty(null).FirstOrDefault(
-                            u => { return u != null && u.id == v; });
+                        dstPlayer = BattleData.Instance.GetPlayerInfo(v);
                         r2 = RoleFactory.Create(dstPlayer.role_id);
                         Log += r2.RoleName + ",";
                     }                        
@@ -115,8 +107,7 @@ namespace AGrail
                     break;
                 case MessageType.GOSSIP:
                     var gossip = parameters[0] as network.Gossip;
-                    srcPlayer = BattleData.Instance.PlayerInfos.DefaultIfEmpty(null).FirstOrDefault(
-                        u => { return u != null && u.id == gossip.id; });
+                    srcPlayer = BattleData.Instance.GetPlayerInfo(gossip.id);
                     if (srcPlayer.role_idSpecified)
                     {
                         r1 = RoleFactory.Create(srcPlayer.role_id);
@@ -124,7 +115,6 @@ namespace AGrail
                     }
                     else
                         Log += string.Format("[{0}]: {1}" + Environment.NewLine, srcPlayer.nickname, gossip.txt);
-
                     break;
                 case MessageType.PlayerLeave:
                     Log += string.Format("玩家[{0}]离开房间" + Environment.NewLine, (int)parameters[0]);

@@ -44,7 +44,8 @@ namespace AGrail
                     BattleData.Instance.Ready(BattleData.Instance.MainPlayer.ready ? false : true);                    
                 });
                 btnOK.gameObject.SetActive(true);
-                btnCancel.gameObject.SetActive(false);
+                btnCancel.gameObject.SetActive(true);
+                btnCancel.interactable = false;
             }
             else
             {
@@ -109,13 +110,16 @@ namespace AGrail
                             handArea.GetChild(i).GetComponent<CardUI>().IsEnable = false;
                         foreach(var v in players.Values)                        
                             v.IsEnable = false;
-                    }
+                        btnOK.interactable = false;
+                        btnCancel.interactable = false;
+                    }                    
                     else
                     {
+                        BattleData.Instance.Agent.PlayerRole.Check(BattleData.Instance.Agent.AgentState);
                         for (int i = 0; i < handArea.childCount; i++)
                             handArea.GetChild(i).GetComponent<CardUI>().IsEnable = true;
                         foreach (var v in players.Values)
-                            v.IsEnable = true;
+                            v.IsEnable = true;                        
                     }
                     break;
             }

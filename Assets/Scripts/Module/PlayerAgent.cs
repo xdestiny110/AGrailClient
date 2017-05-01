@@ -12,19 +12,22 @@ namespace AGrail
         private List<uint> selectPlayers = new List<uint>();
         private List<uint> selectCards = new List<uint>();
         private uint? selectSkill = null;
-        private int agentState = 0;
+        private int agentState = (int)PlayerAgentState.Idle;
         public int AgentState
         {
             get { return agentState; }
             set
             {
+                Debug.LogFormat("Agent state = {0}", value);
                 agentState = value;
+                if (agentState.Check(PlayerAgentState.Idle))
+                    reset();
                 MessageSystem<MessageType>.Notify(MessageType.AgentStateChange, agentState);
             }
         }
         
         public RoleBase PlayerRole { get; private set; }
-        public network.Command RespCmd { get; set; }
+        public network.Command Cmd { get; set; }
 
         public PlayerAgent(uint roleID) : base()
         {
@@ -34,7 +37,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.AgentSelectSkill, this);
         }
 
-        public void Reset()
+        private void reset()
         {
             selectPlayers.Clear();
             selectCards.Clear();
@@ -49,7 +52,7 @@ namespace AGrail
                 case MessageType.AgentSelectCard:
                     var cardID = (uint)parameters[0];
                     it = selectCards.FindIndex(c => { return c == cardID; });
-                    if (it > 0)
+                    if (it >= 0)
                         selectCards.RemoveAt(it);
                     else
                         selectCards.Add(cardID);
@@ -58,7 +61,7 @@ namespace AGrail
                 case MessageType.AgentSelectPlayer:
                     var playerID = (uint)parameters[0];
                     it = selectPlayers.FindIndex(c => { return c == playerID; });
-                    if (it > 0)
+                    if (it >= 0)
                         selectPlayers.RemoveAt(it);
                     else
                         selectPlayers.Add(playerID);

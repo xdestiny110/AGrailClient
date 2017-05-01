@@ -32,6 +32,7 @@ namespace AGrail
             if (!string.IsNullOrEmpty(password))
                 proto.password = password;
             GameManager.TCPInstance.Send(new Protobuf() { Proto = proto, ProtoID = ProtoNameIds.ENTERROOMREQUEST });
+            BattleData.Instance.Reset();
             //其实这么写不太合适，但后端没有合适的协议
             SelectRoom = roomInfo;
         }

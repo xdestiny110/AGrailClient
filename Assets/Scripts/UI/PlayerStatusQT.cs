@@ -303,7 +303,11 @@ namespace AGrail
         public bool IsEnable
         {
             get { return btnPlayer.interactable; }
-            set { btnPlayer.interactable = value; }
+            set {
+                btnPlayer.interactable = value;
+                if (!value)
+                    selectBorder.enabled = false;
+            }
         }
 
         public void AddBtnPlayerCallback(uint id)

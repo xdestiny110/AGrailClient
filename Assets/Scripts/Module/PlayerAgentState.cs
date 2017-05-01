@@ -21,7 +21,7 @@
     {
         public static bool Check(this int agent, PlayerAgentState state)
         {
-            if ((agent | (int)state) != 0)
+            if ((agent & (int)state) != 0)
                 return true;
             return false;
         }

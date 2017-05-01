@@ -29,12 +29,15 @@ namespace Framework
             }
 
             public static void Notify(T eventType, params object[] parameters)
-            {                
+            {
+                //UnityEngine.Debug.LogFormat("MessageSystem notify {0}", eventType.ToString());
                 if (maps.ContainsKey(eventType))
                 {
                     var listeners = new List<IMessageListener<T>>(maps[eventType]);
                     foreach (var v in listeners)
+                    {
                         v.OnEventTrigger(eventType, parameters);
+                    }                        
                 }
             }
         }

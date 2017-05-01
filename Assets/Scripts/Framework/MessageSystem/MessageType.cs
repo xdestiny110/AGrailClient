@@ -50,6 +50,7 @@
         RoomList,
         InputBox,
         EnterRoom,
+        GameStart,
         ChooseRole,
         MoraleChange,
         ShowCardChange,

@@ -23,8 +23,8 @@ namespace UnityEngine.UI
         {
             //依据item数量调节覆盖程度
             Vector2 spacing = layout.spacing;
-            if (transform.childCount > noOverLayCnt)            
-                spacing.x = (layoutCellSizeX * transform.childCount - layoutSizeX) / (transform.childCount - 1);
+            if (transform.childCount > noOverLayCnt)
+                spacing.x = (layoutSizeX - layoutCellSizeX * transform.childCount) / (transform.childCount - 1);
             else
                 spacing.x = 0;
 

@@ -7,7 +7,7 @@ using System;
 
 namespace AGrail
 {
-    public class CardUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+    public class CardUI : MonoBehaviour
     {
         [SerializeField]
         private Canvas canvas;
@@ -59,7 +59,7 @@ namespace AGrail
             }    
         }
 
-        public void OnPointerEnter(PointerEventData eventData)
+        public void OnPointerEnter(BaseEventData eventData)
         {
             var pos = canvas.transform.localPosition;
             pos.y += 10;
@@ -68,7 +68,7 @@ namespace AGrail
             canvas.sortingOrder = 10; 
         }
 
-        public void OnPointerExit(PointerEventData eventData)
+        public void OnPointerExit(BaseEventData eventData)
         {
             var pos = canvas.transform.localPosition;
             pos.y = 0;
