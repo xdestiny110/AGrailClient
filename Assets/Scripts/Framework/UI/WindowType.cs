@@ -5,6 +5,7 @@
         None = 0,
         Battle,
         BattleQT,
+        ChooseEnergy,
         InputBox,
         Lobby,
         LoginBox,

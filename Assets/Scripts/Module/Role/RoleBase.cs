@@ -13,6 +13,7 @@ namespace AGrail
         public abstract string RoleName { get; }
         public abstract Card.CardProperty RoleProperty { get; }
         public virtual uint MaxHealCount { get { return 2; } }
+        public virtual uint MaxEnergyCount { get { return 3; } }
         public virtual bool HasYellow { get { return false; } }
         public virtual bool HasBlue { get { return false; } }
         public virtual bool HasCoverd { get { return false; } }
@@ -26,19 +27,7 @@ namespace AGrail
                 playerIDs = new List<uint>();
             MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetOKCallback, false);
             MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetCancelCallback, false);
-            if (checkCanBuy(agentState))
-            {
-
-            }
-            if (checkCanExtract(agentState))
-            {
-
-            }
-            if (checkCanSynthetize(agentState))
-            {
-
-            }
-            if (checkCanAttack(agentState, cardIDs, playerIDs, skillID))
+            if (CheckCanAttack(agentState, cardIDs, playerIDs, skillID))
             {
                 MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetOKCallback, true,
                     new UnityEngine.Events.UnityAction(() =>
@@ -46,7 +35,7 @@ namespace AGrail
                         attack(cardIDs[0], playerIDs[0]);
                     }));
             }
-            else if (checkCanMagic(agentState, cardIDs, playerIDs, skillID))
+            else if (CheckCanMagic(agentState, cardIDs, playerIDs, skillID))
             {
                 MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetOKCallback, true,
                     new UnityEngine.Events.UnityAction(() =>
@@ -54,7 +43,7 @@ namespace AGrail
                         magic(cardIDs[0], playerIDs[0]);
                     }));
             }
-            else if (checkAttacked(agentState, cardIDs, playerIDs, skillID))
+            else if (CheckAttacked(agentState, cardIDs, playerIDs, skillID))
             {
                 MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetOKCallback, true,
                     new UnityEngine.Events.UnityAction(() =>
@@ -69,8 +58,13 @@ namespace AGrail
                         else
                             AttackedReply();
                     }));
-            }
-            else if (checkDiscard(agentState, cardIDs, playerIDs, skillID))
+                MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetCancelCallback, true,
+                     new UnityEngine.Events.UnityAction(() =>
+                     {
+                         AttackedReply();
+                     }));
+             }
+            else if (CheckDiscard(agentState, cardIDs, playerIDs, skillID))
             {
                 MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetOKCallback, true,
                     new UnityEngine.Events.UnityAction(() =>
@@ -78,7 +72,7 @@ namespace AGrail
                         drop(cardIDs);
                     }));
             }
-            else if (checkModaned(agentState, cardIDs, playerIDs, skillID))
+            else if (CheckModaned(agentState, cardIDs, playerIDs, skillID))
             {
                 MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetOKCallback, true,
                     new UnityEngine.Events.UnityAction(() =>
@@ -89,7 +83,7 @@ namespace AGrail
                             moDaned();
                     }));
             }
-            else if (checkWeaken(agentState, cardIDs, playerIDs, skillID))
+            else if (CheckWeaken(agentState, cardIDs, playerIDs, skillID))
             {
                 MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetOKCallback, true,
                     new UnityEngine.Events.UnityAction(() =>
@@ -102,7 +96,7 @@ namespace AGrail
                         weaken(new List<uint>() { 0 });
                     }));
             }
-            checkSkill(agentState, cardIDs, playerIDs, skillID);
+            CheckSkill(agentState, cardIDs, playerIDs, skillID);
         }
 
         protected virtual void attack(uint card, uint dstID)
@@ -180,22 +174,25 @@ namespace AGrail
             }
         }
 
-        protected virtual void buy(uint srcID, uint gemNum, uint cristalNum)
+        public virtual void Buy(uint gemNum, uint cristalNum)
         {
             //购买        
-            sendActionMsg(BasicActionType.ACTION_SPECIAL, srcID, null, null, 0, new List<uint>() { gemNum, cristalNum });
+            sendActionMsg(BasicActionType.ACTION_SPECIAL, BattleData.Instance.MainPlayer.id,
+                null, null, 0, new List<uint>() { gemNum, cristalNum });
         }
 
-        protected virtual void synthetize(uint srcID, uint gemNum, uint cristalNum)
+        public virtual void Synthetize(uint gemNum, uint cristalNum)
         {
             //合成
-            sendActionMsg(BasicActionType.ACTION_SPECIAL, srcID, null, null, 1, new List<uint>() { gemNum, cristalNum });
+            sendActionMsg(BasicActionType.ACTION_SPECIAL, BattleData.Instance.MainPlayer.id,
+                null, null, 1, new List<uint>() { gemNum, cristalNum });
         }
 
-        protected virtual void extract(uint srcID, uint gemNum, uint cristalNum)
+        public virtual void Extract(uint gemNum, uint cristalNum)
         {
             //提炼
-            sendActionMsg(BasicActionType.ACTION_SPECIAL, srcID, null, null, 2, new List<uint>() { gemNum, cristalNum });
+            sendActionMsg(BasicActionType.ACTION_SPECIAL, BattleData.Instance.MainPlayer.id,
+                null, null, 2, new List<uint>() { gemNum, cristalNum });
         }
 
         protected virtual void useSkill(uint skillID, uint srcID, List<uint> dstID = null, List<uint> cardIds = null, List<uint> args = null)
@@ -203,7 +200,7 @@ namespace AGrail
 
         }
 
-        protected virtual bool checkCanAttack(int agentState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
+        public virtual bool CheckCanAttack(int agentState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
         {
             //基础攻击
             if (agentState.Check(PlayerAgentState.CanAttack))
@@ -221,7 +218,7 @@ namespace AGrail
             return false;
         }
 
-        protected virtual bool checkCanMagic(int agentState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
+        public virtual bool CheckCanMagic(int agentState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
         {
             //基础魔法
             if (agentState.Check(PlayerAgentState.CanMagic))
@@ -244,29 +241,7 @@ namespace AGrail
             return false;
         }
 
-        protected virtual bool checkCanBuy(int agentState)
-        {
-            if (agentState.Check(PlayerAgentState.CanSpecial) &&
-                BattleData.Instance.MainPlayer.max_hand - BattleData.Instance.MainPlayer.hand_count >= 3)
-                return true;
-            return false;
-        }
-
-        protected virtual bool checkCanExtract(int agentState)
-        {
-            return false;
-        }
-
-        protected virtual bool checkCanSynthetize(int agentState)
-        {
-            if (agentState.Check(PlayerAgentState.CanSpecial) &&
-                BattleData.Instance.MainPlayer.max_hand - BattleData.Instance.MainPlayer.hand_count >= 3 &&
-                BattleData.Instance.Gem[(int)BattleData.Instance.MainPlayer.team] + BattleData.Instance.Crystal[(int)BattleData.Instance.MainPlayer.team] >= 3)
-                return true;
-            return false;
-        }
-
-        protected virtual bool checkWeaken(int agentState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
+        public virtual bool CheckWeaken(int agentState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
         {
             //虚弱响应
             if (agentState.Check(PlayerAgentState.Weaken))
@@ -274,7 +249,7 @@ namespace AGrail
             return false;
         }
 
-        protected virtual bool checkAttacked(int agentState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
+        public virtual bool CheckAttacked(int agentState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
         {
             //应战
             //还得斟酌下...必中还没弄进去
@@ -297,7 +272,7 @@ namespace AGrail
             return false;
         }
 
-        protected virtual bool checkModaned(int agentState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
+        public virtual bool CheckModaned(int agentState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
         {
             //魔弹响应
             if (agentState.Check(PlayerAgentState.MoDaned))
@@ -309,7 +284,7 @@ namespace AGrail
             return false;
         }
 
-        protected virtual bool checkDiscard(int agentState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
+        public virtual bool CheckDiscard(int agentState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
         {
             //弃牌
             if (agentState.Check(PlayerAgentState.Discard))
@@ -320,11 +295,26 @@ namespace AGrail
             return false;
         }
 
-        protected virtual bool checkSkill(int agentState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
+        public virtual bool CheckSkill(int agentState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
         {
             //确认技能
             //肯定得重写，但先设成virtual
             return false;
+        }
+
+        public virtual bool CheckBuy(uint gem, uint crystal)
+        {
+            return (gem == 1 && crystal == 1);
+        }
+
+        public virtual bool CheckExtract(uint gem, uint crystal, uint existEnergy)
+        {
+            return (gem + crystal <= 2 && crystal + gem > 0 && gem + crystal + existEnergy <= MaxEnergyCount);
+        }
+        
+        public virtual bool CheckSynthetize(uint gem, uint crystal)
+        {
+            return (gem + crystal == 3);
         }
 
         protected void sendActionMsg(BasicActionType actionType, uint srcID, List<uint> dstID = null, List<uint> cardIDs = null, uint? actionID = null, List<uint> args = null)

@@ -104,6 +104,7 @@ namespace AGrail
                     //卡牌、人物是否能够选中
                     //确认、取消、特殊行动按钮能否显示
                     //技能能否选中
+                    //未来可以改成利用rolebase具体确定哪些能够选中
                     if(BattleData.Instance.Agent.AgentState.Check(PlayerAgentState.Idle))
                     {
                         for(int i = 0; i < handArea.childCount; i++)                        
@@ -112,6 +113,9 @@ namespace AGrail
                             v.IsEnable = false;
                         btnOK.interactable = false;
                         btnCancel.interactable = false;
+                        btnBuy.interactable = false;
+                        btnExtract.interactable = false;
+                        btnSynthetize.interactable = false;
                     }                    
                     else
                     {
@@ -119,10 +123,42 @@ namespace AGrail
                         for (int i = 0; i < handArea.childCount; i++)
                             handArea.GetChild(i).GetComponent<CardUI>().IsEnable = true;
                         foreach (var v in players.Values)
-                            v.IsEnable = true;                        
+                            v.IsEnable = true;
+                        if (BattleData.Instance.Agent.AgentState.Check(PlayerAgentState.CanSpecial) &&
+                            BattleData.Instance.MainPlayer.max_hand - BattleData.Instance.MainPlayer.hand_count >= 3)
+                            btnBuy.interactable = true;
+                        if (BattleData.Instance.Agent.AgentState.Check(PlayerAgentState.CanSpecial) &&
+                            BattleData.Instance.MainPlayer.max_hand - BattleData.Instance.MainPlayer.hand_count >= 3 &&
+                            BattleData.Instance.Gem[(int)BattleData.Instance.MainPlayer.team] + BattleData.Instance.Crystal[(int)BattleData.Instance.MainPlayer.team] >= 3)                        
+                            btnSynthetize.interactable = true;
+                        if (BattleData.Instance.Agent.AgentState.Check(PlayerAgentState.CanSpecial) &&
+                            BattleData.Instance.MainPlayer.crystal + BattleData.Instance.MainPlayer.gem < BattleData.Instance.Agent.PlayerRole.MaxEnergyCount &&
+                            BattleData.Instance.Gem[(int)BattleData.Instance.MainPlayer.team] + BattleData.Instance.Crystal[(int)BattleData.Instance.MainPlayer.team] > 0)
+                            btnExtract.interactable = true;
                     }
                     break;
             }
+        }
+
+        public void OnBtnBuyClick()
+        {
+            GameManager.UIInstance.PushWindow(Framework.UI.WindowType.ChooseEnergy, Framework.UI.WinMsg.Pause, Vector3.zero,
+                new Action<uint, uint>((gem, crystal) => { BattleData.Instance.Agent.PlayerRole.Buy(gem, crystal); }),
+                new Func<uint, uint, bool>((gem, crystal) => { return BattleData.Instance.Agent.PlayerRole.CheckBuy(gem, crystal); }));
+        }
+
+        public void OnBtnExtractClick()
+        {
+            GameManager.UIInstance.PushWindow(Framework.UI.WindowType.ChooseEnergy, Framework.UI.WinMsg.Pause, Vector3.zero,
+                new Action<uint, uint>((gem, crystal) => { BattleData.Instance.Agent.PlayerRole.Extract(gem, crystal); }),
+                new Func<uint, uint, bool>((gem, crystal) => { return BattleData.Instance.Agent.PlayerRole.CheckExtract(gem, crystal, BattleData.Instance.MainPlayer.crystal + BattleData.Instance.MainPlayer.gem); }));
+        }
+
+        public void OnBtnSynthetizeClick()
+        {
+            GameManager.UIInstance.PushWindow(Framework.UI.WindowType.ChooseEnergy, Framework.UI.WinMsg.Pause, Vector3.zero,
+                new Action<uint, uint>((gem, crystal) => { BattleData.Instance.Agent.PlayerRole.Synthetize(gem, crystal); }),
+                new Func<uint, uint, bool>((gem, crystal) => { return BattleData.Instance.Agent.PlayerRole.CheckSynthetize(gem, crystal); }));
         }
     }
 }
