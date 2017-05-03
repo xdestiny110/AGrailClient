@@ -123,7 +123,7 @@ namespace AGrail
 
         public void OnBtnCreateClick()
         {
-            Lobby.Instance.CreateRoom();
+            GameManager.UIInstance.PushWindow(WindowType.CreateRoomUI, WinMsg.Pause);
         }
 
         private Coroutine coroHandle = null;

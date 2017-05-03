@@ -6,6 +6,7 @@
         Battle,
         BattleQT,
         ChooseEnergy,
+        CreateRoomUI,
         InputBox,
         Lobby,
         LoginBox,

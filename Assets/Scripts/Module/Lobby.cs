@@ -37,9 +37,21 @@ namespace AGrail
             SelectRoom = roomInfo;
         }
         
-        public void CreateRoom()
+        public void CreateRoom(network.CreateRoomRequest proto)
         {
-
+            SelectRoom = new network.RoomListResponse.RoomInfo()
+            {
+                allow_guest = proto.allow_guest,
+                first_extension = proto.first_extension,
+                second_extension = proto.second_extension,
+                now_player = 1,
+                max_player = proto.max_player,
+                role_strategy = proto.role_strategy,
+                has_password = proto.passwordSpecified,
+                room_name = proto.room_name,
+                playing = false,
+            };
+            GameManager.TCPInstance.Send(new Protobuf() { Proto = proto, ProtoID = ProtoNameIds.CREATEROOMREQUEST });
         }
 
         public void LeaveRoom()
