@@ -94,18 +94,6 @@ namespace AGrail
             base.OnShow();
         }
 
-        public override void OnPause()
-        {
-            canvasGroup.blocksRaycasts = false;
-            base.OnPause();
-        }
-
-        public override void OnResume()
-        {
-            canvasGroup.blocksRaycasts = true;
-            base.OnResume();
-        }
-
         public override void OnEventTrigger(MessageType eventType, params object[] parameters)
         {
             switch (eventType)

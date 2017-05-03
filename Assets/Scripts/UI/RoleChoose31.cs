@@ -39,7 +39,7 @@ namespace AGrail
                 btn.onClick.AddListener(()=>
                 {
                     RoleChoose.Instance.Choose(roleID);
-                    GameManager.UIInstance.PopWindow(WinMsg.Show);
+                    GameManager.UIInstance.PopWindow(WinMsg.Resume);
                 });
             }
             base.Awake();

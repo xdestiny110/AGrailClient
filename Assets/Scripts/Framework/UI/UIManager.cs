@@ -16,8 +16,11 @@ namespace Framework.UI
             var win = go.GetComponent<WindowsBase>();
             win.Parameters = parameters;
             WindowsBase topWin;
-            if(winStack.TryPeek(out topWin))            
-                dealWinMsg(topWin, msg);            
+            if(winStack.TryPeek(out topWin))
+            {
+                win.Canvas.sortingOrder = topWin.Canvas.sortingOrder + 1;
+                dealWinMsg(topWin, msg);
+            }                
             winStack.Push(win);
             return win;
         }
@@ -46,9 +49,11 @@ namespace Framework.UI
                     topWin.OnHide();
                     break;
                 case WinMsg.Pause:
+                    topWin.CanvasGroup.interactable = false;
                     topWin.OnPause();
                     break;
                 case WinMsg.Resume:
+                    topWin.CanvasGroup.interactable = true;
                     topWin.OnResume();
                     break;
                 case WinMsg.Destroy:

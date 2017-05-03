@@ -13,6 +13,8 @@ namespace AGrail
         [SerializeField]
         private Button btnOK;
         [SerializeField]
+        private Text lblTitle;
+        [SerializeField]
         private Text lblGemNum;
         [SerializeField]
         private Text lblCrystalNum;
@@ -39,8 +41,13 @@ namespace AGrail
             {
                 base.Parameters = value;
                 btnOK.onClick.RemoveAllListeners();
-                btnOK.onClick.AddListener(()=> { ((Action<uint, uint>)value[0])(gemNum, crystalNum); });
+                btnOK.onClick.AddListener(()=> 
+                {
+                    ((Action<uint, uint>)value[0])(gemNum, crystalNum);
+                    GameManager.UIInstance.PopWindow(WinMsg.Resume);
+                });
                 check = (Func<uint, uint, bool>)value[1];
+                lblTitle.text = value[2].ToString();
             }
         }
 
@@ -62,20 +69,20 @@ namespace AGrail
 
         public void OnGemMinusClick()
         {
-            if (crystalNum < BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team])
+            if (gemNum > 0)
             {
-                gemNum++;
-                lblCrystalNum.text = crystalNum.ToString();
+                gemNum--;
+                lblGemNum.text = gemNum.ToString();
             }
             btnOK.interactable = check(gemNum, crystalNum);
         }
 
         public void OnCrystalPlusClick()
         {
-            if (gemNum > 0)
+            if (crystalNum < BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team])
             {
-                gemNum--;
-                lblGemNum.text = gemNum.ToString();
+                gemNum++;
+                lblCrystalNum.text = crystalNum.ToString();
             }
             btnOK.interactable = check(gemNum, crystalNum);
         }

@@ -90,7 +90,7 @@ namespace AGrail
                     {
                         weaken(new List<uint>() { 1 });
                     }));
-                MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetOKCallback, true,
+                MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetCancelCallback, true,
                     new UnityEngine.Events.UnityAction(() =>
                     {
                         weaken(new List<uint>() { 0 });
@@ -233,7 +233,16 @@ namespace AGrail
                             return true;
                         else
                         {
-                            //确认是否是下一个对方玩家
+                            //确认是否是下一个对方玩家                            
+                            foreach(var v in BattleData.Instance.PlayerIdxOrder)
+                            {
+                                if (BattleData.Instance.PlayerInfos[v].team != BattleData.Instance.MainPlayer.team)
+                                {
+                                    if (BattleData.Instance.PlayerInfos[v].id == playerIDs[0])
+                                        return true;
+                                    break;
+                                }                                    
+                            }
                         }
                     }
                 }

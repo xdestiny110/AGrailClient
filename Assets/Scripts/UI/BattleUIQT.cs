@@ -121,7 +121,7 @@ namespace AGrail
             switch (eventType)
             {
                 case MessageType.GameStart:
-                    adjustPlayerPosition(parameters[0] as List<int>);
+                    adjustPlayerPosition(BattleData.Instance.PlayerIdxOrder);
                     break;
                 case MessageType.ChooseRole:
                     var roleStrategy = (network.ROLE_STRATEGY)parameters[0];
@@ -220,7 +220,7 @@ namespace AGrail
 
         private void onESCClick()
         {
-            if (Input.GetKeyDown(KeyCode.Escape))
+            if (Input.GetKeyDown(KeyCode.Escape) && CanvasGroup.interactable)
             {
                 Lobby.Instance.LeaveRoom();
                 GameManager.UIInstance.PopWindow(WinMsg.Show);

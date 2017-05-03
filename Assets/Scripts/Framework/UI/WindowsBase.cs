@@ -8,9 +8,10 @@ namespace Framework.UI
     public abstract class WindowsBase : MonoBehaviour, IMessageListener<MessageType>
     {
         public abstract WindowType Type { get; }
-
-        protected CanvasGroup canvasGroup = null;
-        protected Canvas canvas = null;
+        [HideInInspector]
+        public CanvasGroup CanvasGroup = null;
+        [HideInInspector]
+        public Canvas Canvas = null;
 
         private object[] parameters;
         public virtual object[] Parameters
@@ -48,10 +49,10 @@ namespace Framework.UI
         public virtual void Awake()
         {
             MessageSystem<MessageType>.Notify(MessageType.OnUICreate, this);
-            canvasGroup = GetComponent<CanvasGroup>();
-            canvas = GetComponent<Canvas>();
-            canvas.renderMode = RenderMode.ScreenSpaceCamera;
-            canvas.worldCamera = Camera.main;
+            CanvasGroup = GetComponent<CanvasGroup>();
+            Canvas = GetComponent<Canvas>();
+            Canvas.renderMode = RenderMode.ScreenSpaceCamera;
+            Canvas.worldCamera = Camera.main;
         }
 
         public virtual void OnDestroy()

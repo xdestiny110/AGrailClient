@@ -144,21 +144,24 @@ namespace AGrail
         {
             GameManager.UIInstance.PushWindow(Framework.UI.WindowType.ChooseEnergy, Framework.UI.WinMsg.Pause, Vector3.zero,
                 new Action<uint, uint>((gem, crystal) => { BattleData.Instance.Agent.PlayerRole.Buy(gem, crystal); }),
-                new Func<uint, uint, bool>((gem, crystal) => { return BattleData.Instance.Agent.PlayerRole.CheckBuy(gem, crystal); }));
+                new Func<uint, uint, bool>((gem, crystal) => { return BattleData.Instance.Agent.PlayerRole.CheckBuy(gem, crystal); }),
+                "购买");
         }
 
         public void OnBtnExtractClick()
         {
             GameManager.UIInstance.PushWindow(Framework.UI.WindowType.ChooseEnergy, Framework.UI.WinMsg.Pause, Vector3.zero,
                 new Action<uint, uint>((gem, crystal) => { BattleData.Instance.Agent.PlayerRole.Extract(gem, crystal); }),
-                new Func<uint, uint, bool>((gem, crystal) => { return BattleData.Instance.Agent.PlayerRole.CheckExtract(gem, crystal, BattleData.Instance.MainPlayer.crystal + BattleData.Instance.MainPlayer.gem); }));
+                new Func<uint, uint, bool>((gem, crystal) => { return BattleData.Instance.Agent.PlayerRole.CheckExtract(gem, crystal, BattleData.Instance.MainPlayer.crystal + BattleData.Instance.MainPlayer.gem); }),
+                "提炼");
         }
 
         public void OnBtnSynthetizeClick()
         {
             GameManager.UIInstance.PushWindow(Framework.UI.WindowType.ChooseEnergy, Framework.UI.WinMsg.Pause, Vector3.zero,
                 new Action<uint, uint>((gem, crystal) => { BattleData.Instance.Agent.PlayerRole.Synthetize(gem, crystal); }),
-                new Func<uint, uint, bool>((gem, crystal) => { return BattleData.Instance.Agent.PlayerRole.CheckSynthetize(gem, crystal); }));
+                new Func<uint, uint, bool>((gem, crystal) => { return BattleData.Instance.Agent.PlayerRole.CheckSynthetize(gem, crystal); }),
+                "合成");
         }
     }
 }

@@ -20,6 +20,7 @@ namespace AGrail
         public uint[] Crystal = new uint[2];
         public uint[] Grail = new uint[2];        
         public List<network.SinglePlayerInfo> PlayerInfos = new List<network.SinglePlayerInfo>();
+        public List<int> PlayerIdxOrder = new List<int>();
 
         public PlayerAgent Agent { get; private set; }
         public network.SinglePlayerInfo MainPlayer { get; private set; }
@@ -247,19 +248,19 @@ namespace AGrail
                 {
                     //游戏开始，可能需要重新定位玩家位置                    
                     if (!IsStarted && value.is_started)
-                    {                        
-                        var l = new List<int>();
+                    {
+                        PlayerIdxOrder.Clear();
                         int t = -1;
                         foreach(var v in value.player_infos)
                         {
                             var idx = PlayerInfos.FindIndex(p => { return p.id == v.id; });
-                            l.Add(idx);
+                            PlayerIdxOrder.Add(idx);
                             if (v.id == MainPlayer.id)
-                                t = l.Count - 1;
+                                t = PlayerIdxOrder.Count - 1;
                         }
-                        l.AddRange(l.GetRange(0, t));
-                        l.RemoveRange(0, t);
-                        MessageSystem<MessageType>.Notify(MessageType.GameStart, l);
+                        PlayerIdxOrder.AddRange(PlayerIdxOrder.GetRange(0, t));
+                        PlayerIdxOrder.RemoveRange(0, t);
+                        MessageSystem<MessageType>.Notify(MessageType.GameStart);
                     }
                     IsStarted = value.is_started;
                 }
