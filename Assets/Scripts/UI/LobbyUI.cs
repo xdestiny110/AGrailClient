@@ -51,10 +51,11 @@ namespace AGrail
             root.localPosition = new Vector3(1280, 0, 0);
             root.DOLocalMoveX(0, 1.0f).OnComplete(
                 () =>
-                {
+                {                    
                     var go = GameObject.Find("GameTitle");
-                    go.transform.GetChild(0).SetParent(root);
-                    Destroy(go);
+                    go.transform.SetParent(root);
+                    //go.transform.GetChild(0).SetParent(root);                    
+                    //Destroy(go);
                 });
             if(Lobby.Instance.RoomInfo == null)
                 Lobby.Instance.GetRoomList();

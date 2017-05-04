@@ -58,11 +58,6 @@ namespace AGrail
                         else
                             AttackedReply();
                     }));
-                MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetCancelCallback, true,
-                     new UnityEngine.Events.UnityAction(() =>
-                     {
-                         AttackedReply();
-                     }));
              }
             else if (CheckDiscard(agentState, cardIDs, playerIDs, skillID))
             {
@@ -81,7 +76,7 @@ namespace AGrail
                             moDaned(new Card(cardIDs[0]));
                         else
                             moDaned();
-                    }));
+                    }));                
             }
             else if (CheckWeaken(agentState, cardIDs, playerIDs, skillID))
             {
@@ -286,6 +281,8 @@ namespace AGrail
             //魔弹响应
             if (agentState.Check(PlayerAgentState.MoDaned))
             {
+                if (cardIDs.Count == 0 && playerIDs.Count == 0 && skillID == null)
+                    return true;
                 var card = new Card(cardIDs[0]);
                 if (card.Name == Card.CardName.魔弹 || card.Name == Card.CardName.圣光)
                     return true;
