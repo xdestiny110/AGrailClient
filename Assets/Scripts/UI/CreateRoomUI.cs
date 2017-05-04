@@ -12,7 +12,9 @@ namespace AGrail
         [SerializeField]
         private Dropdown roleChoose;
         [SerializeField]
-        private ToggleGroup peopleNum;
+        private Toggle fourPeople;
+        [SerializeField]
+        private InputField password;
 
         public override WindowType Type
         {
@@ -23,13 +25,14 @@ namespace AGrail
         }
 
         public void OnOKClick()
-        {            
+        {
             var proto = new network.CreateRoomRequest()
             {
                 allow_guest = false,
-                max_player = 4,
-                role_strategy = network.ROLE_STRATEGY.ROLE_STRATEGY_ANY,
+                max_player = fourPeople.isOn ? 4 : 6,
+                role_strategy = (network.ROLE_STRATEGY)(roleChoose.value + 1),
                 room_name = roomTitle.text,
+                password = password.text,
                 seat_mode = 1,
                 first_extension = false,
                 second_extension = false,
