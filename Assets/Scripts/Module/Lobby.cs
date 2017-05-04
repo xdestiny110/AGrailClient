@@ -49,6 +49,7 @@ namespace AGrail
                 role_strategy = proto.role_strategy,
                 has_password = proto.passwordSpecified,
                 room_name = proto.room_name,
+                seat_mode = proto.seat_mode,
                 playing = false,
             };
             GameManager.TCPInstance.Send(new Protobuf() { Proto = proto, ProtoID = ProtoNameIds.CREATEROOMREQUEST });

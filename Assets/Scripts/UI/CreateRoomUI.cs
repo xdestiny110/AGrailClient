@@ -30,8 +30,11 @@ namespace AGrail
                 max_player = 4,
                 role_strategy = network.ROLE_STRATEGY.ROLE_STRATEGY_ANY,
                 room_name = roomTitle.text,
+                seat_mode = 1,
                 first_extension = false,
                 second_extension = false,
+                silence = false,
+                sp_mo_dao = false,
             };
             Lobby.Instance.CreateRoom(proto);
             GameManager.UIInstance.PopWindow(WinMsg.Pause);
