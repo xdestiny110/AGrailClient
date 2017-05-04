@@ -9,12 +9,13 @@
         HealCost = 0x10,
         Discard = 0x20,
         StartUp = 0x40,
+        AdditionAction = 0x80,
+        SkillResponse = 0x100,
 
-        CanSpecial = 0x80,
-        CanAttack = 0x100,
-        CanMagic = 0x200,
-        CanSkill = 0x400,        
-
+        CanSpecial = 0x200,
+        CanAttack = 0x400,
+        CanMagic = 0x800,
+        CanSkill = 0x1000,
     }
 
     public static class PlayerAgentStateExtension

@@ -14,7 +14,7 @@ namespace AGrail
         public string Log
         {
             get { return log; }
-            private set
+            set
             {
                 log = value;
                 MessageSystem<MessageType>.Notify(MessageType.LogChange);

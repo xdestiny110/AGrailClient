@@ -18,6 +18,7 @@ namespace AGrail
         public virtual bool HasBlue { get { return false; } }
         public virtual bool HasCoverd { get { return false; } }
         public virtual string Knelt { get { return null; } }
+        public Dictionary<uint, Skill> Skills = new Dictionary<uint, Skill>();
 
         public virtual void Check(int agentState, List<uint> cardIDs = null, List<uint> playerIDs = null, uint? skillID = null)
         {
@@ -91,7 +92,10 @@ namespace AGrail
                         weaken(new List<uint>() { 0 });
                     }));
             }
-            CheckSkill(agentState, cardIDs, playerIDs, skillID);
+            else if(CheckSkill(agentState, cardIDs, playerIDs, skillID))
+            {
+                
+            }
         }
 
         protected virtual void attack(uint card, uint dstID)

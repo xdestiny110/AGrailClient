@@ -25,6 +25,7 @@ namespace AGrail
         private GameObject cardPrefab;
 
         private Dictionary<int, PlayerStatusQT> players;
+        private List<Button> skillBtns = new List<Button>();
 
         void Awake()
         {
@@ -52,6 +53,8 @@ namespace AGrail
                 btnOK.gameObject.SetActive(false);
                 btnCancel.gameObject.SetActive(false);
             }
+            //初始化技能键
+
         }
 
         void OnDestroy()

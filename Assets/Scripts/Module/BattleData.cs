@@ -77,7 +77,8 @@ namespace AGrail
             Gem = new uint[2];
             Crystal = new uint[2];
             Grail = new uint[2];
-            PlayerInfos.Clear();            
+            PlayerInfos.Clear();
+            PlayerIdxOrder.Clear();            
             Agent = null;
             MainPlayer = null;
             RoomID = null;
@@ -275,12 +276,15 @@ namespace AGrail
                     ((network.BasicActionType)value.commands[0].respond_id).ToString() : ((network.BasicRespondType)value.commands[0].respond_id).ToString()));
                 foreach(var v in value.commands)
                 {
+                    RoleBase r = null;
                     //从proto上来看能够有多重响应
                     //但逻辑上说不通啊...
                     switch (v.respond_id)
                     {
                         case (uint)network.BasicRespondType.RESPOND_REPLY_ATTACK:
-                            if(v.args[2] != MainPlayer.id)
+                            r = RoleFactory.Create(v.src_id);
+                            Dialog.Instance.Log += "等待" + r.RoleName + "应战响应";
+                            if (v.args[2] != MainPlayer.id)
                             {
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
                                 continue;
@@ -289,6 +293,8 @@ namespace AGrail
                             Agent.AgentState = (int)PlayerAgentState.Attacked;
                             break;
                         case (uint)network.BasicRespondType.RESPOND_DISCARD:
+                            r = RoleFactory.Create(v.src_id);
+                            Dialog.Instance.Log += "等待" + r.RoleName + "弃牌响应";
                             if (v.dst_ids[0] != MainPlayer.id)
                             {
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
@@ -298,6 +304,8 @@ namespace AGrail
                             Agent.AgentState = (int)PlayerAgentState.Discard;
                             break;
                         case (uint)network.BasicRespondType.RESPOND_DISCARD_COVER:
+                            r = RoleFactory.Create(v.src_id);
+                            Dialog.Instance.Log += "等待" + r.RoleName + "弃盖牌响应";
                             if (v.dst_ids[0] != MainPlayer.id)
                             {
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
@@ -306,6 +314,8 @@ namespace AGrail
                             Agent.Cmd = v;
                             break;
                         case (uint)network.BasicRespondType.RESPOND_HEAL:
+                            r = RoleFactory.Create(v.src_id);
+                            Dialog.Instance.Log += "等待" + r.RoleName + "治疗响应";
                             if (v.args[0] != MainPlayer.id)
                             {
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
@@ -315,6 +325,8 @@ namespace AGrail
                             Agent.AgentState = (int)PlayerAgentState.HealCost;
                             break;
                         case (uint)network.BasicRespondType.RESPOND_WEAKEN:
+                            r = RoleFactory.Create(v.src_id);
+                            Dialog.Instance.Log += "等待" + r.RoleName + "虚弱响应";
                             if (v.args[0] != MainPlayer.id)
                             {
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
@@ -324,6 +336,8 @@ namespace AGrail
                             Agent.AgentState = (int)PlayerAgentState.Weaken;
                             break;
                         case (uint)network.BasicRespondType.RESPOND_BULLET:
+                            r = RoleFactory.Create(v.src_id);
+                            Dialog.Instance.Log += "等待" + r.RoleName + "魔弹响应";
                             if (v.args[0] != MainPlayer.id)
                             {
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
@@ -333,12 +347,15 @@ namespace AGrail
                             Agent.AgentState = (int)PlayerAgentState.MoDaned;
                             break;
                         case (uint)network.BasicRespondType.RESPOND_ADDITIONAL_ACTION:
+                            r = RoleFactory.Create(v.src_id);
+                            Dialog.Instance.Log += "等待" + r.RoleName + "额外行动响应";
                             if (v.src_id != MainPlayer.id)
                             {
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
                                 continue;
                             }
                             Agent.Cmd = v;
+                            Agent.AgentState = (int)PlayerAgentState.AdditionAction;
                             break;
                         case (uint)network.BasicActionType.ACTION_ANY:
                             if (v.src_id != MainPlayer.id)
@@ -387,10 +404,28 @@ namespace AGrail
                             }
                             Agent.Cmd = v;
                             break;
+                        default:
+                            //技能响应
+                            r = RoleFactory.Create(v.src_id);
+                            Dialog.Instance.Log += "等待" + r.RoleName + "响应技能" + r.Skills[v.respond_id].SkillName + Environment.NewLine;
+                            if (v.src_id != MainPlayer.id)
+                            {
+                                Agent.AgentState = (int)PlayerAgentState.Idle;
+                                continue;
+                            }
+                            Agent.Cmd = v;
+                            Agent.AgentState = (int)PlayerAgentState.SkillResponse;
+                            break;
                     }
                 }
             }
         }
+    }
+
+    public class PlayerInfo
+    {
+        public network.SinglePlayerInfo SinglePlayerInfo;
+        public RoleBase Role;
     }
 
     public enum Team
