@@ -295,7 +295,7 @@ namespace AGrail
             //弃牌
             if (agentState.Check(PlayerAgentState.Discard))
             {
-                if (cardIDs.Count > 0 && cardIDs.Count < BattleData.Instance.Agent.Cmd.args[1])
+                if (cardIDs.Count > 0 && cardIDs.Count <= BattleData.Instance.Agent.Cmd.args[1])
                     return true;
             }
             return false;

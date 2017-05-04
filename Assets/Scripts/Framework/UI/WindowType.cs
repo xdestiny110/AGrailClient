@@ -11,5 +11,6 @@
         Lobby,
         LoginBox,
         RoleChoose31,
+        RoleChooseAny,
     }
 }

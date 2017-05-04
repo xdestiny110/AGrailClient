@@ -128,8 +128,11 @@ namespace AGrail
                     switch (roleStrategy)
                     {
                         case network.ROLE_STRATEGY.ROLE_STRATEGY_31:
-                            GameManager.UIInstance.PushWindow(WindowType.RoleChoose31, WinMsg.Pause);
-                            break;
+                            if (RoleChoose.Instance.RoleIDs.Count > 3)
+                                GameManager.UIInstance.PushWindow(WindowType.RoleChooseAny, WinMsg.Pause);
+                            else
+                                GameManager.UIInstance.PushWindow(WindowType.RoleChoose31, WinMsg.Pause);
+                            break;                        
                         default:
                             Debug.LogError("不支持的选将模式");
                             break;

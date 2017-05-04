@@ -42,10 +42,14 @@ namespace Framework.UI
         {
             switch (msg)
             {
-                case WinMsg.Show:
+                case WinMsg.Show:                    
                     topWin.OnShow();
+                    topWin.CanvasGroup.interactable = true;
+                    topWin.OnResume();
                     break;
                 case WinMsg.Hide:
+                    topWin.CanvasGroup.interactable = false;
+                    topWin.OnPause();
                     topWin.OnHide();
                     break;
                 case WinMsg.Pause:
