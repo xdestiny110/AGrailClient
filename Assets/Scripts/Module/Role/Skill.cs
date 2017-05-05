@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace AGrail
 {
-    public struct Skill
+    public class Skill
     {
         public uint SkillID;
         public string SkillName;

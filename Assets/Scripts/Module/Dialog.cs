@@ -102,8 +102,11 @@ namespace AGrail
                         dstPlayer = BattleData.Instance.GetPlayerInfo(v);
                         r2 = RoleFactory.Create(dstPlayer.role_id);
                         Log += r2.RoleName + ",";
-                    }                        
-                    Log += string.Format("使用了技能{0}" + Environment.NewLine, skillMsg.skill_id);                    
+                    }
+                    if(!r1.Skills.ContainsKey(skillMsg.skill_id))
+                        Log += string.Format("使用了技能{0}" + Environment.NewLine, skillMsg.skill_id);                    
+                    else
+                        Log += string.Format("使用了技能{0}" + Environment.NewLine, r1.Skills[skillMsg.skill_id]);
                     break;
                 case MessageType.GOSSIP:
                     var gossip = parameters[0] as network.Gossip;

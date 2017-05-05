@@ -12,6 +12,8 @@ namespace AGrail
         [SerializeField]
         private Transform handArea;
         [SerializeField]
+        private Transform skillArea;
+        [SerializeField]
         private Button btnOK;
         [SerializeField]
         private Button btnCancel;
@@ -23,9 +25,11 @@ namespace AGrail
         private Button btnSynthetize;        
         [SerializeField]
         private GameObject cardPrefab;
+        [SerializeField]
+        private GameObject skillPrefab;
 
         private Dictionary<int, PlayerStatusQT> players;
-        private List<Button> skillBtns = new List<Button>();
+        private List<SkillUI> skillUIs = new List<SkillUI>();
 
         void Awake()
         {
@@ -35,9 +39,10 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.AgentSetCancelCallback, this);
             MessageSystem<MessageType>.Regist(MessageType.AgentHandChange, this);
             MessageSystem<MessageType>.Regist(MessageType.AgentStateChange, this);
-            
+            MessageSystem<MessageType>.Regist(MessageType.AgentSelectSkill, this);
+
             //先将确认键初始化为准备按钮
-            if(BattleData.Instance.PlayerID != 9)
+            if (BattleData.Instance.PlayerID != 9)
             {
                 btnOK.onClick.RemoveAllListeners();
                 btnOK.onClick.AddListener(() => 
@@ -54,7 +59,16 @@ namespace AGrail
                 btnCancel.gameObject.SetActive(false);
             }
             //初始化技能键
-
+            foreach(var v in BattleData.Instance.Agent.PlayerRole.Skills.Values)
+            {
+                var go = Instantiate(skillPrefab);
+                go.transform.SetParent(skillArea);
+                go.transform.localPosition = Vector3.zero;
+                go.transform.localRotation = Quaternion.identity;
+                go.transform.localScale = Vector3.one;
+                skillUIs.Add(go.GetComponent<SkillUI>());
+                skillUIs[skillUIs.Count - 1].Skill = v;
+            }
         }
 
         void OnDestroy()
@@ -63,6 +77,7 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.AgentSetCancelCallback, this);
             MessageSystem<MessageType>.UnRegist(MessageType.AgentHandChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.AgentStateChange, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.AgentSelectSkill, this);
         }
 
         public void OnEventTrigger(MessageType eventType, params object[] parameters)
@@ -114,6 +129,8 @@ namespace AGrail
                             handArea.GetChild(i).GetComponent<CardUI>().IsEnable = false;
                         foreach(var v in players.Values)                        
                             v.IsEnable = false;
+                        foreach (var v in skillUIs)
+                            v.IsEnable = false;
                         btnOK.interactable = false;
                         btnCancel.interactable = false;
                         btnBuy.interactable = false;
@@ -127,6 +144,8 @@ namespace AGrail
                             handArea.GetChild(i).GetComponent<CardUI>().IsEnable = true;
                         foreach (var v in players.Values)
                             v.IsEnable = true;
+                        foreach (var v in skillUIs)
+                            v.IsEnable = true;
                         if (BattleData.Instance.Agent.AgentState.Check(PlayerAgentState.CanSpecial) &&
                             BattleData.Instance.MainPlayer.max_hand - BattleData.Instance.MainPlayer.hand_count >= 3)
                             btnBuy.interactable = true;
@@ -137,7 +156,19 @@ namespace AGrail
                         if (BattleData.Instance.Agent.AgentState.Check(PlayerAgentState.CanSpecial) &&
                             BattleData.Instance.MainPlayer.crystal + BattleData.Instance.MainPlayer.gem < BattleData.Instance.Agent.PlayerRole.MaxEnergyCount &&
                             BattleData.Instance.Gem[(int)BattleData.Instance.MainPlayer.team] + BattleData.Instance.Crystal[(int)BattleData.Instance.MainPlayer.team] > 0)
-                            btnExtract.interactable = true;
+                            btnExtract.interactable = true;                        
+                    }
+                    break;
+                case MessageType.AgentSelectSkill:
+                    //一次只能选中一个技能
+                    var skillID = (uint)parameters[0];
+                    foreach(var v in skillUIs)
+                    {
+                        if (v.Skill.SkillID != skillID)
+                        {
+                            v.IsEnable = false;
+                            v.IsEnable = true;
+                        }
                     }
                     break;
             }

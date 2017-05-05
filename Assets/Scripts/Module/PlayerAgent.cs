@@ -68,6 +68,7 @@ namespace AGrail
                     PlayerRole.Check(AgentState, selectCards, selectPlayers, selectSkill);
                     break;
                 case MessageType.AgentSelectSkill:
+                    selectSkill = (uint?)parameters[0];                    
                     break;
             }
         }
