@@ -20,10 +20,13 @@ namespace AGrail
         private static List<string[]> cardStr = new List<string[]>();
         static Card()
         {
-            var txt = (Resources.Load<TextAsset>("cardDB")).text;
+            var txt = (Resources.Load<TextAsset>("cardDB")).text;            
             var strs = txt.Split('\n');
             foreach (var v in strs)
-                cardStr.Add(v.Split('\t'));
+            {
+                var s = v.Trim(" \t\r\n".ToCharArray());
+                cardStr.Add(s.Split('\t'));
+            }                
         }
 
         public Card(uint cardID)

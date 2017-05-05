@@ -59,7 +59,7 @@ namespace AGrail
 
         public void OnBtnClick()
         {
-            selectBorder.enabled = !selectBorder.hasBorder;
+            selectBorder.enabled = !selectBorder.enabled;
             if(selectBorder.enabled)
                 MessageSystem<MessageType>.Notify(MessageType.AgentSelectSkill, (uint?)skill.SkillID);
             else

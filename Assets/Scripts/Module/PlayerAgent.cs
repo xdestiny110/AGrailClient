@@ -20,8 +20,7 @@ namespace AGrail
             {
                 Debug.LogFormat("Agent state = {0}", value);
                 agentState = value;
-                if (agentState.Check(PlayerAgentState.Idle))
-                    reset();
+                reset();
                 MessageSystem<MessageType>.Notify(MessageType.AgentStateChange, agentState);
             }
         }
@@ -34,7 +33,7 @@ namespace AGrail
             PlayerRole = RoleFactory.Create(roleID);
             MessageSystem<MessageType>.Regist(MessageType.AgentSelectCard, this);
             MessageSystem<MessageType>.Regist(MessageType.AgentSelectPlayer, this);
-            MessageSystem<MessageType>.Regist(MessageType.AgentSelectSkill, this);
+            MessageSystem<MessageType>.Regist(MessageType.AgentSelectSkill, this);            
         }
 
         private void reset()

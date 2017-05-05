@@ -35,11 +35,12 @@ namespace AGrail
         {
             players = GetComponent<BattleUIQT>().PlayersStatus;
 
+            MessageSystem<MessageType>.Regist(MessageType.AgentUpdate, this);
             MessageSystem<MessageType>.Regist(MessageType.AgentSetOKCallback, this);
             MessageSystem<MessageType>.Regist(MessageType.AgentSetCancelCallback, this);
             MessageSystem<MessageType>.Regist(MessageType.AgentHandChange, this);
             MessageSystem<MessageType>.Regist(MessageType.AgentStateChange, this);
-            MessageSystem<MessageType>.Regist(MessageType.AgentSelectSkill, this);
+            MessageSystem<MessageType>.Regist(MessageType.AgentSelectSkill, this);            
 
             //先将确认键初始化为准备按钮
             if (BattleData.Instance.PlayerID != 9)
@@ -50,29 +51,19 @@ namespace AGrail
                     BattleData.Instance.Ready(BattleData.Instance.MainPlayer.ready ? false : true);                    
                 });
                 btnOK.gameObject.SetActive(true);
-                btnCancel.gameObject.SetActive(true);
+                btnCancel.gameObject.SetActive(true);               
                 btnCancel.interactable = false;
             }
             else
             {
-                btnOK.gameObject.SetActive(false);
-                btnCancel.gameObject.SetActive(false);
-            }
-            //初始化技能键
-            foreach(var v in BattleData.Instance.Agent.PlayerRole.Skills.Values)
-            {
-                var go = Instantiate(skillPrefab);
-                go.transform.SetParent(skillArea);
-                go.transform.localPosition = Vector3.zero;
-                go.transform.localRotation = Quaternion.identity;
-                go.transform.localScale = Vector3.one;
-                skillUIs.Add(go.GetComponent<SkillUI>());
-                skillUIs[skillUIs.Count - 1].Skill = v;
+                btnOK.interactable = false;
+                btnCancel.interactable = false;
             }
         }
 
         void OnDestroy()
         {
+            MessageSystem<MessageType>.UnRegist(MessageType.AgentUpdate, this);
             MessageSystem<MessageType>.UnRegist(MessageType.AgentSetOKCallback, this);
             MessageSystem<MessageType>.UnRegist(MessageType.AgentSetCancelCallback, this);
             MessageSystem<MessageType>.UnRegist(MessageType.AgentHandChange, this);
@@ -84,6 +75,21 @@ namespace AGrail
         {
             switch (eventType)
             {
+                case MessageType.AgentUpdate:
+                    btnOK.interactable = false;
+                    btnOK.onClick.RemoveAllListeners();
+                    //初始化技能键
+                    foreach (var v in BattleData.Instance.Agent.PlayerRole.Skills.Values)
+                    {
+                        var go = Instantiate(skillPrefab);
+                        go.transform.SetParent(skillArea);
+                        go.transform.localPosition = Vector3.zero;
+                        go.transform.localRotation = Quaternion.identity;
+                        go.transform.localScale = Vector3.one;
+                        skillUIs.Add(go.GetComponent<SkillUI>());
+                        skillUIs[skillUIs.Count - 1].Skill = v;
+                    }
+                    break;
                 case MessageType.AgentHandChange:
                     for(int i = 0; i < handArea.childCount; i++)                    
                         Destroy(handArea.GetChild(i).gameObject);                    

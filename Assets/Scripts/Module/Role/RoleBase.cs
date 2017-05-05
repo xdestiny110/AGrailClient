@@ -70,14 +70,7 @@ namespace AGrail
             }
             else if (CheckModaned(agentState, cardIDs, playerIDs, skillID))
             {
-                MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetOKCallback, true,
-                    new UnityEngine.Events.UnityAction(() =>
-                    {
-                        if (cardIDs.Count > 0)
-                            moDaned(new Card(cardIDs[0]));
-                        else
-                            moDaned();
-                    }));                
+                addModanedCB(agentState, cardIDs, playerIDs, skillID);
             }
             else if (CheckWeaken(agentState, cardIDs, playerIDs, skillID))
             {
@@ -94,8 +87,42 @@ namespace AGrail
             }
             else if(CheckSkill(agentState, cardIDs, playerIDs, skillID))
             {
-                
+                addSkillCB(agentState, cardIDs, playerIDs, skillID);
             }
+        }
+
+        protected virtual void addModanedCB(int agentState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
+        {
+            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetOKCallback, true,
+            new UnityEngine.Events.UnityAction(() =>
+            {
+                if (cardIDs.Count > 0)
+                    moDaned(new Card(cardIDs[0]));
+                else
+                    moDaned();
+            }));
+        }
+
+        protected virtual void addSkillCB(int agentState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
+        {
+            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetOKCallback, true,
+                new UnityEngine.Events.UnityAction(() =>
+                {
+                    //如果没有，则视为是在响应技能
+                    if(skillID.HasValue)
+                        useSkill(skillID.Value, BattleData.Instance.MainPlayer.id, playerIDs, cardIDs, new List<uint>() { 1 });
+                    else
+                        useSkill(BattleData.Instance.Agent.Cmd.respond_id, BattleData.Instance.MainPlayer.id, playerIDs, cardIDs, new List<uint>() { 1 });
+                }));
+            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetCancelCallback, true,
+                new UnityEngine.Events.UnityAction(() =>
+                {
+                    //如果没有，则视为是在响应技能
+                    if (skillID.HasValue)
+                        useSkill(skillID.Value, BattleData.Instance.MainPlayer.id, playerIDs, cardIDs, new List<uint>() { 0 });
+                    else
+                        useSkill(BattleData.Instance.Agent.Cmd.respond_id, BattleData.Instance.MainPlayer.id, playerIDs, cardIDs, new List<uint>() { 0 });
+                }));
         }
 
         protected virtual void attack(uint card, uint dstID)
@@ -148,6 +175,8 @@ namespace AGrail
             sendReponseMsg((uint)BasicRespondType.RESPOND_DISCARD, BattleData.Instance.MainPlayer.id,
                 null, NIDs, new List<uint>() { 1 });
         }
+
+        
 
         public virtual void AttackedReply(Card card = null, uint? dstID = null)
         {
@@ -314,17 +343,30 @@ namespace AGrail
 
         public virtual bool CheckBuy(uint gem, uint crystal)
         {
-            return (gem == 1 && crystal == 1);
+            var tGem = BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team];
+            var tCrstal = BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team];
+            return (tGem + tCrstal < 5 && ((gem == 1 && crystal == 1) || 
+                (tGem + tCrstal == 4 && gem + crystal == 1)));
         }
 
         public virtual bool CheckExtract(uint gem, uint crystal, uint existEnergy)
         {
-            return (gem + crystal <= 2 && crystal + gem > 0 && gem + crystal + existEnergy <= MaxEnergyCount);
+            return (gem + crystal <= 2 && crystal + gem > 0 && gem + crystal + existEnergy <= MaxEnergyCount &&
+                BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team] >= gem &&
+                BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team] >= crystal);
         }
         
         public virtual bool CheckSynthetize(uint gem, uint crystal)
         {
-            return (gem + crystal == 3);
+            return (gem + crystal == 3 &&
+                BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team] >= gem &&
+                BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team] >= crystal);
+        }
+
+        //为以后做成能够自动屏蔽无法选择的牌做准备
+        public virtual bool CanSelect(int agentState)
+        {
+            return false;
         }
 
         protected void sendActionMsg(BasicActionType actionType, uint srcID, List<uint> dstID = null, List<uint> cardIDs = null, uint? actionID = null, List<uint> args = null)

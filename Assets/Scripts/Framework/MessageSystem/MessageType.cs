@@ -77,5 +77,6 @@
         AgentSetCancelCallback,
         AgentStateChange,
         AgentHandChange,
+        AgentUpdate,
     }
 }

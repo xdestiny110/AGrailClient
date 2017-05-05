@@ -84,3 +84,4 @@ MonoBehaviour:
   - AgentSetCancelCallback
   - AgentStateChange
   - AgentHandChange
+  - AgentUpdate

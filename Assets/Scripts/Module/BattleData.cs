@@ -78,8 +78,8 @@ namespace AGrail
             Crystal = new uint[2];
             Grail = new uint[2];
             PlayerInfos.Clear();
-            PlayerIdxOrder.Clear();            
-            Agent = null;
+            PlayerIdxOrder.Clear();
+            Agent = new PlayerAgent(0);
             MainPlayer = null;
             RoomID = null;
             IsStarted = false;
@@ -177,7 +177,10 @@ namespace AGrail
                         player.role_id = v.role_id;
                         MessageSystem<MessageType>.Notify(MessageType.PlayerRoleChange, idx, player.role_id);
                         if(player.id == PlayerID)
-                            Agent = new PlayerAgent(player.role_id);                            
+                        {
+                            Agent = new PlayerAgent(player.role_id);
+                            MessageSystem<MessageType>.Notify(MessageType.AgentUpdate);
+                        }                                     
                     }
                     if (v.nicknameSpecified)
                     {
@@ -347,7 +350,7 @@ namespace AGrail
                             Agent.AgentState = (int)PlayerAgentState.MoDaned;
                             break;
                         case (uint)network.BasicRespondType.RESPOND_ADDITIONAL_ACTION:
-                            r = RoleFactory.Create(v.src_id);
+                            r = RoleFactory.Create(GetPlayerInfo(v.src_id).role_id);
                             Dialog.Instance.Log += "等待" + r.RoleName + "额外行动响应" + Environment.NewLine;
                             if (v.src_id != MainPlayer.id)
                             {
@@ -406,7 +409,7 @@ namespace AGrail
                             break;
                         default:
                             //技能响应
-                            r = RoleFactory.Create(v.src_id);
+                            r = RoleFactory.Create(GetPlayerInfo(v.src_id).role_id);
                             Dialog.Instance.Log += "等待" + r.RoleName + "响应技能" + r.Skills[v.respond_id].SkillName + Environment.NewLine;
                             if (v.src_id != MainPlayer.id)
                             {

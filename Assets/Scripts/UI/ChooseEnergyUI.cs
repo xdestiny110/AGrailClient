@@ -59,7 +59,7 @@ namespace AGrail
 
         public void OnGemPlusClick()
         {
-            if(gemNum < BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team])
+            if(gemNum < 5)
             {
                 gemNum++;
                 lblGemNum.text = gemNum.ToString();
@@ -79,9 +79,9 @@ namespace AGrail
 
         public void OnCrystalPlusClick()
         {
-            if (crystalNum < BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team])
+            if (crystalNum < 5)
             {
-                gemNum++;
+                crystalNum++;
                 lblCrystalNum.text = crystalNum.ToString();
             }
             btnOK.interactable = check(gemNum, crystalNum);

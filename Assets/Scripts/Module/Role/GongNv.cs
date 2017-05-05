@@ -3,6 +3,7 @@ using System.Collections;
 using System;
 using System.Collections.Generic;
 using network;
+using Framework.Message;
 
 namespace AGrail
 {
@@ -68,7 +69,7 @@ namespace AGrail
                     if (c.Type == Card.CardType.magic)
                         return true;
                 }
-            }
+            }            
             return false;
         }
 
@@ -80,7 +81,7 @@ namespace AGrail
                     sendReponseMsg(301, srcID, null, null, args);
                     break;
                 case 302:
-                    sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, srcID, dstID, null, 302);
+                    sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, srcID, dstID, cardIds, 302);
                     break;
                 case 303:
                     sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, srcID, dstID, null, 303);
@@ -92,7 +93,6 @@ namespace AGrail
                     break;
             }
         }
-
     }
 }
 
