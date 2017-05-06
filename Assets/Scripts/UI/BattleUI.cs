@@ -269,7 +269,7 @@ namespace AGrail
                 Destroy(ShowCardArea.GetChild(i).gameObject);
             foreach (var v in card_ids)
             {
-                var card = new Card(v);
+                var card = Card.GetCard(v);
                 var go = new GameObject();
                 go.transform.SetParent(ShowCardArea);
                 go.transform.localScale = Vector3.one;

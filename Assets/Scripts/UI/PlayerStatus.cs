@@ -170,7 +170,7 @@ namespace AGrail
                 foreach (var v in value)
                 {
                     Texture2D icon = new Texture2D(0, 0);
-                    var card = new Card(v);
+                    var card = Card.GetCard(v);
 
                     if (card.Name == Card.CardName.中毒)
                         icon = Resources.Load<Texture2D>("Icons/du");

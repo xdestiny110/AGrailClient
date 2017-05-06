@@ -52,9 +52,9 @@ namespace AGrail
                         if (cardIDs.Count > 0)
                         {
                             if(playerIDs.Count > 0)
-                                AttackedReply(new Card(cardIDs[0]), playerIDs[0]);
+                                AttackedReply(Card.GetCard(cardIDs[0]), playerIDs[0]);
                             else
-                                AttackedReply(new Card(cardIDs[0]));
+                                AttackedReply(Card.GetCard(cardIDs[0]));
                         }                            
                         else
                             AttackedReply();
@@ -97,7 +97,7 @@ namespace AGrail
             new UnityEngine.Events.UnityAction(() =>
             {
                 if (cardIDs.Count > 0)
-                    moDaned(new Card(cardIDs[0]));
+                    moDaned(Card.GetCard(cardIDs[0]));
                 else
                     moDaned();
             }));
@@ -114,15 +114,14 @@ namespace AGrail
                     else
                         useSkill(BattleData.Instance.Agent.Cmd.respond_id, BattleData.Instance.MainPlayer.id, playerIDs, cardIDs, new List<uint>() { 1 });
                 }));
-            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetCancelCallback, true,
-                new UnityEngine.Events.UnityAction(() =>
-                {
-                    //如果没有，则视为是在响应技能
-                    if (skillID.HasValue)
-                        useSkill(skillID.Value, BattleData.Instance.MainPlayer.id, playerIDs, cardIDs, new List<uint>() { 0 });
-                    else
+            if (!skillID.HasValue)
+            {
+                MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetCancelCallback, true,
+                    new UnityEngine.Events.UnityAction(() =>
+                    {
                         useSkill(BattleData.Instance.Agent.Cmd.respond_id, BattleData.Instance.MainPlayer.id, playerIDs, cardIDs, new List<uint>() { 0 });
-                }));
+                    }));
+            }
         }
 
         protected virtual void attack(uint card, uint dstID)
@@ -236,7 +235,7 @@ namespace AGrail
                 //是攻击牌，是敌方，且能够攻击（潜行之类的）
                 if (skillID == null && cardIDs.Count == 1 && playerIDs.Count == 1)
                 {
-                    var card = new Card(cardIDs[0]);
+                    var card = Card.GetCard(cardIDs[0]);
                     var player = BattleData.Instance.PlayerInfos.Find(p => { return p.id == playerIDs[0]; });
                     if (card.Type == Card.CardType.attack && player.team != BattleData.Instance.MainPlayer.team &&
                         !(player.role_id == (uint)RoleID.AnSha && player.is_knelt))
@@ -253,7 +252,7 @@ namespace AGrail
             {
                 if (skillID == null && cardIDs.Count == 1 && playerIDs.Count == 1)
                 {
-                    var card = new Card(cardIDs[0]);
+                    var card = Card.GetCard(cardIDs[0]);
                     var player = BattleData.Instance.PlayerInfos.Find(p => { return p.id == playerIDs[0]; });
                     if (card.Type == Card.CardType.magic && card.Element != Card.CardElement.light)
                     {
@@ -294,10 +293,10 @@ namespace AGrail
             {
                 if (cardIDs.Count == 1 && skillID == null)
                 {
-                    Card c1 = new Card(cardIDs[0]);
+                    Card c1 = Card.GetCard(cardIDs[0]);
                     if (c1.Element == Card.CardElement.light)
                         return true;
-                    Card c2 = new Card(BattleData.Instance.Agent.Cmd.args[1]);
+                    Card c2 = Card.GetCard(BattleData.Instance.Agent.Cmd.args[1]);
                     if (playerIDs.Count == 1 && playerIDs[0] != BattleData.Instance.Agent.Cmd.args[3] && 
                         BattleData.Instance.GetPlayerInfo(playerIDs[0]).team != BattleData.Instance.MainPlayer.team &&
                         ((c1.Element == Card.CardElement.darkness || c1.Element == c2.Element) && BattleData.Instance.Agent.Cmd.args[0] < 1))
@@ -316,7 +315,7 @@ namespace AGrail
             {
                 if (cardIDs.Count == 0 && playerIDs.Count == 0 && skillID == null)
                     return true;
-                var card = new Card(cardIDs[0]);
+                var card = Card.GetCard(cardIDs[0]);
                 if (card.Name == Card.CardName.魔弹 || card.Name == Card.CardName.圣光)
                     return true;
             }

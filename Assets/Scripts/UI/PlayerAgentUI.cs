@@ -101,7 +101,7 @@ namespace AGrail
                         go.transform.localRotation = Quaternion.identity;
                         go.transform.localScale = Vector3.one;
                         var cardUI = go.GetComponent<CardUI>();
-                        cardUI.Card = new Card(v);
+                        cardUI.Card = Card.GetCard(v);
                     }                    
                     break;
                 case MessageType.AgentSetOKCallback:

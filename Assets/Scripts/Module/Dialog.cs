@@ -86,7 +86,7 @@ namespace AGrail
                         Log += "展示了";                       
                     foreach (var v in cardMsg.card_ids)
                     {
-                        var c = new Card(v);
+                        var c = Card.GetCard(v);
                         Log += c.Name + ",";
                     }                        
                     Log += Environment.NewLine;
