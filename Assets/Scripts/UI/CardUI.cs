@@ -28,8 +28,14 @@ namespace AGrail
             set
             {
                 isEnable = value;
-                if (!isEnable)                
-                    selectBorder.enabled = false;                
+                if (!isEnable)
+                {
+                    selectBorder.enabled = false;
+                    btn.interactable = false;
+                    BattleData.Instance.Agent.SelectCards.Remove(card.ID);
+                }
+                else
+                    btn.interactable = true;
             }
         }
 
@@ -48,6 +54,7 @@ namespace AGrail
                 }
                 IsEnable = true;
             }
+            get { return card; }
         }
 
         public void OnCardClick()
@@ -55,7 +62,17 @@ namespace AGrail
             if (isEnable)
             {
                 selectBorder.enabled = !selectBorder.enabled;
-                MessageSystem<MessageType>.Notify(MessageType.AgentSelectCard, card.ID);
+                if (selectBorder.enabled)
+                {
+                    BattleData.Instance.Agent.SelectCards.Add(card.ID);
+                    if (BattleData.Instance.Agent.AgentUIState == 10 || BattleData.Instance.Agent.AgentUIState == 11)
+                        BattleData.Instance.Agent.AgentUIState = (card.Type == Card.CardType.attack) ? (uint)1 : 2;
+                }
+                else
+                {
+                    BattleData.Instance.Agent.SelectCards.Remove(card.ID);
+                    BattleData.Instance.Agent.AgentState = BattleData.Instance.Agent.AgentState;
+                }               
             }    
         }
 

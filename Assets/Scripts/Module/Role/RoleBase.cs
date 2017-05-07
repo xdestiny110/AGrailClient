@@ -18,134 +18,30 @@ namespace AGrail
         public virtual bool HasBlue { get { return false; } }
         public virtual bool HasCoverd { get { return false; } }
         public virtual string Knelt { get { return null; } }
-        public Dictionary<uint, Skill> Skills = new Dictionary<uint, Skill>();
+        public Dictionary<uint, Skill> Skills = new Dictionary<uint, Skill>();        
 
-        public virtual void Check(int agentState, List<uint> cardIDs = null, List<uint> playerIDs = null, uint? skillID = null)
-        {
-            if (cardIDs == null)
-                cardIDs = new List<uint>();
-            if (playerIDs == null)
-                playerIDs = new List<uint>();
-            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetOKCallback, false);
-            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetCancelCallback, false);
-            if (CheckCanAttack(agentState, cardIDs, playerIDs, skillID))
-            {
-                MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetOKCallback, true,
-                    new UnityEngine.Events.UnityAction(() =>
-                    {
-                        attack(cardIDs[0], playerIDs[0]);
-                    }));
-            }
-            else if (CheckCanMagic(agentState, cardIDs, playerIDs, skillID))
-            {
-                MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetOKCallback, true,
-                    new UnityEngine.Events.UnityAction(() =>
-                    {
-                        magic(cardIDs[0], playerIDs[0]);
-                    }));
-            }
-            else if (CheckAttacked(agentState, cardIDs, playerIDs, skillID))
-            {
-                MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetOKCallback, true,
-                    new UnityEngine.Events.UnityAction(() =>
-                    {
-                        if (cardIDs.Count > 0)
-                        {
-                            if(playerIDs.Count > 0)
-                                AttackedReply(Card.GetCard(cardIDs[0]), playerIDs[0]);
-                            else
-                                AttackedReply(Card.GetCard(cardIDs[0]));
-                        }                            
-                        else
-                            AttackedReply();
-                    }));
-             }
-            else if (CheckDiscard(agentState, cardIDs, playerIDs, skillID))
-            {
-                MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetOKCallback, true,
-                    new UnityEngine.Events.UnityAction(() =>
-                    {
-                        drop(cardIDs);
-                    }));
-            }
-            else if (CheckModaned(agentState, cardIDs, playerIDs, skillID))
-            {
-                addModanedCB(agentState, cardIDs, playerIDs, skillID);
-            }
-            else if (CheckWeaken(agentState, cardIDs, playerIDs, skillID))
-            {
-                MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetOKCallback, true,
-                    new UnityEngine.Events.UnityAction(() =>
-                    {
-                        weaken(new List<uint>() { 1 });
-                    }));
-                MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetCancelCallback, true,
-                    new UnityEngine.Events.UnityAction(() =>
-                    {
-                        weaken(new List<uint>() { 0 });
-                    }));
-            }
-            else if(CheckSkill(agentState, cardIDs, playerIDs, skillID))
-            {
-                addSkillCB(agentState, cardIDs, playerIDs, skillID);
-            }
-        }
-
-        protected virtual void addModanedCB(int agentState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
-        {
-            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetOKCallback, true,
-            new UnityEngine.Events.UnityAction(() =>
-            {
-                if (cardIDs.Count > 0)
-                    moDaned(Card.GetCard(cardIDs[0]));
-                else
-                    moDaned();
-            }));
-        }
-
-        protected virtual void addSkillCB(int agentState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
-        {
-            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetOKCallback, true,
-                new UnityEngine.Events.UnityAction(() =>
-                {
-                    //如果没有，则视为是在响应技能
-                    if(skillID.HasValue)
-                        useSkill(skillID.Value, BattleData.Instance.MainPlayer.id, playerIDs, cardIDs, new List<uint>() { 1 });
-                    else
-                        useSkill(BattleData.Instance.Agent.Cmd.respond_id, BattleData.Instance.MainPlayer.id, playerIDs, cardIDs, new List<uint>() { 1 });
-                }));
-            if (!skillID.HasValue)
-            {
-                MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSetCancelCallback, true,
-                    new UnityEngine.Events.UnityAction(() =>
-                    {
-                        useSkill(BattleData.Instance.Agent.Cmd.respond_id, BattleData.Instance.MainPlayer.id, playerIDs, cardIDs, new List<uint>() { 0 });
-                    }));
-            }
-        }
-
-        protected virtual void attack(uint card, uint dstID)
+        public virtual void Attack(uint card, uint dstID)
         {
             //普通攻击
             sendActionMsg(BasicActionType.ACTION_ATTACK, BattleData.Instance.MainPlayer.id,
                 new List<uint>() { dstID }, new List<uint>() { card });
         }
 
-        protected virtual void magic(uint card, uint dstID)
+        public virtual void Magic(uint card, uint dstID)
         {
             //基础法术
             sendActionMsg(BasicActionType.ACTION_MAGIC, BattleData.Instance.MainPlayer.id,
                 new List<uint>() { dstID }, new List<uint>() { card });
         }
 
-        protected virtual void weaken(List<uint> args)
+        public virtual void Weaken(List<uint> args)
         {
             //被虚弱 
             sendReponseMsg((uint)BasicRespondType.RESPOND_WEAKEN, BattleData.Instance.MainPlayer.id,
                 null, null, args);
         }
 
-        protected virtual void moDaned(Card card = null)
+        public virtual void MoDaned(Card card = null)
         {
             //被魔弹
             if (card != null)
@@ -162,20 +58,18 @@ namespace AGrail
                     null, null, new List<uint>() { 2 });
         }
 
-        protected virtual void heal(uint srcID, List<uint> args = null)
+        public virtual void Heal(uint srcID, List<uint> args = null)
         {
             //治疗 
             sendReponseMsg((uint)BasicRespondType.RESPOND_HEAL, srcID, null, null, args);
         }
 
-        protected virtual void drop(List<uint> NIDs)
+        public virtual void Drop(List<uint> NIDs)
         {
             //弃牌
             sendReponseMsg((uint)BasicRespondType.RESPOND_DISCARD, BattleData.Instance.MainPlayer.id,
                 null, NIDs, new List<uint>() { 1 });
-        }
-
-        
+        }        
 
         public virtual void AttackedReply(Card card = null, uint? dstID = null)
         {
@@ -222,89 +116,100 @@ namespace AGrail
                 null, null, 2, new List<uint>() { gemNum, cristalNum });
         }
 
-        protected virtual void useSkill(uint skillID, uint srcID, List<uint> dstID = null, List<uint> cardIds = null, List<uint> args = null)
+        public virtual void AdditionAction()
         {
 
         }
 
-        public virtual bool CheckCanAttack(int agentState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
+        public virtual void UseSkill(bool isOK)
         {
-            //基础攻击
-            if (agentState.Check(PlayerAgentState.CanAttack))
+
+        }
+
+        public virtual bool CheckOK(uint uiState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
+        {
+            switch (uiState)
             {
-                //是攻击牌，是敌方，且能够攻击（潜行之类的）
-                if (skillID == null && cardIDs.Count == 1 && playerIDs.Count == 1)
-                {
-                    var card = Card.GetCard(cardIDs[0]);
-                    var player = BattleData.Instance.PlayerInfos.Find(p => { return p.id == playerIDs[0]; });
-                    if (card.Type == Card.CardType.attack && player.team != BattleData.Instance.MainPlayer.team &&
-                        !(player.role_id == (uint)RoleID.AnSha && player.is_knelt))
+                case 1:                
+                case 3:
+                    if (cardIDs.Count == 1 && playerIDs.Count == 1)
                         return true;
-                }
-            }
-            return false;
-        }
-
-        public virtual bool CheckCanMagic(int agentState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
-        {
-            //基础魔法
-            if (agentState.Check(PlayerAgentState.CanMagic))
-            {
-                if (skillID == null && cardIDs.Count == 1 && playerIDs.Count == 1)
-                {
-                    var card = Card.GetCard(cardIDs[0]);
-                    var player = BattleData.Instance.PlayerInfos.Find(p => { return p.id == playerIDs[0]; });
-                    if (card.Type == Card.CardType.magic && card.Element != Card.CardElement.light)
+                    break;
+                case 2:
+                    if(cardIDs.Count == 1 && playerIDs.Count == 1)
                     {
-                        if (card.Name != Card.CardName.魔弹)
+                        if (Card.GetCard(cardIDs[0]).Name != Card.CardName.魔弹)
                             return true;
                         else
                         {
-                            //确认是否是下一个对方玩家                            
-                            foreach(var v in BattleData.Instance.PlayerIdxOrder)
+                            foreach (var v in BattleData.Instance.PlayerIdxOrder)
                             {
                                 if (BattleData.Instance.PlayerInfos[v].team != BattleData.Instance.MainPlayer.team)
                                 {
                                     if (BattleData.Instance.PlayerInfos[v].id == playerIDs[0])
                                         return true;
                                     break;
-                                }                                    
+                                }
                             }
-                        }
+                        }    
                     }
-                }
+                    break;
+                case 4:
+                    if (cardIDs.Count == 1)
+                        return true;
+                    break;
+                case 5:
+                    if (cardIDs.Count > 0)
+                        return true;
+                    break;
+                case 6:
+                case 12:
+                case 13:
+                case 14:
+                    return true;                    
             }
             return false;
         }
 
-        public virtual bool CheckWeaken(int agentState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
+        public virtual bool CheckCancel(uint uiState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
         {
-            //虚弱响应
-            if (agentState.Check(PlayerAgentState.Weaken))
+            switch (uiState)
+            {
+                case 3:
+                case 4:
+                case 6:
+                case 12:
+                case 13:
+                case 14:
+                    return true;
+            }
+            return false;
+        }
+        
+        public virtual bool CheckBuy(uint uiState)
+        {
+            var m = BattleData.Instance.MainPlayer;
+            if (uiState == 10 && m.max_hand - m.hand_count >= 3 &&
+                BattleData.Instance.Gem[m.team] + BattleData.Instance.Crystal[m.team] <= 4)
                 return true;
             return false;
         }
 
-        public virtual bool CheckAttacked(int agentState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
+        public virtual bool CheckExtract(uint uiState)
         {
-            //应战
-            //还得斟酌下...必中还没弄进去
-            if (agentState.Check(PlayerAgentState.Attacked))
-            {
-                if (cardIDs.Count == 1 && skillID == null)
-                {
-                    Card c1 = Card.GetCard(cardIDs[0]);
-                    if (c1.Element == Card.CardElement.light)
-                        return true;
-                    Card c2 = Card.GetCard(BattleData.Instance.Agent.Cmd.args[1]);
-                    if (playerIDs.Count == 1 && playerIDs[0] != BattleData.Instance.Agent.Cmd.args[3] && 
-                        BattleData.Instance.GetPlayerInfo(playerIDs[0]).team != BattleData.Instance.MainPlayer.team &&
-                        ((c1.Element == Card.CardElement.darkness || c1.Element == c2.Element) && BattleData.Instance.Agent.Cmd.args[0] < 1))
-                        return true;
-                }
-                if (cardIDs.Count == 0 && skillID == null && playerIDs.Count == 0)
-                    return true;
-            }
+            var m = BattleData.Instance.MainPlayer;
+            if (uiState == 10 && m.gem + m.crystal < BattleData.Instance.Agent.PlayerRole.MaxEnergyCount &&
+                BattleData.Instance.Gem[m.team] + BattleData.Instance.Crystal[m.team] > 0)
+                return true;
+            return false;
+        }
+
+        public virtual bool CheckSynthetize(uint uiState)
+        {
+            var m = BattleData.Instance.MainPlayer;
+            if (uiState == 10 && m.max_hand - m.hand_count >= 3 &&
+                BattleData.Instance.Gem[m.team] + BattleData.Instance.Crystal[m.team] >= 3)
+                return true;
             return false;
         }
 
@@ -322,49 +227,62 @@ namespace AGrail
             return false;
         }
 
-        public virtual bool CheckDiscard(int agentState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
+        //判断能否选择牌/角色/技能
+        public virtual bool CanSelect(uint uiState, Card card)
         {
-            //弃牌
-            if (agentState.Check(PlayerAgentState.Discard))
+            switch (uiState)
             {
-                if (cardIDs.Count > 0 && cardIDs.Count <= BattleData.Instance.Agent.Cmd.args[1])
-                    return true;
+                case 10:
+                case 11:
+                    if (card.Element != Card.CardElement.light)
+                        return true;
+                    break;
+                case 1:
+                    if (card.Type == Card.CardType.attack)
+                        return true;
+                    break;
+                case 2:
+                    if (card.Type == Card.CardType.magic && card.Element != Card.CardElement.light)
+                        return true;
+                    break;
+                case 3:
+                    if (card.Element == Card.CardElement.light ||
+                        (((card.Element == Card.CardElement.darkness || card.Element == Card.GetCard(BattleData.Instance.Agent.Cmd.args[1]).Element) 
+                            && BattleData.Instance.Agent.Cmd.args[0] < 1)))
+                        return true;
+                    break;
+                case 4:
+                    if (card.Name == Card.CardName.魔弹 || card.Element == Card.CardElement.light)
+                        return true;
+                    break;
+                case 5:
+                    return true;                    
             }
             return false;
         }
 
-        public virtual bool CheckSkill(int agentState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
+        public virtual bool CanSelect(uint uiState, network.SinglePlayerInfo player)
         {
-            //确认技能
-            //肯定得重写，但先设成virtual
+            switch (uiState)
+            {
+                case 1:
+                case 2:
+                    if (player.team != BattleData.Instance.MainPlayer.team && 
+                        !(player.role_id == (uint)RoleID.AnSha && player.is_knelt))                    
+                            return true;                    
+                    break;
+                case 3:
+                    if (player.team != BattleData.Instance.MainPlayer.team && player.id != BattleData.Instance.Agent.Cmd.args[3])
+                        return true;
+                    break;
+            }
             return false;
         }
 
-        public virtual bool CheckBuy(uint gem, uint crystal)
+        public virtual bool CanSelect(uint uiState, Skill skill)
         {
-            var tGem = BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team];
-            var tCrstal = BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team];
-            return (tGem + tCrstal < 5 && ((gem == 1 && crystal == 1) || 
-                (tGem + tCrstal == 4 && gem + crystal == 1)));
-        }
-
-        public virtual bool CheckExtract(uint gem, uint crystal, uint existEnergy)
-        {
-            return (gem + crystal <= 2 && crystal + gem > 0 && gem + crystal + existEnergy <= MaxEnergyCount &&
-                BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team] >= gem &&
-                BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team] >= crystal);
-        }
-        
-        public virtual bool CheckSynthetize(uint gem, uint crystal)
-        {
-            return (gem + crystal == 3 &&
-                BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team] >= gem &&
-                BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team] >= crystal);
-        }
-
-        //为以后做成能够自动屏蔽无法选择的牌做准备
-        public virtual bool CanSelect(int agentState)
-        {
+            if ((uiState == 10 || uiState == 11) && skill.SkillType == SkillType.法术)
+                return true;
             return false;
         }
 

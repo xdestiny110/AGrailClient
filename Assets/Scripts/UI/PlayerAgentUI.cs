@@ -30,6 +30,7 @@ namespace AGrail
 
         private Dictionary<int, PlayerStatusQT> players;
         private List<SkillUI> skillUIs = new List<SkillUI>();
+        private List<CardUI> cardUIs = new List<CardUI>();
 
         void Awake()
         {
@@ -40,7 +41,8 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.AgentSetCancelCallback, this);
             MessageSystem<MessageType>.Regist(MessageType.AgentHandChange, this);
             MessageSystem<MessageType>.Regist(MessageType.AgentStateChange, this);
-            MessageSystem<MessageType>.Regist(MessageType.AgentSelectSkill, this);            
+            MessageSystem<MessageType>.Regist(MessageType.AgentSelectSkill, this);
+            MessageSystem<MessageType>.Regist(MessageType.AgentUIStateChange, this);
 
             //先将确认键初始化为准备按钮
             if (BattleData.Instance.PlayerID != 9)
@@ -69,15 +71,47 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.AgentHandChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.AgentStateChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.AgentSelectSkill, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.AgentUIStateChange, this);
         }
 
         public void OnEventTrigger(MessageType eventType, params object[] parameters)
         {
             switch (eventType)
             {
+                case MessageType.AgentUIStateChange:
+                    //UI状态变化，确认哪些能够选择
+                    foreach (var v in cardUIs)
+                    {
+                        if (BattleData.Instance.Agent.PlayerRole.CanSelect(BattleData.Instance.Agent.AgentUIState, v.Card))
+                            v.IsEnable = true;
+                        else
+                            v.IsEnable = false;
+                    }
+                    foreach (var v in skillUIs)
+                    {
+                        if (BattleData.Instance.Agent.PlayerRole.CanSelect(BattleData.Instance.Agent.AgentUIState, v.Skill))
+                            v.IsEnable = true;
+                        else
+                            v.IsEnable = false;
+                    }
+                    foreach (var v in players.Keys)
+                    {
+                        if (BattleData.Instance.Agent.PlayerRole.CanSelect(BattleData.Instance.Agent.AgentUIState, BattleData.Instance.PlayerInfos[v]))
+                            players[v].IsEnable = true;
+                        else
+                            players[v].IsEnable = false;
+                    }
+                    btnOK.interactable = BattleData.Instance.Agent.PlayerRole.CheckOK(BattleData.Instance.Agent.AgentUIState,
+                        BattleData.Instance.Agent.SelectCards, BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectSkill);
+                    btnCancel.interactable = BattleData.Instance.Agent.PlayerRole.CheckCancel(BattleData.Instance.Agent.AgentUIState,
+                        BattleData.Instance.Agent.SelectCards, BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectSkill);
+                    break;
                 case MessageType.AgentUpdate:
                     btnOK.interactable = false;
                     btnOK.onClick.RemoveAllListeners();
+                    btnOK.onClick.AddListener(onBtnOKClick);
+                    btnCancel.onClick.RemoveAllListeners();
+                    btnCancel.onClick.AddListener(onBtnCancelClick);
                     //初始化技能键
                     foreach (var v in BattleData.Instance.Agent.PlayerRole.Skills.Values)
                     {
@@ -89,10 +123,14 @@ namespace AGrail
                         skillUIs.Add(go.GetComponent<SkillUI>());
                         skillUIs[skillUIs.Count - 1].Skill = v;
                     }
+                    btnBuy.interactable = BattleData.Instance.Agent.PlayerRole.CheckBuy(BattleData.Instance.Agent.AgentUIState);
+                    btnExtract.interactable = BattleData.Instance.Agent.PlayerRole.CheckExtract(BattleData.Instance.Agent.AgentUIState);                    
+                    btnSynthetize.interactable = BattleData.Instance.Agent.PlayerRole.CheckSynthetize(BattleData.Instance.Agent.AgentUIState);
                     break;
                 case MessageType.AgentHandChange:
                     for(int i = 0; i < handArea.childCount; i++)                    
-                        Destroy(handArea.GetChild(i).gameObject);                    
+                        Destroy(handArea.GetChild(i).gameObject);
+                    cardUIs.Clear();
                     foreach(var v in BattleData.Instance.MainPlayer.hands)
                     {
                         var go = Instantiate(cardPrefab);
@@ -102,107 +140,179 @@ namespace AGrail
                         go.transform.localScale = Vector3.one;
                         var cardUI = go.GetComponent<CardUI>();
                         cardUI.Card = Card.GetCard(v);
-                    }                    
-                    break;
-                case MessageType.AgentSetOKCallback:
-                    btnOK.onClick.RemoveAllListeners();
-                    if ((bool)parameters[0])
-                    {
-                        btnOK.interactable = true;
-                        btnOK.onClick.AddListener((UnityEngine.Events.UnityAction)parameters[1]);
+                        cardUIs.Add(cardUI);
                     }
-                    else
-                        btnOK.interactable = false;
-                    break;
-                case MessageType.AgentSetCancelCallback:
-                    btnCancel.onClick.RemoveAllListeners();
-                    if ((bool)parameters[0])
-                    {
-                        btnCancel.interactable = true;
-                        btnCancel.onClick.AddListener((UnityEngine.Events.UnityAction)parameters[1]);
-                    }
-                    else
-                        btnCancel.interactable = false;
                     break;
                 case MessageType.AgentStateChange:
-                    //卡牌、人物是否能够选中
-                    //确认、取消、特殊行动按钮能否显示
-                    //技能能否选中
-                    //未来可以改成利用rolebase具体确定哪些能够选中
-                    if(BattleData.Instance.Agent.AgentState.Check(PlayerAgentState.Idle))
-                    {
-                        for(int i = 0; i < handArea.childCount; i++)                        
-                            handArea.GetChild(i).GetComponent<CardUI>().IsEnable = false;
-                        foreach(var v in players.Values)                        
+                    //保证在初始状态 
+                    foreach (var v in cardUIs)
                             v.IsEnable = false;
-                        foreach (var v in skillUIs)
+                    foreach (var v in skillUIs)
                             v.IsEnable = false;
-                        btnOK.interactable = false;
-                        btnCancel.interactable = false;
-                        btnBuy.interactable = false;
-                        btnExtract.interactable = false;
-                        btnSynthetize.interactable = false;
-                    }                    
-                    else
-                    {
-                        BattleData.Instance.Agent.PlayerRole.Check(BattleData.Instance.Agent.AgentState);
-                        for (int i = 0; i < handArea.childCount; i++)
-                            handArea.GetChild(i).GetComponent<CardUI>().IsEnable = true;
-                        foreach (var v in players.Values)
-                            v.IsEnable = true;
-                        foreach (var v in skillUIs)
-                            v.IsEnable = true;
-                        if (BattleData.Instance.Agent.AgentState.Check(PlayerAgentState.CanSpecial) &&
-                            BattleData.Instance.MainPlayer.max_hand - BattleData.Instance.MainPlayer.hand_count >= 3)
-                            btnBuy.interactable = true;
-                        if (BattleData.Instance.Agent.AgentState.Check(PlayerAgentState.CanSpecial) &&
-                            BattleData.Instance.MainPlayer.max_hand - BattleData.Instance.MainPlayer.hand_count >= 3 &&
-                            BattleData.Instance.Gem[(int)BattleData.Instance.MainPlayer.team] + BattleData.Instance.Crystal[(int)BattleData.Instance.MainPlayer.team] >= 3)                        
-                            btnSynthetize.interactable = true;
-                        if (BattleData.Instance.Agent.AgentState.Check(PlayerAgentState.CanSpecial) &&
-                            BattleData.Instance.MainPlayer.crystal + BattleData.Instance.MainPlayer.gem < BattleData.Instance.Agent.PlayerRole.MaxEnergyCount &&
-                            BattleData.Instance.Gem[(int)BattleData.Instance.MainPlayer.team] + BattleData.Instance.Crystal[(int)BattleData.Instance.MainPlayer.team] > 0)
-                            btnExtract.interactable = true;                        
-                    }
-                    break;
-                case MessageType.AgentSelectSkill:
-                    //一次只能选中一个技能
-                    var skillID = (uint)parameters[0];
-                    foreach(var v in skillUIs)
-                    {
-                        if (v.Skill.SkillID != skillID)
-                        {
-                            v.IsEnable = false;
-                            v.IsEnable = true;
-                        }
-                    }
+                    foreach (var v in players.Keys)
+                            players[v].IsEnable = false;
+                    btnOK.interactable = false;
+                    btnCancel.interactable = false;
                     break;
             }
         }
 
         public void OnBtnBuyClick()
-        {
-            GameManager.UIInstance.PushWindow(Framework.UI.WindowType.ChooseEnergy, Framework.UI.WinMsg.Pause, Vector3.zero,
-                new Action<uint, uint>((gem, crystal) => { BattleData.Instance.Agent.PlayerRole.Buy(gem, crystal); }),
-                new Func<uint, uint, bool>((gem, crystal) => { return BattleData.Instance.Agent.PlayerRole.CheckBuy(gem, crystal); }),
-                "购买");
+        {            
+            BattleData.Instance.Agent.AgentUIState = 12;
+            var selectList = new List<List<uint>>();
+            if (BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team] + BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team] == 4)
+            {
+                selectList.Add(new List<uint>() { 1, 0 });
+                selectList.Add(new List<uint>() { 0, 1 });
+            }
+            else
+                selectList.Add(new List<uint>() { 1, 1 });
+            GameManager.UIInstance.PushWindow(Framework.UI.WindowType.ChooseArgsUI, Framework.UI.WinMsg.None, Vector3.zero,
+                "Energy", selectList);
         }
 
         public void OnBtnExtractClick()
         {
-            GameManager.UIInstance.PushWindow(Framework.UI.WindowType.ChooseEnergy, Framework.UI.WinMsg.Pause, Vector3.zero,
-                new Action<uint, uint>((gem, crystal) => { BattleData.Instance.Agent.PlayerRole.Extract(gem, crystal); }),
-                new Func<uint, uint, bool>((gem, crystal) => { return BattleData.Instance.Agent.PlayerRole.CheckExtract(gem, crystal, BattleData.Instance.MainPlayer.crystal + BattleData.Instance.MainPlayer.gem); }),
-                "提炼");
+            BattleData.Instance.Agent.AgentUIState = 13;
+            var selectList = new List<List<uint>>();
+            if (BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team] >= 2)
+                selectList.Add(new List<uint>() { 2, 0 });
+            if (BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team] >= 2)
+                selectList.Add(new List<uint>() { 0, 2 });
+            if (BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team] >= 1 && BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team] >= 1)
+                selectList.Add(new List<uint>() { 1, 1 });
+            if (BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team] >= 1)
+                selectList.Add(new List<uint>() { 1, 0 });
+            if (BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team] >= 1)
+                selectList.Add(new List<uint>() { 0, 1 });
+            GameManager.UIInstance.PushWindow(Framework.UI.WindowType.ChooseArgsUI, Framework.UI.WinMsg.None, Vector3.zero,
+                "Energy", selectList);
         }
 
         public void OnBtnSynthetizeClick()
         {
-            GameManager.UIInstance.PushWindow(Framework.UI.WindowType.ChooseEnergy, Framework.UI.WinMsg.Pause, Vector3.zero,
-                new Action<uint, uint>((gem, crystal) => { BattleData.Instance.Agent.PlayerRole.Synthetize(gem, crystal); }),
-                new Func<uint, uint, bool>((gem, crystal) => { return BattleData.Instance.Agent.PlayerRole.CheckSynthetize(gem, crystal); }),
-                "合成");
+            BattleData.Instance.Agent.AgentUIState = 14;
+            var selectList = new List<List<uint>>();
+            if (BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team] >= 3)
+                selectList.Add(new List<uint>() { 0, 3 });
+            if (BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team] >= 1 && BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team] >= 2)
+                selectList.Add(new List<uint>() { 1, 2 });
+            if (BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team] >= 2 && BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team] >= 1)
+                selectList.Add(new List<uint>() { 2, 1 });
+            if (BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team] >= 3)
+                selectList.Add(new List<uint>() { 3, 0 });
+            GameManager.UIInstance.PushWindow(Framework.UI.WindowType.ChooseArgsUI, Framework.UI.WinMsg.None, Vector3.zero,
+                "Energy", selectList);
         }
+
+        private void onBtnOKClick()
+        {
+            switch (BattleData.Instance.Agent.AgentUIState)
+            {
+                case 1:
+                    //攻击
+                    BattleData.Instance.Agent.PlayerRole.Attack(BattleData.Instance.Agent.SelectCards[0],
+                        BattleData.Instance.Agent.SelectPlayers[0]);
+                    break;
+                case 2:
+                    //魔法
+                    BattleData.Instance.Agent.PlayerRole.Magic(BattleData.Instance.Agent.SelectCards[0],
+                        BattleData.Instance.Agent.SelectPlayers[0]);
+                    break;
+                case 3:
+                    //应战
+                    if (BattleData.Instance.Agent.SelectCards.Count > 0)
+                    {
+                        if (BattleData.Instance.Agent.SelectPlayers.Count > 0)
+                            BattleData.Instance.Agent.PlayerRole.AttackedReply(
+                                Card.GetCard(BattleData.Instance.Agent.SelectCards[0]),
+                                BattleData.Instance.Agent.SelectPlayers[0]);
+                        else
+                            BattleData.Instance.Agent.PlayerRole.AttackedReply(
+                                Card.GetCard(BattleData.Instance.Agent.SelectCards[0]));
+                    }
+                    break;
+                case 4:
+                    //魔弹响应
+                    BattleData.Instance.Agent.PlayerRole.MoDaned(Card.GetCard(BattleData.Instance.Agent.SelectCards[0]));
+                    break;
+                case 5:
+                    //弃牌
+                    BattleData.Instance.Agent.PlayerRole.Drop(BattleData.Instance.Agent.SelectCards);
+                    break;
+                case 6:
+                    //虚弱
+                    BattleData.Instance.Agent.PlayerRole.Weaken(new List<uint>() { 1 });
+                    break;
+                case 7:
+                    //治疗
+                    break;
+                case 10:
+                    //最通常的回合开始的状态
+                    break;
+                case 11:
+                    //只能攻击或法术
+                    break;
+                case 12:
+                    //购买
+                    BattleData.Instance.Agent.PlayerRole.Buy(BattleData.Instance.Agent.SelectArgs[0], BattleData.Instance.Agent.SelectArgs[1]);
+                    break;
+                case 13:
+                    //提取
+                    BattleData.Instance.Agent.PlayerRole.Extract(BattleData.Instance.Agent.SelectArgs[0], BattleData.Instance.Agent.SelectArgs[1]);
+                    break;
+                case 14:
+                    //合成
+                    BattleData.Instance.Agent.PlayerRole.Synthetize(BattleData.Instance.Agent.SelectArgs[0], BattleData.Instance.Agent.SelectArgs[1]);
+                    break;
+                case 42:
+                    //额外行动
+                    //BattleData.Instance.Agent.PlayerRole.AdditionAction();
+                    break;
+                default:
+                    //技能
+                    BattleData.Instance.Agent.PlayerRole.UseSkill(true);
+                    break;
+            }
+        }
+
+        private void onBtnCancelClick()
+        {
+            switch (BattleData.Instance.Agent.AgentUIState)
+            {
+                case 3:
+                    //应战
+                    BattleData.Instance.Agent.PlayerRole.AttackedReply();
+                    break;
+                case 4:
+                    //魔弹响应
+                    BattleData.Instance.Agent.PlayerRole.MoDaned();
+                    break;
+                case 6:
+                    //虚弱
+                    BattleData.Instance.Agent.PlayerRole.Weaken(new List<uint>() { 0 });
+                    break;
+                case 7:
+                    //治疗
+                    break;
+                case 12:
+                case 13:
+                case 14:
+                    GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.Show);
+                    BattleData.Instance.Agent.AgentState = BattleData.Instance.Agent.AgentState;
+                    break;
+                case 42:
+                    //额外行动
+                    //BattleData.Instance.Agent.PlayerRole.AdditionAction();
+                    break;
+                default:
+                    //技能
+                    BattleData.Instance.Agent.PlayerRole.UseSkill(false);
+                    break;
+            }
+        }
+
     }
 }
 

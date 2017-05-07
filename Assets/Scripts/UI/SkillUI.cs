@@ -60,11 +60,16 @@ namespace AGrail
         public void OnBtnClick()
         {
             selectBorder.enabled = !selectBorder.enabled;
-            if(selectBorder.enabled)
-                MessageSystem<MessageType>.Notify(MessageType.AgentSelectSkill, (uint?)skill.SkillID);
+            if (selectBorder.enabled)
+            {
+                BattleData.Instance.Agent.SelectSkill = skill.SkillID;
+                BattleData.Instance.Agent.AgentUIState = skill.SkillID;
+            }
             else
-                MessageSystem<MessageType>.Notify(MessageType.AgentSelectSkill, null);
+            {
+                BattleData.Instance.Agent.SelectSkill = null;
+                BattleData.Instance.Agent.AgentState = BattleData.Instance.Agent.AgentState;
+            }                
         }
-
     }
 }

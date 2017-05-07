@@ -315,7 +315,22 @@ namespace AGrail
             btnPlayer.onClick.AddListener(()=>
             {
                 selectBorder.enabled = !selectBorder.enabled;
-                MessageSystem<MessageType>.Notify(MessageType.AgentSelectPlayer, id);
+                if (selectBorder.enabled)
+                {
+                    BattleData.Instance.Agent.SelectPlayers.Add(id);                    
+                    if(BattleData.Instance.Agent.AgentUIState < 100)
+                        BattleData.Instance.Agent.AgentUIState = BattleData.Instance.Agent.AgentUIState;
+                    else
+                    {
+                        //为了应付有些技能需要选更多的东西...
+                        BattleData.Instance.Agent.AgentUIState = BattleData.Instance.Agent.AgentUIState * 100 + 1;
+                    }
+                }
+                else
+                {
+                    BattleData.Instance.Agent.SelectPlayers.Remove(id);
+                    BattleData.Instance.Agent.AgentUIState = BattleData.Instance.Agent.AgentUIState;
+                }                    
             });
             btnPlayer.interactable = false;
             selectBorder.enabled = false;

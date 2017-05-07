@@ -368,8 +368,7 @@ namespace AGrail
                             }
                             Agent.Cmd = v;
                             Agent.AgentState =
-                                (int)PlayerAgentState.CanAttack | (int)PlayerAgentState.CanMagic |
-                                (int)PlayerAgentState.CanSkill | (int)PlayerAgentState.CanSpecial;
+                                (int)PlayerAgentState.CanAttack | (int)PlayerAgentState.CanMagic | (int)PlayerAgentState.CanSpecial;
                             break;
                         case (uint)network.BasicActionType.ACTION_ATTACK_MAGIC:
                             if (v.src_id != MainPlayer.id)
@@ -423,12 +422,6 @@ namespace AGrail
                 }
             }
         }
-    }
-
-    public class PlayerInfo
-    {
-        public network.SinglePlayerInfo SinglePlayerInfo;
-        public RoleBase Role;
     }
 
     public enum Team

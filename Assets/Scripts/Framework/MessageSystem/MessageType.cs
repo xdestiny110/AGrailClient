@@ -73,9 +73,11 @@
         AgentSelectCard,
         AgentSelectPlayer,
         AgentSelectSkill,
+        AgentSetArgs,
         AgentSetOKCallback,
         AgentSetCancelCallback,
         AgentStateChange,
+        AgentUIStateChange,
         AgentHandChange,
         AgentUpdate,
     }

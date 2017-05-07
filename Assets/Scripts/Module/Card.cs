@@ -23,7 +23,7 @@ namespace AGrail
             var txt = (Resources.Load<TextAsset>("cardDB")).text;
             var strs = txt.Split('\n');
             foreach (var v in strs)
-            {
+            {                
                 var s = v.Trim(" \t\r\n".ToCharArray());
                 var t = s.Split('\t');
                 var c = new Card()
