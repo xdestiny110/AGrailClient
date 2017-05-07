@@ -24,20 +24,24 @@ namespace AGrail
             }
         }
 
-        public StateAttacked(StateMachine<StateMsg> machine) : base(machine) { }
+        public StateAttacked(StateMachine<UIStateMsg> machine) : base(machine) { }
 
-        public override void Process(StateMsg msg, params object[] paras)
+        public override void Process(UIStateMsg msg, params object[] paras)
         {
             switch (msg)
             {
-                case StateMsg.ClickCard:
-                case StateMsg.ClickPlayer:
+                case UIStateMsg.ClickCard:
+                case UIStateMsg.ClickPlayer:
                     if(BattleData.Instance.Agent.SelectCards.Count == 1 && 
                         Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Element == Card.CardElement.light)
                     {
                         BattleData.Instance.Agent.SelectPlayers.Clear();
-                        MessageSystem<MessageType>.Notify(MessageType.AgentSelectCard);
+                        MessageSystem<MessageType>.Notify(MessageType.AgentSelectPlayer);
                     }
+                    base.Process(msg, paras);
+                    break;
+                default:
+                    base.Process(msg, paras);
                     break;
             }
         }

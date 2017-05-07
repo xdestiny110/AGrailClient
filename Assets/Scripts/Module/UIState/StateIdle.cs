@@ -24,10 +24,10 @@ namespace AGrail
             }
         }
 
-        public StateIdle(StateMachine<StateMsg> machine) : base(machine) { }
+        public StateIdle(StateMachine<UIStateMsg> machine) : base(machine) { }
 
-        public override void Enter(StateMsg msg, params object[] paras)
-        {            
+        public override void Enter(UIStateMsg msg, params object[] paras)
+        {
             BattleData.Instance.Agent.SelectCards.Clear();
             BattleData.Instance.Agent.SelectPlayers.Clear();
             BattleData.Instance.Agent.SelectSkill = null;
@@ -37,9 +37,9 @@ namespace AGrail
             base.Enter(msg, paras);
         }
 
-        public override void Process(StateMsg msg, params object[] paras)
+        public override void Process(UIStateMsg msg, params object[] paras)
         {
-            if(msg == StateMsg.Init)
+            if(msg == UIStateMsg.Init)
             {
                 stateMachine.ChangeState((Type)paras[0], true, msg, paras);
             }

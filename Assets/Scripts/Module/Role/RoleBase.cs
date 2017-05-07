@@ -130,9 +130,8 @@ namespace AGrail
         {
             switch (uiState)
             {
-                case 1:                
-                case 3:
-                    if (cardIDs.Count == 1 && playerIDs.Count == 1)
+                case 1:
+                    if (playerIDs.Count == 1 && cardIDs.Count == 1)
                         return true;
                     break;
                 case 2:
@@ -154,6 +153,15 @@ namespace AGrail
                         }    
                     }
                     break;
+                case 3:
+                    if (cardIDs.Count == 1)
+                    {
+                        if (playerIDs.Count == 0 && Card.GetCard(cardIDs[0]).Element == Card.CardElement.light)
+                            return true;
+                        if (playerIDs.Count == 1 && Card.GetCard(cardIDs[0]).Element != Card.CardElement.light)
+                            return true;
+                    }
+                    break;
                 case 4:
                     if (cardIDs.Count == 1)
                         return true;
@@ -163,9 +171,7 @@ namespace AGrail
                         return true;
                     break;
                 case 6:
-                case 12:
                 case 13:
-                case 14:
                     return true;                    
             }
             return false;
@@ -178,9 +184,7 @@ namespace AGrail
                 case 3:
                 case 4:
                 case 6:
-                case 12:
                 case 13:
-                case 14:
                     return true;
             }
             return false;
@@ -210,20 +214,6 @@ namespace AGrail
             if (uiState == 10 && m.max_hand - m.hand_count >= 3 &&
                 BattleData.Instance.Gem[m.team] + BattleData.Instance.Crystal[m.team] >= 3)
                 return true;
-            return false;
-        }
-
-        public virtual bool CheckModaned(int agentState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
-        {
-            //魔弹响应
-            if (agentState.Check(PlayerAgentState.MoDaned))
-            {
-                if (cardIDs.Count == 0 && playerIDs.Count == 0 && skillID == null)
-                    return true;
-                var card = Card.GetCard(cardIDs[0]);
-                if (card.Name == Card.CardName.魔弹 || card.Name == Card.CardName.圣光)
-                    return true;
-            }
             return false;
         }
 
@@ -306,6 +296,8 @@ namespace AGrail
                 case 2:
                 case 3:
                 case 4:
+                case 10:
+                case 11:
                     return 1;
             }
             return 0;

@@ -21,9 +21,9 @@ namespace AGrail
             }
         }
 
-        public StateHealCost(StateMachine<StateMsg> machine) : base(machine) { }
+        public StateHealCost(StateMachine<UIStateMsg> machine) : base(machine) { }
 
-        public override void Process(StateMsg msg, params object[] paras)
+        public override void Process(UIStateMsg msg, params object[] paras)
         {
 
         }

@@ -41,6 +41,7 @@ namespace AGrail
             };
             Lobby.Instance.CreateRoom(proto);
             GameManager.UIInstance.PopWindow(WinMsg.Pause);
+            GameManager.UIInstance.PushWindow(WindowType.BattleQT, WinMsg.Hide);
         }
 
         public void OnCancelClick()

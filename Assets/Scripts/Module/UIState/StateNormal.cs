@@ -21,11 +21,11 @@ namespace AGrail
             }
         }
 
-        public StateNormal(StateMachine<StateMsg> machine) : base(machine) { }
+        public StateNormal(StateMachine<UIStateMsg> machine) : base(machine) { }
 
-        public override void Enter(StateMsg msg, params object[] paras)
+        public override void Enter(UIStateMsg msg, params object[] paras)
         {
-            if(msg == StateMsg.Init)
+            if(msg == UIStateMsg.Init)
             {
                 BattleData.Instance.Agent.SelectCards.Clear();
                 BattleData.Instance.Agent.SelectPlayers.Clear();
@@ -38,20 +38,20 @@ namespace AGrail
             base.Enter(msg, paras);
         }
 
-        public override void Process(StateMsg msg, params object[] paras)
+        public override void Process(UIStateMsg msg, params object[] paras)
         {
             switch (msg)
             {
-                case StateMsg.ClickCard:
+                case UIStateMsg.ClickCard:
                     if (Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Type == Card.CardType.attack)
                         stateMachine.ChangeState<StateAttack>(msg, true, paras);
                     else
                         stateMachine.ChangeState<StateMagic>(msg, true, paras);
                     break;
-                case StateMsg.ClickSkill:
+                case UIStateMsg.ClickSkill:
                     stateMachine.ChangeState<StateSkill>(msg, true, BattleData.Instance.Agent.SelectSkill.Value, paras);
                     break;
-                case StateMsg.ClickBtn:
+                case UIStateMsg.ClickBtn:
                     var cmd = paras[0].ToString();
                     if (cmd == "Buy")
                     {

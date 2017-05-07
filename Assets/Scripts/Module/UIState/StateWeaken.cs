@@ -21,12 +21,7 @@ namespace AGrail
             }
         }
 
-        public StateWeaken(StateMachine<StateMsg> machine) : base(machine) { }
-
-        public override void Process(StateMsg msg, params object[] paras)
-        {
-
-        }
+        public StateWeaken(StateMachine<UIStateMsg> machine) : base(machine) { }
     }
 }
 

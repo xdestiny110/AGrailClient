@@ -21,12 +21,7 @@ namespace AGrail
             }
         }
 
-        public StateDrop(StateMachine<StateMsg> machine) : base(machine) { }
-
-        public override void Process(StateMsg msg, params object[] paras)
-        {
-
-        }
+        public StateDrop(StateMachine<UIStateMsg> machine) : base(machine) { }
     }
 }
 

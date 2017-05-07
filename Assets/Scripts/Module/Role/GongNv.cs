@@ -146,7 +146,7 @@ namespace AGrail
                         break;
                     case 302:
                     case 303:
-                        BattleData.Instance.Agent.AgentState = BattleData.Instance.Agent.AgentState;
+                        BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
                         break;
                     default:
                         break;

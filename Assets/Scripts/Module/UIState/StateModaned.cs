@@ -4,7 +4,7 @@ using Framework.FSM;
 
 namespace AGrail
 {
-    public class StateModaned : StateBase<StateMsg>
+    public class StateModaned : StateBase<UIStateMsg>
     {
 
         public override string StateName
@@ -23,9 +23,9 @@ namespace AGrail
             }
         }
 
-        public StateModaned(StateMachine<StateMsg> machine) : base(machine) { }
+        public StateModaned(StateMachine<UIStateMsg> machine) : base(machine) { }
 
-        public override void Process(StateMsg msg, params object[] paras)
+        public override void Process(UIStateMsg msg, params object[] paras)
         {
             
         }

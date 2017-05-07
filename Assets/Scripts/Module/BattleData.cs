@@ -179,6 +179,7 @@ namespace AGrail
                         if(player.id == PlayerID)
                         {
                             Agent = new PlayerAgent(player.role_id);
+                            Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, false);
                             MessageSystem<MessageType>.Notify(MessageType.AgentUpdate);
                         }                                     
                     }

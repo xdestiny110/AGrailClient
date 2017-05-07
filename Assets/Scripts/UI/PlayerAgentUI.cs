@@ -164,14 +164,14 @@ namespace AGrail
                 var selectList = new List<List<uint>>();
                 selectList.Add(new List<uint>() { 1, 0 });
                 selectList.Add(new List<uint>() { 0, 1 });
-                BattleData.Instance.Agent.FSM.HandleMessage(StateMsg.ClickBtn, "Buy");
+                BattleData.Instance.Agent.FSM.HandleMessage(UIStateMsg.ClickBtn, "Buy");
                 GameManager.UIInstance.PushWindow(Framework.UI.WindowType.ChooseArgsUI, Framework.UI.WinMsg.None, Vector3.zero,
                     "Energy", selectList);
             }
             else
             {
                 BattleData.Instance.Agent.PlayerRole.Buy(1, 1);
-                BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(StateMsg.Init, true);
+                BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
             }                
         }
 
@@ -259,7 +259,9 @@ namespace AGrail
                     break;
                 case 13:
                     //选择参数
-
+                    GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
+                    BattleData.Instance.Agent.FSM.HandleMessage(UIStateMsg.ClickBtn, "OK");
+                    onBtnOKClick();
                     break;
                 case 42:
                     //额外行动
@@ -270,7 +272,7 @@ namespace AGrail
                     BattleData.Instance.Agent.PlayerRole.UseSkill(true);
                     break;
             }
-            BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(StateMsg.Init, true);
+            BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
         }
 
         private void onBtnCancelClick()
@@ -294,6 +296,8 @@ namespace AGrail
                     break;
                 case 13:
                     //选择参数
+                    GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
+                    BattleData.Instance.Agent.FSM.BackState(UIStateMsg.ClickBtn);
                     break;
                 case 42:
                     //额外行动
@@ -304,7 +308,7 @@ namespace AGrail
                     BattleData.Instance.Agent.PlayerRole.UseSkill(false);
                     break;
             }
-            BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(StateMsg.Init, true);
+            BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
         }
 
     }

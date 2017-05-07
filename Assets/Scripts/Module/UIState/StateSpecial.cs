@@ -20,9 +20,9 @@ namespace AGrail
             }
         }
 
-        public StateSpecial(StateMachine<StateMsg> machine) : base(machine) { }
+        public StateSpecial(StateMachine<UIStateMsg> machine) : base(machine) { }
 
-        public override void Process(StateMsg msg, params object[] paras)
+        public override void Process(UIStateMsg msg, params object[] paras)
         {
             
         }

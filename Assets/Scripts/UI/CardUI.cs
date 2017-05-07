@@ -22,9 +22,21 @@ namespace AGrail
         [SerializeField]
         private Image selectBorder;
 
+        private bool isEnable;
         public bool IsEnable
         {
-            set; get;
+            set
+            {
+                isEnable = value;
+                if (!isEnable)
+                    image.color = new Color(0.5f, 0.5f, 0.5f, 1);
+                else
+                    image.color = Color.white;
+            }
+            get
+            {
+                return isEnable;
+            }
         }
 
         private Card card;

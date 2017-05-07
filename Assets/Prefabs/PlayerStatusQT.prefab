@@ -518,7 +518,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   teamBG: {fileID: 224000012507500324}
   playerName: {fileID: 114000011322866190}
-  playerID: {fileID: 114000012646181658}
+  txtPlayerID: {fileID: 114000012646181658}
   hero: {fileID: 114000014248640634}
   handCard: {fileID: 224000010155370828}
   heal: {fileID: 224000011030106156}

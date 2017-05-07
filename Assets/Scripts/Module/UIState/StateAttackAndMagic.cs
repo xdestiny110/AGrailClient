@@ -21,11 +21,11 @@ namespace AGrail
             }
         }
 
-        public StateAttackAndMagic(StateMachine<StateMsg> machine) : base(machine) { }
+        public StateAttackAndMagic(StateMachine<UIStateMsg> machine) : base(machine) { }
 
-        public override void Enter(StateMsg msg, params object[] paras)
+        public override void Enter(UIStateMsg msg, params object[] paras)
         {
-            if (msg == StateMsg.Init)
+            if (msg == UIStateMsg.Init)
             {
                 BattleData.Instance.Agent.SelectCards.Clear();
                 BattleData.Instance.Agent.SelectPlayers.Clear();
@@ -38,15 +38,18 @@ namespace AGrail
             base.Enter(msg, paras);
         }
 
-        public override void Process(StateMsg msg, params object[] paras)
+        public override void Process(UIStateMsg msg, params object[] paras)
         {
             switch (msg)
             {
-                case StateMsg.ClickCard:
+                case UIStateMsg.ClickCard:
                     if (Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Type == Card.CardType.attack)
                         stateMachine.ChangeState<StateAttack>(msg, true, paras);
                     else
                         stateMachine.ChangeState<StateMagic>(msg, true, paras);
+                    break;
+                default:
+                    base.Process(msg, paras);
                     break;
             }
         }

@@ -4,7 +4,6 @@ using Framework;
 using Framework.Message;
 using System;
 using System.Collections.Generic;
-using Framework.FSM;
 
 namespace AGrail
 {
@@ -14,8 +13,8 @@ namespace AGrail
         public List<uint> SelectCards = new List<uint>();
         public uint? SelectSkill = null;
         public List<uint> SelectArgs = new List<uint>();
-        private int agentState = (int)PlayerAgentState.Idle;
-        public StateMachine<StateMsg> FSM = new StateMachine<StateMsg>("AgnetUI");
+        private int agentState = (int)PlayerAgentState.Idle;        
+        public UIStateMachine FSM = new UIStateMachine("AgnetUI");
         public int AgentState
         {
             get { return agentState; }
@@ -24,7 +23,7 @@ namespace AGrail
                 Debug.LogFormat("Agent state = {0}", value);
                 agentState = value;
                 MessageSystem<MessageType>.Notify(MessageType.AgentStateChange);
-                FSM.HandleMessage(StateMsg.Init, calUIState(agentState));
+                FSM.ChangeState(calUIState(agentState), true, UIStateMsg.Init);
             }
         }
         
@@ -34,7 +33,6 @@ namespace AGrail
         public PlayerAgent(uint roleID) : base()
         {
             PlayerRole = RoleFactory.Create(roleID);
-            FSM.ChangeState<StateIdle>(StateMsg.Init, false);
         }
 
         public void AddSelectPlayer(uint playerID)
@@ -45,8 +43,8 @@ namespace AGrail
                 while (SelectPlayers.Count > PlayerRole.MaxSelectPlayer(FSM.Current.StateNumber))
                     SelectPlayers.RemoveAt(0);
             }
-            MessageSystem<MessageType>.Notify(MessageType.AgentSelectPlayer);
-            FSM.HandleMessage(StateMsg.ClickPlayer);
+            MessageSystem<MessageType>.Notify(MessageType.AgentSelectPlayer);            
+            FSM.HandleMessage(UIStateMsg.ClickPlayer);
         }
 
         public void RemoveSelectPlayer(uint playerID)
@@ -54,7 +52,7 @@ namespace AGrail
             if (SelectPlayers.Contains(playerID))
                 SelectPlayers.Remove(playerID);
             MessageSystem<MessageType>.Notify(MessageType.AgentSelectPlayer);
-            FSM.HandleMessage(StateMsg.ClickPlayer);
+            FSM.HandleMessage(UIStateMsg.ClickPlayer);
         }
 
         public void AddSelectCard(uint cardID)
@@ -66,7 +64,7 @@ namespace AGrail
                     SelectCards.RemoveAt(0);
             }
             MessageSystem<MessageType>.Notify(MessageType.AgentSelectCard);
-            FSM.HandleMessage(StateMsg.ClickCard);
+            FSM.HandleMessage(UIStateMsg.ClickCard);
         }
 
         public void RemoveSelectCard(uint cardID)
@@ -74,14 +72,14 @@ namespace AGrail
             if (SelectCards.Contains(cardID))
                 SelectCards.Remove(cardID);               
             MessageSystem<MessageType>.Notify(MessageType.AgentSelectCard);
-            FSM.HandleMessage(StateMsg.ClickCard);
+            FSM.HandleMessage(UIStateMsg.ClickCard);
         }
 
         public void ChangeSelectSkill(uint? skillID)
         {
             SelectSkill = skillID;
             MessageSystem<MessageType>.Notify(MessageType.AgentSelectSkill);
-            FSM.HandleMessage(StateMsg.ClickSkill);
+            FSM.HandleMessage(UIStateMsg.ClickSkill);
         }
 
         private Type calUIState(int state)

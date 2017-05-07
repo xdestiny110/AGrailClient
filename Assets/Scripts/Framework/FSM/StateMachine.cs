@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Framework.FSM
 {
-    public partial class StateMachine<T>
+    public abstract class StateMachine<T>
     {
         public StateBase<T> Current { get; private set; }
-        public StateBase<T> Parent { get; private set; }
+        public Stack<Type> History = new Stack<Type>();
 
         public string MachineName { get; private set; }        
 
@@ -21,17 +22,31 @@ namespace Framework.FSM
 
         public void ChangeState(Type t, bool isRecord, T msg, params object[] paras)
         {
-            if(isRecord)
-                Parent = Current;
+            if (isRecord)
+                History.Push(Current.GetType());
+            if(Current != null)
+                Current.Exit(msg, paras);
             Current = Activator.CreateInstance(t, this) as StateBase<T>;
-            if (Parent != null)
-                Parent.Exit(msg, paras);
             Current.Enter(msg);
+            if (cleanHistroy(t))
+                History.Clear();
         }
 
         public void HandleMessage(T msg, params object[] paras)
         {
             Current.Process(msg, paras);
         }
+
+        public void BackState(T msg, params object[] paras)
+        {
+            if(History.Count > 0)
+            {
+                var t = History.Pop();
+                ChangeState(t, false, msg, paras);
+            }
+        }
+
+        protected abstract bool cleanHistroy(Type t);
+
     }
 }

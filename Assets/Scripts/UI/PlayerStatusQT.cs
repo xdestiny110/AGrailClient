@@ -311,8 +311,6 @@ namespace AGrail
             get { return btnPlayer.interactable; }
             set {
                 btnPlayer.interactable = value;
-                if (!value)
-                    selectBorder.enabled = false;
             }
         }
 
@@ -343,7 +341,7 @@ namespace AGrail
         {
             btnPlayer.onClick.AddListener(()=>
             {
-                if (selectBorder.enabled)
+                if (!selectBorder.enabled)
                     BattleData.Instance.Agent.AddSelectPlayer(id);
                 else
                     BattleData.Instance.Agent.RemoveSelectPlayer(id);              

@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace AGrail
 {
-    public enum StateMsg
+    public enum UIStateMsg
     {
         Init,
         ClickCard,

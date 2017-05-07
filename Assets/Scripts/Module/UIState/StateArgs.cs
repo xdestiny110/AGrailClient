@@ -21,17 +21,29 @@ namespace AGrail
             }
         }
 
-        public StateArgs(StateMachine<StateMsg> machine) : base(machine) { }
+        public StateArgs(StateMachine<UIStateMsg> machine) : base(machine) { }
 
-        public override void Enter(StateMsg msg, params object[] paras)
+        public override void Enter(UIStateMsg msg, params object[] paras)
         {
             BattleData.Instance.Agent.SelectArgs.Clear();
             base.Enter(msg, paras);
         }
 
-        public override void Process(StateMsg msg, params object[] paras)
+        public override void Process(UIStateMsg msg, params object[] paras)
         {
-
+            switch (msg)
+            {
+                case UIStateMsg.ClickBtn:
+                    if (msg == UIStateMsg.ClickBtn && paras[0].ToString() == "OK")
+                    {
+                        var t = stateMachine.History.Peek();
+                        stateMachine.ChangeState(t, true, msg);
+                    }
+                    break;
+                default:
+                    base.Process(msg, paras);
+                    break;
+            }
         }
     }
 }
