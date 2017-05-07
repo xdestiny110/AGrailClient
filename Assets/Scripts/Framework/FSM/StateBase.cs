@@ -4,7 +4,7 @@ namespace Framework.FSM
 {
     public abstract class StateBase<T>
     {
-        private StateMachine<T> stateMachine; 
+        protected StateMachine<T> stateMachine; 
 
         public StateBase(StateMachine<T> machine)
         {
@@ -16,14 +16,19 @@ namespace Framework.FSM
             get;
         }
 
+        public abstract uint StateNumber
+        {
+            get;
+        }
+
         public virtual void Enter(T msg, params object[] paras)
         {
-            Debug.Log("Enter " + StateName);
+            Debug.LogFormat("Enter {0}:{1}", StateName, StateNumber);
         }
 
         public virtual void Exit(T msg, params object[] paras)
         {
-            Debug.Log("Exit " + StateName);
+            Debug.LogFormat("Enter {0}:{1}", StateName, StateNumber);
         }
 
         public abstract void Process(T msg, params object[] paras);

@@ -7,7 +7,7 @@ using System;
 
 namespace AGrail
 {
-    public class CardUI : MonoBehaviour
+    public class CardUI : MonoBehaviour,  IMessageListener<MessageType>
     {
         [SerializeField]
         private Canvas canvas;
@@ -22,21 +22,9 @@ namespace AGrail
         [SerializeField]
         private Image selectBorder;
 
-        private bool isEnable = false;
         public bool IsEnable
         {
-            set
-            {
-                isEnable = value;
-                if (!isEnable)
-                {
-                    selectBorder.enabled = false;
-                    btn.interactable = false;
-                    BattleData.Instance.Agent.SelectCards.Remove(card.ID);
-                }
-                else
-                    btn.interactable = true;
-            }
+            set; get;
         }
 
         private Card card;
@@ -52,27 +40,42 @@ namespace AGrail
                     if (card.SkillNum >= 2)
                         txtSkill2.text = card.SkillNames[1];
                 }
-                IsEnable = true;
+                IsEnable = false;
             }
             get { return card; }
         }
 
+        void Awake()
+        {
+            MessageSystem<MessageType>.Regist(MessageType.AgentSelectCard, this);
+        }
+
+        void Destroy()
+        {
+            MessageSystem<MessageType>.UnRegist(MessageType.AgentSelectCard, this);
+        }
+
+        public void OnEventTrigger(MessageType eventType, params object[] parameters)
+        {
+            switch (eventType)
+            {
+                case MessageType.AgentSelectCard:
+                    if (BattleData.Instance.Agent.SelectCards.Contains(card.ID))
+                        selectBorder.enabled = true;
+                    else
+                        selectBorder.enabled = false;
+                    break;
+            }
+        }
+
         public void OnCardClick()
         {
-            if (isEnable)
+            if (IsEnable)
             {
-                selectBorder.enabled = !selectBorder.enabled;
-                if (selectBorder.enabled)
-                {
-                    BattleData.Instance.Agent.SelectCards.Add(card.ID);
-                    if (BattleData.Instance.Agent.AgentUIState == 10 || BattleData.Instance.Agent.AgentUIState == 11)
-                        BattleData.Instance.Agent.AgentUIState = (card.Type == Card.CardType.attack) ? (uint)1 : 2;
-                }
+                if (!selectBorder.enabled)
+                    BattleData.Instance.Agent.AddSelectCard(card.ID);
                 else
-                {
-                    BattleData.Instance.Agent.SelectCards.Remove(card.ID);
-                    BattleData.Instance.Agent.AgentState = BattleData.Instance.Agent.AgentState;
-                }               
+                    BattleData.Instance.Agent.RemoveSelectCard(card.ID);
             }    
         }
 

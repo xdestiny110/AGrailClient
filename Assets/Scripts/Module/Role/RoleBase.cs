@@ -286,6 +286,31 @@ namespace AGrail
             return false;
         }
 
+        public virtual uint MaxSelectPlayer(uint uiState)
+        {
+            switch (uiState)
+            {                
+                case 1:
+                case 2:
+                case 3:
+                    return 1;
+            }
+            return 0;
+        }
+
+        public virtual uint MaxSelectCard(uint uiState)
+        {
+            switch (uiState)
+            {
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                    return 1;
+            }
+            return 0;
+        }
+
         protected void sendActionMsg(BasicActionType actionType, uint srcID, List<uint> dstID = null, List<uint> cardIDs = null, uint? actionID = null, List<uint> args = null)
         {
             Action proto = new Action() { action_type = (uint)actionType, src_id = srcID };

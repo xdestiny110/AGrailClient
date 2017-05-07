@@ -2,10 +2,10 @@
 
 namespace Framework.FSM
 {
-    public class StateMachine<T>
+    public partial class StateMachine<T>
     {
-        private StateBase<T> current;
-        private StateBase<T> parent;
+        public StateBase<T> Current { get; private set; }
+        public StateBase<T> Parent { get; private set; }
 
         public string MachineName { get; private set; }        
 
@@ -14,13 +14,24 @@ namespace Framework.FSM
             MachineName = name;
         }
 
-        public void ChangeState<U>(T msg, params object[] paras) where U : StateBase<T>
-        {            
-            parent = current;
-            current = Activator.CreateInstance(typeof(U), this) as StateBase<T>;
-            if (parent != null)
-                parent.Exit(msg, paras);
-            current.Enter(msg);
+        public void ChangeState<U>(T msg, bool isRecord, params object[] paras) where U : StateBase<T>
+        {
+            ChangeState(typeof(U), isRecord, msg, paras);
+        }
+
+        public void ChangeState(Type t, bool isRecord, T msg, params object[] paras)
+        {
+            if(isRecord)
+                Parent = Current;
+            Current = Activator.CreateInstance(t, this) as StateBase<T>;
+            if (Parent != null)
+                Parent.Exit(msg, paras);
+            Current.Enter(msg);
+        }
+
+        public void HandleMessage(T msg, params object[] paras)
+        {
+            Current.Process(msg, paras);
         }
     }
 }

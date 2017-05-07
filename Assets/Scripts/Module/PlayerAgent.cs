@@ -4,6 +4,7 @@ using Framework;
 using Framework.Message;
 using System;
 using System.Collections.Generic;
+using Framework.FSM;
 
 namespace AGrail
 {
@@ -14,28 +15,16 @@ namespace AGrail
         public uint? SelectSkill = null;
         public List<uint> SelectArgs = new List<uint>();
         private int agentState = (int)PlayerAgentState.Idle;
+        public StateMachine<StateMsg> FSM = new StateMachine<StateMsg>("AgnetUI");
         public int AgentState
         {
             get { return agentState; }
             set
             {
                 Debug.LogFormat("Agent state = {0}", value);
-                reset();
                 agentState = value;
                 MessageSystem<MessageType>.Notify(MessageType.AgentStateChange);
-                AgentUIState = calUIState(agentState);                
-            }
-        }
-
-        private uint agentUIState = 0;
-        public uint AgentUIState
-        {
-            get { return agentUIState; }
-            set
-            {
-                Debug.LogFormat("Agent UI state = {0}", value);
-                agentUIState = value;
-                MessageSystem<MessageType>.Notify(MessageType.AgentUIStateChange);
+                FSM.HandleMessage(StateMsg.Init, calUIState(agentState));
             }
         }
         
@@ -44,42 +33,82 @@ namespace AGrail
 
         public PlayerAgent(uint roleID) : base()
         {
-            PlayerRole = RoleFactory.Create(roleID);         
+            PlayerRole = RoleFactory.Create(roleID);
+            FSM.ChangeState<StateIdle>(StateMsg.Init, false);
         }
 
-        private void reset()
+        public void AddSelectPlayer(uint playerID)
         {
-            SelectPlayers.Clear();
-            SelectCards.Clear();
-            SelectSkill = null;
-            SelectArgs.Clear();
+            if (!SelectPlayers.Contains(playerID))
+            {
+                SelectPlayers.Add(playerID);
+                while (SelectPlayers.Count > PlayerRole.MaxSelectPlayer(FSM.Current.StateNumber))
+                    SelectPlayers.RemoveAt(0);
+            }
+            MessageSystem<MessageType>.Notify(MessageType.AgentSelectPlayer);
+            FSM.HandleMessage(StateMsg.ClickPlayer);
         }
 
-        private uint calUIState(int state)
+        public void RemoveSelectPlayer(uint playerID)
+        {
+            if (SelectPlayers.Contains(playerID))
+                SelectPlayers.Remove(playerID);
+            MessageSystem<MessageType>.Notify(MessageType.AgentSelectPlayer);
+            FSM.HandleMessage(StateMsg.ClickPlayer);
+        }
+
+        public void AddSelectCard(uint cardID)
+        {
+            if (!SelectCards.Contains(cardID))
+            {
+                SelectCards.Add(cardID);
+                while (SelectCards.Count > PlayerRole.MaxSelectCard(FSM.Current.StateNumber))
+                    SelectCards.RemoveAt(0);
+            }
+            MessageSystem<MessageType>.Notify(MessageType.AgentSelectCard);
+            FSM.HandleMessage(StateMsg.ClickCard);
+        }
+
+        public void RemoveSelectCard(uint cardID)
+        {
+            if (SelectCards.Contains(cardID))
+                SelectCards.Remove(cardID);               
+            MessageSystem<MessageType>.Notify(MessageType.AgentSelectCard);
+            FSM.HandleMessage(StateMsg.ClickCard);
+        }
+
+        public void ChangeSelectSkill(uint? skillID)
+        {
+            SelectSkill = skillID;
+            MessageSystem<MessageType>.Notify(MessageType.AgentSelectSkill);
+            FSM.HandleMessage(StateMsg.ClickSkill);
+        }
+
+        private Type calUIState(int state)
         {
             if (state.Check(PlayerAgentState.CanSpecial))
-                return 10;
+                return typeof(StateNormal);
             if (state.Check(PlayerAgentState.CanAttack) && state.Check(PlayerAgentState.CanMagic))
-                return 11;
+                return typeof(StateAttackAndMagic);
             if (state.Check(PlayerAgentState.CanAttack) && !state.Check(PlayerAgentState.CanMagic))
-                return 1;
+                return typeof(StateAttack);
             if (!state.Check(PlayerAgentState.CanAttack) && state.Check(PlayerAgentState.CanMagic))
-                return 2;
+                return typeof(StateMagic);
             if (state.Check(PlayerAgentState.Attacked))
-                return 3;
+                return typeof(StateAttacked);
             if (state.Check(PlayerAgentState.MoDaned))
-                return 4;
+                return typeof(StateModaned);
             if (state.Check(PlayerAgentState.Discard))
-                return 5;
+                return typeof(StateDrop);
             if (state.Check(PlayerAgentState.Weaken))
-                return 6;
+                return typeof(StateWeaken);
             if (state.Check(PlayerAgentState.HealCost))
-                return 7;
+                return typeof(StateHealCost);
             if (state.Check(PlayerAgentState.AdditionAction))
-                return 42;
+                return typeof(StateArgs);
             if (state.Check(PlayerAgentState.SkillResponse))
-                return Cmd.respond_id;
-            return 0;
+                return typeof(StateSkill);
+            return typeof(StateIdle);
         }
     }    
 

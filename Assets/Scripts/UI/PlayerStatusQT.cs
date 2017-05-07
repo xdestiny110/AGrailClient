@@ -6,14 +6,14 @@ using Framework.Message;
 
 namespace AGrail
 {
-    public class PlayerStatusQT : MonoBehaviour
+    public class PlayerStatusQT : MonoBehaviour, IMessageListener<MessageType>
     {
         [SerializeField]
         private Transform teamBG;
         [SerializeField]
         private Text playerName;
         [SerializeField]
-        private Text playerID;
+        private Text txtPlayerID;
         [SerializeField]
         private RawImage hero;
         [SerializeField]
@@ -66,11 +66,17 @@ namespace AGrail
             }
         }
 
+        private uint playerID;
         public uint PlayerID
         {
             set
             {
-                playerID.text = value.ToString();
+                playerID = value;
+                txtPlayerID.text = value.ToString();
+            }
+            get
+            {
+                return playerID;
             }
         }
 
@@ -310,27 +316,37 @@ namespace AGrail
             }
         }
 
+        void Awake()
+        {
+            MessageSystem<MessageType>.Regist(MessageType.AgentSelectPlayer, this);
+        }
+
+        void Destroy()
+        {
+            MessageSystem<MessageType>.UnRegist(MessageType.AgentSelectPlayer, this);
+        }
+
+        public void OnEventTrigger(MessageType eventType, params object[] parameters)
+        {
+            switch (eventType)
+            {
+                case MessageType.AgentSelectPlayer:
+                    if (BattleData.Instance.Agent.SelectPlayers.Contains(playerID))
+                        selectBorder.enabled = true;
+                    else
+                        selectBorder.enabled = false;
+                    break;
+            }
+        }
+
         public void AddBtnPlayerCallback(uint id)
         {
             btnPlayer.onClick.AddListener(()=>
             {
-                selectBorder.enabled = !selectBorder.enabled;
                 if (selectBorder.enabled)
-                {
-                    BattleData.Instance.Agent.SelectPlayers.Add(id);                    
-                    if(BattleData.Instance.Agent.AgentUIState < 100)
-                        BattleData.Instance.Agent.AgentUIState = BattleData.Instance.Agent.AgentUIState;
-                    else
-                    {
-                        //为了应付有些技能需要选更多的东西...
-                        BattleData.Instance.Agent.AgentUIState = BattleData.Instance.Agent.AgentUIState * 100 + 1;
-                    }
-                }
+                    BattleData.Instance.Agent.AddSelectPlayer(id);
                 else
-                {
-                    BattleData.Instance.Agent.SelectPlayers.Remove(id);
-                    BattleData.Instance.Agent.AgentUIState = BattleData.Instance.Agent.AgentUIState;
-                }                    
+                    BattleData.Instance.Agent.RemoveSelectPlayer(id);              
             });
             btnPlayer.interactable = false;
             selectBorder.enabled = false;
