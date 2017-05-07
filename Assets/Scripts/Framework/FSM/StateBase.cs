@@ -28,7 +28,7 @@ namespace Framework.FSM
 
         public virtual void Exit(T msg, params object[] paras)
         {
-            Debug.LogFormat("Enter {0}:{1}", StateName, StateNumber);
+            Debug.LogFormat("Exit {0}:{1}", StateName, StateNumber);
         }
 
         public abstract void Process(T msg, params object[] paras);

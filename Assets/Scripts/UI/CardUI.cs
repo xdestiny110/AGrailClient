@@ -62,7 +62,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.AgentSelectCard, this);
         }
 
-        void Destroy()
+        void OnDestroy()
         {
             MessageSystem<MessageType>.UnRegist(MessageType.AgentSelectCard, this);
         }

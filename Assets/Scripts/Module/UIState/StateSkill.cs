@@ -31,7 +31,10 @@ namespace AGrail
                 if (msg == UIStateMsg.ClickSkill)
                     skillID = (uint)paras[0];
                 else
+                {
                     skillID = BattleData.Instance.Agent.Cmd.respond_id;
+                    BattleData.Instance.Agent.SelectSkill = skillID;
+                }                    
                 BattleData.Instance.Agent.SelectCards.Clear();
                 BattleData.Instance.Agent.SelectPlayers.Clear();
                 BattleData.Instance.Agent.SelectArgs.Clear();

@@ -123,7 +123,7 @@ namespace AGrail
 
         public virtual void UseSkill(bool isOK)
         {
-
+            Debug.LogFormat("Use skill. isOK = {0}, skill = {1}", isOK, BattleData.Instance.Agent.SelectSkill);
         }
 
         public virtual bool CheckOK(uint uiState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
@@ -237,8 +237,8 @@ namespace AGrail
                     break;
                 case 3:
                     if (card.Element == Card.CardElement.light ||
-                        (((card.Element == Card.CardElement.darkness || card.Element == Card.GetCard(BattleData.Instance.Agent.Cmd.args[1]).Element) 
-                            && BattleData.Instance.Agent.Cmd.args[0] < 1)))
+                        (((card.Element == Card.CardElement.darkness || card.Element == Card.GetCard(BattleData.Instance.Agent.Cmd.args[1]).Element) && 
+                            BattleData.Instance.Agent.Cmd.args[0] < 1 && card.Type == Card.CardType.attack)))
                         return true;
                     break;
                 case 4:
@@ -256,11 +256,12 @@ namespace AGrail
             switch (uiState)
             {
                 case 1:
-                case 2:
-                    if (player.team != BattleData.Instance.MainPlayer.team && 
-                        !(player.role_id == (uint)RoleID.AnSha && player.is_knelt))                    
-                            return true;                    
+                    if (player.team != BattleData.Instance.MainPlayer.team &&
+                        !(player.role_id == (uint)RoleID.AnSha && player.is_knelt))
+                        return true;
                     break;
+                case 2:
+                    return true;
                 case 3:
                     if (player.team != BattleData.Instance.MainPlayer.team && player.id != BattleData.Instance.Agent.Cmd.args[3])
                         return true;

@@ -56,7 +56,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.AgentSelectSkill, this);
         }
 
-        void Destroy()
+        void OnDestroy()
         {
             MessageSystem<MessageType>.UnRegist(MessageType.AgentSelectSkill, this);
         }

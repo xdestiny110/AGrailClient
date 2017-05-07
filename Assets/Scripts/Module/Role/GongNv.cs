@@ -114,6 +114,7 @@ namespace AGrail
 
         public override void UseSkill(bool isOK)
         {
+            base.UseSkill(isOK);
             if (isOK)
             {
                 switch (BattleData.Instance.Agent.SelectSkill)

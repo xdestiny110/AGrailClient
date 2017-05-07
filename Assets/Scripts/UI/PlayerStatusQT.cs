@@ -319,7 +319,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.AgentSelectPlayer, this);
         }
 
-        void Destroy()
+        void OnDestroy()
         {
             MessageSystem<MessageType>.UnRegist(MessageType.AgentSelectPlayer, this);
         }
