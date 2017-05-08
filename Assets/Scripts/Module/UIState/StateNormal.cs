@@ -55,11 +55,11 @@ namespace AGrail
                     var cmd = paras[0].ToString();
                     if (cmd == "Buy")
                     {
-                        stateMachine.ChangeState<StateArgs>(msg, true);
+                        stateMachine.ChangeState<StateBuy>(msg, true);
                     }
                     if(cmd == "Extract")
                     {
-
+                        stateMachine.ChangeState<StateExtract>(msg, true);
                     }
                     if(cmd == "Syntheis")
                     {

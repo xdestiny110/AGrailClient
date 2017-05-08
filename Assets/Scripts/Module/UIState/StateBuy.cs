@@ -2,7 +2,7 @@
 
 namespace AGrail
 {
-    public class StateSpecial : UIStateBase
+    public class StateBuy : UIStateBase
     {
         public override string StateName
         {
@@ -20,11 +20,7 @@ namespace AGrail
             }
         }
 
-        public StateSpecial(StateMachine<UIStateMsg> machine) : base(machine) { }
+        public StateBuy(StateMachine<UIStateMsg> machine) : base(machine) { }
 
-        public override void Process(UIStateMsg msg, params object[] paras)
-        {
-            
-        }
     }
 }

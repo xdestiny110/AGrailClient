@@ -121,11 +121,6 @@ namespace AGrail
 
         }
 
-        public virtual void UseSkill(bool isOK)
-        {
-            Debug.LogFormat("Use skill. isOK = {0}, skill = {1}", isOK, BattleData.Instance.Agent.SelectSkill);
-        }
-
         public virtual bool CheckOK(uint uiState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
         {
             switch (uiState)
@@ -302,6 +297,117 @@ namespace AGrail
                     return 1;
             }
             return 0;
+        }
+
+        public System.Action OKAction = null;
+        public System.Action CancelAction = null;
+        public virtual void UIStateChange(uint state, UIStateMsg msg, params object[] paras)
+        {
+            switch (state)
+            {
+                case 1:
+                    //攻击
+                    OKAction = () =>
+                    {
+                        Attack(BattleData.Instance.Agent.SelectCards[0], BattleData.Instance.Agent.SelectPlayers[0]);
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                    };
+                    break;
+                case 2:
+                    //魔法
+                    OKAction = () =>
+                    {
+                        Magic(BattleData.Instance.Agent.SelectCards[0], BattleData.Instance.Agent.SelectPlayers[0]);
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                    };
+                    break;
+                case 3:
+                    //应战
+                    if (BattleData.Instance.Agent.SelectCards.Count > 0)
+                    {
+                        if (BattleData.Instance.Agent.SelectPlayers.Count > 0)
+                            OKAction = () =>
+                            {
+                                AttackedReply(Card.GetCard(BattleData.Instance.Agent.SelectCards[0]),
+                                    BattleData.Instance.Agent.SelectPlayers[0]);
+                                BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                            };
+                        else
+                            OKAction = () =>
+                            {
+                                AttackedReply(Card.GetCard(BattleData.Instance.Agent.SelectCards[0]));
+                                BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                            };
+                    }
+                    CancelAction = () =>
+                    {
+                        AttackedReply();
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                    };
+                    break;
+                case 4:
+                    //魔弹响应
+                    OKAction = () =>
+                    {
+                        MoDaned(Card.GetCard(BattleData.Instance.Agent.SelectCards[0]));
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                    };
+                    CancelAction = () =>
+                    {
+                        MoDaned();
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                    };
+                    break;
+                case 5:
+                    //弃牌
+                    OKAction = () =>
+                    {
+                        Drop(BattleData.Instance.Agent.SelectCards);
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                    };
+                    break;
+                case 6:
+                    //虚弱
+                    OKAction = () =>
+                    {
+                        Weaken(new List<uint>() { 1 });
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                    };
+                    CancelAction = () =>
+                    {
+                        Weaken(new List<uint>() { 0 });
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                    };
+                    break;
+                case 7:
+                    //治疗
+                    break;
+                case 12:
+                    //购买
+                    if (BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team] + BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team] == 4)
+                    {
+                        var selectList = new List<List<uint>>();
+                        selectList.Add(new List<uint>() { 1, 0 });
+                        selectList.Add(new List<uint>() { 0, 1 });
+                        
+                    }
+                    else
+                    {
+                        BattleData.Instance.Agent.PlayerRole.Buy(1, 1);
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                    }
+                    break;
+                case 13:
+                    //提炼
+                    break;
+                case 14:
+                    //合成
+                    break;
+                case 42:
+                    //额外行动
+                    //BattleData.Instance.Agent.PlayerRole.AdditionAction();
+                    break;
+            }
         }
 
         protected void sendActionMsg(BasicActionType actionType, uint srcID, List<uint> dstID = null, List<uint> cardIDs = null, uint? actionID = null, List<uint> args = null)

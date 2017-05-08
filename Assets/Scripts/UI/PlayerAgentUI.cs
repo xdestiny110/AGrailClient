@@ -105,6 +105,9 @@ namespace AGrail
                         BattleData.Instance.Agent.SelectCards, BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectSkill);
                     btnCancel.interactable = BattleData.Instance.Agent.PlayerRole.CheckCancel(BattleData.Instance.Agent.FSM.Current.StateNumber,
                         BattleData.Instance.Agent.SelectCards, BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectSkill);
+                    //有ArgsUI则弹出
+                    if (GameManager.UIInstance.PeekWindow() == Framework.UI.WindowType.ChooseArgsUI)
+                        GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
                     break;
                 case MessageType.AgentUpdate:
                     btnOK.interactable = false;
@@ -159,36 +162,48 @@ namespace AGrail
 
         public void OnBtnBuyClick()
         {
-            if (BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team] + BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team] == 4)
-            {
-                var selectList = new List<List<uint>>();
-                selectList.Add(new List<uint>() { 1, 0 });
-                selectList.Add(new List<uint>() { 0, 1 });
-                BattleData.Instance.Agent.FSM.HandleMessage(UIStateMsg.ClickBtn, "Buy");
-                GameManager.UIInstance.PushWindow(Framework.UI.WindowType.ChooseArgsUI, Framework.UI.WinMsg.None, Vector3.zero,
-                    "Energy", selectList);
-            }
-            else
-            {
-                BattleData.Instance.Agent.PlayerRole.Buy(1, 1);
-                BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-            }                
+            BattleData.Instance.Agent.FSM.HandleMessage(UIStateMsg.ClickBtn, "Buy");
+            //if (BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team] + BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team] == 4)
+            //{
+            //    var selectList = new List<List<uint>>();
+            //    selectList.Add(new List<uint>() { 1, 0 });
+            //    selectList.Add(new List<uint>() { 0, 1 });
+            //    BattleData.Instance.Agent.FSM.HandleMessage(UIStateMsg.ClickBtn, "Buy");
+            //    GameManager.UIInstance.PushWindow(Framework.UI.WindowType.ChooseArgsUI, Framework.UI.WinMsg.None, Vector3.zero,
+            //        "Energy", selectList);
+            //}
+            //else
+            //{
+            //    BattleData.Instance.Agent.PlayerRole.Buy(1, 1);
+            //    BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+            //}                
         }
 
         public void OnBtnExtractClick()
         {
-            //BattleData.Instance.Agent.AgentUIState = 13;
+            //var tGem = BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team];
+            //var tCrystal = BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team];
+            //var gem = BattleData.Instance.MainPlayer.gem;
+            //var crystal = BattleData.Instance.MainPlayer.crystal;
+            //var maxEnergyCnt = BattleData.Instance.Agent.PlayerRole.MaxEnergyCount;
             //var selectList = new List<List<uint>>();
-            //if (BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team] >= 2)
-            //    selectList.Add(new List<uint>() { 2, 0 });
-            //if (BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team] >= 2)
-            //    selectList.Add(new List<uint>() { 0, 2 });
-            //if (BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team] >= 1 && BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team] >= 1)
-            //    selectList.Add(new List<uint>() { 1, 1 });
-            //if (BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team] >= 1)
-            //    selectList.Add(new List<uint>() { 1, 0 });
-            //if (BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team] >= 1)
-            //    selectList.Add(new List<uint>() { 0, 1 });
+            //if(maxEnergyCnt - gem - crystal >=2)
+            //{
+            //    if(tGem >=2)
+            //        selectList.Add(new List<uint>() { 2, 0 });
+            //    if(tGem >=1 && tCrystal >=1)
+            //        selectList.Add(new List<uint>() { 1, 1 });
+            //    if(tCrystal >=2)
+            //        selectList.Add(new List<uint>() { 0, 2 });
+            //}
+            //else
+            //{
+            //    if (tGem >= 1)
+            //        selectList.Add(new List<uint>() { 1, 0 });
+            //    if (tCrystal >= 1)
+            //        selectList.Add(new List<uint>() { 0, 1 });
+            //}
+            //BattleData.Instance.Agent.FSM.HandleMessage(UIStateMsg.ClickBtn, "Extract");
             //GameManager.UIInstance.PushWindow(Framework.UI.WindowType.ChooseArgsUI, Framework.UI.WinMsg.None, Vector3.zero,
             //    "Energy", selectList);
         }
@@ -211,104 +226,16 @@ namespace AGrail
 
         private void onBtnOKClick()
         {
-            switch (BattleData.Instance.Agent.FSM.Current.StateNumber)
-            {
-                case 1:
-                    //攻击
-                    BattleData.Instance.Agent.PlayerRole.Attack(BattleData.Instance.Agent.SelectCards[0],
-                        BattleData.Instance.Agent.SelectPlayers[0]);
-                    break;
-                case 2:
-                    //魔法
-                    BattleData.Instance.Agent.PlayerRole.Magic(BattleData.Instance.Agent.SelectCards[0],
-                        BattleData.Instance.Agent.SelectPlayers[0]);
-                    break;
-                case 3:
-                    //应战
-                    if (BattleData.Instance.Agent.SelectCards.Count > 0)
-                    {
-                        if (BattleData.Instance.Agent.SelectPlayers.Count > 0)
-                            BattleData.Instance.Agent.PlayerRole.AttackedReply(
-                                Card.GetCard(BattleData.Instance.Agent.SelectCards[0]),
-                                BattleData.Instance.Agent.SelectPlayers[0]);
-                        else
-                            BattleData.Instance.Agent.PlayerRole.AttackedReply(
-                                Card.GetCard(BattleData.Instance.Agent.SelectCards[0]));
-                    }
-                    break;
-                case 4:
-                    //魔弹响应
-                    BattleData.Instance.Agent.PlayerRole.MoDaned(Card.GetCard(BattleData.Instance.Agent.SelectCards[0]));
-                    break;
-                case 5:
-                    //弃牌
-                    BattleData.Instance.Agent.PlayerRole.Drop(BattleData.Instance.Agent.SelectCards);
-                    break;
-                case 6:
-                    //虚弱
-                    BattleData.Instance.Agent.PlayerRole.Weaken(new List<uint>() { 1 });
-                    break;
-                case 7:
-                    //治疗
-                    break;
-                case 10:
-                    //最通常的回合开始的状态
-                    break;
-                case 11:
-                    //只能攻击或法术
-                    break;
-                case 13:
-                    //选择参数
-                    GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
-                    BattleData.Instance.Agent.FSM.HandleMessage(UIStateMsg.ClickBtn, "OK");
-                    onBtnOKClick();
-                    break;
-                case 42:
-                    //额外行动
-                    //BattleData.Instance.Agent.PlayerRole.AdditionAction();
-                    break;
-                default:
-                    //技能
-                    BattleData.Instance.Agent.PlayerRole.UseSkill(true);
-                    break;
-            }
-            BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+            BattleData.Instance.Agent.PlayerRole.OKAction();
+            BattleData.Instance.Agent.PlayerRole.OKAction = null;
+            BattleData.Instance.Agent.PlayerRole.CancelAction = null;
         }
 
         private void onBtnCancelClick()
         {
-            switch (BattleData.Instance.Agent.FSM.Current.StateNumber)
-            {
-                case 3:
-                    //应战
-                    BattleData.Instance.Agent.PlayerRole.AttackedReply();
-                    break;
-                case 4:
-                    //魔弹响应
-                    BattleData.Instance.Agent.PlayerRole.MoDaned();
-                    break;
-                case 6:
-                    //虚弱
-                    BattleData.Instance.Agent.PlayerRole.Weaken(new List<uint>() { 0 });
-                    break;
-                case 7:
-                    //治疗
-                    break;
-                case 13:
-                    //选择参数
-                    GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
-                    BattleData.Instance.Agent.FSM.BackState(UIStateMsg.ClickBtn);
-                    break;
-                case 42:
-                    //额外行动
-                    //BattleData.Instance.Agent.PlayerRole.AdditionAction();
-                    break;
-                default:
-                    //技能
-                    BattleData.Instance.Agent.PlayerRole.UseSkill(false);
-                    break;
-            }
-            BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+            BattleData.Instance.Agent.PlayerRole.CancelAction();
+            BattleData.Instance.Agent.PlayerRole.OKAction = null;
+            BattleData.Instance.Agent.PlayerRole.CancelAction = null;
         }
 
     }

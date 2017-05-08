@@ -40,7 +40,7 @@ namespace AGrail
                 BattleData.Instance.Agent.SelectArgs.Clear();
                 MessageSystem<MessageType>.Notify(MessageType.AgentSelectPlayer);
                 MessageSystem<MessageType>.Notify(MessageType.AgentSelectCard);
-            }                
+            }
             base.Enter(msg, paras);
         }
 
@@ -50,39 +50,17 @@ namespace AGrail
             {
                 case UIStateMsg.ClickSkill:
                     if (BattleData.Instance.Agent.SelectSkill == null)
+                        //取消技能
                         stateMachine.BackState(msg, paras);                        
                     else
                         //点了别的技能
                         stateMachine.ChangeState<StateSkill>(msg, false, BattleData.Instance.Agent.SelectSkill, paras);
                     break;
                 case UIStateMsg.ClickCard:
-                    clickCard();
-                    break;
                 case UIStateMsg.ClickPlayer:
-                    clickPlayer();
+                    base.Process(msg, paras);
                     break;
             }
         }
-
-        private void clickCard()
-        {
-            //所有人物技能的特定动作(主要就是那些需要额外args的)
-            //如果不用切换状态，需要进行base.Process(msg, paras);
-            switch (BattleData.Instance.MainPlayer.role_id)
-            {
-
-            }
-        }
-
-        private void clickPlayer()
-        {
-            //所有人物技能的特定动作(主要就是那些需要额外args的)
-            //如果不用切换状态，需要进行base.Process(msg, paras);
-            switch (BattleData.Instance.MainPlayer.role_id)
-            {
-
-            }
-        }
-
     }
 }
