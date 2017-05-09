@@ -1,18 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Framework.FSM;
-using System;
 
 namespace AGrail
 {
-    public class StateModaned : UIStateBase
+    public class StateSynthetize : UIStateBase
     {
-
         public override string StateName
         {
             get
             {
-                return "Modaned";
+                return "Synthetize";
             }
         }
 
@@ -20,13 +18,10 @@ namespace AGrail
         {
             get
             {
-                return 4;
+                return 14;
             }
         }
 
-        public StateModaned(StateMachine<UIStateMsg> machine) : base(machine) { }
-
+        public StateSynthetize(StateMachine<UIStateMsg> machine) : base(machine) { }
     }
 }
-
-

@@ -29,7 +29,7 @@ namespace AGrail
             if(msg == UIStateMsg.ClickSkill || msg == UIStateMsg.Init)
             {
                 if (msg == UIStateMsg.ClickSkill)
-                    skillID = (uint)paras[0];
+                    skillID = BattleData.Instance.Agent.SelectSkill.Value;
                 else
                 {
                     skillID = BattleData.Instance.Agent.Cmd.respond_id;

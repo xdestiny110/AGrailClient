@@ -37,12 +37,12 @@ namespace AGrail
             players = GetComponent<BattleUIQT>().PlayersStatus;
 
             MessageSystem<MessageType>.Regist(MessageType.AgentUpdate, this);
-            MessageSystem<MessageType>.Regist(MessageType.AgentSetOKCallback, this);
-            MessageSystem<MessageType>.Regist(MessageType.AgentSetCancelCallback, this);
             MessageSystem<MessageType>.Regist(MessageType.AgentHandChange, this);
             MessageSystem<MessageType>.Regist(MessageType.AgentStateChange, this);
             MessageSystem<MessageType>.Regist(MessageType.AgentSelectSkill, this);
             MessageSystem<MessageType>.Regist(MessageType.AgentUIStateChange, this);
+            MessageSystem<MessageType>.Regist(MessageType.ShowArgsUI, this);
+            MessageSystem<MessageType>.Regist(MessageType.CloseArgsUI, this);
 
             //先将确认键初始化为准备按钮
             if (BattleData.Instance.PlayerID != 9)
@@ -66,12 +66,11 @@ namespace AGrail
         void OnDestroy()
         {
             MessageSystem<MessageType>.UnRegist(MessageType.AgentUpdate, this);
-            MessageSystem<MessageType>.UnRegist(MessageType.AgentSetOKCallback, this);
-            MessageSystem<MessageType>.UnRegist(MessageType.AgentSetCancelCallback, this);
             MessageSystem<MessageType>.UnRegist(MessageType.AgentHandChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.AgentStateChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.AgentSelectSkill, this);
             MessageSystem<MessageType>.UnRegist(MessageType.AgentUIStateChange, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.ShowArgsUI, this);
         }
 
         public void OnEventTrigger(MessageType eventType, params object[] parameters)
@@ -105,9 +104,9 @@ namespace AGrail
                         BattleData.Instance.Agent.SelectCards, BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectSkill);
                     btnCancel.interactable = BattleData.Instance.Agent.PlayerRole.CheckCancel(BattleData.Instance.Agent.FSM.Current.StateNumber,
                         BattleData.Instance.Agent.SelectCards, BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectSkill);
-                    //有ArgsUI则弹出
-                    if (GameManager.UIInstance.PeekWindow() == Framework.UI.WindowType.ChooseArgsUI)
-                        GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
+                    btnBuy.interactable = BattleData.Instance.Agent.PlayerRole.CheckBuy(BattleData.Instance.Agent.FSM.Current.StateNumber);
+                    btnExtract.interactable = BattleData.Instance.Agent.PlayerRole.CheckExtract(BattleData.Instance.Agent.FSM.Current.StateNumber);
+                    btnSynthetize.interactable = BattleData.Instance.Agent.PlayerRole.CheckSynthetize(BattleData.Instance.Agent.FSM.Current.StateNumber);
                     break;
                 case MessageType.AgentUpdate:
                     btnOK.interactable = false;
@@ -157,71 +156,31 @@ namespace AGrail
                     btnOK.interactable = false;
                     btnCancel.interactable = false;
                     break;
+                case MessageType.ShowArgsUI:
+                    if (GameManager.UIInstance.PeekWindow() != Framework.UI.WindowType.ChooseArgsUI)
+                        GameManager.UIInstance.PushWindow(Framework.UI.WindowType.ChooseArgsUI,
+                            Framework.UI.WinMsg.None, Vector3.zero, parameters[0], "Energy");
+                    break;
+                case MessageType.CloseArgsUI:
+                    if (GameManager.UIInstance.PeekWindow() == Framework.UI.WindowType.ChooseArgsUI)
+                        GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
+                    break;
             }
         }
 
         public void OnBtnBuyClick()
         {
             BattleData.Instance.Agent.FSM.HandleMessage(UIStateMsg.ClickBtn, "Buy");
-            //if (BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team] + BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team] == 4)
-            //{
-            //    var selectList = new List<List<uint>>();
-            //    selectList.Add(new List<uint>() { 1, 0 });
-            //    selectList.Add(new List<uint>() { 0, 1 });
-            //    BattleData.Instance.Agent.FSM.HandleMessage(UIStateMsg.ClickBtn, "Buy");
-            //    GameManager.UIInstance.PushWindow(Framework.UI.WindowType.ChooseArgsUI, Framework.UI.WinMsg.None, Vector3.zero,
-            //        "Energy", selectList);
-            //}
-            //else
-            //{
-            //    BattleData.Instance.Agent.PlayerRole.Buy(1, 1);
-            //    BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-            //}                
         }
 
         public void OnBtnExtractClick()
         {
-            //var tGem = BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team];
-            //var tCrystal = BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team];
-            //var gem = BattleData.Instance.MainPlayer.gem;
-            //var crystal = BattleData.Instance.MainPlayer.crystal;
-            //var maxEnergyCnt = BattleData.Instance.Agent.PlayerRole.MaxEnergyCount;
-            //var selectList = new List<List<uint>>();
-            //if(maxEnergyCnt - gem - crystal >=2)
-            //{
-            //    if(tGem >=2)
-            //        selectList.Add(new List<uint>() { 2, 0 });
-            //    if(tGem >=1 && tCrystal >=1)
-            //        selectList.Add(new List<uint>() { 1, 1 });
-            //    if(tCrystal >=2)
-            //        selectList.Add(new List<uint>() { 0, 2 });
-            //}
-            //else
-            //{
-            //    if (tGem >= 1)
-            //        selectList.Add(new List<uint>() { 1, 0 });
-            //    if (tCrystal >= 1)
-            //        selectList.Add(new List<uint>() { 0, 1 });
-            //}
-            //BattleData.Instance.Agent.FSM.HandleMessage(UIStateMsg.ClickBtn, "Extract");
-            //GameManager.UIInstance.PushWindow(Framework.UI.WindowType.ChooseArgsUI, Framework.UI.WinMsg.None, Vector3.zero,
-            //    "Energy", selectList);
+            BattleData.Instance.Agent.FSM.HandleMessage(UIStateMsg.ClickBtn, "Extract");
         }
 
         public void OnBtnSynthetizeClick()
         {
-            //BattleData.Instance.Agent.AgentUIState = 14;
-            //var selectList = new List<List<uint>>();
-            //if (BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team] >= 3)
-            //    selectList.Add(new List<uint>() { 0, 3 });
-            //if (BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team] >= 1 && BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team] >= 2)
-            //    selectList.Add(new List<uint>() { 1, 2 });
-            //if (BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team] >= 2 && BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team] >= 1)
-            //    selectList.Add(new List<uint>() { 2, 1 });
-            //if (BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team] >= 3)
-            //    selectList.Add(new List<uint>() { 3, 0 });
-            //GameManager.UIInstance.PushWindow(Framework.UI.WindowType.ChooseArgsUI, Framework.UI.WinMsg.None, Vector3.zero,
-            //    "Energy", selectList);
+            BattleData.Instance.Agent.FSM.HandleMessage(UIStateMsg.ClickBtn, "Syntheis");
         }
 
         private void onBtnOKClick()

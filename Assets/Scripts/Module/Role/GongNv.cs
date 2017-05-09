@@ -112,6 +112,28 @@ namespace AGrail
             return base.CheckCancel(uiState, cardIDs, playerIDs, skillID);
         }
 
+        public override uint MaxSelectCard(uint uiState)
+        {
+            switch (uiState)
+            {
+                case 302:
+                case 305:
+                    return 1;
+            }
+            return base.MaxSelectCard(uiState);
+        }
+
+        public override uint MaxSelectPlayer(uint uiState)
+        {
+            switch (uiState)
+            {
+                case 302:
+                case 303:
+                    return 1;
+            }
+            return base.MaxSelectPlayer(uiState);
+        }
+
         public override void UIStateChange(uint state, UIStateMsg msg, params object[] paras)
         {
             switch (state)
@@ -137,7 +159,6 @@ namespace AGrail
                     CancelAction = () =>
                     {
                         BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
-                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     break;
                 case 303:
@@ -149,7 +170,6 @@ namespace AGrail
                     CancelAction = () =>
                     {
                         BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
-                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     break;
                 case 305:

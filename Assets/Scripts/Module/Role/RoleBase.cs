@@ -166,7 +166,10 @@ namespace AGrail
                         return true;
                     break;
                 case 6:
+                    return true;
+                case 12:
                 case 13:
+                case 14:
                     return true;                    
             }
             return false;
@@ -179,7 +182,9 @@ namespace AGrail
                 case 3:
                 case 4:
                 case 6:
+                case 12:
                 case 13:
+                case 14:
                     return true;
             }
             return false;
@@ -267,8 +272,6 @@ namespace AGrail
 
         public virtual bool CanSelect(uint uiState, Skill skill)
         {
-            if ((uiState == 10 || uiState == 11) && skill.SkillType == SkillType.法术)
-                return true;
             return false;
         }
 
@@ -291,10 +294,12 @@ namespace AGrail
                 case 1:
                 case 2:
                 case 3:
-                case 4:
+                case 4:                
                 case 10:
                 case 11:
                     return 1;
+                case 5:
+                    return BattleData.Instance.Agent.Cmd.args[1];
             }
             return 0;
         }
@@ -303,6 +308,8 @@ namespace AGrail
         public System.Action CancelAction = null;
         public virtual void UIStateChange(uint state, UIStateMsg msg, params object[] paras)
         {
+            List<List<uint>> selectList;
+            uint tGem, tCrystal ;
             switch (state)
             {
                 case 1:
@@ -386,10 +393,20 @@ namespace AGrail
                     //购买
                     if (BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team] + BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team] == 4)
                     {
-                        var selectList = new List<List<uint>>();
+                        selectList = new List<List<uint>>();
                         selectList.Add(new List<uint>() { 1, 0 });
                         selectList.Add(new List<uint>() { 0, 1 });
-                        
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, selectList);
+                        OKAction = () => 
+                        {
+                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                            BattleData.Instance.Agent.PlayerRole.Buy(BattleData.Instance.Agent.SelectArgs[0], BattleData.Instance.Agent.SelectArgs[1]);
+                        };
+                        CancelAction = () => 
+                        {
+                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                            BattleData.Instance.Agent.FSM.BackState(UIStateMsg.ClickBtn);
+                        };
                     }
                     else
                     {
@@ -399,9 +416,64 @@ namespace AGrail
                     break;
                 case 13:
                     //提炼
+                    tGem = BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team];
+                    tCrystal = BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team];
+                    var gem = BattleData.Instance.MainPlayer.gem;
+                    var crystal = BattleData.Instance.MainPlayer.crystal;
+                    var maxEnergyCnt = BattleData.Instance.Agent.PlayerRole.MaxEnergyCount;
+                    selectList = new List<List<uint>>();
+                    if (maxEnergyCnt - gem - crystal >= 2)
+                    {
+                        if (tGem >= 2)
+                            selectList.Add(new List<uint>() { 2, 0 });
+                        if (tGem >= 1 && tCrystal >= 1)
+                            selectList.Add(new List<uint>() { 1, 1 });
+                        if (tCrystal >= 2)
+                            selectList.Add(new List<uint>() { 0, 2 });
+                    }
+                    else
+                    {
+                        if (tGem >= 1)
+                            selectList.Add(new List<uint>() { 1, 0 });
+                        if (tCrystal >= 1)
+                            selectList.Add(new List<uint>() { 0, 1 });
+                    }
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, selectList);
+                    OKAction = () => 
+                    {
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                        BattleData.Instance.Agent.PlayerRole.Extract(BattleData.Instance.Agent.SelectArgs[0], BattleData.Instance.Agent.SelectArgs[1]);
+                    };
+                    CancelAction = () => 
+                    {
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                        BattleData.Instance.Agent.FSM.BackState(UIStateMsg.ClickBtn);
+                    };
                     break;
                 case 14:
                     //合成
+                    tGem = BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team];
+                    tCrystal = BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team];
+                    selectList = new List<List<uint>>();
+                    if (tGem >= 3)
+                        selectList.Add(new List<uint>() { 0, 3 });
+                    if (tGem >= 1 && tCrystal >= 2)
+                        selectList.Add(new List<uint>() { 1, 2 });
+                    if (tGem >= 2 && tCrystal >= 1)
+                        selectList.Add(new List<uint>() { 2, 1 });
+                    if (tCrystal >= 3)
+                        selectList.Add(new List<uint>() { 3, 0 });
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, selectList);
+                    OKAction = () =>
+                    {
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                        BattleData.Instance.Agent.PlayerRole.Synthetize(BattleData.Instance.Agent.SelectArgs[0], BattleData.Instance.Agent.SelectArgs[1]);
+                    };
+                    CancelAction = () =>
+                    {
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                        BattleData.Instance.Agent.FSM.BackState(UIStateMsg.ClickBtn);
+                    };
                     break;
                 case 42:
                     //额外行动

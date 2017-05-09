@@ -65,7 +65,7 @@ namespace AGrail
         {
             switch (eventType)
             {
-                case MessageType.AgentSelectCard:
+                case MessageType.AgentSelectSkill:
                     if (BattleData.Instance.Agent.SelectSkill == skill.SkillID)
                         selectBorder.enabled = true;
                     else

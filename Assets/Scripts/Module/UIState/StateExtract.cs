@@ -9,7 +9,7 @@ namespace AGrail
         {
             get
             {
-                return "Args";
+                return "Extract";
             }
         }
 

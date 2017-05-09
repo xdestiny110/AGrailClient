@@ -8,7 +8,7 @@ namespace AGrail
         {
             get
             {
-                return "Special";
+                return "Buy";
             }
         }
 

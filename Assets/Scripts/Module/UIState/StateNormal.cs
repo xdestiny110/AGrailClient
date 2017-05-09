@@ -63,7 +63,7 @@ namespace AGrail
                     }
                     if(cmd == "Syntheis")
                     {
-
+                        stateMachine.ChangeState<StateSynthetize>(msg, true);
                     }
                     break;
             }
