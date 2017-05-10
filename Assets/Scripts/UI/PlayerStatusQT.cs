@@ -6,14 +6,14 @@ using Framework.Message;
 
 namespace AGrail
 {
-    public class PlayerStatusQT : MonoBehaviour
+    public class PlayerStatusQT : MonoBehaviour, IMessageListener<MessageType>
     {
         [SerializeField]
         private Transform teamBG;
         [SerializeField]
         private Text playerName;
         [SerializeField]
-        private Text playerID;
+        private Text txtPlayerID;
         [SerializeField]
         private RawImage hero;
         [SerializeField]
@@ -66,11 +66,17 @@ namespace AGrail
             }
         }
 
+        private uint playerID;
         public uint PlayerID
         {
             set
             {
-                playerID.text = value.ToString();
+                playerID = value;
+                txtPlayerID.text = value.ToString();
+            }
+            get
+            {
+                return playerID;
             }
         }
 
@@ -305,8 +311,29 @@ namespace AGrail
             get { return btnPlayer.interactable; }
             set {
                 btnPlayer.interactable = value;
-                if (!value)
-                    selectBorder.enabled = false;
+            }
+        }
+
+        void Awake()
+        {
+            MessageSystem<MessageType>.Regist(MessageType.AgentSelectPlayer, this);
+        }
+
+        void OnDestroy()
+        {
+            MessageSystem<MessageType>.UnRegist(MessageType.AgentSelectPlayer, this);
+        }
+
+        public void OnEventTrigger(MessageType eventType, params object[] parameters)
+        {
+            switch (eventType)
+            {
+                case MessageType.AgentSelectPlayer:
+                    if (BattleData.Instance.Agent.SelectPlayers.Contains(playerID))
+                        selectBorder.enabled = true;
+                    else
+                        selectBorder.enabled = false;
+                    break;
             }
         }
 
@@ -314,8 +341,10 @@ namespace AGrail
         {
             btnPlayer.onClick.AddListener(()=>
             {
-                selectBorder.enabled = !selectBorder.enabled;
-                MessageSystem<MessageType>.Notify(MessageType.AgentSelectPlayer, id);
+                if (!selectBorder.enabled)
+                    BattleData.Instance.Agent.AddSelectPlayer(id);
+                else
+                    BattleData.Instance.Agent.RemoveSelectPlayer(id);              
             });
             btnPlayer.interactable = false;
             selectBorder.enabled = false;

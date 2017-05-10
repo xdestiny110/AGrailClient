@@ -179,6 +179,7 @@ namespace AGrail
                         if(player.id == PlayerID)
                         {
                             Agent = new PlayerAgent(player.role_id);
+                            Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, false);
                             MessageSystem<MessageType>.Notify(MessageType.AgentUpdate);
                         }                                     
                     }
@@ -280,10 +281,18 @@ namespace AGrail
                 foreach(var v in value.commands)
                 {
                     RoleBase r = null;
-                    //从proto上来看能够有多重响应
-                    //但逻辑上说不通啊...
+                    //能够有多重响应                    
                     switch (v.respond_id)
                     {
+                        case 0:
+                            //本次行动能够放弃
+                            if (v.dst_ids[0] != MainPlayer.id)
+                            {
+                                Agent.AgentState = (int)PlayerAgentState.Idle;
+                                continue;
+                            }
+                            Agent.AgentState |= (int)PlayerAgentState.CanResign;
+                            break;
                         case (uint)network.BasicRespondType.RESPOND_REPLY_ATTACK:
                             r = RoleFactory.Create(GetPlayerInfo(v.args[2]).role_id);
                             Dialog.Instance.Log += "等待" + r.RoleName + "应战响应" + Environment.NewLine;
@@ -368,8 +377,7 @@ namespace AGrail
                             }
                             Agent.Cmd = v;
                             Agent.AgentState =
-                                (int)PlayerAgentState.CanAttack | (int)PlayerAgentState.CanMagic |
-                                (int)PlayerAgentState.CanSkill | (int)PlayerAgentState.CanSpecial;
+                                (int)PlayerAgentState.CanAttack | (int)PlayerAgentState.CanMagic | (int)PlayerAgentState.CanSpecial;
                             break;
                         case (uint)network.BasicActionType.ACTION_ATTACK_MAGIC:
                             if (v.src_id != MainPlayer.id)
@@ -423,12 +431,6 @@ namespace AGrail
                 }
             }
         }
-    }
-
-    public class PlayerInfo
-    {
-        public network.SinglePlayerInfo SinglePlayerInfo;
-        public RoleBase Role;
     }
 
     public enum Team

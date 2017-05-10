@@ -7,12 +7,14 @@ using System.Collections.Generic;
 
 namespace AGrail
 {
-    public class PlayerAgent : IMessageListener<MessageType>, IDisposable
+    public class PlayerAgent
     {
-        private List<uint> selectPlayers = new List<uint>();
-        private List<uint> selectCards = new List<uint>();
-        private uint? selectSkill = null;
-        private int agentState = (int)PlayerAgentState.Idle;
+        public List<uint> SelectPlayers = new List<uint>();
+        public List<uint> SelectCards = new List<uint>();
+        public uint? SelectSkill = null;
+        public List<uint> SelectArgs = new List<uint>();
+        private int agentState = (int)PlayerAgentState.Idle;        
+        public UIStateMachine FSM = new UIStateMachine("AgnetUI");
         public int AgentState
         {
             get { return agentState; }
@@ -20,8 +22,8 @@ namespace AGrail
             {
                 Debug.LogFormat("Agent state = {0}", value);
                 agentState = value;
-                reset();
-                MessageSystem<MessageType>.Notify(MessageType.AgentStateChange, agentState);
+                MessageSystem<MessageType>.Notify(MessageType.AgentStateChange);
+                FSM.ChangeState(calUIState(agentState), true, UIStateMsg.Init);
             }
         }
         
@@ -31,74 +33,83 @@ namespace AGrail
         public PlayerAgent(uint roleID) : base()
         {
             PlayerRole = RoleFactory.Create(roleID);
-            MessageSystem<MessageType>.Regist(MessageType.AgentSelectCard, this);
-            MessageSystem<MessageType>.Regist(MessageType.AgentSelectPlayer, this);
-            MessageSystem<MessageType>.Regist(MessageType.AgentSelectSkill, this);            
         }
 
-        private void reset()
+        public void AddSelectPlayer(uint playerID)
         {
-            selectPlayers.Clear();
-            selectCards.Clear();
-            selectSkill = null;
-        }
-
-        public void OnEventTrigger(MessageType eventType, params object[] parameters)
-        {
-            int it;
-            switch (eventType)
+            if (!SelectPlayers.Contains(playerID))
             {
-                case MessageType.AgentSelectCard:
-                    var cardID = (uint)parameters[0];
-                    it = selectCards.FindIndex(c => { return c == cardID; });
-                    if (it >= 0)
-                        selectCards.RemoveAt(it);
-                    else
-                        selectCards.Add(cardID);
-                    PlayerRole.Check(AgentState, selectCards, selectPlayers, selectSkill);
-                    break;
-                case MessageType.AgentSelectPlayer:
-                    var playerID = (uint)parameters[0];
-                    it = selectPlayers.FindIndex(c => { return c == playerID; });
-                    if (it >= 0)
-                        selectPlayers.RemoveAt(it);
-                    else
-                        selectPlayers.Add(playerID);
-                    PlayerRole.Check(AgentState, selectCards, selectPlayers, selectSkill);
-                    break;
-                case MessageType.AgentSelectSkill:
-                    selectSkill = (uint?)parameters[0];                    
-                    break;
+                SelectPlayers.Add(playerID);
+                while (SelectPlayers.Count > PlayerRole.MaxSelectPlayer(FSM.Current.StateNumber))
+                    SelectPlayers.RemoveAt(0);
             }
+            MessageSystem<MessageType>.Notify(MessageType.AgentSelectPlayer);            
+            FSM.HandleMessage(UIStateMsg.ClickPlayer);
         }
 
-        private bool IsDisposed = false;
-        public void Dispose()
+        public void RemoveSelectPlayer(uint playerID)
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            if (SelectPlayers.Contains(playerID))
+                SelectPlayers.Remove(playerID);
+            MessageSystem<MessageType>.Notify(MessageType.AgentSelectPlayer);
+            FSM.HandleMessage(UIStateMsg.ClickPlayer);
         }
 
-        protected void Dispose(bool Disposing)
+        public void AddSelectCard(uint cardID)
         {
-            if (!IsDisposed)
+            if (!SelectCards.Contains(cardID))
             {
-                if (Disposing)
-                {
-
-                }
-                MessageSystem<MessageType>.UnRegist(MessageType.AgentSelectCard, this);
-                MessageSystem<MessageType>.UnRegist(MessageType.AgentSelectPlayer, this);
-                MessageSystem<MessageType>.UnRegist(MessageType.AgentSelectSkill, this);
+                SelectCards.Add(cardID);
+                while (SelectCards.Count > PlayerRole.MaxSelectCard(FSM.Current.StateNumber))
+                    SelectCards.RemoveAt(0);
             }
-            IsDisposed = true;
+            MessageSystem<MessageType>.Notify(MessageType.AgentSelectCard);
+            FSM.HandleMessage(UIStateMsg.ClickCard);
         }
 
-        ~PlayerAgent()
+        public void RemoveSelectCard(uint cardID)
         {
-            Dispose(false);
+            if (SelectCards.Contains(cardID))
+                SelectCards.Remove(cardID);               
+            MessageSystem<MessageType>.Notify(MessageType.AgentSelectCard);
+            FSM.HandleMessage(UIStateMsg.ClickCard);
         }
-    }
+
+        public void ChangeSelectSkill(uint? skillID)
+        {
+            SelectSkill = skillID;
+            MessageSystem<MessageType>.Notify(MessageType.AgentSelectSkill);
+            FSM.HandleMessage(UIStateMsg.ClickSkill);
+        }
+
+        private Type calUIState(int state)
+        {
+            if (state.Check(PlayerAgentState.CanSpecial))
+                return typeof(StateNormal);
+            if (state.Check(PlayerAgentState.CanAttack) && state.Check(PlayerAgentState.CanMagic))
+                return typeof(StateAttackAndMagic);
+            if (state.Check(PlayerAgentState.CanAttack) && !state.Check(PlayerAgentState.CanMagic))
+                return typeof(StateAttack);
+            if (!state.Check(PlayerAgentState.CanAttack) && state.Check(PlayerAgentState.CanMagic))
+                return typeof(StateMagic);
+            if (state.Check(PlayerAgentState.Attacked))
+                return typeof(StateAttacked);
+            if (state.Check(PlayerAgentState.MoDaned))
+                return typeof(StateModaned);
+            if (state.Check(PlayerAgentState.Discard))
+                return typeof(StateDrop);
+            if (state.Check(PlayerAgentState.Weaken))
+                return typeof(StateWeaken);
+            if (state.Check(PlayerAgentState.HealCost))
+                return typeof(StateHealCost);
+            if (state.Check(PlayerAgentState.AdditionAction))
+                return typeof(StateAdditionAction);
+            if (state.Check(PlayerAgentState.SkillResponse))
+                return typeof(StateSkill);
+            return typeof(StateIdle);
+        }
+    }    
+
 }
 
 

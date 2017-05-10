@@ -4,6 +4,7 @@
 	ConnectJS : function(url)
 	{
 		var s_url = Pointer_stringify(url);
+        var onOpenCb, onCloseCb, onMessageCb;
 		webSocket = new WebSocket(s_url);
 		webSocket.onmessage = function (e) 
 		{
@@ -50,11 +51,29 @@
 		webSocket.close();
 	},
 	
-	AlertJS:function (msg)
+	AlertJS: function (msg)
 	{
 		var s_msg = Pointer_stringify(msg);
 		alert(s_msg);
 	}
+    
+    AddOnOpenCallback: function (obj)
+    {
+        onOpenCb = obj;
+        console.log(obj);
+    }
+    
+    AddOnCloseCallback: function (obj)
+    {
+        onCloseCb = obj;
+        console.log(obj);
+    }
+    
+    AddOnMessageCallback: function (obj)
+    {
+        onMessageCb = obj;
+        console.log(obj);
+    }
 };
 
 autoAddDeps(WebSocketJS, '$webSocket');

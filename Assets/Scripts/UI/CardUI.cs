@@ -7,7 +7,7 @@ using System;
 
 namespace AGrail
 {
-    public class CardUI : MonoBehaviour
+    public class CardUI : MonoBehaviour,  IMessageListener<MessageType>
     {
         [SerializeField]
         private Canvas canvas;
@@ -22,14 +22,20 @@ namespace AGrail
         [SerializeField]
         private Image selectBorder;
 
-        private bool isEnable = false;
+        private bool isEnable;
         public bool IsEnable
         {
             set
             {
                 isEnable = value;
-                if (!isEnable)                
-                    selectBorder.enabled = false;                
+                if (!isEnable)
+                    image.color = new Color(0.5f, 0.5f, 0.5f, 1);
+                else
+                    image.color = Color.white;
+            }
+            get
+            {
+                return isEnable;
             }
         }
 
@@ -46,16 +52,42 @@ namespace AGrail
                     if (card.SkillNum >= 2)
                         txtSkill2.text = card.SkillNames[1];
                 }
-                IsEnable = true;
+                IsEnable = false;
+            }
+            get { return card; }
+        }
+
+        void Awake()
+        {
+            MessageSystem<MessageType>.Regist(MessageType.AgentSelectCard, this);
+        }
+
+        void OnDestroy()
+        {
+            MessageSystem<MessageType>.UnRegist(MessageType.AgentSelectCard, this);
+        }
+
+        public void OnEventTrigger(MessageType eventType, params object[] parameters)
+        {
+            switch (eventType)
+            {
+                case MessageType.AgentSelectCard:
+                    if (BattleData.Instance.Agent.SelectCards.Contains(card.ID))
+                        selectBorder.enabled = true;
+                    else
+                        selectBorder.enabled = false;
+                    break;
             }
         }
 
         public void OnCardClick()
         {
-            if (isEnable)
+            if (IsEnable)
             {
-                selectBorder.enabled = !selectBorder.enabled;
-                MessageSystem<MessageType>.Notify(MessageType.AgentSelectCard, card.ID);
+                if (!selectBorder.enabled)
+                    BattleData.Instance.Agent.AddSelectCard(card.ID);
+                else
+                    BattleData.Instance.Agent.RemoveSelectCard(card.ID);
             }    
         }
 

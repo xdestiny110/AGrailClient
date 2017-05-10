@@ -38,6 +38,11 @@ namespace Framework.UI
                 throw new System.Exception("Winstack is empty!");
         }
 
+        public WindowType PeekWindow()
+        {
+            return winStack.Peek().Type;
+        }
+
         private void dealWinMsg(WindowsBase topWin, WinMsg msg)
         {
             switch (msg)

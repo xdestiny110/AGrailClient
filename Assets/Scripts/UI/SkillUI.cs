@@ -5,7 +5,7 @@ using Framework.Message;
 
 namespace AGrail
 {
-    public class SkillUI : MonoBehaviour
+    public class SkillUI : MonoBehaviour, IMessageListener<MessageType>
     {
         [SerializeField]
         private RawImage skillIcon;
@@ -47,24 +47,39 @@ namespace AGrail
         {
             set
             {
-                if (!value)
-                {
-                    btn.interactable = false;
-                    selectBorder.enabled = false;
-                }
-                else if(skill.SkillType == SkillType.法术)
-                    btn.interactable = true;
+                btn.interactable = value;
+            }
+        }
+
+        void Awake()
+        {
+            MessageSystem<MessageType>.Regist(MessageType.AgentSelectSkill, this);
+        }
+
+        void OnDestroy()
+        {
+            MessageSystem<MessageType>.UnRegist(MessageType.AgentSelectSkill, this);
+        }
+
+        public void OnEventTrigger(MessageType eventType, params object[] parameters)
+        {
+            switch (eventType)
+            {
+                case MessageType.AgentSelectSkill:
+                    if (BattleData.Instance.Agent.SelectSkill == skill.SkillID)
+                        selectBorder.enabled = true;
+                    else
+                        selectBorder.enabled = false;
+                    break;
             }
         }
 
         public void OnBtnClick()
         {
-            selectBorder.enabled = !selectBorder.enabled;
-            if(selectBorder.enabled)
-                MessageSystem<MessageType>.Notify(MessageType.AgentSelectSkill, (uint?)skill.SkillID);
-            else
-                MessageSystem<MessageType>.Notify(MessageType.AgentSelectSkill, null);
+            if (!selectBorder.enabled)            
+                BattleData.Instance.Agent.ChangeSelectSkill(skill.SkillID);                            
+            else            
+                BattleData.Instance.Agent.ChangeSelectSkill(null);                            
         }
-
     }
 }
