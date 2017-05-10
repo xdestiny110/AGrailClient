@@ -80,6 +80,17 @@ namespace AGrail
             return base.CanSelect(uiState, skill);
         }
 
+        public override void AdditionAction()
+        {            
+            if(BattleData.Instance.Agent.SelectArgs.Count == 1 && BattleData.Instance.Agent.SelectArgs[0] == 303)
+            {
+                //狙击的返回不会写....
+                //sendReponseMsg(304, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 1 });
+                return;
+            }
+            base.AdditionAction();
+        }
+
         public override bool CheckOK(uint uiState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
         {
             switch (uiState)

@@ -54,9 +54,12 @@ namespace AGrail
                     for (int i = 0; i < argsCache.Count; i++)                    
                         args.options.Add(new Dropdown.OptionData()
                         {
-                            text = string.Format("{0}个宝石与{1}个星石", argsCache[argsCache.Count - 1][0], argsCache[argsCache.Count - 1][1])
+                            text = string.Format("{0}个宝石与{1}个星石", argsCache[i][0], argsCache[i][1])
                         });                    
                 }
+                args.RefreshShownValue();
+                BattleData.Instance.Agent.SelectArgs.Clear();
+                BattleData.Instance.Agent.SelectArgs.AddRange(argsCache[0]);
             }
         }
 

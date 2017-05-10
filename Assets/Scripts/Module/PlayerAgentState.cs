@@ -14,7 +14,8 @@
 
         CanSpecial = 0x200,
         CanAttack = 0x400,
-        CanMagic = 0x800,        
+        CanMagic = 0x800,
+        CanResign = 0x1000,
     }
 
     public static class PlayerAgentStateExtension

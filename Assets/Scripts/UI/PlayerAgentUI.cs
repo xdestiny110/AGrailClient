@@ -159,7 +159,7 @@ namespace AGrail
                 case MessageType.ShowArgsUI:
                     if (GameManager.UIInstance.PeekWindow() != Framework.UI.WindowType.ChooseArgsUI)
                         GameManager.UIInstance.PushWindow(Framework.UI.WindowType.ChooseArgsUI,
-                            Framework.UI.WinMsg.None, Vector3.zero, parameters[0], "Energy");
+                            Framework.UI.WinMsg.None, Vector3.zero, parameters[0], parameters[1]);
                     break;
                 case MessageType.CloseArgsUI:
                     if (GameManager.UIInstance.PeekWindow() == Framework.UI.WindowType.ChooseArgsUI)
@@ -188,6 +188,7 @@ namespace AGrail
             BattleData.Instance.Agent.PlayerRole.OKAction();
             BattleData.Instance.Agent.PlayerRole.OKAction = null;
             BattleData.Instance.Agent.PlayerRole.CancelAction = null;
+            BattleData.Instance.Agent.PlayerRole.ResignAction = null;
         }
 
         private void onBtnCancelClick()
@@ -195,6 +196,15 @@ namespace AGrail
             BattleData.Instance.Agent.PlayerRole.CancelAction();
             BattleData.Instance.Agent.PlayerRole.OKAction = null;
             BattleData.Instance.Agent.PlayerRole.CancelAction = null;
+            BattleData.Instance.Agent.PlayerRole.ResignAction = null;
+        }
+
+        private void onBtnResignClick()
+        {
+            BattleData.Instance.Agent.PlayerRole.ResignAction();
+            BattleData.Instance.Agent.PlayerRole.OKAction = null;
+            BattleData.Instance.Agent.PlayerRole.CancelAction = null;
+            BattleData.Instance.Agent.PlayerRole.ResignAction = null;
         }
 
     }

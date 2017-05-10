@@ -118,7 +118,8 @@ namespace AGrail
 
         public virtual void AdditionAction()
         {
-
+            sendReponseMsg((uint)BasicRespondType.RESPOND_ADDITIONAL_ACTION, 
+                BattleData.Instance.MainPlayer.id, null, null, BattleData.Instance.Agent.SelectArgs);
         }
 
         public virtual bool CheckOK(uint uiState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
@@ -170,6 +171,7 @@ namespace AGrail
                 case 12:
                 case 13:
                 case 14:
+                case 15:
                     return true;                    
             }
             return false;
@@ -187,6 +189,18 @@ namespace AGrail
                 case 14:
                     return true;
             }
+            return false;
+        }
+
+        public virtual bool CheckResign(uint uiState)
+        {
+            switch (uiState)
+            {
+                case 15:
+                    return true;
+            }
+            if (BattleData.Instance.Agent.AgentState.Check(PlayerAgentState.CanResign))
+                return true;
             return false;
         }
         
@@ -306,6 +320,7 @@ namespace AGrail
 
         public System.Action OKAction = null;
         public System.Action CancelAction = null;
+        public System.Action ResignAction = null;
         public virtual void UIStateChange(uint state, UIStateMsg msg, params object[] paras)
         {
             List<List<uint>> selectList;
@@ -396,7 +411,7 @@ namespace AGrail
                         selectList = new List<List<uint>>();
                         selectList.Add(new List<uint>() { 1, 0 });
                         selectList.Add(new List<uint>() { 0, 1 });
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, selectList);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "Energy", selectList);
                         OKAction = () => 
                         {
                             MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
@@ -438,7 +453,7 @@ namespace AGrail
                         if (tCrystal >= 1)
                             selectList.Add(new List<uint>() { 0, 1 });
                     }
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, selectList);
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "Energy", selectList);
                     OKAction = () => 
                     {
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
@@ -463,7 +478,7 @@ namespace AGrail
                         selectList.Add(new List<uint>() { 2, 1 });
                     if (tCrystal >= 3)
                         selectList.Add(new List<uint>() { 3, 0 });
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, selectList);
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "Energy", selectList);
                     OKAction = () =>
                     {
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
@@ -475,9 +490,24 @@ namespace AGrail
                         BattleData.Instance.Agent.FSM.BackState(UIStateMsg.ClickBtn);
                     };
                     break;
-                case 42:
+                case 15:
                     //额外行动
-                    //BattleData.Instance.Agent.PlayerRole.AdditionAction();
+                    selectList = new List<List<uint>>();
+                    foreach (var v in BattleData.Instance.Agent.Cmd.args)
+                        selectList.Add(new List<uint>() { v });
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "Skill", selectList);
+                    OKAction = () => 
+                    {
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                        AdditionAction();
+                    };
+                    ResignAction = () =>
+                    {
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                        BattleData.Instance.Agent.SelectArgs.Clear();
+                        BattleData.Instance.Agent.SelectArgs.Add((uint)BasicActionType.ACTION_NONE);
+                        AdditionAction();
+                    };
                     break;
             }
         }

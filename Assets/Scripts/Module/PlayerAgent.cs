@@ -103,7 +103,7 @@ namespace AGrail
             if (state.Check(PlayerAgentState.HealCost))
                 return typeof(StateHealCost);
             if (state.Check(PlayerAgentState.AdditionAction))
-                return null;
+                return typeof(StateAdditionAction);
             if (state.Check(PlayerAgentState.SkillResponse))
                 return typeof(StateSkill);
             return typeof(StateIdle);
