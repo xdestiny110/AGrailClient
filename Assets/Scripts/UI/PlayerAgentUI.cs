@@ -18,6 +18,8 @@ namespace AGrail
         [SerializeField]
         private Button btnCancel;
         [SerializeField]
+        private Button BtnResign;
+        [SerializeField]
         private Button btnBuy;
         [SerializeField]
         private Button btnExtract;
@@ -104,6 +106,7 @@ namespace AGrail
                         BattleData.Instance.Agent.SelectCards, BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectSkill);
                     btnCancel.interactable = BattleData.Instance.Agent.PlayerRole.CheckCancel(BattleData.Instance.Agent.FSM.Current.StateNumber,
                         BattleData.Instance.Agent.SelectCards, BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectSkill);
+                    BtnResign.interactable = BattleData.Instance.Agent.PlayerRole.CheckResign(BattleData.Instance.Agent.FSM.Current.StateNumber);
                     btnBuy.interactable = BattleData.Instance.Agent.PlayerRole.CheckBuy(BattleData.Instance.Agent.FSM.Current.StateNumber);
                     btnExtract.interactable = BattleData.Instance.Agent.PlayerRole.CheckExtract(BattleData.Instance.Agent.FSM.Current.StateNumber);
                     btnSynthetize.interactable = BattleData.Instance.Agent.PlayerRole.CheckSynthetize(BattleData.Instance.Agent.FSM.Current.StateNumber);
@@ -114,6 +117,8 @@ namespace AGrail
                     btnOK.onClick.AddListener(onBtnOKClick);
                     btnCancel.onClick.RemoveAllListeners();
                     btnCancel.onClick.AddListener(onBtnCancelClick);
+                    BtnResign.onClick.RemoveAllListeners();
+                    BtnResign.onClick.AddListener(onBtnResignClick);
                     //初始化技能键
                     foreach (var v in BattleData.Instance.Agent.PlayerRole.Skills.Values)
                     {

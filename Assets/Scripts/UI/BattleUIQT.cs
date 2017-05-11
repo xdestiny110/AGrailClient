@@ -224,8 +224,9 @@ namespace AGrail
         private void onESCClick()
         {
             if (Input.GetKeyDown(KeyCode.Escape) && CanvasGroup.interactable)
-            {
-                Lobby.Instance.LeaveRoom();
+            {                
+                if (GameManager.UIInstance.PeekWindow() == WindowType.BattleQT)
+                    Lobby.Instance.LeaveRoom();
                 GameManager.UIInstance.PopWindow(WinMsg.Show);
             }
         }

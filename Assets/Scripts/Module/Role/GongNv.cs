@@ -36,7 +36,7 @@ namespace AGrail
         public GongNv()
         {
             for (uint i = 301; i <= 305; i++)
-                Skills.Add(i, Skill.GetSkill(i));            
+                Skills.Add(i, Skill.GetSkill(i));
         }
 
         public override bool CanSelect(uint uiState, Card card)
@@ -160,7 +160,7 @@ namespace AGrail
                         sendReponseMsg(301, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    break;
+                    return;
                 case 302:
                     OKAction = () =>
                     {
@@ -171,7 +171,7 @@ namespace AGrail
                     {
                         BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
                     };
-                    break;
+                    return;
                 case 303:
                     OKAction = () =>
                     {
@@ -182,7 +182,7 @@ namespace AGrail
                     {
                         BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
                     };
-                    break;
+                    return;
                 case 305:
                     OKAction = () =>
                     {
@@ -194,7 +194,7 @@ namespace AGrail
                         sendReponseMsg(305, BattleData.Instance.MainPlayer.id, null, BattleData.Instance.Agent.SelectCards, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    break;
+                    return;
             }
             base.UIStateChange(state, msg, paras);
         }

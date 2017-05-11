@@ -2,7 +2,7 @@
 {
     public enum PlayerAgentState
     {
-        Idle = 0x1,        
+        Idle = 0x0,        
         Attacked = 0x2,
         MoDaned = 0x4,
         Weaken = 0x8,
@@ -16,6 +16,8 @@
         CanAttack = 0x400,
         CanMagic = 0x800,
         CanResign = 0x1000,
+
+        ActionNone = 0x10000,
     }
 
     public static class PlayerAgentStateExtension

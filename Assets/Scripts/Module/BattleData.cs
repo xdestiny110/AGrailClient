@@ -275,11 +275,13 @@ namespace AGrail
         private network.CommandRequest cmdReq
         {
             set
-            {                
-                UnityEngine.Debug.Log(string.Format("cmd request call back: {0}", (value.cmd_type == network.CmdType.CMD_ACTION) ?
-                    ((network.BasicActionType)value.commands[0].respond_id).ToString() : ((network.BasicRespondType)value.commands[0].respond_id).ToString()));
-                foreach(var v in value.commands)
-                {
+            {
+                for (int i = 0; i < value.commands.Count; i++)
+                    UnityEngine.Debug.Log(string.Format("cmd request call back: {0}", (value.cmd_type == network.CmdType.CMD_ACTION) ?
+                        ((network.BasicActionType)value.commands[i].respond_id).ToString() : ((network.BasicRespondType)value.commands[i].respond_id).ToString()));
+                Agent.AgentState = (int)PlayerAgentState.Idle;
+                foreach (var v in value.commands)
+                {                    
                     RoleBase r = null;
                     //能够有多重响应                    
                     switch (v.respond_id)
@@ -376,7 +378,7 @@ namespace AGrail
                                 continue;
                             }
                             Agent.Cmd = v;
-                            Agent.AgentState =
+                            Agent.AgentState |=
                                 (int)PlayerAgentState.CanAttack | (int)PlayerAgentState.CanMagic | (int)PlayerAgentState.CanSpecial;
                             break;
                         case (uint)network.BasicActionType.ACTION_ATTACK_MAGIC:
@@ -386,7 +388,7 @@ namespace AGrail
                                 continue;
                             }
                             Agent.Cmd = v;
-                            Agent.AgentState = (int)PlayerAgentState.CanMagic | (int)PlayerAgentState.CanAttack;
+                            Agent.AgentState |= (int)PlayerAgentState.CanMagic | (int)PlayerAgentState.CanAttack;
                             break;
                         case (uint)network.BasicActionType.ACTION_ATTACK:
                             if (v.src_id != MainPlayer.id)
@@ -395,7 +397,7 @@ namespace AGrail
                                 continue;
                             }
                             Agent.Cmd = v;
-                            Agent.AgentState = (int)PlayerAgentState.CanAttack;
+                            Agent.AgentState |= (int)PlayerAgentState.CanAttack;
                             break;
                         case (uint)network.BasicActionType.ACTION_MAGIC:
                             if (v.src_id != MainPlayer.id)
@@ -404,7 +406,7 @@ namespace AGrail
                                 continue;
                             }
                             Agent.Cmd = v;
-                            Agent.AgentState = (int)PlayerAgentState.CanMagic;
+                            Agent.AgentState |= (int)PlayerAgentState.CanMagic;
                             break;
                         case (uint)network.BasicActionType.ACTION_NONE:
                             //无法行动
@@ -413,7 +415,8 @@ namespace AGrail
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
                                 continue;
                             }
-                            Agent.Cmd = v;
+                            //Agent.Cmd = v;                            
+                            Agent.AgentState |= (int)PlayerAgentState.CanResign;
                             break;
                         default:
                             //技能响应
@@ -425,7 +428,7 @@ namespace AGrail
                                 continue;
                             }
                             Agent.Cmd = v;
-                            Agent.AgentState = (int)PlayerAgentState.SkillResponse;
+                            Agent.AgentState |= (int)PlayerAgentState.SkillResponse;
                             break;
                     }
                 }

@@ -18,7 +18,11 @@ namespace AGrail
         public virtual bool HasBlue { get { return false; } }
         public virtual bool HasCoverd { get { return false; } }
         public virtual string Knelt { get { return null; } }
-        public Dictionary<uint, Skill> Skills = new Dictionary<uint, Skill>();        
+        public Dictionary<uint, Skill> Skills = new Dictionary<uint, Skill>();
+
+        //记录一些特殊状态
+        //由于当初没想好导致必须要在Role中维护这个状态...这个要比较小心
+        protected uint AddtionalState { get; set; }
 
         public virtual void Attack(uint card, uint dstID)
         {
@@ -196,7 +200,7 @@ namespace AGrail
         {
             switch (uiState)
             {
-                case 15:
+                case 15:                
                     return true;
             }
             if (BattleData.Instance.Agent.AgentState.Check(PlayerAgentState.CanResign))
@@ -415,7 +419,7 @@ namespace AGrail
                         OKAction = () => 
                         {
                             MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
-                            BattleData.Instance.Agent.PlayerRole.Buy(BattleData.Instance.Agent.SelectArgs[0], BattleData.Instance.Agent.SelectArgs[1]);
+                            BattleData.Instance.Agent.PlayerRole.Buy(BattleData.Instance.Agent.SelectArgs[0], BattleData.Instance.Agent.SelectArgs[1]);                            
                         };
                         CancelAction = () => 
                         {
@@ -499,7 +503,7 @@ namespace AGrail
                     OKAction = () => 
                     {
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
-                        AdditionAction();
+                        AdditionAction();                        
                     };
                     ResignAction = () =>
                     {
@@ -507,9 +511,19 @@ namespace AGrail
                         BattleData.Instance.Agent.SelectArgs.Clear();
                         BattleData.Instance.Agent.SelectArgs.Add((uint)BasicActionType.ACTION_NONE);
                         AdditionAction();
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     break;
             }
+            if(BattleData.Instance.Agent.AgentState.Check(PlayerAgentState.CanResign))
+                ResignAction = () =>
+                {
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                    BattleData.Instance.Agent.SelectArgs.Clear();
+                    BattleData.Instance.Agent.SelectArgs.Add((uint)BasicActionType.ACTION_NONE);
+                    AdditionAction();
+                    BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                };
         }
 
         protected void sendActionMsg(BasicActionType actionType, uint srcID, List<uint> dstID = null, List<uint> cardIDs = null, uint? actionID = null, List<uint> args = null)

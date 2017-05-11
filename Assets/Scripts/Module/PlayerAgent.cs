@@ -13,7 +13,8 @@ namespace AGrail
         public List<uint> SelectCards = new List<uint>();
         public uint? SelectSkill = null;
         public List<uint> SelectArgs = new List<uint>();
-        private int agentState = (int)PlayerAgentState.Idle;        
+
+        private int agentState = (int)PlayerAgentState.Idle;
         public UIStateMachine FSM = new UIStateMachine("AgnetUI");
         public int AgentState
         {
@@ -106,6 +107,8 @@ namespace AGrail
                 return typeof(StateAdditionAction);
             if (state.Check(PlayerAgentState.SkillResponse))
                 return typeof(StateSkill);
+            if (state.Check(PlayerAgentState.ActionNone))
+                return typeof(StateActionNone);
             return typeof(StateIdle);
         }
     }    
