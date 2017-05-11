@@ -518,10 +518,7 @@ namespace AGrail
             if(BattleData.Instance.Agent.AgentState.Check(PlayerAgentState.CanResign))
                 ResignAction = () =>
                 {
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
-                    BattleData.Instance.Agent.SelectArgs.Clear();
-                    BattleData.Instance.Agent.SelectArgs.Add((uint)BasicActionType.ACTION_NONE);
-                    AdditionAction();
+                    sendActionMsg(BasicActionType.ACTION_NONE, BattleData.Instance.MainPlayer.id, null, null, null, null);
                     BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                 };
         }
