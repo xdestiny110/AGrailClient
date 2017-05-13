@@ -106,7 +106,7 @@ namespace AGrail
                     if(!r1.Skills.ContainsKey(skillMsg.skill_id))
                         Log += string.Format("使用了技能{0}" + Environment.NewLine, skillMsg.skill_id);                    
                     else
-                        Log += string.Format("使用了技能{0}" + Environment.NewLine, r1.Skills[skillMsg.skill_id]);
+                        Log += string.Format("使用了技能{0}" + Environment.NewLine, r1.Skills[skillMsg.skill_id].SkillName);
                     break;
                 case MessageType.GOSSIP:
                     var gossip = parameters[0] as network.Gossip;

@@ -45,7 +45,13 @@ namespace AGrail
 
         public static Card GetCard(uint cardID)
         {
-            return cardDict[cardID];
+            if (cardDict.ContainsKey(cardID))
+                return cardDict[cardID];
+            else
+            {
+                Debug.LogErrorFormat("Can not find card id {0}", cardID);
+                return null;
+            }                
         }
 
         private Card() { }        

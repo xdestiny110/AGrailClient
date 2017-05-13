@@ -44,9 +44,7 @@ namespace AGrail
             switch (uiState)
             {
                 case 302:
-                    if (card.HasSkill(302))
-                        return true;
-                    break;
+                    return card.HasSkill(302);                    
                 case 305:
                     if (card.Type == Card.CardType.magic)
                         return true;
@@ -70,7 +68,7 @@ namespace AGrail
 
         public override bool CanSelect(uint uiState, Skill skill)
         {
-            if (uiState == 10 || uiState == 11 || uiState == 2 || uiState == 302 || uiState == 303)
+            if (uiState == 10 || uiState == 11 || uiState == 302 || uiState == 303)
             {
                 if (skill.SkillID == 302)
                     return true;
@@ -150,49 +148,28 @@ namespace AGrail
             switch (state)
             {
                 case 301:
+                case 305:
                     OKAction = () =>
                     {
-                        sendReponseMsg(301, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 1 });
+                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 1 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     CancelAction = () =>
                     {
-                        sendReponseMsg(301, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
+                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     return;
                 case 302:
-                    OKAction = () =>
-                    {
-                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, 302);
-                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                    };
-                    CancelAction = () =>
-                    {
-                        BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
-                    };
-                    return;
                 case 303:
                     OKAction = () =>
                     {
-                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, 303);
+                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     CancelAction = () =>
                     {
                         BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
-                    };
-                    return;
-                case 305:
-                    OKAction = () =>
-                    {
-                        sendReponseMsg(305, BattleData.Instance.MainPlayer.id, null, BattleData.Instance.Agent.SelectCards, new List<uint>() { 1 });
-                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                    };
-                    CancelAction = () =>
-                    {
-                        sendReponseMsg(305, BattleData.Instance.MainPlayer.id, null, BattleData.Instance.Agent.SelectCards, new List<uint>() { 0 });
-                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     return;
             }

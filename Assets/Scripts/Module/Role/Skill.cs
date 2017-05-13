@@ -69,8 +69,7 @@ namespace AGrail
     {
         None,
         Gem,
-        Cristal,
-
+        Crystal,
     }
 }
 
