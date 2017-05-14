@@ -15,12 +15,12 @@ namespace Framework.FSM
             MachineName = name;
         }
 
-        public void ChangeState<U>(T msg, bool isRecord, params object[] paras) where U : StateBase<T>
+        public virtual void ChangeState<U>(T msg, bool isRecord, params object[] paras) where U : StateBase<T>
         {
             ChangeState(typeof(U), isRecord, msg, paras);
         }
 
-        public void ChangeState(Type t, bool isRecord, T msg, params object[] paras)
+        public virtual void ChangeState(Type t, bool isRecord, T msg, params object[] paras)
         {
             if (isRecord)
                 History.Push(Current.GetType());
@@ -32,16 +32,16 @@ namespace Framework.FSM
                 History.Clear();
         }
 
-        public void HandleMessage(T msg, params object[] paras)
+        public virtual void HandleMessage(T msg, params object[] paras)
         {
             Current.Process(msg, paras);
         }
 
-        public void BackState(T msg, params object[] paras)
+        public virtual void BackState(T msg, params object[] paras)
         {
             if(History.Count > 0)
             {
-                var t = History.Pop();
+                var t = History.Pop();                
                 ChangeState(t, false, msg, paras);
             }
         }

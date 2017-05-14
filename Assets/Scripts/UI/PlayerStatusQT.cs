@@ -211,6 +211,8 @@ namespace AGrail
                         icon = Resources.Load<Texture2D>("Icons/fengFeng");
                     else if (card.HasSkill("雷之封印"))
                         icon = Resources.Load<Texture2D>("Icons/leiFeng");
+                    else if (card.Name == Card.CardName.五行束缚)
+                        icon = Resources.Load<Texture2D>("Icons/ShuFu");
                     else
                         Debug.LogErrorFormat("Basic card is error! CardID = {0}", v);
                     var go = new GameObject();

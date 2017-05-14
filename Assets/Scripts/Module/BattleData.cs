@@ -236,6 +236,9 @@ namespace AGrail
                         player.basic_cards = v.basic_cards;
                     if(v.ex_cards.Count > 0)
                         player.ex_cards = v.ex_cards;
+                    //为了进行卡牌编号的区分, 专有牌的序号都+1000
+                    for (int i = 0; i < player.ex_cards.Count; i++)
+                        player.ex_cards[i] += 1000;
                     if(v.delete_field.Count > 0)
                     {
                         foreach(var u in v.delete_field)

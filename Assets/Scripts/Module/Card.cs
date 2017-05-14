@@ -23,7 +23,8 @@ namespace AGrail
             var txt = (Resources.Load<TextAsset>("cardDB")).text;
             var strs = txt.Split('\n');
             foreach (var v in strs)
-            {                
+            {
+                if (string.IsNullOrEmpty(v)) continue;
                 var s = v.Trim(" \t\r\n".ToCharArray());
                 var t = s.Split('\t');
                 var c = new Card()
@@ -74,11 +75,13 @@ namespace AGrail
         public enum CardType
         {
             magic,
-            attack
+            attack,
+            unique
         }
 
         public enum CardElement
         {
+            none,
             earth,
             wind,
             light,
@@ -90,7 +93,7 @@ namespace AGrail
 
         public enum CardProperty
         {
-            幻, 圣, 咏, 技, 血
+            无, 幻, 圣, 咏, 技, 血
         }
 
         public enum CardName
@@ -105,16 +108,12 @@ namespace AGrail
             水涟斩,
             雷光斩,
             圣光,
-            暗灭,            
+            暗灭,
+            五行束缚,
+            同生共死,
+            挑衅,
+            灵魂链接,
+            永恒乐章
         }
-
-
-
-
     }
-
-
-
 }
-
-
