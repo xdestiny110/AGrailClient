@@ -62,9 +62,9 @@ namespace AGrail
                     null, null, new List<uint>() { 2 });
         }
 
-        public virtual void Heal(uint srcID, List<uint> args = null)
+        public virtual void Heal(uint srcID, List<uint> args)
         {
-            //治疗 
+            //治疗
             sendReponseMsg((uint)BasicRespondType.RESPOND_HEAL, srcID, null, null, args);
         }
 
@@ -407,6 +407,16 @@ namespace AGrail
                     break;
                 case 7:
                     //治疗
+                    OKAction = () => 
+                    {
+                        Heal(BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectArgs);
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                    };
+                    CancelAction = () => 
+                    {
+                        Heal(BattleData.Instance.MainPlayer.id, new List<uint>() { 0 });
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                    };
                     break;
                 case 12:
                     //购买

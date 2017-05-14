@@ -200,7 +200,10 @@ namespace AGrail
                         if(BattleData.Instance.Agent.SelectPlayers.Count > 0)
                         {                            
                             var s = BattleData.Instance.GetPlayerInfo(BattleData.Instance.Agent.SelectPlayers[0]);
-                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "Card", s.basic_cards);
+                            var selectList = new List<List<uint>>();
+                            foreach (var v in s.basic_cards)
+                                selectList.Add(new List<uint>() { v });
+                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "Card", selectList);
                         }
                     }
                 return;

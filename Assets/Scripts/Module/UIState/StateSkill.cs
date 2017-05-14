@@ -50,8 +50,11 @@ namespace AGrail
             {
                 case UIStateMsg.ClickSkill:
                     if (BattleData.Instance.Agent.SelectSkill == null)
+                    {
                         //取消技能
-                        stateMachine.BackState(msg, paras);                        
+                        stateMachine.BackState(msg, paras);
+                        MessageSystem<MessageType>.Notify(MessageType.CloseArgsUI);
+                    }                        
                     else
                         //点了别的技能
                         stateMachine.ChangeState<StateSkill>(msg, false, BattleData.Instance.Agent.SelectSkill, paras);

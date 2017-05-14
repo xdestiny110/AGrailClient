@@ -1,4 +1,6 @@
 ﻿using Framework.FSM;
+using Framework.Message;
+using System.Collections.Generic;
 
 namespace AGrail
 {
@@ -22,6 +24,21 @@ namespace AGrail
         }
 
         public StateHealCost(StateMachine<UIStateMsg> machine) : base(machine) { }
+
+        public override void Enter(UIStateMsg msg, params object[] paras)
+        {
+            var selectList = new List<List<uint>>();
+            for (uint i = 0; i < BattleData.Instance.MainPlayer.heal_count; i++)
+                selectList.Add(new List<uint>() { i });
+            MessageSystem<MessageType>.Notify(MessageType.ShowArgsUI, "Heal", selectList);
+            base.Enter(msg, paras);
+        }
+
+        public override void Exit(UIStateMsg msg, params object[] paras)
+        {
+            MessageSystem<MessageType>.Notify(MessageType.CloseArgsUI);
+            base.Exit(msg, paras);
+        }
 
         public override void Process(UIStateMsg msg, params object[] paras)
         {

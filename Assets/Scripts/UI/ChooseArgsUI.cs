@@ -51,11 +51,20 @@ namespace AGrail
                 if(t == "Energy")
                 {
                     title.text = "选择能量";
-                    for (int i = 0; i < argsCache.Count; i++)                    
+                    for (int i = 0; i < argsCache.Count; i++)
                         args.options.Add(new Dropdown.OptionData()
                         {
                             text = string.Format("{0}个宝石与{1}个星石", argsCache[i][0], argsCache[i][1])
                         });                    
+                }
+                if(t == "Heal")
+                {
+                    title.text = "选择治疗数";
+                    for (int i = 0; i < argsCache.Count; i++)
+                        args.options.Add(new Dropdown.OptionData()
+                        {
+                            text = string.Format("{0}个治疗", argsCache[i][0])
+                        });
                 }
                 args.RefreshShownValue();
                 BattleData.Instance.Agent.SelectArgs.Clear();
