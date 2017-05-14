@@ -171,7 +171,8 @@ namespace AGrail
                         return true;
                     break;
                 case 6:
-                    return true;
+                case 7:
+                    return true;                    
                 case 12:
                 case 13:
                 case 14:
@@ -188,6 +189,7 @@ namespace AGrail
                 case 3:
                 case 4:
                 case 6:
+                case 7:
                 case 12:
                 case 13:
                 case 14:

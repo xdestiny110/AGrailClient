@@ -63,6 +63,7 @@ namespace AGrail
             {
                 case 601:
                 case 602:
+                case 603:
                 case 605:
                     return true;
             }
@@ -76,14 +77,18 @@ namespace AGrail
                 case 601:
                 case 602:
                 case 605:
+                    return true;
                 case 10:
-                    if(skill.SkillID == 601 || skill.SkillID == 602 || skill.SkillID == 605)
+                    if(skill.SkillID == 601 || skill.SkillID == 602)
+                        return true;
+                    if (skill.SkillID == 605 && BattleData.Instance.MainPlayer.gem + BattleData.Instance.MainPlayer.crystal >= 1)
                         return true;
                     return false;
                 case 11:
                     if (skill.SkillID == 601 || skill.SkillID == 602)
                         return true;
-                    if (skill.SkillID == 605 && additionalState != 6054)
+                    if (skill.SkillID == 605 && additionalState != 6054 && 
+                        BattleData.Instance.MainPlayer.gem + BattleData.Instance.MainPlayer.crystal >= 1)
                         return true;                    
                     return false;
             }
@@ -185,7 +190,8 @@ namespace AGrail
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
                     return;
                 case 603:
-                    OKAction = () => { sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 1 }); };
+                    OKAction = () => { sendReponseMsg(state, BattleData.Instance.MainPlayer.id, 
+                        BattleData.Instance.Agent.SelectPlayers, null, new List<uint>() { 1 }); };
                     return;
                 case 604:
                     OKAction = () =>
@@ -207,18 +213,20 @@ namespace AGrail
                             additionalState = 6051;
                             selectPlayers.Clear();
                             selectPlayers.Add(BattleData.Instance.Agent.SelectPlayers[0]);
+                            BattleData.Instance.Agent.RemoveSelectPlayer(BattleData.Instance.Agent.SelectPlayers[0]);
                         }
                         else if(additionalState >= 6051 && additionalState <= 6052)
                         {
                             additionalState++;
                             selectPlayers.Add(BattleData.Instance.Agent.SelectPlayers[0]);
+                            BattleData.Instance.Agent.RemoveSelectPlayer(BattleData.Instance.Agent.SelectPlayers[0]);
                         }
                         else if(additionalState == 6053)
                         {
                             additionalState++;
                             selectPlayers.Add(BattleData.Instance.Agent.SelectPlayers[0]);
-                            BattleData.Instance.Agent.SelectArgs.Clear();
-                            BattleData.Instance.Agent.SelectPlayers.Clear();
+                            BattleData.Instance.Agent.RemoveSelectPlayer(BattleData.Instance.Agent.SelectPlayers[0]);
+                            BattleData.Instance.Agent.SelectArgs.Clear();                            
                             foreach (var v in selectPlayers)
                             {
                                 var idx = BattleData.Instance.Agent.SelectPlayers.FindIndex((t) => { return t == v; });

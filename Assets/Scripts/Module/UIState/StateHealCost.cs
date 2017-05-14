@@ -28,7 +28,8 @@ namespace AGrail
         public override void Enter(UIStateMsg msg, params object[] paras)
         {
             var selectList = new List<List<uint>>();
-            for (uint i = 0; i < BattleData.Instance.MainPlayer.heal_count; i++)
+            //服务器默认玩家有治疗时才会发这个响应
+            for (uint i = 1; i <= BattleData.Instance.MainPlayer.heal_count; i++)
                 selectList.Add(new List<uint>() { i });
             MessageSystem<MessageType>.Notify(MessageType.ShowArgsUI, "Heal", selectList);
             base.Enter(msg, paras);
