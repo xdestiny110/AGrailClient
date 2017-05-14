@@ -30,6 +30,7 @@ namespace AGrail
             var strs = txt.Split('\n');
             foreach (var v in strs)
             {
+                if (string.IsNullOrEmpty(v)) continue;
                 var s = v.Trim(" \t\r\n".ToCharArray());
                 var t = s.Split('\t');
                 var skillID = uint.Parse(t[0]);
