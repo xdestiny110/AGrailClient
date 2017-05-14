@@ -58,10 +58,9 @@ namespace AGrail
             switch (uiState)
             {
                 case 302:
-                case 303:
-                    if (player.id != BattleData.Instance.MainPlayer.id)
-                        return true;
-                    break;
+                case 303:                    
+                    return true;
+                    
             }
             return base.CanSelect(uiState, player);
         }
@@ -83,7 +82,7 @@ namespace AGrail
             if(BattleData.Instance.Agent.SelectArgs.Count == 1 && BattleData.Instance.Agent.SelectArgs[0] == 303)
             {
                 //狙击的返回不会写....
-                //sendReponseMsg(304, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 1 });
+                sendReponseMsg(304, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 1 });
                 return;
             }
             base.AdditionAction();

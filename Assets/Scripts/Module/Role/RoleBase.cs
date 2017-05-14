@@ -22,7 +22,7 @@ namespace AGrail
 
         //记录一些特殊状态
         //由于当初没想好导致必须要在Role中维护这个状态...这个要比较小心
-        protected uint AddtionalState { get; set; }
+        protected uint additionalState { get; set; }
 
         public virtual void Attack(uint card, uint dstID)
         {

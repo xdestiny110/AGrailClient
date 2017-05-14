@@ -40,7 +40,7 @@ namespace AGrail
 
         public override bool CanSelect(uint uiState, Card card)
         {
-            if (AddtionalState == 103 &&
+            if (additionalState == 103 &&
                 (card.Element != Card.CardElement.wind || card.Type != Card.CardType.attack))
                 return false;
             return base.CanSelect(uiState, card);
@@ -48,7 +48,7 @@ namespace AGrail
 
         public override bool CheckOK(uint uiState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
         {
-            if (AddtionalState == 103 &&
+            if (additionalState == 103 &&
                 cardIDs.Count == 1 && playerIDs.Count == 1)
                 return true;
             switch (uiState)
@@ -71,7 +71,7 @@ namespace AGrail
 
         public override bool CheckResign(uint uiState)
         {
-            if (AddtionalState == 103)
+            if (additionalState == 103)
                 return true;
             return base.CheckResign(uiState);
         }
@@ -83,10 +83,10 @@ namespace AGrail
                 switch(BattleData.Instance.Agent.SelectArgs[0])
                 {                    
                     case 103:
-                        AddtionalState = 103;
+                        additionalState = 103;
                         break;
                     default:
-                        AddtionalState = 0;
+                        additionalState = 0;
                         break;
                 }
             }
@@ -103,14 +103,14 @@ namespace AGrail
                     return;
             }
             base.UIStateChange(state, msg, paras);
-            if (AddtionalState == 103)
+            if (additionalState == 103)
             {
                 //这代码真傻...应该做成list的
                 //但懒得改了
                 var t1 = OKAction;
                 var t2 = ResignAction;
-                OKAction = () => { t1(); AddtionalState = 0; };
-                ResignAction = () => { t2(); AddtionalState = 0; };
+                OKAction = () => { t1(); additionalState = 0; };
+                ResignAction = () => { t2(); additionalState = 0; };
             }
         }
     }
