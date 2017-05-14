@@ -460,7 +460,7 @@ namespace AGrail
                         if (tCrystal >= 2)
                             selectList.Add(new List<uint>() { 0, 2 });
                     }
-                    else
+                    if (maxEnergyCnt - gem - crystal >= 1)
                     {
                         if (tGem >= 1)
                             selectList.Add(new List<uint>() { 1, 0 });

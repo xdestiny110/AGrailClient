@@ -63,9 +63,9 @@ namespace AGrail
                 case 404:
                 case 405:
                 case 407:
-                    return player.team != BattleData.Instance.MainPlayer.team;
+                    return (player.team != BattleData.Instance.MainPlayer.team);
                 case 408:
-                    return true;
+                    return player.basic_cards.Count > 0;
             }
             return base.CanSelect(uiState, player);
         }
@@ -81,7 +81,6 @@ namespace AGrail
                 case 405:
                 case 407:
                 case 408:
-                    return true;
                 case 10:
                 case 11:
                     if (skill.SkillID >= 401 && skill.SkillID <= 405)
@@ -133,11 +132,11 @@ namespace AGrail
                 case 403:
                 case 404:
                 case 405:
-                case 408:
                     if (cardIDs.Count == 1 && playerIDs.Count == 1)
                         return true;
                     return false;
                 case 407:
+                case 408:
                     if (playerIDs.Count == 1)
                         return true;
                     return false;
@@ -185,8 +184,7 @@ namespace AGrail
                     {
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
                         sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
-                            BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state,
-                            BattleData.Instance.Agent.SelectArgs);
+                            BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectArgs, state);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     CancelAction = () => 
