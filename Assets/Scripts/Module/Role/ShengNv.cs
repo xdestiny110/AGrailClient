@@ -77,7 +77,6 @@ namespace AGrail
                 case 601:
                 case 602:
                 case 605:
-                    return true;
                 case 10:
                     if(skill.SkillID == 601 || skill.SkillID == 602)
                         return true;
@@ -87,7 +86,7 @@ namespace AGrail
                 case 11:
                     if (skill.SkillID == 601 || skill.SkillID == 602)
                         return true;
-                    if (skill.SkillID == 605 && additionalState != 6054 && 
+                    if (skill.SkillID == 605 && additionalState != 6053 && 
                         BattleData.Instance.MainPlayer.gem + BattleData.Instance.MainPlayer.crystal >= 1)
                         return true;                    
                     return false;
@@ -158,10 +157,11 @@ namespace AGrail
 
         public override void AdditionAction()
         {
+            //同样不知道圣女的圣疗应该怎么弄...
             if (BattleData.Instance.Agent.SelectArgs.Count == 1 && BattleData.Instance.Agent.SelectArgs[0] == 605)
             {
                 sendReponseMsg(606, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 1 });
-                additionalState = 6054;
+                additionalState = 6053;
                 return;
             }
             base.AdditionAction();
@@ -173,7 +173,7 @@ namespace AGrail
         private List<uint> selectPlayers = new List<uint>();
         public override void UIStateChange(uint state, UIStateMsg msg, params object[] paras)
         {
-            if (state != 605 && !(additionalState == 6054 && state != 0))            
+            if (state != 605 && !(additionalState == 6053 && state != 0))            
                 additionalState = 0;
 
             switch (state)
@@ -215,13 +215,13 @@ namespace AGrail
                             selectPlayers.Add(BattleData.Instance.Agent.SelectPlayers[0]);
                             BattleData.Instance.Agent.RemoveSelectPlayer(BattleData.Instance.Agent.SelectPlayers[0]);
                         }
-                        else if(additionalState >= 6051 && additionalState <= 6052)
+                        else if(additionalState == 6051)
                         {
                             additionalState++;
                             selectPlayers.Add(BattleData.Instance.Agent.SelectPlayers[0]);
                             BattleData.Instance.Agent.RemoveSelectPlayer(BattleData.Instance.Agent.SelectPlayers[0]);
                         }
-                        else if(additionalState == 6053)
+                        else if(additionalState == 6052)
                         {
                             additionalState++;
                             selectPlayers.Add(BattleData.Instance.Agent.SelectPlayers[0]);
@@ -237,9 +237,9 @@ namespace AGrail
                                     BattleData.Instance.Agent.SelectPlayers.Add(v);
                                     BattleData.Instance.Agent.SelectArgs.Add(1);
                                 }
-                                sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
-                                    BattleData.Instance.Agent.SelectPlayers, null, 605, BattleData.Instance.Agent.SelectArgs);
                             }
+                            sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
+                                BattleData.Instance.Agent.SelectPlayers, null, 605, BattleData.Instance.Agent.SelectArgs);
                         }                        
                     };
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
