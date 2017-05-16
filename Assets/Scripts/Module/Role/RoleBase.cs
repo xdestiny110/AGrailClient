@@ -486,13 +486,13 @@ namespace AGrail
                     tGem = BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team];
                     tCrystal = BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team];
                     selectList = new List<List<uint>>();
-                    if (tGem >= 3)
+                    if (tCrystal >= 3)
                         selectList.Add(new List<uint>() { 0, 3 });
                     if (tGem >= 1 && tCrystal >= 2)
                         selectList.Add(new List<uint>() { 1, 2 });
                     if (tGem >= 2 && tCrystal >= 1)
                         selectList.Add(new List<uint>() { 2, 1 });
-                    if (tCrystal >= 3)
+                    if (tGem >= 3)
                         selectList.Add(new List<uint>() { 3, 0 });
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "Energy", selectList);
                     OKAction = () =>

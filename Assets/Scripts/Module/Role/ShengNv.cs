@@ -157,11 +157,10 @@ namespace AGrail
 
         public override void AdditionAction()
         {
-            //同样不知道圣女的圣疗应该怎么弄...
             if (BattleData.Instance.Agent.SelectArgs.Count == 1 && BattleData.Instance.Agent.SelectArgs[0] == 605)
             {
-                sendReponseMsg(606, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 1 });
-                additionalState = 6053;
+                sendReponseMsg((uint)BasicRespondType.RESPOND_ADDITIONAL_ACTION, BattleData.Instance.MainPlayer.id,
+                    null, null, new List<uint>() { 605 });
                 return;
             }
             base.AdditionAction();

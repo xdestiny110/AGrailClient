@@ -176,7 +176,8 @@ namespace AGrail
                     {
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
                         sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
-                            BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectArgs, state);
+                            BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state,
+                            BattleData.Instance.Agent.SelectArgs);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     CancelAction = () =>
@@ -239,20 +240,22 @@ namespace AGrail
                 case 706:
                     OKAction = () => 
                     {
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, BattleData.Instance.Agent.SelectArgs);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     CancelAction = () =>
                     {
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0, 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };                   
                     {
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
                         var selectList = new List<List<uint>>();
-                        for (uint i = 0; i <= BattleData.Instance.MainPlayer.gem; i++)
+                        for (uint i = 0; i <= Math.Min(BattleData.Instance.MainPlayer.gem, BattleData.Instance.Agent.Cmd.args[0]); i++)
                         {
-                            for (uint j = 0; j <= BattleData.Instance.MainPlayer.crystal; j++)
+                            for (uint j = 0; j <= Math.Min(BattleData.Instance.MainPlayer.crystal, BattleData.Instance.Agent.Cmd.args[0] - i); j++)
                                 selectList.Add(new List<uint>() { i, j });
                         }
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "Energy", selectList);

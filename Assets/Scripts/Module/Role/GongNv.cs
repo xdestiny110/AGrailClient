@@ -81,8 +81,8 @@ namespace AGrail
         {            
             if(BattleData.Instance.Agent.SelectArgs.Count == 1 && BattleData.Instance.Agent.SelectArgs[0] == 303)
             {
-                //狙击的返回不会写....
-                sendReponseMsg(304, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 1 });
+                sendReponseMsg((uint)BasicRespondType.RESPOND_ADDITIONAL_ACTION, BattleData.Instance.MainPlayer.id, 
+                    null, null, new List<uint>() { 303 });
                 return;
             }
             base.AdditionAction();

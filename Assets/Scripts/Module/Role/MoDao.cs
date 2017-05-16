@@ -49,7 +49,7 @@ namespace AGrail
                     return false;
                 case 801:
                     return card.Type == Card.CardType.magic;
-                case 802:
+                case 803:
                     return card.Element == Card.CardElement.fire || card.Element == Card.CardElement.earth;
 
             }
@@ -61,7 +61,7 @@ namespace AGrail
             switch (uiState)
             {
                 case 801:
-                case 802:
+                case 803:
                 case 804:
                     return player.team != BattleData.Instance.MainPlayer.team;
             }
@@ -75,9 +75,9 @@ namespace AGrail
                 case 10:
                 case 11:
                 case 801:
-                case 802:
+                case 803:
                 case 804:
-                    if (skill.SkillID == 801 || skill.SkillID == 802)
+                    if (skill.SkillID == 801 || skill.SkillID == 803)
                         return true;
                     if (skill.SkillID == 804 && BattleData.Instance.MainPlayer.gem > 0)
                         return true;
@@ -91,7 +91,7 @@ namespace AGrail
             switch (uiState)
             {
                 case 801:
-                case 802:
+                case 803:
                     return 1;
             }
             return base.MaxSelectCard(uiState);
@@ -101,7 +101,7 @@ namespace AGrail
         {
             switch (uiState)
             {
-                case 802:
+                case 803:
                     return 1;
                 case 801:
                 case 804:
@@ -133,7 +133,7 @@ namespace AGrail
                     if (cardIDs.Count == 1 && playerIDs.Count == 2)
                         return true;
                     return false;
-                case 802:
+                case 803:
                     if (cardIDs.Count == 1 && playerIDs.Count == 1)
                         return true;
                     return false;
@@ -150,7 +150,7 @@ namespace AGrail
             switch (uiState)
             {
                 case 801:
-                case 802:
+                case 803:
                 case 804:
                     return true;
             }
@@ -162,7 +162,7 @@ namespace AGrail
             switch (state)
             {
                 case 801:
-                case 802:
+                case 803:
                 case 804:
                     OKAction = () => 
                     {
