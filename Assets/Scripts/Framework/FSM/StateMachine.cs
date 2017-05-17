@@ -22,7 +22,7 @@ namespace Framework.FSM
 
         public virtual void ChangeState(Type t, bool isRecord, T msg, params object[] paras)
         {
-            if (isRecord)
+            if (isRecord && Current != null)
                 History.Push(Current.GetType());
             if(Current != null)
                 Current.Exit(msg, paras);

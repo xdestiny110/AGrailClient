@@ -161,6 +161,8 @@ namespace AGrail
                             MainPlayer = player;
                         isInit = true;
                     }
+                    if (MainPlayer == null)
+                        MainPlayer = new network.SinglePlayerInfo() { id = 9 };
                     var idx = PlayerInfos.IndexOf(player);
                     if (v.readySpecified)
                     {
@@ -263,11 +265,14 @@ namespace AGrail
                         {
                             var idx = PlayerInfos.FindIndex(p => { return p.id == v.id; });
                             PlayerIdxOrder.Add(idx);
-                            if (v.id == MainPlayer.id)
+                            if (MainPlayer != null && v.id == MainPlayer.id)
                                 t = PlayerIdxOrder.Count - 1;
                         }
-                        PlayerIdxOrder.AddRange(PlayerIdxOrder.GetRange(0, t));
-                        PlayerIdxOrder.RemoveRange(0, t);
+                        if(t != -1)
+                        {
+                            PlayerIdxOrder.AddRange(PlayerIdxOrder.GetRange(0, t));
+                            PlayerIdxOrder.RemoveRange(0, t);
+                        }                        
                         MessageSystem<MessageType>.Notify(MessageType.GameStart);
                     }
                     IsStarted = value.is_started;
@@ -283,6 +288,8 @@ namespace AGrail
                     UnityEngine.Debug.Log(string.Format("cmd request call back: {0}", (value.cmd_type == network.CmdType.CMD_ACTION) ?
                         ((network.BasicActionType)value.commands[i].respond_id).ToString() : ((network.BasicRespondType)value.commands[i].respond_id).ToString()));
                 Agent.AgentState = (int)PlayerAgentState.Idle;
+                if (MainPlayer == null)
+                    return;
                 foreach (var v in value.commands)
                 {                    
                     RoleBase r = null;
@@ -424,7 +431,10 @@ namespace AGrail
                         default:
                             //技能响应
                             r = RoleFactory.Create(GetPlayerInfo(v.src_id).role_id);
-                            Dialog.Instance.Log += "等待" + r.RoleName + "响应技能" + r.Skills[v.respond_id].SkillName + Environment.NewLine;
+                            if (r.Skills.ContainsKey(v.respond_id))
+                                Dialog.Instance.Log += "等待" + r.RoleName + "响应技能" + r.Skills[v.respond_id].SkillName + Environment.NewLine;
+                            else
+                                Dialog.Instance.Log += "等待" + r.RoleName + "响应技能" + v.respond_id.ToString() + Environment.NewLine;
                             if (v.src_id != MainPlayer.id)
                             {
                                 Agent.AgentState = (int)PlayerAgentState.Idle;

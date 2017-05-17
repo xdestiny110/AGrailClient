@@ -7,7 +7,7 @@ namespace AGrail
     {
         public UIStateMachine(string name) : base(name)
         {
-
+            
         }
 
         protected override bool cleanHistroy(Type t)
