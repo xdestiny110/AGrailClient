@@ -82,17 +82,23 @@ namespace AGrail
 
         private void showLoginInput()
         {
-            if (Input.anyKeyDown && waitAnyClick.activeSelf)
+            if (Input.anyKeyDown && state == LoginState.Ready && waitAnyClick.activeSelf)
             {
                 waitAnyClick.SetActive(false);
                 loginInput.SetActive(true);
             }
         }
 
+        private LoginState _state;
         private LoginState state
         {
+            get
+            {
+                return _state;
+            }
             set
             {
+                _state = value;
                 switch (value)
                 {
                     case LoginState.Prepare:

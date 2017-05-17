@@ -32,6 +32,8 @@ namespace AGrail
         [SerializeField]
         private GameObject playerStatusPrefab;
         [SerializeField]
+        private Text txtHint;
+        [SerializeField]
         private GameObject arrowPrefab;
         
         public Dictionary<int, PlayerStatusQT> PlayersStatus = new Dictionary<int, PlayerStatusQT>();
@@ -66,6 +68,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.GemChange, this);
             MessageSystem<MessageType>.Regist(MessageType.CrystalChange, this);
             MessageSystem<MessageType>.Regist(MessageType.GrailChange, this);
+            MessageSystem<MessageType>.Regist(MessageType.SendHint, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerLeave, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerIsReady, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerNickName, this);
@@ -96,6 +99,7 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.GemChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.CrystalChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.GrailChange, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.SendHint, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerLeave, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerIsReady, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerNickName, this);
@@ -149,6 +153,15 @@ namespace AGrail
                     break;
                 case MessageType.GrailChange:
                     grailChange((Team)parameters[0], (uint)parameters[1]);
+                    break;
+                case MessageType.SendHint:
+                    if (parameters.Length != 1)
+                        txtHint.transform.parent.gameObject.SetActive(false);
+                    else
+                    {
+                        txtHint.transform.parent.gameObject.SetActive(true);
+                        txtHint.text = parameters[0].ToString();
+                    }                    
                     break;
                 case MessageType.PlayerNickName:
                     checkPlayer((int)parameters[0]);

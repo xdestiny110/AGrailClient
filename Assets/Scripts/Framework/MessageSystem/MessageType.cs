@@ -57,6 +57,7 @@
         GemChange,
         CrystalChange,
         GrailChange,
+        SendHint,
         PlayerLeave,
         PlayerHeroName,
         PlayerRoleChange,

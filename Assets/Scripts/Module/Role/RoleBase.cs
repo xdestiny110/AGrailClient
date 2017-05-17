@@ -331,6 +331,7 @@ namespace AGrail
         {
             List<List<uint>> selectList;
             uint tGem, tCrystal ;
+            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint);
             switch (state)
             {
                 case 1:
@@ -340,6 +341,8 @@ namespace AGrail
                         Attack(BattleData.Instance.Agent.SelectCards[0], BattleData.Instance.Agent.SelectPlayers[0]);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                        "请选择目标");
                     break;
                 case 2:
                     //魔法
@@ -348,6 +351,8 @@ namespace AGrail
                         Magic(BattleData.Instance.Agent.SelectCards[0], BattleData.Instance.Agent.SelectPlayers[0]);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                        "请选择目标");
                     break;
                 case 3:
                     //应战
@@ -372,6 +377,8 @@ namespace AGrail
                         AttackedReply();
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                        "选择卡牌与目标并点击确定;或者点击取消");
                     break;
                 case 4:
                     //魔弹响应
@@ -385,6 +392,8 @@ namespace AGrail
                         MoDaned();
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                        "选择卡牌并点击确定;或者点击取消");
                     break;
                 case 5:
                     //弃牌
@@ -393,6 +402,8 @@ namespace AGrail
                         Drop(BattleData.Instance.Agent.SelectCards);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                        "选择要舍弃的牌");
                     break;
                 case 6:
                     //虚弱
@@ -406,6 +417,8 @@ namespace AGrail
                         Weaken(new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                        "摸牌则点击确认;跳过回合则点击取消");
                     break;
                 case 7:
                     //治疗
@@ -419,6 +432,13 @@ namespace AGrail
                         Heal(BattleData.Instance.MainPlayer.id, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                        "选择治疗数");
+                    break;
+                case 10:
+                case 11:
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                        "请选择行动");
                     break;
                 case 12:
                     //购买
@@ -525,6 +545,8 @@ namespace AGrail
                         AdditionAction();
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                        "请选择额外行动");
                     break;
             }
             if(BattleData.Instance.Agent.AgentState.Check(PlayerAgentState.CanResign))
