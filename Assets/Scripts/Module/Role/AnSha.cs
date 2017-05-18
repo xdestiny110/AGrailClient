@@ -1,7 +1,5 @@
-using UnityEngine;
-using System.Collections;
-using System;
 using System.Collections.Generic;
+using Framework.Message;
 
 namespace AGrail
 {
@@ -99,6 +97,7 @@ namespace AGrail
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
+                    MessageSystem<MessageType>.Notify(MessageType.SendHint, "水影: 请选择舍弃的水系牌");
                     return;
                 case 503:
                     OKAction = () =>
@@ -111,6 +110,7 @@ namespace AGrail
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
+                    MessageSystem<MessageType>.Notify(MessageType.SendHint, "是否发动潜行");
                     return;
             }
             base.UIStateChange(state, msg, paras);

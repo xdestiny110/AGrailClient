@@ -3,6 +3,7 @@ using System.Collections;
 using System;
 using network;
 using System.Collections.Generic;
+using Framework.Message;
 
 namespace AGrail
 {
@@ -187,10 +188,14 @@ namespace AGrail
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                        string.Format("{0}: 请选择目标玩家以及独有技卡牌", Skills[state].SkillName));
                     return;
                 case 603:
                     OKAction = () => { sendReponseMsg(state, BattleData.Instance.MainPlayer.id, 
                         BattleData.Instance.Agent.SelectPlayers, null, new List<uint>() { 1 }); };
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                        "冰霜祷言: 请选择目标玩家为其增加一点治疗");
                     return;
                 case 604:
                     OKAction = () =>
@@ -203,6 +208,7 @@ namespace AGrail
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, "是否发动怜悯");
                     return;
                 case 605:
                     OKAction = () =>
@@ -242,6 +248,15 @@ namespace AGrail
                         }                        
                     };
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
+                    if(additionalState == 0)
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                            "请分配第一点治疗");
+                    else if(additionalState == 6051)                    
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                            "请分配第二点治疗");
+                    else if(additionalState == 6052)
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, 
+                            "请分配第三点治疗");
                     return;
             }
             base.UIStateChange(state, msg, paras);

@@ -178,6 +178,8 @@ namespace AGrail
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                        string.Format("{0}: 请选择目标玩家以及独有技卡牌", Skills[state].SkillName));
                     return;
                 case 408:
                     OKAction = () =>
@@ -202,9 +204,14 @@ namespace AGrail
                             foreach (var v in s.basic_cards)
                                 selectList.Add(new List<uint>() { v });
                             MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "Card", selectList);
+                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                                "封印破碎: 请选择要移除的基础效果");
                         }
                     }
-                return;
+                    if (BattleData.Instance.Agent.SelectPlayers.Count <= 0)
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                            "封印破碎: 请选择目标玩家");
+                    return;
             }
             base.UIStateChange(state, msg, paras);
         }

@@ -55,7 +55,8 @@ namespace AGrail
                     BattleData.Instance.Ready(BattleData.Instance.MainPlayer.ready ? false : true);                    
                 });
                 btnOK.gameObject.SetActive(true);
-                btnCancel.gameObject.SetActive(true);               
+                btnOK.interactable = true;
+                btnCancel.gameObject.SetActive(true);
                 btnCancel.interactable = false;
             }
             else

@@ -1,8 +1,5 @@
-using UnityEngine;
-using System.Collections;
-using System;
-using network;
 using System.Collections.Generic;
+using Framework.Message;
 
 namespace AGrail
 {
@@ -100,6 +97,7 @@ namespace AGrail
                 case 102:
                     OKAction = () => { sendReponseMsg(102, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 1 }); };
                     CancelAction = () => { sendReponseMsg(102, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 }); };
+                    MessageSystem<MessageType>.Notify(MessageType.SendHint, "是否发动烈风技");
                     return;
             }
             base.UIStateChange(state, msg, paras);

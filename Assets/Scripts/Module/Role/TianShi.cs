@@ -169,7 +169,9 @@ namespace AGrail
                             BattleData.Instance.Agent.SelectArgs);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
+                    CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };                    
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                        string.Format("{0}: 请选择目标玩家以及卡牌", Skills[state].SkillName));
                     return;
                 case 703:
                     OKAction = () =>
@@ -195,8 +197,13 @@ namespace AGrail
                             foreach (var v in s.basic_cards)
                                 selectList.Add(new List<uint>() { v });
                             MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "Card", selectList);
+                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                                string.Format("{0}: 请选择要移除的基础效果", Skills[state].SkillName));
                         }
                     }
+                    if (BattleData.Instance.Agent.SelectPlayers.Count <= 0)
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                            string.Format("{0}: 请选择目标玩家以及卡牌", Skills[state].SkillName));
                     return;
                 case 704:
                     OKAction = () => 
@@ -205,6 +212,8 @@ namespace AGrail
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectPlayers);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                        string.Format("{0}: 请选择目标玩家为其增加一点治疗", Skills[state].SkillName));
                     return;
                 case 705:
                     OKAction = () =>
@@ -234,8 +243,13 @@ namespace AGrail
                             foreach (var v in s.basic_cards)
                                 selectList.Add(new List<uint>() { v });
                             MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "Card", selectList);
+                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                                string.Format("{0}: 请选择要移除的基础效果", Skills[state].SkillName));
                         }
                     }
+                    if (BattleData.Instance.Agent.SelectPlayers.Count <= 0)
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                            string.Format("{0}: 请选择目标玩家", Skills[state].SkillName));
                     return;
                 case 706:
                     OKAction = () => 
@@ -259,6 +273,8 @@ namespace AGrail
                                 selectList.Add(new List<uint>() { i, j });
                         }
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "Energy", selectList);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                            string.Format("{0}: 请选择要消耗的能量", Skills[state].SkillName));
                     }
                    
                     return;

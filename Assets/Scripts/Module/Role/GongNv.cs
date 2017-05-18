@@ -1,6 +1,3 @@
-using UnityEngine;
-using System.Collections;
-using System;
 using System.Collections.Generic;
 using network;
 using Framework.Message;
@@ -158,6 +155,8 @@ namespace AGrail
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, 
+                        string.Format("是否发动{0}", Skills[state].SkillName));
                     return;
                 case 302:
                 case 303:
@@ -170,6 +169,12 @@ namespace AGrail
                     {
                         BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
                     };
+                    if(state == 303)
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                            string.Format("{0}: 请选择目标玩家", Skills[state].SkillName));
+                    else
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                            string.Format("{0}: 请选择目标玩家以及独有技卡牌", Skills[state].SkillName));
                     return;
             }
             base.UIStateChange(state, msg, paras);

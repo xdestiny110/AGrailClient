@@ -3,6 +3,7 @@ using System.Collections;
 using System;
 using network;
 using System.Collections.Generic;
+using Framework.Message;
 
 namespace AGrail
 {
@@ -172,8 +173,19 @@ namespace AGrail
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
-                    return;              
-
+                    break;
+            }
+            switch (state)
+            {
+                case 801:
+                case 803:
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                        string.Format("{0}: 请选择目标玩家以及卡牌", Skills[state].SkillName));
+                    break;
+                case 804:
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                        string.Format("{0}: 请选择目标玩家", Skills[state].SkillName));
+                    return;
             }
             base.UIStateChange(state, msg, paras);
         }
