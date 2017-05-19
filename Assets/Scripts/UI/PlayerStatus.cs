@@ -32,6 +32,7 @@ namespace AGrail
         private RawImage kneltIcon;
         [SerializeField]
         private Image readyIcon;
+        public Transform animAnchor;
 
         [SerializeField]
         private Texture2D[] teamBGs = new Texture2D[3];
@@ -64,6 +65,9 @@ namespace AGrail
                     go.GetComponent<RawImage>().texture = Resources.Load<Texture2D>("Icons/token0");
                     go.name = "token0";
                     go.transform.SetParent(basicAndExCards);
+                    go.transform.localPosition = tokenPrefab.transform.localPosition;
+                    go.transform.localRotation = tokenPrefab.transform.localRotation;
+                    go.transform.localScale = tokenPrefab.transform.localScale;
                     go.transform.GetChild(0).GetComponent<Text>().text = "0";
                     token0 = go.transform;
                 }
@@ -73,6 +77,9 @@ namespace AGrail
                     go.GetComponent<RawImage>().texture = Resources.Load<Texture2D>("Icons/token1");
                     go.name = "token1";
                     go.transform.SetParent(basicAndExCards);
+                    go.transform.localPosition = tokenPrefab.transform.localPosition;
+                    go.transform.localRotation = tokenPrefab.transform.localRotation;
+                    go.transform.localScale = tokenPrefab.transform.localScale;
                     go.transform.GetChild(0).GetComponent<Text>().text = "0";
                     token1 = go.transform;
                 }
@@ -82,9 +89,12 @@ namespace AGrail
                     go.GetComponent<RawImage>().texture = Resources.Load<Texture2D>("Icons/token2");
                     go.name = "token2";
                     go.transform.SetParent(basicAndExCards);
+                    go.transform.localPosition = tokenPrefab.transform.localPosition;
+                    go.transform.localRotation = tokenPrefab.transform.localRotation;
+                    go.transform.localScale = tokenPrefab.transform.localScale;
                     go.transform.GetChild(0).GetComponent<Text>().text = "0";
                     token2 = go.transform;
-                }
+                }                
             }
         }
 
@@ -106,12 +116,18 @@ namespace AGrail
                 {
                     var go = new GameObject();
                     go.transform.SetParent(energy);
+                    go.transform.localPosition = Vector3.zero;
+                    go.transform.localRotation = Quaternion.identity;
+                    go.transform.localScale = Vector3.one;
                     go.AddComponent<RawImage>().texture = energeIcons[0];                    
                 }
                 for(int i = 0; i < value.Value; i++)
                 {
                     var go = new GameObject();
                     go.transform.SetParent(energy);
+                    go.transform.localPosition = Vector3.zero;
+                    go.transform.localRotation = Quaternion.identity;
+                    go.transform.localScale = Vector3.one;
                     go.AddComponent<RawImage>().texture = energeIcons[1];
                 }
             }
@@ -154,7 +170,7 @@ namespace AGrail
                 foreach (var v in value)
                 {
                     Texture2D icon = new Texture2D(0, 0);
-                    var card = new Card(v);
+                    var card = Card.GetCard(v);
 
                     if (card.Name == Card.CardName.中毒)
                         icon = Resources.Load<Texture2D>("Icons/du");
@@ -180,6 +196,9 @@ namespace AGrail
                         Debug.LogErrorFormat("Basic card is error! CardID = {0}", v);
                     var go = new GameObject();
                     go.transform.SetParent(basicAndExCards);
+                    go.transform.localPosition = Vector3.zero;
+                    go.transform.localRotation = Quaternion.identity;
+                    go.transform.localScale = Vector3.one;
                     go.AddComponent<RawImage>().texture = icon;
                 }
             }
@@ -195,18 +214,27 @@ namespace AGrail
                 {
                     var go = new GameObject();
                     go.transform.SetParent(handCard);
+                    go.transform.localPosition = Vector3.zero;
+                    go.transform.localRotation = Quaternion.identity;
+                    go.transform.localScale = Vector3.one;
                     go.AddComponent<RawImage>().texture = healIcons[1];
                 }
                 for (int i = 0; i < (int)value.Value - (int)value.Key; i++)
                 {
                     var go = new GameObject();
                     go.transform.SetParent(handCard);
+                    go.transform.localPosition = Vector3.zero;
+                    go.transform.localRotation = Quaternion.identity;
+                    go.transform.localScale = Vector3.one;
                     go.AddComponent<RawImage>().texture = healIcons[0];
                 }
                 for (int i = 0; i < (int)value.Key - (int)value.Value; i++)
                 {
                     var go = new GameObject();
                     go.transform.SetParent(handCard);
+                    go.transform.localPosition = Vector3.zero;
+                    go.transform.localRotation = Quaternion.identity;
+                    go.transform.localScale = Vector3.one;
                     var ri = go.AddComponent<RawImage>();
                     ri.texture = healIcons[0];
                     ri.color = Color.red;
@@ -224,9 +252,17 @@ namespace AGrail
                 {
                     var go = new GameObject();
                     go.transform.SetParent(heal);
+                    go.transform.localPosition = Vector3.zero;
+                    go.transform.localRotation = Quaternion.identity;
+                    go.transform.localScale = Vector3.one;
                     go.AddComponent<RawImage>().texture = healIcons[2];
                 }
             }
+        }
+
+        public void DrawLine(Vector3 pos1, Vector3 pos2)
+        {
+            //animAnchor.GetComponent<LineRenderer>().enabled = true;            
         }
 
     }

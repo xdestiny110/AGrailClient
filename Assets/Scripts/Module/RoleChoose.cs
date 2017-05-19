@@ -2,6 +2,7 @@
 using Framework;
 using Framework.Message;
 using System.Collections.Generic;
+using Framework.Network;
 
 namespace AGrail
 {
@@ -20,7 +21,7 @@ namespace AGrail
         {
             var proto = new network.PickBan() { strategy = (uint)RoleStrategy, is_pick = true };
             proto.role_ids.Add(roleID);
-            MessageSystem<MessageType>.Notify(MessageType.ChooseRole, true);
+            GameManager.TCPInstance.Send(new Protobuf() { Proto = proto, ProtoID = ProtoNameIds.PICKBAN });
         }
 
         public void OnEventTrigger(MessageType eventType, params object[] parameters)
@@ -32,7 +33,7 @@ namespace AGrail
                     RoleStrategy = proto.strategy;
                     CanIChoose = proto.id == BattleData.Instance.PlayerID;
                     RoleIDs = proto.role_ids;
-                    MessageSystem<MessageType>.Notify(MessageType.ChooseRole, false);
+                    MessageSystem<MessageType>.Notify(MessageType.ChooseRole, RoleStrategy);
                     break;
             }
         }

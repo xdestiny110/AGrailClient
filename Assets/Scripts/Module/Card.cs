@@ -17,29 +17,45 @@ namespace AGrail
         public int SkillNum { get; private set; }
         public List<string> SkillNames = new List<string>();
 
-        private static List<string[]> cardStr = new List<string[]>();
+        private static Dictionary<uint, Card> cardDict = new Dictionary<uint, Card>();
         static Card()
         {
             var txt = (Resources.Load<TextAsset>("cardDB")).text;
             var strs = txt.Split('\n');
             foreach (var v in strs)
-                cardStr.Add(v.Split('\t'));
+            {
+                if (string.IsNullOrEmpty(v)) continue;
+                var s = v.Trim(" \t\r\n".ToCharArray());
+                var t = s.Split('\t');
+                var c = new Card()
+                {
+                    ID = uint.Parse(t[0]),
+                    Type = (CardType)Enum.Parse(typeof(CardType), t[1], true),
+                    Element = (CardElement)Enum.Parse(typeof(CardElement), t[2], true),
+                    Property = (CardProperty)Enum.Parse(typeof(CardProperty), t[3], true),
+                    Name = (CardName)Enum.Parse(typeof(CardName), t[4], true),
+                    AssetPath = t[5],
+                    Description = t[6],
+                    SkillNum = int.Parse(t[7])
+                };
+                for(int i = 0; i < c.SkillNum; i++)                
+                    c.SkillNames.Add(t[8 + i]);
+                cardDict.Add(c.ID, c);
+            }                
         }
 
-        public Card(uint cardID)
+        public static Card GetCard(uint cardID)
         {
-            var t = cardStr[(int)cardID];
-            ID = cardID;
-            Type = (CardType)Enum.Parse(typeof(CardType), t[1], true);
-            Element = (CardElement)Enum.Parse(typeof(CardElement), t[2], true);
-            Property = (CardProperty)Enum.Parse(typeof(CardProperty), t[3], true);
-            Name = (CardName)Enum.Parse(typeof(CardName), t[4], true);
-            AssetPath = t[5];
-            Description = t[6];
-            SkillNum = int.Parse(t[7]);
-            for (int i = 0; i < SkillNum; i++)
-                SkillNames.Add(t[8 + i]);            
+            if (cardDict.ContainsKey(cardID))
+                return cardDict[cardID];
+            else
+            {
+                Debug.LogErrorFormat("Can not find card id {0}", cardID);
+                return null;
+            }                
         }
+
+        private Card() { }        
 
         public bool HasSkill(string skillName)
         {
@@ -53,17 +69,19 @@ namespace AGrail
 
         public bool HasSkill(uint skillID)
         {
-            return false;
+            return HasSkill(Skill.GetSkill(skillID).SkillName);
         }
 
         public enum CardType
         {
             magic,
-            attack
+            attack,
+            unique
         }
 
         public enum CardElement
         {
+            none,
             earth,
             wind,
             light,
@@ -75,7 +93,7 @@ namespace AGrail
 
         public enum CardProperty
         {
-            幻, 圣, 咏, 技, 血
+            无, 幻, 圣, 咏, 技, 血
         }
 
         public enum CardName
@@ -90,16 +108,12 @@ namespace AGrail
             水涟斩,
             雷光斩,
             圣光,
-            暗灭,            
+            暗灭,
+            五行束缚,
+            同生共死,
+            挑衅,
+            灵魂链接,
+            永恒乐章
         }
-
-
-
-
     }
-
-
-
 }
-
-

@@ -62,13 +62,15 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.PlayerBasicAndExCardChange, this);
             MessageSystem<MessageType>.Regist(MessageType.LogChange, this);
             MessageSystem<MessageType>.Regist(MessageType.CARDMSG, this);
+            MessageSystem<MessageType>.Regist(MessageType.SKILLMSG, this);
             MessageSystem<MessageType>.Regist(MessageType.TURNBEGIN, this);
 
             GameManager.AddUpdateAction(onESCClick);
+            Dialog.Instance.Reset();
 
             root.localPosition = new Vector3(1280, 0, 0);
             root.DOLocalMoveX(0, 1.0f);
-            base.Awake();            
+            base.Awake();
         }        
 
         public override void OnDestroy()
@@ -90,6 +92,7 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerBasicAndExCardChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.LogChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.CARDMSG, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.SKILLMSG, this);
             MessageSystem<MessageType>.UnRegist(MessageType.TURNBEGIN, this);
 
             GameManager.RemoveUpdateAciont(onESCClick);
@@ -155,6 +158,11 @@ namespace AGrail
                     if (cardMsg.dst_idSpecified && cardMsg.src_idSpecified)
                         actionAnim(cardMsg.src_id, cardMsg.dst_id);
                     break;
+                case MessageType.SKILLMSG:
+                    var skillMsg = parameters[0] as network.SkillMsg;
+                    foreach (var v in skillMsg.dst_ids)
+                        actionAnim(skillMsg.src_id, v);
+                    break;
                 case MessageType.TURNBEGIN:
                     var tb = parameters[0] as network.TurnBegin;
                     if(tb.roundSpecified)
@@ -187,6 +195,9 @@ namespace AGrail
                     go.transform.SetParent(rightPlayerStatus);
                 else
                     go.transform.SetParent(leftPlayerStatus);
+                go.transform.localPosition = playerStatusPrefab.transform.localPosition;
+                go.transform.localRotation = playerStatusPrefab.transform.localRotation;
+                go.transform.localScale = playerStatusPrefab.transform.localScale;
             }
         }
 
@@ -204,6 +215,9 @@ namespace AGrail
                     var go = new GameObject();
                     go.AddComponent<RawImage>().texture = icons[0];
                     go.transform.SetParent(energy[(int)team]);
+                    go.transform.localPosition = Vector3.zero;
+                    go.transform.localRotation = Quaternion.identity;
+                    go.transform.localScale = Vector3.one;
                     go.transform.SetSiblingIndex(0);
                 }
             }
@@ -223,6 +237,9 @@ namespace AGrail
                     var go = new GameObject();
                     go.AddComponent<RawImage>().texture = icons[1];
                     go.transform.SetParent(energy[(int)team]);
+                    go.transform.localPosition = Vector3.zero;
+                    go.transform.localRotation = Quaternion.identity;
+                    go.transform.localScale = Vector3.one;
                     go.transform.SetSiblingIndex(energy[(int)team].childCount - 1);
                 }
             }
@@ -238,8 +255,11 @@ namespace AGrail
             for (int i = 0; i < diffGrail; i++)
             {
                 var go = new GameObject();
-                go.AddComponent<RawImage>().texture = icons[2];
+                go.AddComponent<RawImage>().texture = icons[2];                
                 go.transform.SetParent(grail[(int)team]);
+                go.transform.localPosition = Vector3.zero;
+                go.transform.localRotation = Quaternion.identity;
+                go.transform.localScale = Vector3.one;
             }
         }        
 
@@ -249,16 +269,19 @@ namespace AGrail
                 Destroy(ShowCardArea.GetChild(i).gameObject);
             foreach (var v in card_ids)
             {
-                var card = new Card(v);
+                var card = Card.GetCard(v);
                 var go = new GameObject();
                 go.transform.SetParent(ShowCardArea);
+                go.transform.localScale = Vector3.one;
+                go.transform.localPosition = Vector3.zero;
+                go.transform.localRotation = Quaternion.identity;
                 go.AddComponent<RawImage>().texture = Resources.Load<Texture2D>(card.AssetPath);
             }
         }
 
         private void actionAnim(uint src_id, uint dst_id)
         {
-            int srcIdx, dstIdx;
+            int srcIdx = -1, dstIdx = -1;
             for(int i = 0; i < players.Count; i++)
             {
                 if (BattleData.Instance.PlayerInfos[i].id == src_id)
@@ -266,7 +289,7 @@ namespace AGrail
                 if (BattleData.Instance.PlayerInfos[i].id == dst_id)
                     dstIdx = i;
             }
-            //players[srcIdx].transform.position.x
+            players[srcIdx].DrawLine(players[srcIdx].animAnchor.position, players[dstIdx].animAnchor.position);
         }
     }
 }

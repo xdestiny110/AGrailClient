@@ -16,8 +16,11 @@ namespace Framework.UI
             var win = go.GetComponent<WindowsBase>();
             win.Parameters = parameters;
             WindowsBase topWin;
-            if(winStack.TryPeek(out topWin))            
-                dealWinMsg(topWin, msg);            
+            if(winStack.TryPeek(out topWin))
+            {
+                win.Canvas.sortingOrder = topWin.Canvas.sortingOrder + 1;
+                dealWinMsg(topWin, msg);
+            }                
             winStack.Push(win);
             return win;
         }
@@ -35,20 +38,31 @@ namespace Framework.UI
                 throw new System.Exception("Winstack is empty!");
         }
 
+        public WindowType PeekWindow()
+        {
+            return winStack.Peek().Type;
+        }
+
         private void dealWinMsg(WindowsBase topWin, WinMsg msg)
         {
             switch (msg)
             {
-                case WinMsg.Show:
+                case WinMsg.Show:                    
                     topWin.OnShow();
+                    topWin.CanvasGroup.interactable = true;
+                    topWin.OnResume();
                     break;
                 case WinMsg.Hide:
+                    topWin.CanvasGroup.interactable = false;
+                    topWin.OnPause();
                     topWin.OnHide();
                     break;
                 case WinMsg.Pause:
+                    topWin.CanvasGroup.interactable = false;
                     topWin.OnPause();
                     break;
                 case WinMsg.Resume:
+                    topWin.CanvasGroup.interactable = true;
                     topWin.OnResume();
                     break;
                 case WinMsg.Destroy:

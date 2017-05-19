@@ -51,10 +51,11 @@ namespace AGrail
             root.localPosition = new Vector3(1280, 0, 0);
             root.DOLocalMoveX(0, 1.0f).OnComplete(
                 () =>
-                {
+                {                    
                     var go = GameObject.Find("GameTitle");
-                    go.transform.GetChild(0).SetParent(root);
-                    Destroy(go);
+                    go.transform.SetParent(root);
+                    //go.transform.GetChild(0).SetParent(root);                    
+                    //Destroy(go);
                 });
             if(Lobby.Instance.RoomInfo == null)
                 Lobby.Instance.GetRoomList();
@@ -94,18 +95,6 @@ namespace AGrail
             base.OnShow();
         }
 
-        public override void OnPause()
-        {
-            canvasGroup.blocksRaycasts = false;
-            base.OnPause();
-        }
-
-        public override void OnResume()
-        {
-            canvasGroup.blocksRaycasts = true;
-            base.OnResume();
-        }
-
         public override void OnEventTrigger(MessageType eventType, params object[] parameters)
         {
             switch (eventType)
@@ -114,7 +103,8 @@ namespace AGrail
                     roomInfos = Lobby.Instance.RoomInfo;
                     break;
                 case MessageType.EnterRoom:
-                    GameManager.UIInstance.PushWindow(WindowType.Battle, WinMsg.Hide);
+                    //GameManager.UIInstance.PushWindow(WindowType.Battle, WinMsg.Hide);
+                    GameManager.UIInstance.PushWindow(WindowType.BattleQT, WinMsg.Hide);
                     break;
                 case MessageType.ERROR:
                     var errorProto = parameters[0] as network.Error;
@@ -132,6 +122,11 @@ namespace AGrail
             Lobby.Instance.GetRoomList();
         }
 
+        public void OnBtnCreateClick()
+        {
+            GameManager.UIInstance.PushWindow(WindowType.CreateRoomUI, WinMsg.Pause);
+        }
+
         private Coroutine coroHandle = null;
         private IEnumerator addRoomItem(List<network.RoomListResponse.RoomInfo> roomInfos)
         {
@@ -141,7 +136,10 @@ namespace AGrail
                 var go = Instantiate(roomItemPrefab);
                 go.transform.SetParent(content);
                 go.SetActive(false);
-                var script = go.GetComponent<RoomItem>();
+                go.transform.localPosition = roomItemPrefab.transform.localPosition;
+                go.transform.localRotation = roomItemPrefab.transform.localRotation;
+                go.transform.localScale = roomItemPrefab.transform.localScale;
+                var script = go.GetComponent<RoomItem>();                
                 script.RoomInfo = v;
                 //怒了，一帧只允许创建一个
                 //在没有统一管理的资源池与协程池前先这么凑合着

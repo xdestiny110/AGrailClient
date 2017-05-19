@@ -57,12 +57,15 @@ MonoBehaviour:
   - RoomList
   - InputBox
   - EnterRoom
+  - GameStart
   - ChooseRole
   - MoraleChange
   - ShowCardChange
   - GemChange
   - CrystalChange
   - GrailChange
+  - SendHint
+  - PlayerLeave
   - PlayerHeroName
   - PlayerRoleChange
   - PlayerTeamChange
@@ -75,3 +78,12 @@ MonoBehaviour:
   - PlayerIsReady
   - PlayerBasicAndExCardChange
   - LogChange
+  - AgentSelectCard
+  - AgentSelectPlayer
+  - AgentSelectSkill
+  - AgentStateChange
+  - AgentUIStateChange
+  - AgentHandChange
+  - AgentUpdate
+  - ShowArgsUI
+  - CloseArgsUI

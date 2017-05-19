@@ -29,6 +29,7 @@ namespace AGrail
             instance = this;
             DontDestroyOnLoad(this);
 
+            Framework.Log.Logger.Init();
             var config = new ServerConfig();
             var coder = new Coder();
             TCPInstance = new TCP(config, coder);
