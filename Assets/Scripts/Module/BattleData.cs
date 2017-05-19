@@ -275,6 +275,10 @@ namespace AGrail
                         }                        
                         MessageSystem<MessageType>.Notify(MessageType.GameStart);
                     }
+                    //需要再发一次准备
+                    //以前是不用的...不知道现在改成这样的目的是什么
+                    var proto = new network.ReadyForGameRequest() { type = network.ReadyForGameRequest.Type.SEAT_READY };
+                    GameManager.TCPInstance.Send(new Protobuf() { Proto = proto, ProtoID = ProtoNameIds.READYFORGAMEREQUEST });
                     IsStarted = value.is_started;
                 }
             }

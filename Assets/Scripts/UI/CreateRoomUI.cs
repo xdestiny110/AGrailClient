@@ -28,7 +28,7 @@ namespace AGrail
         {
             var proto = new network.CreateRoomRequest()
             {
-                allow_guest = false,
+                allow_guest = true,
                 max_player = fourPeople.isOn ? 4 : 6,
                 role_strategy = (network.ROLE_STRATEGY)(roleChoose.value + 1),
                 room_name = roomTitle.text,
