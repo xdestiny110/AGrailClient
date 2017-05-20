@@ -95,9 +95,17 @@ namespace AGrail
             switch (state)
             {
                 case 102:
-                    OKAction = () => { sendReponseMsg(102, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 1 }); };
-                    CancelAction = () => { sendReponseMsg(102, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 }); };
-                    MessageSystem<MessageType>.Notify(MessageType.SendHint, "是否发动烈风技");
+                    OKAction = () =>
+                    {
+                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 1 });
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                    };
+                    CancelAction = () =>
+                    {
+                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                    };
+                    MessageSystem<MessageType>.Notify(MessageType.SendHint, string.Format("是否发动{0}", Skills[state].SkillName));
                     return;
             }
             base.UIStateChange(state, msg, paras);
