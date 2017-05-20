@@ -43,7 +43,7 @@ namespace AGrail
 
         public MoJian()
         {
-            for (uint i = 301; i <= 305; i++)
+            for (uint i = 901; i <= 906; i++)
                 Skills.Add(i, Skill.GetSkill(i));
         }
 
@@ -63,6 +63,16 @@ namespace AGrail
             }
 
             return base.CanSelect(uiState, card);
+        }
+
+        public override bool CanSelect(uint uiState, SinglePlayerInfo player)
+        {
+            switch (uiState)
+            {
+                case 905:
+                    return true;
+            }
+            return base.CanSelect(uiState, player);
         }
 
         public override bool CanSelect(uint uiState, Skill skill)
@@ -97,6 +107,23 @@ namespace AGrail
             return base.MaxSelectPlayer(uiState);
         }
 
+        public override void AdditionAction()
+        {
+            if (BattleData.Instance.Agent.SelectArgs.Count == 1)
+            {
+                switch (BattleData.Instance.Agent.SelectArgs[0])
+                {
+                    case 901:
+                        additionalState = 901;
+                        break;
+                    default:
+                        additionalState = 0;
+                        break;
+                }
+            }
+            base.AdditionAction();
+        }
+
         public override bool CheckOK(uint uiState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
         {
             switch (uiState)
@@ -127,9 +154,7 @@ namespace AGrail
         public override void UIStateChange(uint state, UIStateMsg msg, params object[] paras)
         {
             switch (state)
-            {
-                //服务器真蛋疼，剑圣的连续技放在了额外行动里，魔剑的修罗连斩却放在了响应里
-                case 901:                    
+            {                   
                 case 902:
                 case 906:
                     OKAction = () =>
