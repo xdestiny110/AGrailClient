@@ -104,7 +104,16 @@ namespace AGrail
                     RoomID = value.room_id;
                     MessageSystem<MessageType>.Notify(MessageType.EnterRoom);
                 }
-                PlayerID = value.player_idSpecified ? value.player_id : PlayerID;
+                if (value.player_idSpecified)
+                {
+                    if (value.player_id == 9)
+                    {
+                        MainPlayer = new network.SinglePlayerInfo() { id = 9 };
+                        Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, false);
+                        MessageSystem<MessageType>.Notify(MessageType.AgentUpdate);
+                    }                        
+                    PlayerID = value.player_id;
+                }                
                 Pile = value.pileSpecified ? value.pile : Pile;
                 Discard = value.discardSpecified ? value.discard : Discard;                
                 if (value.blue_moraleSpecified)
@@ -161,8 +170,6 @@ namespace AGrail
                             MainPlayer = player;
                         isInit = true;
                     }
-                    if (MainPlayer == null)
-                        MainPlayer = new network.SinglePlayerInfo() { id = 9 };
                     var idx = PlayerInfos.IndexOf(player);
                     if (v.readySpecified)
                     {

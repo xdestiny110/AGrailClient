@@ -235,11 +235,12 @@ namespace AGrail
                 BattleData.Instance.Gem[m.team] + BattleData.Instance.Crystal[m.team] >= 3)
                 return true;
             return false;
-        }
+        }        
 
         //判断能否选择牌/角色/技能
-        public virtual bool CanSelect(uint uiState, Card card)
+        public virtual bool CanSelect(uint uiState, Card card, bool isCovered)
         {
+            if (isCovered) return false;
             switch (uiState)
             {
                 case 10:

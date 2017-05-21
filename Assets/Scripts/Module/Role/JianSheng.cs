@@ -35,12 +35,12 @@ namespace AGrail
                 Skills.Add(i, Skill.GetSkill(i));
         }
 
-        public override bool CanSelect(uint uiState, Card card)
+        public override bool CanSelect(uint uiState, Card card, bool isCovered)
         {
             if (additionalState == 103 &&
                 (card.Element != Card.CardElement.wind || card.Type != Card.CardType.attack))
                 return false;
-            return base.CanSelect(uiState, card);
+            return base.CanSelect(uiState, card, isCovered);
         }
 
         public override bool CheckOK(uint uiState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
