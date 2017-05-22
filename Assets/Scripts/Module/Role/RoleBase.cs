@@ -167,11 +167,11 @@ namespace AGrail
                         return true;
                     break;
                 case 5:
-                    if (cardIDs.Count > 0)
+                    if (cardIDs.Count == BattleData.Instance.Agent.Cmd.args[1])
                         return true;
                     break;
                 case 6:
-                case 7:
+                case 7:                
                     return true;                    
                 case 12:
                 case 13:
@@ -189,7 +189,7 @@ namespace AGrail
                 case 3:
                 case 4:
                 case 6:
-                case 7:
+                case 7:                
                 case 12:
                 case 13:
                 case 14:
