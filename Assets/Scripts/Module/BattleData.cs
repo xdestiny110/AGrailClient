@@ -220,7 +220,7 @@ namespace AGrail
                             }                            
                             MessageSystem<MessageType>.Notify(MessageType.AgentHandChange);
                         }                            
-                    }                                   
+                    }                    
                     if (v.heal_countSpecified)
                     {
                         player.heal_count = v.heal_count;
@@ -237,7 +237,14 @@ namespace AGrail
                     if (v.blue_tokenSpecified)
                         player.blue_token = v.blue_token;
                     if (v.covered_countSpecified)
+                    {
                         player.covered_count = v.covered_count;
+                        player.covereds.Clear();
+                        foreach (var u in v.covereds)
+                            player.covereds.Add(u);
+                    }
+                    if (v.covered_countSpecified)
+                        MessageSystem<MessageType>.Notify(MessageType.AgentHandChange);
                     if (v.yellow_tokenSpecified || v.blue_tokenSpecified || v.covered_countSpecified)                    
                         MessageSystem<MessageType>.Notify(MessageType.PlayerTokenChange, 
                             idx, player.yellow_token, player.blue_token, player.covered_count);
@@ -302,7 +309,7 @@ namespace AGrail
                 if (MainPlayer == null)
                     return;
                 foreach (var v in value.commands)
-                {                    
+                {
                     RoleBase r = null;
                     //能够有多重响应                    
                     switch (v.respond_id)
@@ -347,6 +354,7 @@ namespace AGrail
                                 continue;
                             }
                             Agent.Cmd = v;
+                            Agent.AgentState = (int)PlayerAgentState.DiscardCovered;
                             break;
                         case (uint)network.BasicRespondType.RESPOND_HEAL:
                             r = RoleFactory.Create(GetPlayerInfo(v.args[0]).role_id);

@@ -54,9 +54,9 @@ namespace AGrail
                 case 8:
                     return isCovered;
                 case 1801:
-                    return card.Element == Card.CardElement.thunder && !isCovered;
-                case 1802:
                     return card.Element == Card.CardElement.wind && !isCovered;
+                case 1802:
+                    return card.Element == Card.CardElement.thunder && !isCovered;
             }
             return base.CanSelect(uiState, card, isCovered);
         }
@@ -178,15 +178,18 @@ namespace AGrail
                             sendReponseMsg((uint)BasicRespondType.RESPOND_DISCARD_COVER, BattleData.Instance.MainPlayer.id,
                                 null, BattleData.Instance.Agent.SelectCards, new List<uint>() { 1 });
                             BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentHandChange, false);
                         };
                         CancelAction = () =>
                         {
                             sendReponseMsg((uint)BasicRespondType.RESPOND_DISCARD_COVER, BattleData.Instance.MainPlayer.id,
                                 null, null, new List<uint>() { 0 });
                             BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentHandChange, false);
                         };
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                             string.Format("{0}: 请选择妖力", Skills[1804].SkillName));
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentHandChange, true);
                         return;
                     }
                     break;

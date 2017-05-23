@@ -100,8 +100,11 @@ namespace AGrail
                     foreach (var v in skillMsg.dst_ids)
                     {
                         dstPlayer = BattleData.Instance.GetPlayerInfo(v);
-                        r2 = RoleFactory.Create(dstPlayer.role_id);
-                        Log += r2.RoleName + ",";
+                        if(dstPlayer != null)
+                        {
+                            r2 = RoleFactory.Create(dstPlayer.role_id);
+                            Log += r2.RoleName + ",";
+                        }
                     }
                     if(!r1.Skills.ContainsKey(skillMsg.skill_id))
                         Log += string.Format("使用了技能{0}" + Environment.NewLine, skillMsg.skill_id);                    
