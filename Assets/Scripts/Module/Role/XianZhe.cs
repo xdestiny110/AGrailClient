@@ -1,6 +1,6 @@
-using UnityEngine;
-using System.Collections;
-using System;
+using network;
+using System.Collections.Generic;
+using Framework.Message;
 
 namespace AGrail
 {
@@ -29,5 +29,144 @@ namespace AGrail
                 return Card.CardProperty.咏;
             }
         }
+
+        public override uint MaxEnergyCount
+        {
+            get
+            {
+                return 4;
+            }
+        }
+
+        public XianZhe()
+        {
+            for (uint i = 1701; i <= 1704; i++)
+                Skills.Add(i, Skill.GetSkill(i));
+        }
+
+        public override bool CanSelect(uint uiState, Card card, bool isCovered)
+        {
+            switch (uiState)
+            {
+                case 1702:                    
+                case 1703:
+                    return !BattleData.Instance.Agent.SelectCards.Exists(c => { return Card.GetCard(c).Element == card.Element; });                    
+                case 1704:
+                    return BattleData.Instance.Agent.SelectCards.Exists(c => { return Card.GetCard(c).Element == card.Element; });                                       
+            }
+            return base.CanSelect(uiState, card, isCovered);
+        }
+
+        public override bool CanSelect(uint uiState, SinglePlayerInfo player)
+        {
+            switch (uiState)
+            {
+                case 1702:                    
+                case 1703:
+                case 1704:
+                    return true;
+            }
+            return base.CanSelect(uiState, player);
+        }
+
+        public override bool CanSelect(uint uiState, Skill skill)
+        {
+            switch (uiState)
+            {
+                case 1702:
+                case 1703:
+                case 10:
+                case 11:
+                    return skill.SkillID >= 1702 && skill.SkillID <= 1703 && BattleData.Instance.MainPlayer.gem > 0;
+            }
+            return base.CanSelect(uiState, skill);
+        }
+
+        public override uint MaxSelectCard(uint uiState)
+        {
+            switch (uiState)
+            {                
+                case 1702:
+                case 1703:
+                case 1704:
+                    return 6;
+            }
+            return base.MaxSelectCard(uiState);
+        }
+
+        public override uint MaxSelectPlayer(uint uiState)
+        {
+            switch (uiState)
+            {
+                case 1702:
+                case 1704:
+                    return 1;
+                case 1703:
+                    return 4;
+            }
+            return base.MaxSelectPlayer(uiState);
+        }
+
+        public override bool CheckOK(uint uiState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
+        {
+            switch (uiState)
+            {
+                case 1702:
+                case 1704:
+                    return cardIDs.Count > 1 && playerIDs.Count == 1;
+                case 1703:
+                    return cardIDs.Count > 2 && playerIDs.Count <= cardIDs.Count - 2;
+            }
+            return base.CheckOK(uiState, cardIDs, playerIDs, skillID);
+        }
+
+        public override bool CheckCancel(uint uiState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
+        {
+            switch (uiState)
+            {
+                case 1702:
+                case 1703:
+                case 1704:
+                    return true;
+            }
+            return base.CheckCancel(uiState, cardIDs, playerIDs, skillID);
+        }
+
+        public override void UIStateChange(uint state, UIStateMsg msg, params object[] paras)
+        {
+            switch (state)
+            {
+                case 1702:
+                case 1703:
+                    OKAction = () =>
+                    {
+                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
+                            BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state,
+                            BattleData.Instance.Agent.SelectArgs);
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                    };
+                    CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                        string.Format("{0}: 请选择目标玩家以及异系卡牌", Skills[state].SkillName));
+                    return;
+                case 1704:
+                    OKAction = () =>
+                    {
+                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id,
+                            BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards);
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                    };
+                    CancelAction = () =>
+                    {
+                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id);
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                    };
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                        string.Format("{0}: 请选择目标玩家以及同系卡牌", Skills[state].SkillName));
+                    return;
+            }
+            base.UIStateChange(state, msg, paras);
+        }
+
     }
 }
