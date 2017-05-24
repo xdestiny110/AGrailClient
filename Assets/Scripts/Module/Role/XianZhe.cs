@@ -50,9 +50,11 @@ namespace AGrail
             {
                 case 1702:                    
                 case 1703:
-                    return !BattleData.Instance.Agent.SelectCards.Exists(c => { return Card.GetCard(c).Element == card.Element; });                    
+                    return !BattleData.Instance.Agent.SelectCards.Exists(c => { return Card.GetCard(c).Element == card.Element; }) ||
+                        BattleData.Instance.Agent.SelectCards.Contains(card.ID);
                 case 1704:
-                    return BattleData.Instance.Agent.SelectCards.Exists(c => { return Card.GetCard(c).Element == card.Element; });                                       
+                    return BattleData.Instance.Agent.SelectCards.Count == 0 || BattleData.Instance.Agent.SelectCards.Contains(card.ID) ||
+                        BattleData.Instance.Agent.SelectCards.Exists(c => { return Card.GetCard(c).Element == card.Element; });
             }
             return base.CanSelect(uiState, card, isCovered);
         }
