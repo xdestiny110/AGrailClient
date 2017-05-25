@@ -207,8 +207,7 @@ namespace AGrail
                     return;
                 case 704:
                     OKAction = () => 
-                    {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                    {                        
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectPlayers);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
@@ -224,7 +223,8 @@ namespace AGrail
                         if (BattleData.Instance.MainPlayer.crystal > 0)
                             useGem = 0;
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectPlayers, null,
-                            new List<uint>() { useGem, BattleData.Instance.Agent.SelectArgs[0] });                            
+                            new List<uint>() { useGem, BattleData.Instance.Agent.SelectArgs[0] });
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     CancelAction = () =>

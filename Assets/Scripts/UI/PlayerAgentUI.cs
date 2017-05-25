@@ -137,7 +137,7 @@ namespace AGrail
                 case MessageType.ShowArgsUI:
                     if (GameManager.UIInstance.PeekWindow() != Framework.UI.WindowType.ChooseArgsUI)
                         GameManager.UIInstance.PushWindow(Framework.UI.WindowType.ChooseArgsUI,
-                            Framework.UI.WinMsg.None, Vector3.zero, parameters[0], parameters[1]);
+                            Framework.UI.WinMsg.None, Vector3.zero, parameters);
                     break;
                 case MessageType.CloseArgsUI:
                     if (GameManager.UIInstance.PeekWindow() == Framework.UI.WindowType.ChooseArgsUI)
@@ -251,8 +251,10 @@ namespace AGrail
             btnExtract.interactable = BattleData.Instance.Agent.PlayerRole.CheckExtract(BattleData.Instance.Agent.FSM.Current.StateNumber);
             btnSynthetize.interactable = BattleData.Instance.Agent.PlayerRole.CheckSynthetize(BattleData.Instance.Agent.FSM.Current.StateNumber);
             btnCovered.interactable = BattleData.Instance.Agent.PlayerRole.HasCoverd;
+            MessageSystem<MessageType>.Notify(MessageType.AgentSelectPlayer);
+            MessageSystem<MessageType>.Notify(MessageType.AgentSelectCard);
+            MessageSystem<MessageType>.Notify(MessageType.AgentSelectSkill);
         }
-
     }
 }
 

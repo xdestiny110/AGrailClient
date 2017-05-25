@@ -42,13 +42,13 @@ namespace AGrail
                     for (int i = 0; i < argsCache.Count; i++)                    
                         args.options.Add(new Dropdown.OptionData() { text = Skill.GetSkill(argsCache[i][0]).SkillName });
                 }
-                if(t == "Card")
+                else if(t == "Card")
                 {
                     title.text = "选择卡牌";
                     for (int i = 0; i < argsCache.Count; i++)
                         args.options.Add(new Dropdown.OptionData() { text = Card.GetCard(argsCache[i][0]).Name.ToString() });
                 }
-                if(t == "Energy")
+                else if(t == "Energy")
                 {
                     title.text = "选择能量";
                     for (int i = 0; i < argsCache.Count; i++)
@@ -57,7 +57,7 @@ namespace AGrail
                             text = string.Format("{0}个宝石与{1}个星石", argsCache[i][0], argsCache[i][1])
                         });                    
                 }
-                if(t == "Heal")
+                else if(t == "Heal")
                 {
                     title.text = "选择治疗数";
                     for (int i = 0; i < argsCache.Count; i++)
@@ -65,6 +65,16 @@ namespace AGrail
                         {
                             text = string.Format("{0}个治疗", argsCache[i][0])
                         });
+                }
+                else
+                {
+                    //使用传入的参数构造选择列表
+                    title.text = t;
+                    for (int i = 0; i < argsCache.Count; i++)
+                        args.options.Add(new Dropdown.OptionData()
+                        {
+                            text = string.Format("{0}{1}", argsCache[i][0], value[2].ToString())
+                        });                    
                 }
                 args.RefreshShownValue();
                 BattleData.Instance.Agent.SelectArgs.Clear();
