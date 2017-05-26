@@ -59,7 +59,7 @@ namespace AGrail
                 }
                 else if(t == "Heal")
                 {
-                    title.text = "选择治疗数";
+                    title.text = "选择治疗数";                    
                     for (int i = 0; i < argsCache.Count; i++)
                         args.options.Add(new Dropdown.OptionData()
                         {
@@ -70,10 +70,11 @@ namespace AGrail
                 {
                     //使用传入的参数构造选择列表
                     title.text = t;
+                    var m = value[2] as List<string>;
                     for (int i = 0; i < argsCache.Count; i++)
                         args.options.Add(new Dropdown.OptionData()
                         {
-                            text = string.Format("{0}{1}", argsCache[i][0], value[2].ToString())
+                            text = string.Format("{0}{1}", argsCache[i][0], m[i])
                         });                    
                 }
                 args.RefreshShownValue();

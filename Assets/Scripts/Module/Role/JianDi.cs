@@ -148,9 +148,13 @@ namespace AGrail
                         {
                             var s = BattleData.Instance.GetPlayerInfo(BattleData.Instance.Agent.SelectPlayers[0]);
                             var selectList = new List<List<uint>>();
+                            var mList = new List<string>();
                             for (uint i = Math.Min(3, BattleData.Instance.MainPlayer.yellow_token); i > 0 ; i--)
+                            {
                                 selectList.Add(new List<uint>() { i });
-                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "剑气数量", selectList, "个剑气");
+                                mList.Add("个剑气");
+                            }                                
+                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "剑气数量", selectList, mList);
                             MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                                 string.Format("{0}: 请选择剑气数量", Skills[state].SkillName));
                         }
