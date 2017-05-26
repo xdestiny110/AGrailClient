@@ -46,7 +46,7 @@ namespace AGrail
         {
             get
             {
-                return "BaShi";
+                return "BaiShi";
             }
         }
 
