@@ -35,14 +35,9 @@ namespace AGrail
                     // 协议反序列化
                     MemoryStream protoStream = new MemoryStream();
                     protoStream.Write(stream.ToArray(), 8, sumLen - 4);
-                    // 打印协议内容
-                    System.Text.StringBuilder log = new System.Text.StringBuilder();
-                    foreach (var v in protoStream.GetBuffer())
-                    {
-                        log.Append(v);
-                        log.Append(", ");
-                    }
-                    UnityEngine.Debug.LogFormat("{0}: {1}", (ProtoNameIds)protoID, log);
+
+                    printProtoContent((ProtoNameIds)protoID, protoStream.GetBuffer());
+
                     // 将流位置重置为开头
                     protoStream.Position = 0;
                     protobufs.Add(new Protobuf()
@@ -107,6 +102,20 @@ namespace AGrail
             }
             return null;
         }
+
+        [System.Diagnostics.Conditional("LOGON")]
+        private void printProtoContent(ProtoNameIds protoID, byte[] content)
+        {
+            // 打印协议内容
+            System.Text.StringBuilder log = new System.Text.StringBuilder();
+            foreach (var v in content)
+            {
+                log.Append(v);
+                log.Append(", ");
+            }
+            UnityEngine.Debug.LogFormat("{0}: {1}", protoID, log);
+        }
+
     }
 }
 
