@@ -40,6 +40,7 @@ namespace AGrail
                 BattleData.Instance.Agent.SelectArgs.Clear();
                 MessageSystem<MessageType>.Notify(MessageType.AgentSelectPlayer);
                 MessageSystem<MessageType>.Notify(MessageType.AgentSelectCard);
+                MessageSystem<MessageType>.Notify(MessageType.CloseArgsUI);
             }
             base.Enter(msg, paras);
         }
