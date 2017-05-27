@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-using System.Collections;
-using network;
+﻿using network;
 using System.Collections.Generic;
 using Framework.Network;
 using Framework.Message;
@@ -280,7 +278,7 @@ namespace AGrail
                     if (player.team != BattleData.Instance.MainPlayer.team &&
                         !(player.role_id == (uint)RoleID.AnSha && player.is_knelt))
                     {
-                        if (player.ex_cards.Contains(1001) && player.role_id != (uint)RoleID.YongZhe)
+                        if (BattleData.Instance.MainPlayer.ex_cards.Contains(1001) && player.role_id != (uint)RoleID.YongZhe)
                             return false;
                         return true;
                     }                        
@@ -288,7 +286,8 @@ namespace AGrail
                 case 2:
                     return true;
                 case 3:
-                    if (player.team != BattleData.Instance.MainPlayer.team && player.id != BattleData.Instance.Agent.Cmd.args[3])
+                    if (player.team != BattleData.Instance.MainPlayer.team && player.id != BattleData.Instance.Agent.Cmd.args[3] &&
+                        !(player.role_id == (uint)RoleID.AnSha && player.is_knelt))
                         return true;
                     break;
             }

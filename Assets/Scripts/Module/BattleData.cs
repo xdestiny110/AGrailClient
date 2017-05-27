@@ -155,9 +155,9 @@ namespace AGrail
                 {
                     MessageSystem<MessageType>.Notify(MessageType.GrailChange, Team.Red, value.red_crystal - Grail[(int)Team.Red]);
                     Grail[(int)Team.Red] = value.red_grail;
-                }                
-                
-                foreach(var v in value.player_infos)
+                }
+
+                foreach (var v in value.player_infos)
                 {
                     var player = GetPlayerInfo(v.id);
                     bool isInit = false;
@@ -165,7 +165,7 @@ namespace AGrail
                     {
                         PlayerInfos.Add(v);
                         player = v;
-                        player.max_hand = 6;                            
+                        player.max_hand = 6;
                         if (player.id == PlayerID)
                             MainPlayer = player;
                         isInit = true;
@@ -185,12 +185,12 @@ namespace AGrail
                     {
                         player.role_id = v.role_id;
                         MessageSystem<MessageType>.Notify(MessageType.PlayerRoleChange, idx, player.role_id);
-                        if(player.id == PlayerID)
+                        if (player.id == PlayerID)
                         {
                             Agent = new PlayerAgent(player.role_id);
                             Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, false);
                             MessageSystem<MessageType>.Notify(MessageType.AgentUpdate);
-                        }                                     
+                        }
                     }
                     if (v.nicknameSpecified)
                     {
@@ -203,8 +203,8 @@ namespace AGrail
                         MessageSystem<MessageType>.Notify(MessageType.PlayerKneltChange, idx, player.is_knelt);
                     }
                     if (v.max_handSpecified)
-                        player.max_hand = v.max_hand;                                            
-                    if (v.hand_countSpecified)                    
+                        player.max_hand = v.max_hand;
+                    if (v.hand_countSpecified)
                         player.hand_count = v.hand_count;
                     if (v.max_handSpecified || v.hand_countSpecified)
                     {
@@ -217,23 +217,23 @@ namespace AGrail
                                 player.hands.Clear();
                                 foreach (var u in v.hands)
                                     player.hands.Add(u);
-                            }                            
+                            }
                             MessageSystem<MessageType>.Notify(MessageType.AgentHandChange);
-                        }                            
-                    }                    
+                        }
+                    }
                     if (v.heal_countSpecified)
                     {
                         player.heal_count = v.heal_count;
                         MessageSystem<MessageType>.Notify(MessageType.PlayerHealChange, idx, player.heal_count);
                     }
-                    if (v.gemSpecified)                    
+                    if (v.gemSpecified)
                         player.gem = v.gem;
-                    if (v.crystalSpecified)                    
-                        player.crystal = v.crystal;                        
-                    if(v.gemSpecified || v.crystalSpecified)
+                    if (v.crystalSpecified)
+                        player.crystal = v.crystal;
+                    if (v.gemSpecified || v.crystalSpecified)
                         MessageSystem<MessageType>.Notify(MessageType.PlayerEnergeChange, idx, player.gem, player.crystal);
                     if (v.yellow_tokenSpecified)
-                        player.yellow_token = v.yellow_token;                        
+                        player.yellow_token = v.yellow_token;
                     if (v.blue_tokenSpecified)
                         player.blue_token = v.blue_token;
                     if (v.covered_countSpecified)
@@ -245,16 +245,18 @@ namespace AGrail
                     }
                     if (v.covered_countSpecified)
                         MessageSystem<MessageType>.Notify(MessageType.AgentHandChange);
-                    if (v.yellow_tokenSpecified || v.blue_tokenSpecified || v.covered_countSpecified)                    
-                        MessageSystem<MessageType>.Notify(MessageType.PlayerTokenChange, 
+                    if (v.yellow_tokenSpecified || v.blue_tokenSpecified || v.covered_countSpecified)
+                        MessageSystem<MessageType>.Notify(MessageType.PlayerTokenChange,
                             idx, player.yellow_token, player.blue_token, player.covered_count);
                     if (v.basic_cards.Count > 0)
                         player.basic_cards = v.basic_cards;
-                    if(v.ex_cards.Count > 0)
+                    if (v.ex_cards.Count > 0)
+                    {
                         player.ex_cards = v.ex_cards;
-                    //为了进行卡牌编号的区分, 专有牌的序号都+1000
-                    for (int i = 0; i < player.ex_cards.Count; i++)
-                        player.ex_cards[i] += 1000;
+                        //为了进行卡牌编号的区分, 专有牌的序号都+1000
+                        for (int i = 0; i < player.ex_cards.Count; i++)
+                            player.ex_cards[i] += 1000;
+                    }
                     if(v.delete_field.Count > 0)
                     {
                         foreach(var u in v.delete_field)
