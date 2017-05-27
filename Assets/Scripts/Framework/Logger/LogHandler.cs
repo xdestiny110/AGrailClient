@@ -9,9 +9,10 @@ namespace Framework.Log
     {
         private FileStream fs = null;
         private StreamWriter sw = null;
-        private Thread th = null;
         private ConcurrentQueue<string> logBuffer = new ConcurrentQueue<string>();
         private ILogHandler defaultLoghandler = Debug.logger.logHandler;
+
+        private bool thFlag = true;
 
         public LogHandler()
         {
@@ -21,25 +22,24 @@ namespace Framework.Log
 
             string logFilePath = Path.Combine(logDirPath, DateTime.Now.ToString("MM_dd_hh_mm_ss") + ".log");
 
-            fs = new FileStream(logFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
-            sw = new StreamWriter(fs);
-            //th = new Thread(() => 
-            //{
-            //    using(fs = new FileStream(logFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite))
-            //    {
-            //        sw = new StreamWriter(fs);
-            //        while (true)
-            //        {
-            //            while (logBuffer.Count > 0)
-            //            {
-            //                var str = logBuffer.Dequeue();
-            //                sw.WriteLine(str);
-            //                sw.Flush();
-            //            }
-            //        }
-            //    }
-            //});
-            //th.Start();            
+            new Thread(() =>
+            {
+                using (fs = new FileStream(logFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+                {
+                    sw = new StreamWriter(fs);
+                    while (thFlag)
+                    {
+                        while (logBuffer.Count > 0)
+                        {
+                            var str = logBuffer.Dequeue();
+                            sw.WriteLine(str);
+                            sw.Flush();
+                        }
+                    }
+                    sw.Close();
+                }
+                Debug.Log("log thread abort");
+            }).Start();
 
             Application.logMessageReceivedThreaded += HandleLog;
 
@@ -60,18 +60,14 @@ namespace Framework.Log
 
         public void Close()
         {
-            Debug.Log("Close log file");
-            sw.Close();
-            fs.Close();
+            Debug.Log("Close log file");            
+            thFlag = false;            
         }
 
         void HandleLog(string log, string stackTrace, LogType type)
         {
-            //logBuffer.Enqueue(log);
-            //logBuffer.Enqueue(stackTrace);
-            sw.WriteLine(log);
-            sw.WriteLine(stackTrace);
-            sw.Flush();
+            logBuffer.Enqueue(log);
+            logBuffer.Enqueue(stackTrace);
         }
 
     }
