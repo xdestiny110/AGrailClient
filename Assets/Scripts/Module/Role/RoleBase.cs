@@ -279,7 +279,11 @@ namespace AGrail
                 case 1:
                     if (player.team != BattleData.Instance.MainPlayer.team &&
                         !(player.role_id == (uint)RoleID.AnSha && player.is_knelt))
+                    {
+                        if (player.ex_cards.Contains(1001) && player.role_id != (uint)RoleID.YongZhe)
+                            return false;
                         return true;
+                    }                        
                     break;
                 case 2:
                     return true;
