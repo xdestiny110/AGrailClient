@@ -54,8 +54,18 @@ namespace Framework.Log
 
         public void LogFormat(LogType logType, UnityEngine.Object context, string format, params object[] args)
         {
-            format = string.Format("[{0}][{1}]", DateTime.Now.ToString("hh:mm:ss"), logType) + format;
-            defaultLoghandler.LogFormat(logType, context, format, args);
+            switch (logType)
+            {
+                case LogType.Assert:
+                case LogType.Error:
+                case LogType.Exception:
+                    format = string.Format("[{0}][{1}]", DateTime.Now.ToString("hh:mm:ss"), logType) + format;
+                    defaultLoghandler.LogFormat(logType, context, format, args);
+                    break;
+                default:
+                    log(logType, context, format, args);
+                    break;
+            }            
         }
 
         public void Close()
@@ -64,10 +74,17 @@ namespace Framework.Log
             thFlag = false;            
         }
 
-        void HandleLog(string log, string stackTrace, LogType type)
+        private void HandleLog(string log, string stackTrace, LogType type)
         {
             logBuffer.Enqueue(log);
             logBuffer.Enqueue(stackTrace);
+        }
+
+        [System.Diagnostics.Conditional("LOGON")]
+        private void log(LogType logType, UnityEngine.Object context, string format, params object[] args)
+        {
+            format = string.Format("[{0}][{1}]", DateTime.Now.ToString("hh:mm:ss"), logType) + format;
+            defaultLoghandler.LogFormat(logType, context, format, args);
         }
 
     }
