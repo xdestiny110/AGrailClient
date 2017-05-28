@@ -468,6 +468,11 @@ namespace AGrail
                 }
             }
         }
+
+        public static Team GetOtherTeam(Team team)
+        {
+            return (team == Team.Blue) ? Team.Red : Team.Blue;
+        }
     }
 
     public enum Team
