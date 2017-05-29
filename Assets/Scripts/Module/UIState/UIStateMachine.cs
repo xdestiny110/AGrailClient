@@ -1,5 +1,6 @@
 ﻿using System;
 using Framework.FSM;
+using Framework.Message;
 
 namespace AGrail
 {
@@ -23,7 +24,17 @@ namespace AGrail
             {                
                 var t = History.Pop();
                 if (t == typeof(StateIdle))
+                {
+                    //一般是多次行动时的取消
                     Current.Process(msg, paras);
+                    BattleData.Instance.Agent.SelectCards.Clear();
+                    BattleData.Instance.Agent.SelectPlayers.Clear();
+                    BattleData.Instance.Agent.SelectSkill = null;
+                    BattleData.Instance.Agent.SelectArgs.Clear();
+                    MessageSystem<MessageType>.Notify(MessageType.AgentSelectPlayer);
+                    MessageSystem<MessageType>.Notify(MessageType.AgentSelectCard);
+                    MessageSystem<MessageType>.Notify(MessageType.AgentSelectSkill);                    
+                }                    
                 else
                     ChangeState(t, false, msg, paras);
             }

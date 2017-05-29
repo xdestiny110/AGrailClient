@@ -103,6 +103,8 @@ namespace AGrail
                 return typeof(StateWeaken);
             if (state.Check(PlayerAgentState.HealCost))
                 return typeof(StateHealCost);
+            if (state.Check(PlayerAgentState.DiscardCovered))
+                return typeof(StateDropCovered);
             if (state.Check(PlayerAgentState.AdditionAction))
                 return typeof(StateAdditionAction);
             if (state.Check(PlayerAgentState.SkillResponse))

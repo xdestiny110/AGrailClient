@@ -213,6 +213,14 @@ namespace AGrail
                         icon = Resources.Load<Texture2D>("Icons/leiFeng");
                     else if (card.Name == Card.CardName.五行束缚)
                         icon = Resources.Load<Texture2D>("Icons/ShuFu");
+                    else if (card.Name == Card.CardName.挑衅)
+                        icon = Resources.Load<Texture2D>("Icons/TiaoXin");
+                    else if (card.Name == Card.CardName.灵魂链接)
+                        icon = Resources.Load<Texture2D>("Icons/LianJie");
+                    else if (card.Name == Card.CardName.同生共死)
+                        icon = Resources.Load<Texture2D>("Icons/TongSheng");
+                    else if (card.Name == Card.CardName.永恒乐章)
+                        icon = Resources.Load<Texture2D>("Icons/YueZhang");
                     else
                         Debug.LogErrorFormat("Basic card is error! CardID = {0}", v);
                     var go = new GameObject();

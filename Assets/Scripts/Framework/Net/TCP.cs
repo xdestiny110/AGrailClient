@@ -196,41 +196,54 @@ namespace Framework.Network
         }
 
         private void onConnectSuccess()
-        {
-            UnityEngine.Debug.Log("OnConnectSuccess!");
-            actions.Enqueue(() => { Message.MessageSystem<Message.MessageType>.Notify(Message.MessageType.OnConnect, true); });            
+        {            
+            actions.Enqueue(() => {
+                UnityEngine.Debug.Log("OnConnectSuccess!");
+                Message.MessageSystem<Message.MessageType>.Notify(Message.MessageType.OnConnect, true);
+            });
         }
 
         private void onConnectFail()
-        {
-            UnityEngine.Debug.Log("OnConnectFail!");
-            actions.Enqueue(() => { Message.MessageSystem<Message.MessageType>.Notify(Message.MessageType.OnConnect, false); });
+        {            
+            actions.Enqueue(() => 
+            {
+                UnityEngine.Debug.Log("OnConnectFail!");
+                Message.MessageSystem<Message.MessageType>.Notify(Message.MessageType.OnConnect, false);
+            });
         }
 
         private void onDisconnect()
-        {
-            UnityEngine.Debug.Log("OnDisconnect!");
-            actions.Enqueue(() => { Message.MessageSystem<Message.MessageType>.Notify(Message.MessageType.OnDisconnect); });
+        {            
+            actions.Enqueue(() => 
+            {
+                UnityEngine.Debug.Log("OnDisconnect!");
+                Message.MessageSystem<Message.MessageType>.Notify(Message.MessageType.OnDisconnect);
+            });
         }
 
         private void onReconnect()
-        {
-            UnityEngine.Debug.Log("OnDisconnect!");
-            actions.Enqueue(() => { Message.MessageSystem<Message.MessageType>.Notify(Message.MessageType.OnReconnect); });
+        {            
+            actions.Enqueue(() => 
+            {
+                UnityEngine.Debug.Log("OnDisconnect!");
+                Message.MessageSystem<Message.MessageType>.Notify(Message.MessageType.OnReconnect);
+            });
         }
 
         private void beforeSendProto(Protobuf protobuf)
         {
             UnityEngine.Debug.LogFormat("Send protobuf {0}", protobuf.ProtoID);
-        }        
-
-        private void afterReceiveProto(Protobuf protobuf)
-        {
-            UnityEngine.Debug.LogFormat("Recv protobuf {0}", protobuf.ProtoID);               
-            var msgType = (Message.MessageType)Enum.Parse(typeof(Message.MessageType), protobuf.ProtoID.ToString());
-            actions.Enqueue(() => { Message.MessageSystem<Message.MessageType>.Notify(msgType, protobuf.Proto); });
         }
 
+        private void afterReceiveProto(Protobuf protobuf)
+        {            
+            var msgType = (Message.MessageType)Enum.Parse(typeof(Message.MessageType), protobuf.ProtoID.ToString());
+            actions.Enqueue(() => 
+            {
+                UnityEngine.Debug.LogFormat("Recv protobuf {0}", protobuf.ProtoID);
+                Message.MessageSystem<Message.MessageType>.Notify(msgType, protobuf.Proto);
+            });
+        }
     }
 
     public class StateObject

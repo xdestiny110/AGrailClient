@@ -39,7 +39,7 @@ namespace AGrail
                 Skills.Add(i, Skill.GetSkill(i));
         }
 
-        public override bool CanSelect(uint uiState, Card card)
+        public override bool CanSelect(uint uiState, Card card, bool isCovered)
         {
             switch (uiState)
             {
@@ -50,7 +50,7 @@ namespace AGrail
                 case 703:
                     return card.Element == Card.CardElement.wind;
             }
-            return base.CanSelect(uiState, card);
+            return base.CanSelect(uiState, card, isCovered);
         }
 
         public override bool CanSelect(uint uiState, SinglePlayerInfo player)
@@ -207,8 +207,7 @@ namespace AGrail
                     return;
                 case 704:
                     OKAction = () => 
-                    {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                    {                        
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectPlayers);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
@@ -224,7 +223,8 @@ namespace AGrail
                         if (BattleData.Instance.MainPlayer.crystal > 0)
                             useGem = 0;
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectPlayers, null,
-                            new List<uint>() { useGem, BattleData.Instance.Agent.SelectArgs[0] });                            
+                            new List<uint>() { useGem, BattleData.Instance.Agent.SelectArgs[0] });
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     CancelAction = () =>

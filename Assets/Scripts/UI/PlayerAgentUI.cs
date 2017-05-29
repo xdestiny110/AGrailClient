@@ -24,7 +24,9 @@ namespace AGrail
         [SerializeField]
         private Button btnExtract;
         [SerializeField]
-        private Button btnSynthetize;        
+        private Button btnSynthetize;
+        [SerializeField]
+        private Button btnCovered;
         [SerializeField]
         private GameObject cardPrefab;
         [SerializeField]
@@ -33,6 +35,8 @@ namespace AGrail
         private Dictionary<int, PlayerStatusQT> players;
         private List<SkillUI> skillUIs = new List<SkillUI>();
         private List<CardUI> cardUIs = new List<CardUI>();
+
+        private bool isShowCovered = false;
 
         void Awake()
         {
@@ -81,36 +85,7 @@ namespace AGrail
             switch (eventType)
             {
                 case MessageType.AgentUIStateChange:
-                    //UI状态变化，确认哪些能够选择
-                    foreach (var v in cardUIs)
-                    {
-                        if (BattleData.Instance.Agent.PlayerRole.CanSelect(BattleData.Instance.Agent.FSM.Current.StateNumber, v.Card))
-                            v.IsEnable = true;
-                        else
-                            v.IsEnable = false;
-                    }
-                    foreach (var v in skillUIs)
-                    {
-                        if (BattleData.Instance.Agent.PlayerRole.CanSelect(BattleData.Instance.Agent.FSM.Current.StateNumber, v.Skill))
-                            v.IsEnable = true;
-                        else
-                            v.IsEnable = false;
-                    }
-                    foreach (var v in players.Keys)
-                    {
-                        if (BattleData.Instance.Agent.PlayerRole.CanSelect(BattleData.Instance.Agent.FSM.Current.StateNumber, BattleData.Instance.PlayerInfos[v]))
-                            players[v].IsEnable = true;
-                        else
-                            players[v].IsEnable = false;
-                    }
-                    btnOK.interactable = BattleData.Instance.Agent.PlayerRole.CheckOK(BattleData.Instance.Agent.FSM.Current.StateNumber,
-                        BattleData.Instance.Agent.SelectCards, BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectSkill);
-                    btnCancel.interactable = BattleData.Instance.Agent.PlayerRole.CheckCancel(BattleData.Instance.Agent.FSM.Current.StateNumber,
-                        BattleData.Instance.Agent.SelectCards, BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectSkill);
-                    BtnResign.interactable = BattleData.Instance.Agent.PlayerRole.CheckResign(BattleData.Instance.Agent.FSM.Current.StateNumber);
-                    btnBuy.interactable = BattleData.Instance.Agent.PlayerRole.CheckBuy(BattleData.Instance.Agent.FSM.Current.StateNumber);
-                    btnExtract.interactable = BattleData.Instance.Agent.PlayerRole.CheckExtract(BattleData.Instance.Agent.FSM.Current.StateNumber);
-                    btnSynthetize.interactable = BattleData.Instance.Agent.PlayerRole.CheckSynthetize(BattleData.Instance.Agent.FSM.Current.StateNumber);
+                    onUIStateChange();
                     break;
                 case MessageType.AgentUpdate:
                     btnOK.interactable = false;
@@ -134,22 +109,19 @@ namespace AGrail
                     btnBuy.interactable = BattleData.Instance.Agent.PlayerRole.CheckBuy(BattleData.Instance.Agent.FSM.Current.StateNumber);
                     btnExtract.interactable = BattleData.Instance.Agent.PlayerRole.CheckExtract(BattleData.Instance.Agent.FSM.Current.StateNumber);                    
                     btnSynthetize.interactable = BattleData.Instance.Agent.PlayerRole.CheckSynthetize(BattleData.Instance.Agent.FSM.Current.StateNumber);
+                    btnCovered.interactable = BattleData.Instance.Agent.PlayerRole.HasCoverd;
                     break;
                 case MessageType.AgentHandChange:
-                    for(int i = 0; i < handArea.childCount; i++)                    
-                        Destroy(handArea.GetChild(i).gameObject);
-                    cardUIs.Clear();
-                    foreach(var v in BattleData.Instance.MainPlayer.hands)
+                    if (parameters.Length == 1)
                     {
-                        var go = Instantiate(cardPrefab);
-                        go.transform.SetParent(handArea);
-                        go.transform.localPosition = Vector3.zero;
-                        go.transform.localRotation = Quaternion.identity;
-                        go.transform.localScale = Vector3.one;
-                        var cardUI = go.GetComponent<CardUI>();
-                        cardUI.Card = Card.GetCard(v);
-                        cardUIs.Add(cardUI);
+                        if((bool)parameters[0] != isShowCovered)
+                        {
+                            isShowCovered = (bool)parameters[0];
+                            onCoveredClick();
+                        }                        
                     }
+                    else
+                        updateAgentCards();                                        
                     break;
                 case MessageType.AgentStateChange:
                     //保证在初始状态 
@@ -165,7 +137,7 @@ namespace AGrail
                 case MessageType.ShowArgsUI:
                     if (GameManager.UIInstance.PeekWindow() != Framework.UI.WindowType.ChooseArgsUI)
                         GameManager.UIInstance.PushWindow(Framework.UI.WindowType.ChooseArgsUI,
-                            Framework.UI.WinMsg.None, Vector3.zero, parameters[0], parameters[1]);
+                            Framework.UI.WinMsg.None, Vector3.zero, parameters);
                     break;
                 case MessageType.CloseArgsUI:
                     if (GameManager.UIInstance.PeekWindow() == Framework.UI.WindowType.ChooseArgsUI)
@@ -187,6 +159,20 @@ namespace AGrail
         public void OnBtnSynthetizeClick()
         {
             BattleData.Instance.Agent.FSM.HandleMessage(UIStateMsg.ClickBtn, "Syntheis");
+        }
+
+        public void OnCoveredClick()
+        {
+            isShowCovered = !isShowCovered;
+            onCoveredClick();
+            onUIStateChange();
+        }
+
+        private void onCoveredClick()
+        {            
+            updateAgentCards();
+            btnCovered.GetComponentInChildren<Text>().text =
+                isShowCovered ? "显示手牌" : "显示盖牌";
         }
 
         private void onBtnOKClick()
@@ -213,6 +199,62 @@ namespace AGrail
             BattleData.Instance.Agent.PlayerRole.ResignAction = null;
         }
 
+        private void updateAgentCards()
+        {
+            for (int i = 0; i < handArea.childCount; i++)
+                Destroy(handArea.GetChild(i).gameObject);
+            cardUIs.Clear();
+            List<uint> cards = isShowCovered ? BattleData.Instance.MainPlayer.covereds : BattleData.Instance.MainPlayer.hands;
+            foreach (var v in cards)
+            {
+                var go = Instantiate(cardPrefab);
+                go.transform.SetParent(handArea);
+                go.transform.localPosition = Vector3.zero;
+                go.transform.localRotation = Quaternion.identity;
+                go.transform.localScale = Vector3.one;
+                var cardUI = go.GetComponent<CardUI>();
+                cardUI.Card = Card.GetCard(v);
+                cardUIs.Add(cardUI);
+            }
+        }
+
+        private void onUIStateChange()
+        {
+            //UI状态变化，确认哪些能够选择                    
+            foreach (var v in cardUIs)
+            {
+                if (BattleData.Instance.Agent.PlayerRole.CanSelect(BattleData.Instance.Agent.FSM.Current.StateNumber, v.Card, isShowCovered))
+                    v.IsEnable = true;
+                else
+                    v.IsEnable = false;
+            }
+            foreach (var v in skillUIs)
+            {
+                if (BattleData.Instance.Agent.PlayerRole.CanSelect(BattleData.Instance.Agent.FSM.Current.StateNumber, v.Skill))
+                    v.IsEnable = true;
+                else
+                    v.IsEnable = false;
+            }
+            foreach (var v in players.Keys)
+            {
+                if (BattleData.Instance.Agent.PlayerRole.CanSelect(BattleData.Instance.Agent.FSM.Current.StateNumber, BattleData.Instance.PlayerInfos[v]))
+                    players[v].IsEnable = true;
+                else
+                    players[v].IsEnable = false;
+            }
+            btnOK.interactable = BattleData.Instance.Agent.PlayerRole.CheckOK(BattleData.Instance.Agent.FSM.Current.StateNumber,
+                BattleData.Instance.Agent.SelectCards, BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectSkill);
+            btnCancel.interactable = BattleData.Instance.Agent.PlayerRole.CheckCancel(BattleData.Instance.Agent.FSM.Current.StateNumber,
+                BattleData.Instance.Agent.SelectCards, BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectSkill);
+            BtnResign.interactable = BattleData.Instance.Agent.PlayerRole.CheckResign(BattleData.Instance.Agent.FSM.Current.StateNumber);
+            btnBuy.interactable = BattleData.Instance.Agent.PlayerRole.CheckBuy(BattleData.Instance.Agent.FSM.Current.StateNumber);
+            btnExtract.interactable = BattleData.Instance.Agent.PlayerRole.CheckExtract(BattleData.Instance.Agent.FSM.Current.StateNumber);
+            btnSynthetize.interactable = BattleData.Instance.Agent.PlayerRole.CheckSynthetize(BattleData.Instance.Agent.FSM.Current.StateNumber);
+            btnCovered.interactable = BattleData.Instance.Agent.PlayerRole.HasCoverd;
+            MessageSystem<MessageType>.Notify(MessageType.AgentSelectPlayer);
+            MessageSystem<MessageType>.Notify(MessageType.AgentSelectCard);
+            MessageSystem<MessageType>.Notify(MessageType.AgentSelectSkill);
+        }
     }
 }
 

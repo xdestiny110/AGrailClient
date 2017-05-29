@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-using System.Collections;
-using network;
+﻿using network;
 using System.Collections.Generic;
 using Framework.Network;
 using Framework.Message;
@@ -167,11 +165,11 @@ namespace AGrail
                         return true;
                     break;
                 case 5:
-                    if (cardIDs.Count > 0)
+                    if (cardIDs.Count == BattleData.Instance.Agent.Cmd.args[1])
                         return true;
                     break;
                 case 6:
-                case 7:
+                case 7:                
                     return true;                    
                 case 12:
                 case 13:
@@ -189,7 +187,7 @@ namespace AGrail
                 case 3:
                 case 4:
                 case 6:
-                case 7:
+                case 7:                
                 case 12:
                 case 13:
                 case 14:
@@ -235,11 +233,12 @@ namespace AGrail
                 BattleData.Instance.Gem[m.team] + BattleData.Instance.Crystal[m.team] >= 3)
                 return true;
             return false;
-        }
+        }        
 
         //判断能否选择牌/角色/技能
-        public virtual bool CanSelect(uint uiState, Card card)
+        public virtual bool CanSelect(uint uiState, Card card, bool isCovered)
         {
+            if (isCovered) return false;
             switch (uiState)
             {
                 case 10:
@@ -278,12 +277,17 @@ namespace AGrail
                 case 1:
                     if (player.team != BattleData.Instance.MainPlayer.team &&
                         !(player.role_id == (uint)RoleID.AnSha && player.is_knelt))
+                    {
+                        if (BattleData.Instance.MainPlayer.ex_cards.Contains(1001) && player.role_id != (uint)RoleID.YongZhe)
+                            return false;
                         return true;
+                    }                        
                     break;
                 case 2:
                     return true;
                 case 3:
-                    if (player.team != BattleData.Instance.MainPlayer.team && player.id != BattleData.Instance.Agent.Cmd.args[3])
+                    if (player.team != BattleData.Instance.MainPlayer.team && player.id != BattleData.Instance.Agent.Cmd.args[3] &&
+                        !(player.role_id == (uint)RoleID.AnSha && player.is_knelt))
                         return true;
                     break;
             }

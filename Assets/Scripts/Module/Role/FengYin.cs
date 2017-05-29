@@ -39,7 +39,7 @@ namespace AGrail
                 Skills.Add(i, Skill.GetSkill(i));
         }
 
-        public override bool CanSelect(uint uiState, Card card)
+        public override bool CanSelect(uint uiState, Card card, bool isCovered)
         {
             switch (uiState)
             {
@@ -50,7 +50,7 @@ namespace AGrail
                 case 405:
                     return card.HasSkill(uiState);                
             }
-            return base.CanSelect(uiState, card);
+            return base.CanSelect(uiState, card, isCovered);
         }
 
         public override bool CanSelect(uint uiState, SinglePlayerInfo player)
