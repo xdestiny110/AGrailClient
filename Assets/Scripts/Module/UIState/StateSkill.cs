@@ -54,6 +54,11 @@ namespace AGrail
                     {
                         //取消技能
                         stateMachine.BackState(msg, paras);
+                        BattleData.Instance.Agent.SelectCards.Clear();
+                        BattleData.Instance.Agent.SelectPlayers.Clear();
+                        BattleData.Instance.Agent.SelectArgs.Clear();
+                        MessageSystem<MessageType>.Notify(MessageType.AgentSelectPlayer);
+                        MessageSystem<MessageType>.Notify(MessageType.AgentSelectCard);
                         MessageSystem<MessageType>.Notify(MessageType.CloseArgsUI);
                     }                        
                     else
