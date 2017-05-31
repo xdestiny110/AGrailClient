@@ -192,6 +192,11 @@ namespace AGrail
                 case 13:
                 case 14:
                     return true;
+                case 5:
+                    if (BattleData.Instance.Agent.Cmd.args[0] == 801 || BattleData.Instance.Agent.Cmd.args[0] == 805 ||
+                        BattleData.Instance.Agent.Cmd.args[0] == 29051)
+                        return true;
+                    return false;
             }
             return false;
         }
@@ -404,6 +409,12 @@ namespace AGrail
                     OKAction = () =>
                     {
                         Drop(BattleData.Instance.Agent.SelectCards);
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                    };
+                    CancelAction = () =>
+                    {
+                        sendReponseMsg((uint)BasicRespondType.RESPOND_DISCARD, BattleData.Instance.MainPlayer.id, null, null,
+                            new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,

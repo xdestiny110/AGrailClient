@@ -153,7 +153,7 @@ namespace AGrail
                 }
                 if (value.red_grailSpecified)
                 {
-                    MessageSystem<MessageType>.Notify(MessageType.GrailChange, Team.Red, value.red_crystal - Grail[(int)Team.Red]);
+                    MessageSystem<MessageType>.Notify(MessageType.GrailChange, Team.Red, value.red_grail - Grail[(int)Team.Red]);
                     Grail[(int)Team.Red] = value.red_grail;
                 }
 
