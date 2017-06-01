@@ -69,7 +69,7 @@ namespace AGrail
             {
                 case (uint)SKILLID.水之神力:
                 case (uint)SKILLID.神圣契约:
-                    return player.team == BattleData.Instance.MainPlayer.team;
+                    return player.team == BattleData.Instance.MainPlayer.team && BattleData.Instance.PlayerID != player.id;
                 case (uint)SKILLID.神圣领域:
                     if(additionalState == 15061)
                         return true;
