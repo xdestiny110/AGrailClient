@@ -178,25 +178,16 @@ namespace AGrail
         private void onBtnOKClick()
         {
             BattleData.Instance.Agent.PlayerRole.OKAction();
-            BattleData.Instance.Agent.PlayerRole.OKAction = null;
-            BattleData.Instance.Agent.PlayerRole.CancelAction = null;
-            BattleData.Instance.Agent.PlayerRole.ResignAction = null;
         }
 
         private void onBtnCancelClick()
         {
             BattleData.Instance.Agent.PlayerRole.CancelAction();
-            BattleData.Instance.Agent.PlayerRole.OKAction = null;
-            BattleData.Instance.Agent.PlayerRole.CancelAction = null;
-            BattleData.Instance.Agent.PlayerRole.ResignAction = null;
         }
 
         private void onBtnResignClick()
         {
             BattleData.Instance.Agent.PlayerRole.ResignAction();
-            BattleData.Instance.Agent.PlayerRole.OKAction = null;
-            BattleData.Instance.Agent.PlayerRole.CancelAction = null;
-            BattleData.Instance.Agent.PlayerRole.ResignAction = null;
         }
 
         private void updateAgentCards()
