@@ -34,6 +34,8 @@ namespace AGrail
         [SerializeField]
         private Text txtHint;
         [SerializeField]
+        private GameObject cardPrefab;
+        [SerializeField]
         private GameObject arrowPrefab;
         
         public Dictionary<int, PlayerStatusQT> PlayersStatus = new Dictionary<int, PlayerStatusQT>();
@@ -353,12 +355,13 @@ namespace AGrail
             foreach (var v in card_ids)
             {
                 var card = Card.GetCard(v);
-                var go = new GameObject();
+                var go = Instantiate(cardPrefab);
                 go.transform.SetParent(ShowCardArea);
                 go.transform.localScale = Vector3.one;
                 go.transform.localPosition = Vector3.zero;
                 go.transform.localRotation = Quaternion.identity;
-                go.AddComponent<RawImage>().texture = Resources.Load<Texture2D>(card.AssetPath);
+                var cardUI = go.GetComponent<CardUI>();
+                cardUI.Card = Card.GetCard(v);
             }
         }
 

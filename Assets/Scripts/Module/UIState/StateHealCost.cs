@@ -1,5 +1,6 @@
 ﻿using Framework.FSM;
 using Framework.Message;
+using System;
 using System.Collections.Generic;
 
 namespace AGrail
@@ -27,9 +28,11 @@ namespace AGrail
 
         public override void Enter(UIStateMsg msg, params object[] paras)
         {
+            var canUseHealCount = BattleData.Instance.Agent.Cmd.args[3];
+            var harmPoint = BattleData.Instance.Agent.Cmd.args[1];
             var selectList = new List<List<uint>>();
             //服务器默认玩家有治疗时才会发这个响应
-            for (uint i = 1; i <= BattleData.Instance.MainPlayer.heal_count; i++)
+            for (uint i = Math.Min(canUseHealCount, harmPoint); i > 0; i--)
                 selectList.Add(new List<uint>() { i });
             MessageSystem<MessageType>.Notify(MessageType.ShowArgsUI, "Heal", selectList);
             base.Enter(msg, paras);

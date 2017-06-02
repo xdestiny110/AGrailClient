@@ -1648,6 +1648,7 @@ MonoBehaviour:
   playerStatusPrefab: {fileID: 1000012783429502, guid: cf8e155180ef9fc449624d69b5da1c16,
     type: 2}
   txtHint: {fileID: 114000010536616628}
+  cardPrefab: {fileID: 1000010277060758, guid: 34d948f847e0f4a49a398b37d7c3b065, type: 2}
   arrowPrefab: {fileID: 1000014217613958, guid: 379fb5c04a7ad6f43abe182c681bb21d,
     type: 2}
 --- !u!114 &114000012710222870
@@ -1924,7 +1925,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 224000012610782262}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.9998171
+  m_Size: 0.99988276
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -3004,9 +3005,9 @@ RectTransform:
   m_Father: {fileID: 224000011005995690}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0.5}
-  m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -260, y: 280}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -260, y: -120}
   m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224000011638091410
@@ -3274,7 +3275,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -769.90466}
+  m_AnchoredPosition: {x: 0, y: -769.9354}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
 --- !u!224 &224000013020865526
@@ -3438,9 +3439,9 @@ RectTransform:
   m_Father: {fileID: 224000011005995690}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0.5}
-  m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -704.9998, y: 281}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 255.00024, y: -119}
   m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224000014040293578

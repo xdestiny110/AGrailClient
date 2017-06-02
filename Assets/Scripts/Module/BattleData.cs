@@ -153,7 +153,7 @@ namespace AGrail
                 }
                 if (value.red_grailSpecified)
                 {
-                    MessageSystem<MessageType>.Notify(MessageType.GrailChange, Team.Red, value.red_crystal - Grail[(int)Team.Red]);
+                    MessageSystem<MessageType>.Notify(MessageType.GrailChange, Team.Red, value.red_grail - Grail[(int)Team.Red]);
                     Grail[(int)Team.Red] = value.red_grail;
                 }
 
@@ -217,8 +217,8 @@ namespace AGrail
                                 player.hands.Clear();
                                 foreach (var u in v.hands)
                                     player.hands.Add(u);
-                            }
-                            MessageSystem<MessageType>.Notify(MessageType.AgentHandChange);
+                                MessageSystem<MessageType>.Notify(MessageType.AgentHandChange);
+                            }                            
                         }
                     }
                     if (v.heal_countSpecified)
@@ -242,9 +242,9 @@ namespace AGrail
                         player.covereds.Clear();
                         foreach (var u in v.covereds)
                             player.covereds.Add(u);
+                        if(MainPlayer != null && v.id == MainPlayer.id)
+                            MessageSystem<MessageType>.Notify(MessageType.AgentHandChange);
                     }
-                    if (v.covered_countSpecified)
-                        MessageSystem<MessageType>.Notify(MessageType.AgentHandChange);
                     if (v.yellow_tokenSpecified || v.blue_tokenSpecified || v.covered_countSpecified)
                         MessageSystem<MessageType>.Notify(MessageType.PlayerTokenChange,
                             idx, player.yellow_token, player.blue_token, player.covered_count);

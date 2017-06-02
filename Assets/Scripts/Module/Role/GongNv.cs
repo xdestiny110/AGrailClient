@@ -90,8 +90,9 @@ namespace AGrail
             switch (uiState)
             {
                 case 301:
+                    return true;
                 case 305:
-                    return true;                    
+                    return cardIDs.Count == 1;                    
                 case 302:
                     if (cardIDs.Count == 1 && playerIDs.Count == 1)
                         return true;
@@ -144,7 +145,6 @@ namespace AGrail
             switch (state)
             {
                 case 301:
-                case 305:
                     OKAction = () =>
                     {
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 1 });
@@ -156,6 +156,20 @@ namespace AGrail
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, 
+                        string.Format("是否发动{0}", Skills[state].SkillName));
+                    return;
+                case 305:
+                    OKAction = () =>
+                    {
+                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, BattleData.Instance.Agent.SelectCards, new List<uint>() { 1 });
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                    };
+                    CancelAction = () =>
+                    {
+                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                    };
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                         string.Format("是否发动{0}", Skills[state].SkillName));
                     return;
                 case 302:

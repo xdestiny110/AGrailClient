@@ -175,6 +175,7 @@ namespace AGrail
                 case 13:
                 case 14:
                 case 15:
+                case 1602:
                     return true;                    
             }
             return false;
@@ -191,7 +192,13 @@ namespace AGrail
                 case 12:
                 case 13:
                 case 14:
+                case 1602:
                     return true;
+                case 5:
+                    if (BattleData.Instance.Agent.Cmd.args[0] == 801 || BattleData.Instance.Agent.Cmd.args[0] == 805 ||
+                        BattleData.Instance.Agent.Cmd.args[0] == 29051)
+                        return true;
+                    return false;
             }
             return false;
         }
@@ -406,6 +413,12 @@ namespace AGrail
                         Drop(BattleData.Instance.Agent.SelectCards);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
+                    CancelAction = () =>
+                    {
+                        sendReponseMsg((uint)BasicRespondType.RESPOND_DISCARD, BattleData.Instance.MainPlayer.id, null, null,
+                            new List<uint>() { 0 });
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                    };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                         "选择要舍弃的牌");
                     break;
@@ -551,6 +564,21 @@ namespace AGrail
                     };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                         "请选择额外行动");
+                    break;
+                case 1602:
+                    //响应威力赐福
+                    OKAction = () =>
+                    {
+                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 1 });
+                        BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
+                    };
+                    CancelAction = () =>
+                    {
+                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
+                        BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
+                    };
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                        string.Format("是否发动{0}", Skill.GetSkill(state).SkillName));
                     break;
             }
             if(BattleData.Instance.Agent.AgentState.Check(PlayerAgentState.CanResign))

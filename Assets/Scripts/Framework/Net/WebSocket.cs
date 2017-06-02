@@ -5,6 +5,7 @@ using System;
 
 namespace Framework.Network
 {
+#if UNITY_WEBGL
     public class WebSocket : SocketBase
     {
         public override bool Connected
@@ -58,4 +59,5 @@ namespace Framework.Network
         [DllImport("__Internal")]
         private static extern void AlertJS(string str);
     }
+#endif
 }
