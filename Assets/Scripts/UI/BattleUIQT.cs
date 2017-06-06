@@ -380,7 +380,13 @@ namespace AGrail
             arrow.transform.SetParent(battleRoot);
             arrow.transform.position = PlayersStatus[srcIdx].transform.position;
             arrow.transform.localScale = Vector3.one;
-            arrow.GetComponent<Arrow>().SetParms(PlayersStatus[srcIdx].transform.position, PlayersStatus[dstIdx].transform.position);            
+            if (srcIdx < 0 || dstIdx < 0)
+            {
+                Debug.LogErrorFormat("srcIdx = {0}, dstIdx = {1}", srcIdx, dstIdx);
+                Debug.LogErrorFormat("srcID = {0}, dstID = {1}", src_id, dst_id);
+            }
+            else                
+                arrow.GetComponent<Arrow>().SetParms(PlayersStatus[srcIdx].transform.position, PlayersStatus[dstIdx].transform.position);            
         }
     }
 }
