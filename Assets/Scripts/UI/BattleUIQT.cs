@@ -49,6 +49,8 @@ namespace AGrail
             }
         }
 
+        private Tweener tween = null;
+
         public override void Awake()
         {
             //依据房间人数先去掉不存在anchor
@@ -59,8 +61,7 @@ namespace AGrail
             }
             //测试基本上都是先生成UI才会收到GameInfo事件
             //但不确定是否有可能反过来
-            //最好是能够在Awake中先依据BattleData的数据初始化一遍
-            GameManager.AddUpdateAction(onESCClick);
+            //最好是能够在Awake中先依据BattleData的数据初始化一遍            
             Dialog.Instance.Reset();
             PlayersStatus.Clear();
 
@@ -88,7 +89,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.TURNBEGIN, this);
 
             root.localPosition = new Vector3(1280, 0, 0);
-            root.DOLocalMoveX(0, 1.0f);
+            root.DOLocalMoveX(0, 1.0f).OnComplete(() => { GameManager.AddUpdateAction(onESCClick); });
             base.Awake();
         }
 

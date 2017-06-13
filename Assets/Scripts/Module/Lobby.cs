@@ -35,6 +35,8 @@ namespace AGrail
             BattleData.Instance.Reset();
             //其实这么写不太合适，但后端没有合适的协议
             SelectRoom = roomInfo;
+            //防止多次点击
+            MessageSystem<MessageType>.Notify(MessageType.EnterRoom);
         }
         
         public void CreateRoom(network.CreateRoomRequest proto)

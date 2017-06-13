@@ -10,7 +10,7 @@ namespace AGrail
     public class BattleData : Singleton<BattleData>, IMessageListener<MessageType>
     {        
         public int? RoomID { get; private set; }
-        public int PlayerID { get; private set; }
+        public int? PlayerID { get; private set; }
         public uint Pile { get; private set; }
         public uint Discard { get; private set; }
         public bool IsStarted { get; private set; }
@@ -82,6 +82,7 @@ namespace AGrail
             Agent = new PlayerAgent(0);
             MainPlayer = null;
             RoomID = null;
+            PlayerID = null;
             IsStarted = false;
         }
 
@@ -102,7 +103,7 @@ namespace AGrail
                 if (value.room_idSpecified && !RoomID.HasValue)
                 {                    
                     RoomID = value.room_id;
-                    MessageSystem<MessageType>.Notify(MessageType.EnterRoom);
+                    //MessageSystem<MessageType>.Notify(MessageType.EnterRoom);
                 }
                 if (value.player_idSpecified)
                 {

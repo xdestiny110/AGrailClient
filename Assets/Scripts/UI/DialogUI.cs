@@ -15,7 +15,6 @@ namespace AGrail
                 Dialog.Instance.SendTalk(inpt.text);
             inpt.text = string.Empty;
         }
-
     }
 }
 
