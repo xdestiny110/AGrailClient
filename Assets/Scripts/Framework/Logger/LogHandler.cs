@@ -83,7 +83,7 @@ namespace Framework.Log
         [System.Diagnostics.Conditional("LOGON")]
         private void log(LogType logType, UnityEngine.Object context, string format, params object[] args)
         {
-            format = string.Format("[{0}][{1}]", DateTime.Now.ToString("hh:mm:ss"), logType) + format;
+            format = string.Format("[{0}][{1}]", DateTime.Now.ToString("hh:mm:ss.fff"), logType) + format;
             defaultLoghandler.LogFormat(logType, context, format, args);
         }
 

@@ -44,6 +44,8 @@ namespace AGrail
             var battleInst = BattleData.Instance;
             var dialogInst = Dialog.Instance;
 
+            Screen.sleepTimeout = SleepTimeout.NeverSleep;
+
             SceneManager.LoadScene(1);
         }
 
