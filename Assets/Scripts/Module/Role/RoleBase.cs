@@ -293,8 +293,7 @@ namespace AGrail
                 case 2:
                     return true;
                 case 3:
-                    if (player.team != BattleData.Instance.MainPlayer.team && player.id != BattleData.Instance.Agent.Cmd.args[3] &&
-                        !(player.role_id == (uint)RoleID.AnSha && player.is_knelt))
+                    if (player.team != BattleData.Instance.MainPlayer.team && player.id != BattleData.Instance.Agent.Cmd.args[3])
                         return true;
                     break;
             }
