@@ -280,7 +280,7 @@ namespace AGrail
                     else if(additionalState == 15062)
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                             string.Format("{0}: 选择想要给予治疗的目标队友", Skills[state].SkillName));
-                    else
+                    else if(msg == UIStateMsg.ClickSkill)
                     {
                         selectList.Clear();
                         var mList = new List<string>();
