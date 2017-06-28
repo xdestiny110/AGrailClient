@@ -16,6 +16,7 @@ namespace AGrail
         public virtual bool HasBlue { get { return false; } }
         public virtual bool HasCoverd { get { return false; } }
         public virtual string Knelt { get { return null; } }
+        public bool IsStart { set; get; }
         public Dictionary<uint, Skill> Skills = new Dictionary<uint, Skill>();
 
         //记录一些特殊状态
@@ -174,6 +175,7 @@ namespace AGrail
                 case 12:
                 case 13:
                 case 14:
+                    return !IsStart;
                 case 15:
                 case 1602:
                     return true;                    
@@ -219,7 +221,7 @@ namespace AGrail
         {
             var m = BattleData.Instance.MainPlayer;
             if (uiState == 10 && m.max_hand - m.hand_count >= 3 &&
-                BattleData.Instance.Gem[m.team] + BattleData.Instance.Crystal[m.team] <= 4)
+                BattleData.Instance.Gem[m.team] + BattleData.Instance.Crystal[m.team] <= 4 && !IsStart)
                 return true;
             return false;
         }
@@ -228,7 +230,7 @@ namespace AGrail
         {
             var m = BattleData.Instance.MainPlayer;
             if (uiState == 10 && m.gem + m.crystal < BattleData.Instance.Agent.PlayerRole.MaxEnergyCount &&
-                BattleData.Instance.Gem[m.team] + BattleData.Instance.Crystal[m.team] > 0)
+                BattleData.Instance.Gem[m.team] + BattleData.Instance.Crystal[m.team] > 0 && !IsStart)
                 return true;
             return false;
         }
@@ -237,7 +239,7 @@ namespace AGrail
         {
             var m = BattleData.Instance.MainPlayer;
             if (uiState == 10 && m.max_hand - m.hand_count >= 3 &&
-                BattleData.Instance.Gem[m.team] + BattleData.Instance.Crystal[m.team] >= 3)
+                BattleData.Instance.Gem[m.team] + BattleData.Instance.Crystal[m.team] >= 3 && !IsStart)
                 return true;
             return false;
         }        

@@ -160,6 +160,7 @@ namespace AGrail
                     OKAction = () =>
                     {
                         if (state == 901) additionalState = 901;
+                        if (state == 902) IsStart = true;
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 1 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);                        
                     };

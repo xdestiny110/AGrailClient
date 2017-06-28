@@ -177,6 +177,7 @@ namespace AGrail
                 case 1603:
                     OKAction = () => 
                     {
+                        IsStart = true;
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 1 });
                         BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
                     };

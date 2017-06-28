@@ -225,6 +225,7 @@ namespace AGrail
                 case (uint)SKILLID.神圣契约:
                     OKAction = () =>
                     {
+                        IsStart = true;
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectPlayers, 
                             null, BattleData.Instance.Agent.SelectArgs);

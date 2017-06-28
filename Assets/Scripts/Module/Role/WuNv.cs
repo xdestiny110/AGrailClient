@@ -202,6 +202,7 @@ namespace AGrail
                 case (uint)SkillID.血之哀伤:
                     OKAction = () =>
                     {
+                        IsStart = true;
                         if (BattleData.Instance.Agent.SelectPlayers.Count == 0)
                         {
                             additionalState = 0;

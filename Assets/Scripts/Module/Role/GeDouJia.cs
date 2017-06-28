@@ -185,6 +185,7 @@ namespace AGrail
                 case 2004:
                     OKAction = () =>
                     {
+                        IsStart = true;
                         sendReponseMsg(BAISHIDOUSHEN, BattleData.Instance.MainPlayer.id, null, null,
                                 new List<uint>() { 1 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
@@ -200,6 +201,7 @@ namespace AGrail
                 case 2006:
                     OKAction = () =>
                     {
+                        IsStart = true;
                         sendReponseMsg(BAISHIDOUSHEN, BattleData.Instance.MainPlayer.id, null, BattleData.Instance.Agent.SelectCards,
                             new List<uint>() { 2 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);

@@ -221,7 +221,8 @@ namespace AGrail
                     return;
                 case (uint)SkillID.灵魂增幅:                
                     OKAction = () =>
-                    {                        
+                    {
+                        IsStart = true;
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 1 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
@@ -266,6 +267,7 @@ namespace AGrail
                 case (uint)SkillID.灵魂链接:
                     OKAction = () =>
                     {
+                        IsStart = true;
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, 
                             BattleData.Instance.Agent.SelectPlayers, null, new List<uint>() { 1 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
