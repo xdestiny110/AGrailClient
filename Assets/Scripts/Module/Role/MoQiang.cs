@@ -52,11 +52,19 @@ namespace AGrail
                 case 2:
                 case 10:
                 case 11:
-                    return card.Type != Card.CardType.magic;                    
+                    if (card.Type == Card.CardType.magic)
+                        return false;
+                    break;
+                case 3:
+                    if (card.Name == Card.CardName.圣光)
+                        return false;
+                    break;
                 case (uint)SkillID.暗之障壁:
-                    return BattleData.Instance.Agent.SelectCards.Count == 0 ||
-                        (Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Element == Card.CardElement.thunder && card.Element == Card.CardElement.thunder) ||
-                        (Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Type == Card.CardType.magic && card.Type == Card.CardType.magic);
+                    if (BattleData.Instance.Agent.SelectCards.Count == 0)
+                        return card.Element == Card.CardElement.thunder || card.Type == Card.CardType.magic;
+                    else
+                        return (Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Element == Card.CardElement.thunder && card.Element == Card.CardElement.thunder) ||
+                        (Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Type == Card.CardType.magic && card.Type == Card.CardType.magic);                    
                 case (uint)SkillID.充盈:
                     return card.Type == Card.CardType.magic || card.Element == Card.CardElement.thunder;
             }
@@ -78,7 +86,7 @@ namespace AGrail
             switch (uiState)
             {                
                 case (uint)SkillID.充盈:
-                    return true;
+                    return skill.SkillID == (uint)SkillID.充盈;
                 case 10:
                 case 11:
                     if (skill.SkillID == (uint)SkillID.充盈 && additionalState != 29011)
@@ -219,11 +227,11 @@ namespace AGrail
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                     };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
-                    var selectList = new List<uint>();
+                    List<List<uint>> selectList = new List<List<uint>>();
                     var mList = new List<string>();
                     for(uint i = BattleData.Instance.MainPlayer.crystal + BattleData.Instance.MainPlayer.gem; i > 0; i--)
                     {
-                        selectList.Add(i);
+                        selectList.Add(new List<uint>() { i });
                         mList.Add(" 个能量");
                     }                        
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "选择能量", selectList, mList);
