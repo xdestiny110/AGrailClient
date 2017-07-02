@@ -166,6 +166,7 @@ namespace AGrail
                         return true;
                     break;
                 case 5:
+                case 8:
                     if (cardIDs.Count == BattleData.Instance.Agent.Cmd.args[1])
                         return true;
                     break;
@@ -274,7 +275,9 @@ namespace AGrail
                         return true;
                     break;
                 case 5:
-                    return true;                    
+                    return !isCovered;
+                case 8:
+                    return isCovered;
             }
             return false;
         }
@@ -331,6 +334,7 @@ namespace AGrail
                 case 11:
                     return 1;
                 case 5:
+                case 8:
                     return BattleData.Instance.Agent.Cmd.args[1];
             }
             return 0;
@@ -452,6 +456,17 @@ namespace AGrail
                     };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                         "选择治疗数");
+                    break;
+                case 8:
+                    //弃盖牌
+                    OKAction = () =>
+                    {
+                        sendReponseMsg((uint)BasicRespondType.RESPOND_DISCARD_COVER, BattleData.Instance.MainPlayer.id,
+                            null, BattleData.Instance.Agent.SelectCards, new List<uint>() { 1 });
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                    };
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                        "选择要舍弃的盖牌");
                     break;
                 case 10:
                 case 11:
