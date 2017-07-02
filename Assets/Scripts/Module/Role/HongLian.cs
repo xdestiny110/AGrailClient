@@ -181,6 +181,7 @@ namespace AGrail
                             selectHealCnt.Add(BattleData.Instance.Agent.SelectArgs[0]);
                             if(allies.Count == 1)
                             {
+                                IsStart = true;
                                 sendReponseMsg(state, BattleData.Instance.MainPlayer.id, 
                                     selectPlayers, null, selectHealCnt);
                             }
@@ -192,6 +193,7 @@ namespace AGrail
                         }
                         else
                         {
+                            IsStart = true;
                             selectPlayers.Add(allies[1].id);
                             selectHealCnt.Add(BattleData.Instance.Agent.SelectArgs[0]);
                             sendReponseMsg(state, BattleData.Instance.MainPlayer.id,
@@ -221,7 +223,7 @@ namespace AGrail
                             selectList.Add(new List<uint>() { i });
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "Heal", selectList);
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                            string.Format("{0}: 选择给予{1}的治疗数", Skills[state].SkillName, allies[0]));
+                            string.Format("{0}: 选择给予{1}的治疗数", Skills[state].SkillName, allies[0].nickname));
                     }
                     else
                     {
@@ -230,7 +232,7 @@ namespace AGrail
                             selectList.Add(new List<uint>() { i });
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "Heal", selectList);
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                            string.Format("{0}: 选择给予{1}的治疗数", Skills[state].SkillName, allies[1]));
+                            string.Format("{0}: 选择给予{1}的治疗数", Skills[state].SkillName, allies[1].nickname));
                     }
                     return;
                 case (uint)SkillID.腥红十字:
