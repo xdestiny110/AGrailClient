@@ -16,7 +16,7 @@ namespace AGrail
         public virtual bool HasBlue { get { return false; } }
         public virtual bool HasCoverd { get { return false; } }
         public virtual string Knelt { get { return null; } }
-        public bool IsStart { set; get; }
+        public virtual bool IsStart { set; get; }
         public Dictionary<uint, Skill> Skills = new Dictionary<uint, Skill>();
 
         //记录一些特殊状态
