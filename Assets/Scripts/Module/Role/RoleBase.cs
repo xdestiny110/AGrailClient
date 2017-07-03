@@ -248,7 +248,6 @@ namespace AGrail
         //判断能否选择牌/角色/技能
         public virtual bool CanSelect(uint uiState, Card card, bool isCovered)
         {
-            if (isCovered) return false;
             switch (uiState)
             {
                 case 10:
