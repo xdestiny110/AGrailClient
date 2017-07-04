@@ -29,6 +29,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.HURTMSG, this);
             MessageSystem<MessageType>.Regist(MessageType.GOSSIP, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerLeave, this);
+            MessageSystem<MessageType>.Regist(MessageType.TURNBEGIN, this);
             Reset();
         }
 
@@ -125,6 +126,9 @@ namespace AGrail
                     break;
                 case MessageType.PlayerLeave:
                     Log += string.Format("玩家[{0}]离开房间" + Environment.NewLine, (int)parameters[0]);
+                    break;
+                case MessageType.TURNBEGIN:
+                    Log += "=======================" + Environment.NewLine;
                     break;
             }
         }
