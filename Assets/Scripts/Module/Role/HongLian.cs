@@ -194,8 +194,13 @@ namespace AGrail
                         else
                         {
                             IsStart = true;
+                            if(selectHealCnt[0] == 0)
+                            {
+                                selectHealCnt.Clear();
+                                selectPlayers.Clear();
+                            }
                             selectPlayers.Add(allies[1].id);
-                            selectHealCnt.Add(BattleData.Instance.Agent.SelectArgs[0]);
+                            selectHealCnt.Add(BattleData.Instance.Agent.SelectArgs[0]);                            
                             sendReponseMsg(state, BattleData.Instance.MainPlayer.id,
                                     selectPlayers, null, selectHealCnt);
                             additionalState = 0;

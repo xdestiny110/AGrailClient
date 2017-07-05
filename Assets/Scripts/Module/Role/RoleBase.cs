@@ -454,7 +454,7 @@ namespace AGrail
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        "选择治疗数");
+                        "选择用于抵御伤害治疗数量");
                     break;
                 case 8:
                     //弃盖牌
