@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using network;
 using Framework.Message;
+using System;
 
 namespace AGrail
 {
@@ -154,7 +155,8 @@ namespace AGrail
                 case (uint)SkillID.凋零:
                     return BattleData.Instance.Agent.Cmd.args[0] == 2 && playerIDs.Count == 1;
                 case (uint)SkillID.倒逆之蝶:
-                    return (additionalState == 0 && cardIDs.Count == 2) || (additionalState == 24081 && playerIDs.Count == 1) ||
+                    return (additionalState == 0 && cardIDs.Count == Math.Min(BattleData.Instance.MainPlayer.hand_count, 2)) || 
+                        (additionalState == 24081 && playerIDs.Count == 1) ||
                         (additionalState == 24082 && cardIDs.Count == 2) || additionalState == 24083;
             }
             return base.CheckOK(uiState, cardIDs, playerIDs, skillID);
@@ -315,9 +317,9 @@ namespace AGrail
                         selectList.Add(new List<uint>() { 1 });
                         mList.Add(" 对目标角色造成1点法术伤害");
                         selectList.Add(new List<uint>() { 2 });
-                        mList.Add(" （移除2个【茧】）移除1个【蛹】");
+                        mList.Add(" 移除2个【茧】,移除1个【蛹】");
                         selectList.Add(new List<uint>() { 3 });
-                        mList.Add(" （自己造成4点法术伤害③）移除1个【蛹】");
+                        mList.Add(" 对自己造成4点法术伤害,移除1个【蛹】");
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "选择以下一项发动", selectList, mList);
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                             string.Format("{0}: 弃两张牌并选择要发动的技能", Skills[state].SkillName));
