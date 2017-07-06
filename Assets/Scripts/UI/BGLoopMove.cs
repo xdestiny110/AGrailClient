@@ -12,11 +12,15 @@ namespace AGrail
         void Awake()
         {
             bg = GetComponent<Image>().material;
+            InvokeRepeating("loopMove", 0, 0.01f);
+        }
+        
+        private float offsetX = 0.0f;
+        private void loopMove()
+        {
+            offsetX += 0.00005f;
+            bg.SetTextureOffset("_MainTex", new Vector2(offsetX, 0));
         }
 
-        void Update()
-        {
-            //bg.SetTextureOffset
-        }
     }
 }
