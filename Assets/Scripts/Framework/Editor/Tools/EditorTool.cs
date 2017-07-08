@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.IO;
 using System.Collections.Generic;
+using UnityEditor;
 
 namespace Framework
 {
@@ -47,6 +48,20 @@ namespace Framework
             Debug.Log(systemPath);
             systemPath = systemPath.Replace("\\", "/");
             return systemPath.Substring(systemPath.IndexOf("Assets/"));
-        }   
+        }
+
+        [MenuItem("Framework/Utils/Clean PlayerPref")]
+        static void Clean()
+        {
+            Debug.Log("Clean PlayerPref");
+            PlayerPrefs.DeleteAll();
+        }
+
+        [MenuItem("Framework/Utils/Get world position")]
+        static void GetWorldPos()
+        {
+            var go = Selection.activeGameObject;
+            Debug.LogFormat("World postion = {0}", go.transform.position);
+        }
     }
 }
