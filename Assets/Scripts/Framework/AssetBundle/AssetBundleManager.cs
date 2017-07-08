@@ -4,6 +4,7 @@ using System.Linq;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
+using System;
 
 namespace Framework.AssetBundle
 {
@@ -52,6 +53,7 @@ namespace Framework.AssetBundle
         private AssetBundleManifest remoteManifest = null;
         private Dictionary<string, UnityEngine.AssetBundle> bundles = new Dictionary<string, UnityEngine.AssetBundle>();
 
+
         void Init()
         {
             Debug.LogFormat("SimulationMode = {0}", SimulationMode);
@@ -85,18 +87,64 @@ namespace Framework.AssetBundle
 
             //两个Manifest进行比较
             //若有不同则针对不同进行下载
-            //最终替换Manifest
+            //这里相当于直接加载及解压了所有AssetBundles
             foreach (var v in remoteManifest.GetAllAssetBundles())
-            {
                 yield return StartCoroutine(downloadAssetBundle(v));
-            }
         }
 
         public GameObject LoadAsset(string assetbundleName, string assetName)
         {
+#if UNITY_EDITOR
+            if (SimulationMode)
+            {
+                var assetPaths = UnityEditor.AssetDatabase.GetAssetPathsFromAssetBundleAndAssetName(assetbundleName, assetName);
+                if (assetPaths.Length == 0)
+                {
+                    Debug.LogErrorFormat("There is no asset with name {0}/{1}", assetbundleName, assetName);
+                    return null;
+                }
+                return UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(assetPaths[0]);
+            }
+            else if (bundles.ContainsKey(assetbundleName))
+                return bundles[assetbundleName].LoadAsset<GameObject>(assetName);
+            else
+            {
+                Debug.LogErrorFormat("There is no asset with name {0}/{1}", assetbundleName, assetName);
+                return null;
+            }
+#else
             if (bundles.ContainsKey(assetbundleName))
                 return bundles[assetbundleName].LoadAsset<GameObject>(assetName);
-            return null;
+            else
+            {
+                Debug.LogErrorFormat("There is no asset with name {0}/{1}", assetbundleName, assetName);
+                return null;
+            }
+#endif
+        }
+
+        public void LoadAssetAsyn(string assetbundleName, string assetName, LoadAssetCB cb)
+        {
+#if UNITY_EDITOR
+            if (SimulationMode)
+                LoadAsset(assetbundleName, assetbundleName);
+            else
+                StartCoroutine(LoadAssetAsynCoro(assetbundleName, assetName, cb));
+#else
+            StartCoroutine(loadAssetAsyn(assetbundleName, assetName, cb));
+#endif
+        }
+
+        public IEnumerator LoadAssetAsynCoro(string assetbundleName, string assetName, LoadAssetCB cb)
+        {
+            if (bundles.ContainsKey(assetbundleName))
+            {
+                var req = bundles[assetbundleName].LoadAssetAsync<GameObject>(assetName);
+                yield return req;
+                cb.Cb(req.asset as GameObject);
+            }
+            else
+                Debug.LogErrorFormat("There is no asset with name {0}/{1}", assetbundleName, assetName);
         }
 
         private IEnumerator downloadAssetBundle(string bundleName)
@@ -119,6 +167,11 @@ namespace Framework.AssetBundle
                 bundles.Add(bundleName, DownloadHandlerAssetBundle.GetContent(www));
             }
         }
+    }
+
+    public class LoadAssetCB
+    {
+        public Action<GameObject> Cb = null;
     }
 }
 

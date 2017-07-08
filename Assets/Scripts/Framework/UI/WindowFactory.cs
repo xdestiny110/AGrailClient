@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using Framework.AssetBundle;
 
 namespace Framework.UI
 {
@@ -14,7 +15,7 @@ namespace Framework.UI
         public GameObject CreateWindows(WindowType type)
         {
             if (!goPool.ContainsKey(type))
-                goPool.Add(type, Resources.Load<GameObject>(WindowPrefabPath + type.ToString()));            
+                goPool.Add(type, AssetBundleManager.Instance.LoadAsset(WindowPrefabPath, type.ToString()));
             return GameObject.Instantiate(goPool[type]);
         }
     }
