@@ -8,7 +8,7 @@ namespace Framework.UI
     {
         public WindowFactory() { }
 
-        public const string WindowPrefabPath = "UI/";
+        public const string WindowPrefabPath = "UI";
 
         private Dictionary<WindowType, GameObject> goPool = new Dictionary<WindowType, GameObject>();
 

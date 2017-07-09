@@ -60,40 +60,49 @@ namespace Framework.AssetBundle
             Caching.maximumAvailableDiskSpace = 200 * 1024 * 1024;
         }
 
-        public void LoadManifest()
+        public void LoadManifestAsyn(LoadManifestCB cb)
         {
-            StartCoroutine(LoadManifestCoro());
+            StartCoroutine(LoadManifestCoro(cb));
         }
 
-        public IEnumerator LoadManifestCoro()
+        public IEnumerator LoadManifestCoro(LoadManifestCB cb)
         {
-            UnityWebRequest oldWww = UnityWebRequest.GetAssetBundle(Application.streamingAssetsPath + "/" + manifestFileName + "/" + manifestFileName);
+            UnityWebRequest oldWww = UnityWebRequest.GetAssetBundle(Application.streamingAssetsPath + "/" + manifestFileName);
             yield return oldWww.Send();
-            if (oldWww.isError)
-            {
-
-            }
-            localManifest = (oldWww.downloadHandler as DownloadHandlerAssetBundle).assetBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
+            if (!oldWww.isError)
+                localManifest = (oldWww.downloadHandler as DownloadHandlerAssetBundle).assetBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
+            else
+                Debug.LogError("local manifest is null!");
 
             UnityWebRequest newWww = UnityWebRequest.GetAssetBundle(remoteSrv + manifestFileName + "/" + manifestFileName);
             yield return newWww.Send();
-            remoteManifest = (newWww.downloadHandler as DownloadHandlerAssetBundle).assetBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
-            if (newWww.isError)
-            {
-
-            }
+            if (!newWww.isError)
+                remoteManifest = (newWww.downloadHandler as DownloadHandlerAssetBundle).assetBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
+            else
+                Debug.LogError("remote manifest is null!");
             if (SimulationMode)
                 yield break;
 
             //两个Manifest进行比较
             //若有不同则针对不同进行下载
             //这里相当于直接加载及解压了所有AssetBundles
-            foreach (var v in remoteManifest.GetAllAssetBundles())
-                yield return StartCoroutine(downloadAssetBundle(v));
+            if(remoteManifest != null)
+            {
+                foreach (var v in remoteManifest.GetAllAssetBundles())
+                    yield return StartCoroutine(downloadAssetBundle(v));
+                cb.Cb(remoteManifest);
+            }
+            else
+            {
+                foreach (var v in localManifest.GetAllAssetBundles())
+                    yield return StartCoroutine(downloadAssetBundle(v));
+                cb.Cb(localManifest);
+            }
         }
 
         public GameObject LoadAsset(string assetbundleName, string assetName)
         {
+            assetbundleName = assetbundleName.ToLower();
 #if UNITY_EDITOR
             if (SimulationMode)
             {
@@ -125,18 +134,20 @@ namespace Framework.AssetBundle
 
         public void LoadAssetAsyn(string assetbundleName, string assetName, LoadAssetCB cb)
         {
+            assetbundleName = assetbundleName.ToLower();
 #if UNITY_EDITOR
             if (SimulationMode)
                 LoadAsset(assetbundleName, assetbundleName);
             else
                 StartCoroutine(LoadAssetAsynCoro(assetbundleName, assetName, cb));
 #else
-            StartCoroutine(loadAssetAsyn(assetbundleName, assetName, cb));
+            StartCoroutine(LoadAssetAsynCoro(assetbundleName, assetName, cb));
 #endif
         }
 
         public IEnumerator LoadAssetAsynCoro(string assetbundleName, string assetName, LoadAssetCB cb)
         {
+            assetbundleName = assetbundleName.ToLower();
             if (bundles.ContainsKey(assetbundleName))
             {
                 var req = bundles[assetbundleName].LoadAssetAsync<GameObject>(assetName);
@@ -151,13 +162,20 @@ namespace Framework.AssetBundle
         {
             string uri = "";
             UnityWebRequest www = null;
-            if (localManifest.GetAllAssetBundles().Contains(bundleName) &&
-                remoteManifest.GetAssetBundleHash(bundleName) == localManifest.GetAssetBundleHash(bundleName))
-                uri = Application.streamingAssetsPath + "/" + manifestFileName + "/" + bundleName;
+            AssetBundleManifest manifest = null;
+            if (remoteManifest == null || (localManifest.GetAllAssetBundles().Contains(bundleName) &&
+                remoteManifest.GetAssetBundleHash(bundleName) == localManifest.GetAssetBundleHash(bundleName)))
+            {
+                manifest = localManifest;
+                uri = Application.streamingAssetsPath + "/" + bundleName;
+            }
             else
+            {
+                manifest = remoteManifest;
                 uri = remoteSrv + "/" + manifestFileName + "/" + bundleName;
+            }
 
-            www = UnityWebRequest.GetAssetBundle(uri, remoteManifest.GetAssetBundleHash(bundleName), 0);
+            www = UnityWebRequest.GetAssetBundle(uri, manifest.GetAssetBundleHash(bundleName), 0);
             yield return www.Send();
             if (www.isError)
                 Debug.LogErrorFormat("Download bundle {0} from {1} failed.", bundleName, uri);
@@ -167,6 +185,11 @@ namespace Framework.AssetBundle
                 bundles.Add(bundleName, DownloadHandlerAssetBundle.GetContent(www));
             }
         }
+    }
+
+    public class LoadManifestCB
+    {
+        public Action<AssetBundleManifest> Cb = null;
     }
 
     public class LoadAssetCB
