@@ -27,6 +27,7 @@ namespace AGrail
 
         public BattleData() : base()
         {
+            MessageSystem<MessageType>.Regist(MessageType.TURNBEGIN, this);
             MessageSystem<MessageType>.Regist(MessageType.GAMEINFO, this);
             MessageSystem<MessageType>.Regist(MessageType.ROLEREQUEST, this);
             MessageSystem<MessageType>.Regist(MessageType.COMMANDREQUEST, this);
@@ -50,6 +51,10 @@ namespace AGrail
         {
             switch (eventType)
             {
+                case MessageType.TURNBEGIN:
+                    if (MainPlayer != null && MainPlayer.id != 9)
+                        Agent.PlayerRole.IsStart = false;
+                    break;
                 case MessageType.GAMEINFO:
                     gameInfo = parameters[0] as network.GameInfo;
                     break;

@@ -26,8 +26,6 @@ namespace AGrail
                     agentState |= value;
                 else
                     agentState = value;
-                if (agentState == (int)PlayerAgentState.Idle)
-                    PlayerRole.IsStart = false;
                 MessageSystem<MessageType>.Notify(MessageType.AgentStateChange);
                 FSM.ChangeState(calUIState(agentState), true, UIStateMsg.Init);
             }
