@@ -8,9 +8,6 @@ using System;
 
 namespace Framework.AssetBundle
 {
-#if UNITY_EDITOR
-    [UnityEditor.InitializeOnLoad]
-#endif
     public class AssetBundleManager : MonoBehaviour
     {
         private static AssetBundleManager instance = null;
@@ -23,12 +20,13 @@ namespace Framework.AssetBundle
                     var go = new GameObject("AssetBundleMgr");
                     instance = go.AddComponent<AssetBundleManager>();
                     DontDestroyOnLoad(go);
+                    instance.init();                    
                 }
                 return instance;
             }
         }
 
-        public static bool SimulationMode = false;
+        public static bool SimulationMode;
         static AssetBundleManager()
         {
 #if !UNITY_EDITOR
@@ -54,8 +52,8 @@ namespace Framework.AssetBundle
         private Dictionary<string, UnityEngine.AssetBundle> bundles = new Dictionary<string, UnityEngine.AssetBundle>();
 
 
-        void Init()
-        {
+        void init()
+        {            
             Debug.LogFormat("SimulationMode = {0}", SimulationMode);
             Caching.maximumAvailableDiskSpace = 200 * 1024 * 1024;
         }
@@ -67,6 +65,12 @@ namespace Framework.AssetBundle
 
         public IEnumerator LoadManifestCoro(LoadManifestCB cb)
         {
+            if (SimulationMode)
+            {
+                cb.Cb(null);
+                yield break;
+            }                
+
             UnityWebRequest oldWww = UnityWebRequest.GetAssetBundle(Application.streamingAssetsPath + "/" + manifestFileName);
             yield return oldWww.Send();
             if (!oldWww.isError)
