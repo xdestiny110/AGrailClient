@@ -6,12 +6,11 @@ namespace Framework.UI
     public class UIManager
     {
         private Stack<WindowsBase> winStack = new Stack<WindowsBase>();
-        private Dictionary<WindowType, GameObject> goPool = new Dictionary<WindowType, GameObject>();        
 
         public WindowsBase PushWindow(WindowType type, WinMsg msg, Vector3 initPos = default(Vector3), params object[] parameters)
         {
             var go = WindowFactory.Instance.CreateWindows(type);
-            go.name = type.ToString();            
+            go.name = type.ToString();
             go.transform.position = initPos;
             var win = go.GetComponent<WindowsBase>();
             win.Parameters = parameters;
