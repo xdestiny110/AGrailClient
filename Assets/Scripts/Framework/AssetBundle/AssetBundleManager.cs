@@ -26,6 +26,7 @@ namespace Framework.AssetBundle
             }
         }
 
+        public const string SimulateModeStr = "Framework/AssetBundle/Simulation Mode";
         private static bool? simulationMode = null;
         public static bool SimulationMode
         {
@@ -37,13 +38,36 @@ namespace Framework.AssetBundle
 #else
             {
             if (simulationMode == null)
-                    simulationMode = UnityEditor.EditorPrefs.GetBool("Framework/AssetBundle/Simulation Mode", true);
+                    simulationMode = UnityEditor.EditorPrefs.GetBool(SimulateModeStr, true);
                 return simulationMode.Value;
             }
             set
             {
                 simulationMode = value;
-                UnityEditor.EditorPrefs.SetBool("Framework/AssetBundle/Simulation Mode", value);
+                UnityEditor.EditorPrefs.SetBool(SimulateModeStr, value);
+            }
+#endif
+        }
+
+        public const string IgnoreBundleServerStr = "Framework/AssetBundle/Ignore Bundle Server";
+        private static bool? ignoreBundleServer = null;
+        public static bool IgnoreBundleServer
+        {
+            get
+#if !UNITY_EDITOR
+            {
+                return false;
+            }
+#else
+            {
+                if (ignoreBundleServer == null)
+                    ignoreBundleServer = UnityEditor.EditorPrefs.GetBool(IgnoreBundleServerStr, true);
+                return ignoreBundleServer.Value;
+            }
+            set
+            {
+                ignoreBundleServer = value;
+                UnityEditor.EditorPrefs.SetBool(IgnoreBundleServerStr, value);
             }
 #endif
         }
@@ -83,7 +107,7 @@ namespace Framework.AssetBundle
             {
                 cb.Cb(null);
                 yield break;
-            }                
+            }
 
             UnityWebRequest oldWww = UnityWebRequest.GetAssetBundle(Application.streamingAssetsPath + "/" + manifestFileName);
             yield return oldWww.Send();
@@ -92,14 +116,17 @@ namespace Framework.AssetBundle
             else
                 Debug.LogError("local manifest is null!");
 
-            UnityWebRequest newWww = UnityWebRequest.GetAssetBundle(remoteSrv + manifestFileName + "/" + manifestFileName);
-            yield return newWww.Send();
-            if (!newWww.isError)
-                remoteManifest = (newWww.downloadHandler as DownloadHandlerAssetBundle).assetBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
-            else
-                Debug.LogError("remote manifest is null!");
-            if (SimulationMode)
-                yield break;
+            if (!IgnoreBundleServer)
+            {
+                UnityWebRequest newWww = UnityWebRequest.GetAssetBundle(remoteSrv + manifestFileName + "/" + manifestFileName);
+                yield return newWww.Send();
+                if (!newWww.isError)
+                    remoteManifest = (newWww.downloadHandler as DownloadHandlerAssetBundle).assetBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
+                else
+                    Debug.LogError("remote manifest is null!");
+                if (SimulationMode)
+                    yield break;
+            }
 
             //两个Manifest进行比较
             //若有不同则针对不同进行下载

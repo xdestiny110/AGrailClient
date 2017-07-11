@@ -14,16 +14,29 @@ namespace Framework.AssetBundle
             AssetBundleBrowserMain.ShowWindow();
         }
 
-        [MenuItem("Framework/AssetBundle/Simulation Mode")]
+        [MenuItem(AssetBundleManager.SimulateModeStr)]
         static void simulationMode()
         {
             AssetBundleManager.SimulationMode = !AssetBundleManager.SimulationMode;
         }
 
-        [MenuItem("Framework/AssetBundle/Simulation Mode", true)]
+        [MenuItem(AssetBundleManager.SimulateModeStr, true)]
         static bool validateSimulationMode()
         {
-            Menu.SetChecked("Framework/AssetBundle/Simulation Mode", AssetBundleManager.SimulationMode);
+            Menu.SetChecked(AssetBundleManager.SimulateModeStr, AssetBundleManager.SimulationMode);
+            return true;
+        }
+
+        [MenuItem(AssetBundleManager.IgnoreBundleServerStr)]
+        static void ignoreBundleServer()
+        {
+            AssetBundleManager.IgnoreBundleServer = !AssetBundleManager.IgnoreBundleServer;
+        }
+
+        [MenuItem(AssetBundleManager.IgnoreBundleServerStr, true)]
+        static bool validateIgnoreBundleServer()
+        {
+            Menu.SetChecked(AssetBundleManager.IgnoreBundleServerStr, AssetBundleManager.IgnoreBundleServer);
             return true;
         }
 
