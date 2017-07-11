@@ -26,11 +26,25 @@ namespace Framework.AssetBundle
             }
         }
 
-        public static bool SimulationMode;
-        static AssetBundleManager()
+        private static bool? simulationMode = null;
+        public static bool SimulationMode
         {
+            get
 #if !UNITY_EDITOR
-            SimulationMode = false;
+            {
+                return false;
+            }
+#else
+            {
+            if (simulationMode == null)
+                    simulationMode = UnityEditor.EditorPrefs.GetBool("Framework/AssetBundle/Simulation Mode", true);
+                return simulationMode.Value;
+            }
+            set
+            {
+                simulationMode = value;
+                UnityEditor.EditorPrefs.SetBool("Framework/AssetBundle/Simulation Mode", value);
+            }
 #endif
         }
 

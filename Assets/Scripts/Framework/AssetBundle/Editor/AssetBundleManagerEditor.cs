@@ -16,8 +16,8 @@ namespace Framework.AssetBundle
 
         [MenuItem("Framework/AssetBundle/Simulation Mode")]
         static void simulationMode()
-        {            
-            AssetBundleManager.SimulationMode = !AssetBundleManager.SimulationMode;            
+        {
+            AssetBundleManager.SimulationMode = !AssetBundleManager.SimulationMode;
         }
 
         [MenuItem("Framework/AssetBundle/Simulation Mode", true)]
