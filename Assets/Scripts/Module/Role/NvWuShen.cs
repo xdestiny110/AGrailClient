@@ -144,7 +144,8 @@ namespace AGrail
                     //偷个懒，去掉选择能量的步骤
                     OKAction = () =>
                     {
-                        if(BattleData.Instance.Agent.SelectArgs[0] == 2)
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                        if (BattleData.Instance.Agent.SelectArgs[0] == 2)
                         {
                             if (BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team] >= 2)
                                 BattleData.Instance.Agent.SelectArgs.AddRange(new List<uint>() { 0, 2 });
