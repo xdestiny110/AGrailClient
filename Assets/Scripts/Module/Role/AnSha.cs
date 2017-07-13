@@ -78,7 +78,7 @@ namespace AGrail
         public override uint MaxSelectCard(uint uiState)
         {
             if (uiState == 502)
-                return 6;
+                return 7;
             return base.MaxSelectCard(uiState);
         }
 
