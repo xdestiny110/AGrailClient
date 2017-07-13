@@ -252,25 +252,25 @@ namespace AGrail
             {
                 case 10:
                 case 11:
-                    if (card.Element != Card.CardElement.light)
+                    if (card.Element != Card.CardElement.light && !isCovered)
                         return true;
                     break;
                 case 1:
-                    if (card.Type == Card.CardType.attack)
+                    if (card.Type == Card.CardType.attack && !isCovered)
                         return true;
                     break;
                 case 2:
-                    if (card.Type == Card.CardType.magic && card.Element != Card.CardElement.light)
+                    if (card.Type == Card.CardType.magic && card.Element != Card.CardElement.light && !isCovered)
                         return true;
                     break;
                 case 3:
-                    if (card.Element == Card.CardElement.light ||
+                    if ((card.Element == Card.CardElement.light ||
                         (((card.Element == Card.CardElement.darkness || card.Element == Card.GetCard(BattleData.Instance.Agent.Cmd.args[1]).Element) && 
-                            BattleData.Instance.Agent.Cmd.args[0] < 1 && card.Type == Card.CardType.attack)))
+                            BattleData.Instance.Agent.Cmd.args[0] < 1 && card.Type == Card.CardType.attack))) && !isCovered)
                         return true;
                     break;
                 case 4:
-                    if (card.Name == Card.CardName.魔弹 || card.Element == Card.CardElement.light)
+                    if ((card.Name == Card.CardName.魔弹 || card.Element == Card.CardElement.light) && !isCovered)
                         return true;
                     break;
                 case 5:
