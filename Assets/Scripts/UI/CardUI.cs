@@ -22,6 +22,8 @@ namespace AGrail
         [SerializeField]
         private Transform propertyRoot;
         [SerializeField]
+        private Transform elementRoot;
+        [SerializeField]
         private Image selectBorder;
 
         private bool isEnable;
@@ -33,14 +35,18 @@ namespace AGrail
                 if (!isEnable)
                 {
                     image.color = new Color(0.5f, 0.5f, 0.5f, 1);
-                    for(int i = 0;i < propertyRoot.childCount; i++)                    
-                        propertyRoot.GetChild(i).GetComponent<Image>().color = new Color(0.5f, 0.5f, 0.5f, 1);                    
+                    for (int i = 0; i < propertyRoot.childCount; i++)
+                        propertyRoot.GetChild(i).GetComponent<Image>().color = new Color(0.5f, 0.5f, 0.5f, 1);
+                    for (int i = 0; i < elementRoot.childCount; i++)
+                        elementRoot.GetChild(i).GetComponent<Image>().color = new Color(0.5f, 0.5f, 0.5f, 1);
                 }
                 else
                 {
                     image.color = Color.white;
                     for (int i = 0; i < propertyRoot.childCount; i++)
                         propertyRoot.GetChild(i).GetComponent<Image>().color = Color.white;
+                    for (int i = 0; i < elementRoot.childCount; i++)
+                        elementRoot.GetChild(i).GetComponent<Image>().color = Color.white;
                 }                    
             }
             get
@@ -59,7 +65,11 @@ namespace AGrail
                 for (int i = 0; i < propertyRoot.childCount; i++)
                     propertyRoot.GetChild(i).gameObject.SetActive(false);
                 if (card.Property != Card.CardProperty.无)                
-                    propertyRoot.Find(card.Property.ToString()).gameObject.SetActive(true);                
+                    propertyRoot.Find(card.Property.ToString()).gameObject.SetActive(true);
+                for (int i = 0; i < elementRoot.childCount; i++)
+                    elementRoot.GetChild(i).gameObject.SetActive(false);
+                if (card.Element != Card.CardElement.darkness && card.Element != Card.CardElement.light && card.Element != Card.CardElement.none)
+                    elementRoot.Find(card.Element.ToString()).gameObject.SetActive(true);
                 if (card.SkillNum >= 1)
                 {
                     txtSkill1.text = card.SkillNames[0];
