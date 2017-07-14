@@ -32,3 +32,6 @@ Thumbs.db
 
 !*.dll
 *.apk
+AssetBundles/
+StreamingAssets/
+StreamingAssets.meta

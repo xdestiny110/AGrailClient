@@ -12,7 +12,7 @@ namespace AGrail
         [SerializeField]
         private Transform root;
         [SerializeField]
-        private GameObject waitAnyClick;
+        private GameObject btnStart;
         [SerializeField]
         private GameObject loginInput;
         [SerializeField]
@@ -36,7 +36,6 @@ namespace AGrail
 
         public override void Awake()
         {
-            GameManager.AddUpdateAction(showLoginInput);
             state = UserData.Instance.State;
             MessageSystem<MessageType>.Regist(MessageType.LoginState, this);
             base.Awake();
@@ -44,7 +43,6 @@ namespace AGrail
 
         public override void OnDestroy()
         {
-            GameManager.RemoveUpdateAciont(showLoginInput);
             MessageSystem<MessageType>.UnRegist(MessageType.LoginState, this);
             base.OnDestroy();
         }
@@ -80,11 +78,13 @@ namespace AGrail
             UserData.Instance.Login(inptUserName.text, inptPassword.text);
         }
 
-        private void showLoginInput()
+        public void OnBtnStartClick()
         {
-            if (Input.anyKeyDown && state == LoginState.Ready && waitAnyClick.activeSelf)
+            if ((PlayerPrefs.HasKey("username") && PlayerPrefs.HasKey("password")))
+                Login();
+            else
             {
-                waitAnyClick.SetActive(false);
+                btnStart.SetActive(false);
                 loginInput.SetActive(true);
             }
         }
