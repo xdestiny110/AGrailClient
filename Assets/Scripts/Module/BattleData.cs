@@ -459,6 +459,8 @@ namespace AGrail
                             r = RoleFactory.Create(GetPlayerInfo(v.src_id).role_id);
                             if (r.Skills.ContainsKey(v.respond_id))
                                 Dialog.Instance.Log += "等待" + r.RoleName + "响应技能" + r.Skills[v.respond_id].SkillName + Environment.NewLine;
+                            else if (Skill.GetSkill(v.respond_id) != null)
+                                Dialog.Instance.Log += "等待" + r.RoleName + "响应技能" + Skill.GetSkill(v.respond_id).SkillName + Environment.NewLine;
                             else
                                 Dialog.Instance.Log += "等待" + r.RoleName + "响应技能" + v.respond_id.ToString() + Environment.NewLine;
                             if (v.src_id != MainPlayer.id)

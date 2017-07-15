@@ -56,7 +56,7 @@ namespace AGrail
         }
         public YingLingRenXing()
         {
-            for (uint i = 2701; i <= 2706; i++)
+            for (uint i = 2702; i <= 2707; i++)
                 Skills.Add(i, Skill.GetSkill(i));
         }
 
@@ -281,7 +281,6 @@ namespace AGrail
                     };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, "是否发动符文改造");
                     return;
-
                 case 27051:
                     OKAction = () =>
                     {
@@ -299,9 +298,8 @@ namespace AGrail
                     }
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "战纹数量", selectList, mList);
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                    string.Format("请选择调整后的战纹数量"));
+                        string.Format("请选择调整后的战纹数量"));
                     return;
-
                 case 2706:
                     OKAction = () =>
                     {
@@ -324,14 +322,13 @@ namespace AGrail
         }
         private enum SkillID
         {
-            战纹掌控=2701,
+            战纹掌控 = 2701,
             怒火压制,
             战纹碎击,
             魔纹融合,
             符文改造,
-            符文调整=27051
-    }
-
-
+            双重回响,
+            符文调整 = 27051
+        }
     }
 }

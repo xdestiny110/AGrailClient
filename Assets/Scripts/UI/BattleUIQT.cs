@@ -363,6 +363,7 @@ namespace AGrail
                 go.transform.localRotation = Quaternion.identity;
                 var cardUI = go.GetComponent<CardUI>();
                 cardUI.Card = Card.GetCard(v);
+                cardUI.Disappear();
             }
         }
 

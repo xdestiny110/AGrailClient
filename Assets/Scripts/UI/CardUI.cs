@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using Framework.Message;
 using System;
+using DG.Tweening;
 
 namespace AGrail
 {
@@ -115,17 +116,31 @@ namespace AGrail
             }    
         }
 
+        private bool disappear = false;
+        public void Disappear()
+        {
+            disappear = true;            
+            DOTween.To(() => image.color, x => image.color = x, new Color(1, 1, 1, 0), 20).SetOptions(true);
+            DOTween.To(() => txtSkill1.color, x => txtSkill1.color = x, new Color(1, 1, 1, 0), 20).SetOptions(true);
+            DOTween.To(() => txtSkill2.color, x => txtSkill2.color = x, new Color(1, 1, 1, 0), 20).SetOptions(true);
+            var images = gameObject.GetComponentsInChildren<Image>();
+            foreach(var v in images)
+                DOTween.To(() => v.color, x => v.color = x, new Color(1, 1, 1, 0), 20).SetOptions(true);
+        }
+
         public void OnPointerEnter(BaseEventData eventData)
         {
+            if (disappear) return;
             var pos = canvas.transform.localPosition;
             pos.y += 10;
             canvas.transform.localPosition = pos;
             canvas.overrideSorting = true;
-            canvas.sortingOrder = 10; 
+            canvas.sortingOrder = 10;
         }
 
         public void OnPointerExit(BaseEventData eventData)
         {
+            if (disappear) return;
             var pos = canvas.transform.localPosition;
             pos.y = 0;
             canvas.transform.localPosition = pos;
