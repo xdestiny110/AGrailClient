@@ -215,8 +215,9 @@ namespace AGrail
                     break;
                 case MessageType.CARDMSG:
                     var cardMsg = parameters[0] as network.CardMsg;
-                    showCard(cardMsg.card_ids);
-                    if (cardMsg.dst_idSpecified && cardMsg.src_idSpecified)
+                    if((cardMsg.is_realSpecified && cardMsg.is_real && cardMsg.type == 1) || cardMsg.type == 2)
+                        showCard(cardMsg.card_ids);
+                    if (cardMsg.typeSpecified && cardMsg.type == 1 && cardMsg.dst_id != cardMsg.src_id)
                         actionAnim(cardMsg.src_id, cardMsg.dst_id);
                     break;
                 case MessageType.SKILLMSG:
