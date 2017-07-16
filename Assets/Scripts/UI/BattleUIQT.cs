@@ -49,6 +49,8 @@ namespace AGrail
             }
         }
 
+        private Tweener tween = null;
+
         public override void Awake()
         {
             //依据房间人数先去掉不存在anchor
@@ -59,8 +61,7 @@ namespace AGrail
             }
             //测试基本上都是先生成UI才会收到GameInfo事件
             //但不确定是否有可能反过来
-            //最好是能够在Awake中先依据BattleData的数据初始化一遍
-            GameManager.AddUpdateAction(onESCClick);
+            //最好是能够在Awake中先依据BattleData的数据初始化一遍            
             Dialog.Instance.Reset();
             PlayersStatus.Clear();
 
@@ -87,8 +88,8 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.SKILLMSG, this);
             MessageSystem<MessageType>.Regist(MessageType.TURNBEGIN, this);
 
-            root.localPosition = new Vector3(1280, 0, 0);
-            root.DOLocalMoveX(0, 1.0f);
+            root.localPosition = new Vector3(Screen.width, 0, 0);
+            root.DOLocalMoveX(0, 1.0f).OnComplete(() => { GameManager.AddUpdateAction(onESCClick); });
             base.Awake();
         }
 
@@ -214,8 +215,9 @@ namespace AGrail
                     break;
                 case MessageType.CARDMSG:
                     var cardMsg = parameters[0] as network.CardMsg;
-                    showCard(cardMsg.card_ids);
-                    if (cardMsg.dst_idSpecified && cardMsg.src_idSpecified)
+                    if((cardMsg.is_realSpecified && cardMsg.is_real && cardMsg.type == 1) || cardMsg.type == 2)
+                        showCard(cardMsg.card_ids);
+                    if (cardMsg.typeSpecified && cardMsg.type == 1 && cardMsg.dst_id != cardMsg.src_id)
                         actionAnim(cardMsg.src_id, cardMsg.dst_id);
                     break;
                 case MessageType.SKILLMSG:
@@ -362,6 +364,7 @@ namespace AGrail
                 go.transform.localRotation = Quaternion.identity;
                 var cardUI = go.GetComponent<CardUI>();
                 cardUI.Card = Card.GetCard(v);
+                cardUI.Disappear();
             }
         }
 
@@ -376,11 +379,18 @@ namespace AGrail
                     dstIdx = i;
             }
 
+            if (srcIdx < 0 || dstIdx < 0)
+            {
+                Debug.LogErrorFormat("srcIdx = {0}, dstIdx = {1}", srcIdx, dstIdx);
+                Debug.LogErrorFormat("srcID = {0}, dstID = {1}", src_id, dst_id);
+                return;
+            }                            
+
             var arrow = Instantiate(arrowPrefab);
             arrow.transform.SetParent(battleRoot);
             arrow.transform.position = PlayersStatus[srcIdx].transform.position;
             arrow.transform.localScale = Vector3.one;
-            arrow.GetComponent<Arrow>().SetParms(PlayersStatus[srcIdx].transform.position, PlayersStatus[dstIdx].transform.position);            
+            arrow.GetComponent<Arrow>().SetParms(PlayersStatus[srcIdx].transform.position, PlayersStatus[dstIdx].transform.position);
         }
     }
 }

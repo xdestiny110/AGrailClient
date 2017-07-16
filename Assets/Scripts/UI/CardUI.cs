@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using Framework.Message;
 using System;
+using DG.Tweening;
 
 namespace AGrail
 {
@@ -20,6 +21,10 @@ namespace AGrail
         [SerializeField]
         private RawImage image;
         [SerializeField]
+        private Transform propertyRoot;
+        [SerializeField]
+        private Transform elementRoot;
+        [SerializeField]
         private Image selectBorder;
 
         private bool isEnable;
@@ -29,9 +34,21 @@ namespace AGrail
             {
                 isEnable = value;
                 if (!isEnable)
+                {
                     image.color = new Color(0.5f, 0.5f, 0.5f, 1);
+                    for (int i = 0; i < propertyRoot.childCount; i++)
+                        propertyRoot.GetChild(i).GetComponent<Image>().color = new Color(0.5f, 0.5f, 0.5f, 1);
+                    for (int i = 0; i < elementRoot.childCount; i++)
+                        elementRoot.GetChild(i).GetComponent<Image>().color = new Color(0.5f, 0.5f, 0.5f, 1);
+                }
                 else
+                {
                     image.color = Color.white;
+                    for (int i = 0; i < propertyRoot.childCount; i++)
+                        propertyRoot.GetChild(i).GetComponent<Image>().color = Color.white;
+                    for (int i = 0; i < elementRoot.childCount; i++)
+                        elementRoot.GetChild(i).GetComponent<Image>().color = Color.white;
+                }                    
             }
             get
             {
@@ -46,6 +63,14 @@ namespace AGrail
             {
                 card = value;
                 image.texture = Resources.Load<Texture2D>(card.AssetPath);
+                for (int i = 0; i < propertyRoot.childCount; i++)
+                    propertyRoot.GetChild(i).gameObject.SetActive(false);
+                if (card.Property != Card.CardProperty.无)                
+                    propertyRoot.Find(card.Property.ToString()).gameObject.SetActive(true);
+                for (int i = 0; i < elementRoot.childCount; i++)
+                    elementRoot.GetChild(i).gameObject.SetActive(false);
+                if (card.Element != Card.CardElement.darkness && card.Element != Card.CardElement.light && card.Element != Card.CardElement.none)
+                    elementRoot.Find(card.Element.ToString()).gameObject.SetActive(true);
                 if (card.SkillNum >= 1)
                 {
                     txtSkill1.text = card.SkillNames[0];
@@ -91,17 +116,31 @@ namespace AGrail
             }    
         }
 
+        private bool disappear = false;
+        public void Disappear()
+        {
+            disappear = true;            
+            DOTween.To(() => image.color, x => image.color = x, new Color(1, 1, 1, 0), 20).SetOptions(true);
+            DOTween.To(() => txtSkill1.color, x => txtSkill1.color = x, new Color(1, 1, 1, 0), 20).SetOptions(true);
+            DOTween.To(() => txtSkill2.color, x => txtSkill2.color = x, new Color(1, 1, 1, 0), 20).SetOptions(true);
+            var images = gameObject.GetComponentsInChildren<Image>();
+            foreach(var v in images)
+                DOTween.To(() => v.color, x => v.color = x, new Color(1, 1, 1, 0), 20).SetOptions(true);
+        }
+
         public void OnPointerEnter(BaseEventData eventData)
         {
+            if (disappear) return;
             var pos = canvas.transform.localPosition;
             pos.y += 10;
             canvas.transform.localPosition = pos;
             canvas.overrideSorting = true;
-            canvas.sortingOrder = 10; 
+            canvas.sortingOrder = 10;
         }
 
         public void OnPointerExit(BaseEventData eventData)
         {
+            if (disappear) return;
             var pos = canvas.transform.localPosition;
             pos.y = 0;
             canvas.transform.localPosition = pos;

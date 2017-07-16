@@ -23,12 +23,14 @@ namespace AGrail
 
         public Dialog() : base()
         {
+            MessageSystem<MessageType>.Regist(MessageType.ACTION, this);
             MessageSystem<MessageType>.Regist(MessageType.CARDMSG, this);
             MessageSystem<MessageType>.Regist(MessageType.SKILLMSG, this);
             MessageSystem<MessageType>.Regist(MessageType.HITMSG, this);
             MessageSystem<MessageType>.Regist(MessageType.HURTMSG, this);
             MessageSystem<MessageType>.Regist(MessageType.GOSSIP, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerLeave, this);
+            MessageSystem<MessageType>.Regist(MessageType.TURNBEGIN, this);            
             Reset();
         }
 
@@ -118,13 +120,37 @@ namespace AGrail
                     if (srcPlayer.role_idSpecified)
                     {
                         r1 = RoleFactory.Create(srcPlayer.role_id);
-                        Log += string.Format("[{0}]: {1}" + Environment.NewLine, r1.RoleName, gossip.txt);
+                        Log += string.Format("<color=#0000FFFF>[{0}]: {1}</color>" + Environment.NewLine, r1.RoleName, gossip.txt);
                     }
                     else
-                        Log += string.Format("[{0}]: {1}" + Environment.NewLine, srcPlayer.nickname, gossip.txt);
+                        Log += string.Format("<color=#0000FFFF>[{0}]: {1}</color>" + Environment.NewLine, srcPlayer.nickname, gossip.txt);
                     break;
                 case MessageType.PlayerLeave:
-                    Log += string.Format("玩家[{0}]离开房间" + Environment.NewLine, (int)parameters[0]);
+                    Log += string.Format("<color=#FF0000FF>玩家[{0}]离开房间</color>" + Environment.NewLine, (int)parameters[0]);
+                    break;
+                case MessageType.TURNBEGIN:
+                    Log += "<color=#00FF00FF>=======================</color>" + Environment.NewLine;
+                    break;
+                case MessageType.ACTION:
+                    var act = parameters[0] as network.Action;
+                    srcPlayer = BattleData.Instance.GetPlayerInfo(act.src_id);
+                    r1 = RoleFactory.Create(srcPlayer.role_id);
+                    Log += string.Format("{0}进行了", r1.RoleName);
+                    switch (act.action_id)
+                    {
+                        case 0:
+                            Log += "购买" + Environment.NewLine;
+                            break;
+                        case 1:
+                            Log += "合成" + Environment.NewLine;
+                            break;
+                        case 2:
+                            Log += "提炼" + Environment.NewLine;
+                            break;
+                        default:
+                            Log += "奇怪的行动" + Environment.NewLine;
+                            break;
+                    }
                     break;
             }
         }

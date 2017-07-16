@@ -35,6 +35,10 @@ namespace AGrail
         [SerializeField]
         private GameObject tokenPrefab;
         [SerializeField]
+        private GameObject handCardPrefab;
+        [SerializeField]
+        private GameObject energyPrefab;
+        [SerializeField]
         private Button btnPlayer;
 
         private RoleBase role;
@@ -228,7 +232,7 @@ namespace AGrail
                     go.transform.localPosition = Vector3.zero;
                     go.transform.localRotation = Quaternion.identity;
                     go.transform.localScale = Vector3.one;
-                    go.AddComponent<RawImage>().texture = icon;
+                    go.AddComponent<Image>().sprite = Sprite.Create(icon, new Rect(0, 0, icon.width, icon.height), Vector2.zero);
                 }
             }
         }
@@ -241,21 +245,21 @@ namespace AGrail
                     Destroy(energy.GetChild(i).gameObject);
                 for (int i = 0; i < value.Key; i++)
                 {
-                    var go = new GameObject();
+                    var go = Instantiate(energyPrefab);
                     go.transform.SetParent(energy);
                     go.transform.localPosition = Vector3.zero;
                     go.transform.localRotation = Quaternion.identity;
                     go.transform.localScale = Vector3.one;
-                    go.AddComponent<RawImage>().texture = Resources.Load<Texture2D>("Icons/gem");
+                    go.transform.Find("gem").gameObject.SetActive(true);                    
                 }
                 for (int i = 0; i < value.Value; i++)
                 {
-                    var go = new GameObject();
+                    var go = Instantiate(energyPrefab);
                     go.transform.SetParent(energy);
                     go.transform.localPosition = Vector3.zero;
                     go.transform.localRotation = Quaternion.identity;
                     go.transform.localScale = Vector3.one;
-                    go.AddComponent<RawImage>().texture = Resources.Load<Texture2D>("Icons/crystal");
+                    go.transform.Find("crystal").gameObject.SetActive(true);
                 }
             }
         }
@@ -264,36 +268,37 @@ namespace AGrail
         {
             set
             {
+                MessageSystem<MessageType>.Notify(MessageType.LogChange);
                 for (int i = 0; i < handCard.childCount; i++)
-                    Destroy(handCard.GetChild(i).gameObject);
+                    Destroy(handCard.GetChild(i).gameObject);                
                 for (int i = 0; i < Mathf.Min(value.Key, value.Value); i++)
                 {
-                    var go = new GameObject();
+                    var go = Instantiate(handCardPrefab);
                     go.transform.SetParent(handCard);
                     go.transform.localPosition = Vector3.zero;
                     go.transform.localRotation = Quaternion.identity;
                     go.transform.localScale = Vector3.one;
-                    go.AddComponent<RawImage>().texture = Resources.Load<Texture2D>("Icons/UI6-22");
-                }
+                    go.transform.Find("HandCard").gameObject.SetActive(true);
+                }                
                 for (int i = 0; i < (int)value.Value - (int)value.Key; i++)
                 {
-                    var go = new GameObject();
+                    var go = Instantiate(handCardPrefab);
                     go.transform.SetParent(handCard);
                     go.transform.localPosition = Vector3.zero;
                     go.transform.localRotation = Quaternion.identity;
                     go.transform.localScale = Vector3.one;
-                    go.AddComponent<RawImage>().texture = Resources.Load<Texture2D>("Icons/UI6-23");
-                }
+                    go.transform.Find("Empty").gameObject.SetActive(true);
+                }                
                 for (int i = 0; i < (int)value.Key - (int)value.Value; i++)
                 {
-                    var go = new GameObject();
+                    var go = Instantiate(handCardPrefab);
                     go.transform.SetParent(handCard);
                     go.transform.localPosition = Vector3.zero;
                     go.transform.localRotation = Quaternion.identity;
                     go.transform.localScale = Vector3.one;
-                    var ri = go.AddComponent<RawImage>();
-                    ri.texture = Resources.Load<Texture2D>("Icons/UI6-23");
-                    ri.color = Color.red;
+                    var empty = go.transform.Find("Empty").gameObject;
+                    empty.SetActive(true);
+                    empty.GetComponent<Image>().color = Color.red;
                 }
             }
         }
@@ -306,12 +311,12 @@ namespace AGrail
                     Destroy(heal.GetChild(i).gameObject);
                 for (int i = 0; i < value; i++)
                 {
-                    var go = new GameObject();
+                    var go = Instantiate(handCardPrefab);
                     go.transform.SetParent(heal);
                     go.transform.localPosition = Vector3.zero;
                     go.transform.localRotation = Quaternion.identity;
                     go.transform.localScale = Vector3.one;
-                    go.AddComponent<RawImage>().texture = Resources.Load<Texture2D>("Icons/UI6-24");
+                    go.transform.Find("Heal").gameObject.SetActive(true);
                 }
             }
         }

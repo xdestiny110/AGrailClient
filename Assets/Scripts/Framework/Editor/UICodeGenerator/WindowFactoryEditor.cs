@@ -9,8 +9,7 @@ namespace Framework.UI
     [CustomEditor(typeof(WindowFactory))]
     public class WindowFactoryEditor : Editor
     {
-        private static List<string> windowTypes = new List<string>();
-        private const string ConfigFilePath = "Assets/Resources/UI/WindowsConfig.asset";
+        private static List<string> windowTypes = new List<string>();        
         private const string WindowTypePath = "Scripts/Framework/UI/WindowType.cs";
         private const string AutoUIPath = "Scripts/UI/";
 
@@ -19,7 +18,7 @@ namespace Framework.UI
         [MenuItem("Framework/Window Factory")]        
         public static void GenerateCode()
         {
-            List<string> uiPrefabs = EditorTool.AssetPathOfUnityFolder("Resources/" + WindowFactory.WindowPrefabPath, ".prefab");
+            List<string> uiPrefabs = EditorTool.AssetPathOfUnityFolder("Prefabs/" + WindowFactory.WindowPrefabPath, ".prefab");
             foreach (var v in uiPrefabs)
             {
                 var goPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(v);                
@@ -57,10 +56,10 @@ namespace Framework.UI
                 fw.Append("using Framework.Message;");
                 fw.Append("using UnityEngine;");
                 fw.Append("using UnityEngine.UI;");
-                fw.Append("using DG.Tweening;");                
+                fw.Append("using DG.Tweening;");
             }
         }
-    }                     
+    }
 }
 
 

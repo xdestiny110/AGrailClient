@@ -10,7 +10,7 @@ namespace AGrail
     public class BattleData : Singleton<BattleData>, IMessageListener<MessageType>
     {        
         public int? RoomID { get; private set; }
-        public int PlayerID { get; private set; }
+        public int? PlayerID { get; private set; }
         public uint Pile { get; private set; }
         public uint Discard { get; private set; }
         public bool IsStarted { get; private set; }
@@ -27,6 +27,7 @@ namespace AGrail
 
         public BattleData() : base()
         {
+            MessageSystem<MessageType>.Regist(MessageType.TURNBEGIN, this);
             MessageSystem<MessageType>.Regist(MessageType.GAMEINFO, this);
             MessageSystem<MessageType>.Regist(MessageType.ROLEREQUEST, this);
             MessageSystem<MessageType>.Regist(MessageType.COMMANDREQUEST, this);
@@ -50,6 +51,10 @@ namespace AGrail
         {
             switch (eventType)
             {
+                case MessageType.TURNBEGIN:
+                    if (MainPlayer != null && MainPlayer.id != 9)
+                        Agent.PlayerRole.IsStart = false;
+                    break;
                 case MessageType.GAMEINFO:
                     gameInfo = parameters[0] as network.GameInfo;
                     break;
@@ -82,6 +87,7 @@ namespace AGrail
             Agent = new PlayerAgent(0);
             MainPlayer = null;
             RoomID = null;
+            PlayerID = null;
             IsStarted = false;
         }
 
@@ -102,7 +108,7 @@ namespace AGrail
                 if (value.room_idSpecified && !RoomID.HasValue)
                 {                    
                     RoomID = value.room_id;
-                    MessageSystem<MessageType>.Notify(MessageType.EnterRoom);
+                    //MessageSystem<MessageType>.Notify(MessageType.EnterRoom);
                 }
                 if (value.player_idSpecified)
                 {
@@ -307,7 +313,6 @@ namespace AGrail
                 for (int i = 0; i < value.commands.Count; i++)
                     UnityEngine.Debug.Log(string.Format("cmd request call back: {0}", (value.cmd_type == network.CmdType.CMD_ACTION) ?
                         ((network.BasicActionType)value.commands[i].respond_id).ToString() : ((network.BasicRespondType)value.commands[i].respond_id).ToString()));
-                Agent.AgentState = (int)PlayerAgentState.Idle;
                 if (MainPlayer == null)
                     return;
                 foreach (var v in value.commands)
@@ -409,7 +414,7 @@ namespace AGrail
                                 continue;
                             }
                             Agent.Cmd = v;
-                            Agent.AgentState |=
+                            Agent.AgentState =
                                 (int)PlayerAgentState.CanAttack | (int)PlayerAgentState.CanMagic | (int)PlayerAgentState.CanSpecial;
                             break;
                         case (uint)network.BasicActionType.ACTION_ATTACK_MAGIC:
@@ -419,7 +424,7 @@ namespace AGrail
                                 continue;
                             }
                             Agent.Cmd = v;
-                            Agent.AgentState |= (int)PlayerAgentState.CanMagic | (int)PlayerAgentState.CanAttack;
+                            Agent.AgentState = (int)PlayerAgentState.CanMagic | (int)PlayerAgentState.CanAttack;
                             break;
                         case (uint)network.BasicActionType.ACTION_ATTACK:
                             if (v.src_id != MainPlayer.id)
@@ -428,7 +433,7 @@ namespace AGrail
                                 continue;
                             }
                             Agent.Cmd = v;
-                            Agent.AgentState |= (int)PlayerAgentState.CanAttack;
+                            Agent.AgentState = (int)PlayerAgentState.CanAttack;
                             break;
                         case (uint)network.BasicActionType.ACTION_MAGIC:
                             if (v.src_id != MainPlayer.id)
@@ -437,7 +442,7 @@ namespace AGrail
                                 continue;
                             }
                             Agent.Cmd = v;
-                            Agent.AgentState |= (int)PlayerAgentState.CanMagic;
+                            Agent.AgentState = (int)PlayerAgentState.CanMagic;
                             break;
                         case (uint)network.BasicActionType.ACTION_NONE:
                             //无法行动
@@ -447,13 +452,15 @@ namespace AGrail
                                 continue;
                             }
                             //Agent.Cmd = v;                            
-                            Agent.AgentState |= (int)PlayerAgentState.CanResign;
+                            Agent.AgentState = (int)PlayerAgentState.CanResign;
                             break;
                         default:
                             //技能响应
                             r = RoleFactory.Create(GetPlayerInfo(v.src_id).role_id);
                             if (r.Skills.ContainsKey(v.respond_id))
                                 Dialog.Instance.Log += "等待" + r.RoleName + "响应技能" + r.Skills[v.respond_id].SkillName + Environment.NewLine;
+                            else if (Skill.GetSkill(v.respond_id) != null)
+                                Dialog.Instance.Log += "等待" + r.RoleName + "响应技能" + Skill.GetSkill(v.respond_id).SkillName + Environment.NewLine;
                             else
                                 Dialog.Instance.Log += "等待" + r.RoleName + "响应技能" + v.respond_id.ToString() + Environment.NewLine;
                             if (v.src_id != MainPlayer.id)
@@ -462,7 +469,7 @@ namespace AGrail
                                 continue;
                             }
                             Agent.Cmd = v;
-                            Agent.AgentState |= (int)PlayerAgentState.SkillResponse;
+                            Agent.AgentState = (int)PlayerAgentState.SkillResponse;
                             break;
                     }
                 }

@@ -81,7 +81,7 @@ namespace AGrail
             switch (uiState)
             {
                 case 2006:
-                    return Math.Max(0, BattleData.Instance.MainPlayer.hand_count - 3);
+                    return (uint)Math.Max(0, (int)BattleData.Instance.MainPlayer.hand_count - 3);
             }
             return base.MaxSelectCard(uiState);
         }
@@ -109,7 +109,7 @@ namespace AGrail
                 case 2003:
                     return playerIDs.Count == 1;
                 case 2006:
-                    return cardIDs.Count == Math.Max(0, BattleData.Instance.MainPlayer.hand_count - 3);
+                    return cardIDs.Count == Math.Max(0, (int)BattleData.Instance.MainPlayer.hand_count - 3);
             }
             return base.CheckOK(uiState, cardIDs, playerIDs, skillID);
         }
@@ -183,15 +183,27 @@ namespace AGrail
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, string.Format("请选择发动技能"));
                     return;
                 case 2004:
-                case 2006:                
                     OKAction = () =>
                     {
-                        if (BattleData.Instance.Agent.SelectCards.Count == 0)
-                            sendReponseMsg(BAISHIDOUSHEN, BattleData.Instance.MainPlayer.id, null, null,
+                        IsStart = true;
+                        sendReponseMsg(BAISHIDOUSHEN, BattleData.Instance.MainPlayer.id, null, null,
                                 new List<uint>() { 1 });
-                        else
-                            sendReponseMsg(BAISHIDOUSHEN, BattleData.Instance.MainPlayer.id, null, BattleData.Instance.Agent.SelectCards,
-                                new List<uint>() { 2 });
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                    };
+                    CancelAction = () =>
+                    {
+                        sendReponseMsg(BAISHIDOUSHEN, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                    };
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                        string.Format("是否发动百式幻龙拳"));
+                    return;
+                case 2006:
+                    OKAction = () =>
+                    {
+                        IsStart = true;
+                        sendReponseMsg(BAISHIDOUSHEN, BattleData.Instance.MainPlayer.id, null, BattleData.Instance.Agent.SelectCards,
+                            new List<uint>() { 2 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     CancelAction = () =>
@@ -199,12 +211,8 @@ namespace AGrail
                         sendReponseMsg(BAISHIDOUSHEN, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    if(state == 2004)
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, 
-                            string.Format("是否发动百式幻龙拳"));
-                    else if (state == 2006)
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                            string.Format("斗神天驱: 弃到三张牌并点击确定"));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                        string.Format("斗神天驱: 弃到三张牌并点击确定"));
                     return;
                 case BAISHIDOUSHEN:
                     OKAction = () => 

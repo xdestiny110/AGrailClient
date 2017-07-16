@@ -16,6 +16,7 @@ namespace AGrail
         public virtual bool HasBlue { get { return false; } }
         public virtual bool HasCoverd { get { return false; } }
         public virtual string Knelt { get { return null; } }
+        public virtual bool IsStart { set; get; }
         public Dictionary<uint, Skill> Skills = new Dictionary<uint, Skill>();
 
         //记录一些特殊状态
@@ -165,6 +166,7 @@ namespace AGrail
                         return true;
                     break;
                 case 5:
+                case 8:
                     if (cardIDs.Count == BattleData.Instance.Agent.Cmd.args[1])
                         return true;
                     break;
@@ -174,6 +176,7 @@ namespace AGrail
                 case 12:
                 case 13:
                 case 14:
+                    return !IsStart;
                 case 15:
                 case 1602:
                     return true;                    
@@ -219,7 +222,7 @@ namespace AGrail
         {
             var m = BattleData.Instance.MainPlayer;
             if (uiState == 10 && m.max_hand - m.hand_count >= 3 &&
-                BattleData.Instance.Gem[m.team] + BattleData.Instance.Crystal[m.team] <= 4)
+                BattleData.Instance.Gem[m.team] + BattleData.Instance.Crystal[m.team] <= 4 && !IsStart)
                 return true;
             return false;
         }
@@ -228,7 +231,7 @@ namespace AGrail
         {
             var m = BattleData.Instance.MainPlayer;
             if (uiState == 10 && m.gem + m.crystal < BattleData.Instance.Agent.PlayerRole.MaxEnergyCount &&
-                BattleData.Instance.Gem[m.team] + BattleData.Instance.Crystal[m.team] > 0)
+                BattleData.Instance.Gem[m.team] + BattleData.Instance.Crystal[m.team] > 0 && !IsStart)
                 return true;
             return false;
         }
@@ -237,7 +240,7 @@ namespace AGrail
         {
             var m = BattleData.Instance.MainPlayer;
             if (uiState == 10 && m.max_hand - m.hand_count >= 3 &&
-                BattleData.Instance.Gem[m.team] + BattleData.Instance.Crystal[m.team] >= 3)
+                BattleData.Instance.Gem[m.team] + BattleData.Instance.Crystal[m.team] >= 3 && !IsStart)
                 return true;
             return false;
         }        
@@ -245,34 +248,35 @@ namespace AGrail
         //判断能否选择牌/角色/技能
         public virtual bool CanSelect(uint uiState, Card card, bool isCovered)
         {
-            if (isCovered) return false;
             switch (uiState)
             {
                 case 10:
                 case 11:
-                    if (card.Element != Card.CardElement.light)
+                    if (card.Element != Card.CardElement.light && !isCovered)
                         return true;
                     break;
                 case 1:
-                    if (card.Type == Card.CardType.attack)
+                    if (card.Type == Card.CardType.attack && !isCovered)
                         return true;
                     break;
                 case 2:
-                    if (card.Type == Card.CardType.magic && card.Element != Card.CardElement.light)
+                    if (card.Type == Card.CardType.magic && card.Element != Card.CardElement.light && !isCovered)
                         return true;
                     break;
                 case 3:
-                    if (card.Element == Card.CardElement.light ||
+                    if ((card.Element == Card.CardElement.light ||
                         (((card.Element == Card.CardElement.darkness || card.Element == Card.GetCard(BattleData.Instance.Agent.Cmd.args[1]).Element) && 
-                            BattleData.Instance.Agent.Cmd.args[0] < 1 && card.Type == Card.CardType.attack)))
+                            BattleData.Instance.Agent.Cmd.args[0] < 1 && card.Type == Card.CardType.attack))) && !isCovered)
                         return true;
                     break;
                 case 4:
-                    if (card.Name == Card.CardName.魔弹 || card.Element == Card.CardElement.light)
+                    if ((card.Name == Card.CardName.魔弹 || card.Element == Card.CardElement.light) && !isCovered)
                         return true;
                     break;
                 case 5:
-                    return true;                    
+                    return !isCovered;
+                case 8:
+                    return isCovered;
             }
             return false;
         }
@@ -293,8 +297,7 @@ namespace AGrail
                 case 2:
                     return true;
                 case 3:
-                    if (player.team != BattleData.Instance.MainPlayer.team && player.id != BattleData.Instance.Agent.Cmd.args[3] &&
-                        !(player.role_id == (uint)RoleID.AnSha && player.is_knelt))
+                    if (player.team != BattleData.Instance.MainPlayer.team && player.id != BattleData.Instance.Agent.Cmd.args[3])
                         return true;
                     break;
             }
@@ -330,6 +333,7 @@ namespace AGrail
                 case 11:
                     return 1;
                 case 5:
+                case 8:
                     return BattleData.Instance.Agent.Cmd.args[1];
             }
             return 0;
@@ -450,7 +454,18 @@ namespace AGrail
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        "选择治疗数");
+                        "选择用于抵御伤害治疗数量");
+                    break;
+                case 8:
+                    //弃盖牌
+                    OKAction = () =>
+                    {
+                        sendReponseMsg((uint)BasicRespondType.RESPOND_DISCARD_COVER, BattleData.Instance.MainPlayer.id,
+                            null, BattleData.Instance.Agent.SelectCards, new List<uint>() { 1 });
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                    };
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                        "选择要舍弃的盖牌");
                     break;
                 case 10:
                 case 11:

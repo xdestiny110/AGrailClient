@@ -15,6 +15,14 @@ namespace AGrail
         private Toggle fourPeople;
         [SerializeField]
         private InputField password;
+        [SerializeField]
+        private Toggle firstExtension;
+        [SerializeField]
+        private Toggle thirdExtension;
+        [SerializeField]
+        private Toggle spMoDaoExtension;
+        [SerializeField]
+        private Dropdown seatModeChoose;
 
         public override WindowType Type
         {
@@ -33,11 +41,11 @@ namespace AGrail
                 role_strategy = (network.ROLE_STRATEGY)(roleChoose.value + 1),
                 room_name = roomTitle.text,
                 password = password.text,
-                seat_mode = 1,
-                first_extension = false,
-                second_extension = false,
+                seat_mode = seatModeChoose.value + 1,
+                first_extension = firstExtension.isOn,
+                second_extension = firstExtension.isOn,
                 silence = false,
-                sp_mo_dao = false,
+                sp_mo_dao = spMoDaoExtension.isOn,
             };
             Lobby.Instance.CreateRoom(proto);
             GameManager.UIInstance.PopWindow(WinMsg.Pause);

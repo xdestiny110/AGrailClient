@@ -90,7 +90,6 @@ namespace AGrail
             {                
                 case 1702:
                 case 1703:
-                    return 6;
                 case 1704:
                     return BattleData.Instance.MainPlayer.max_hand;
             }

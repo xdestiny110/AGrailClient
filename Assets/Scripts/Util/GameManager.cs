@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 using Framework.Network;
 using Framework.UI;
 using System;
+using Framework.AssetBundle;
 
 namespace AGrail
 {
@@ -44,7 +45,11 @@ namespace AGrail
             var battleInst = BattleData.Instance;
             var dialogInst = Dialog.Instance;
 
-            SceneManager.LoadScene(1);
+            Screen.sleepTimeout = SleepTimeout.NeverSleep;
+
+            AssetBundleManager.Instance.LoadManifestAsyn(
+                new LoadManifestCB() { Cb = new Action<AssetBundleManifest>((m)=> { SceneManager.LoadScene(1); }) });
+
         }
 
         void OnLevelWasLoaded(int level)
@@ -52,8 +57,8 @@ namespace AGrail
             Debug.LogFormat("Level = {0}", level);
             switch (level)
             {
-                case 1:                    
-                    UIInstance.PushWindow(WindowType.LoginBox, WinMsg.None);                    
+                case 1:
+                    UIInstance.PushWindow(WindowType.LoginBox, WinMsg.None);
                     break;
                 case 2:
                     break;

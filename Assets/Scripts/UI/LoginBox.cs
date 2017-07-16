@@ -12,7 +12,7 @@ namespace AGrail
         [SerializeField]
         private Transform root;
         [SerializeField]
-        private GameObject waitAnyClick;
+        private GameObject btnStart;
         [SerializeField]
         private GameObject loginInput;
         [SerializeField]
@@ -36,7 +36,6 @@ namespace AGrail
 
         public override void Awake()
         {
-            GameManager.AddUpdateAction(showLoginInput);
             state = UserData.Instance.State;
             MessageSystem<MessageType>.Regist(MessageType.LoginState, this);
             base.Awake();
@@ -44,7 +43,6 @@ namespace AGrail
 
         public override void OnDestroy()
         {
-            GameManager.RemoveUpdateAciont(showLoginInput);
             MessageSystem<MessageType>.UnRegist(MessageType.LoginState, this);
             base.OnDestroy();
         }
@@ -59,10 +57,10 @@ namespace AGrail
             canvas.renderMode = RenderMode.ScreenSpaceCamera;
             canvas.worldCamera = Camera.main;
             titleImg.SetParent(go.transform);
-            titleImg.transform.DOLocalMoveY(Screen.height / 800.0f * 330, 1);
-            titleImg.transform.DOScaleX(Screen.width / 1200.0f * 0.8f, 1);
-            titleImg.transform.DOScaleY(Screen.height / 800.0f * 0.8f, 1);
-            root.transform.DOLocalMoveX(-1280, 1).OnComplete(() => { base.OnHide(); gameObject.SetActive(false); });
+            titleImg.transform.DOLocalMoveY(Screen.height / 800.0f * 315, 1);
+            titleImg.transform.DOScaleX(Screen.width / 1280.0f * 0.75f, 1);
+            titleImg.transform.DOScaleY(Screen.height / 800.0f * 0.75f, 1);
+            root.transform.DOLocalMoveX(Screen.width, 1.0f).OnComplete(() => { base.OnHide(); gameObject.SetActive(false); });
         }
 
         public override void OnEventTrigger(MessageType eventType, params object[] parameters)
@@ -80,11 +78,13 @@ namespace AGrail
             UserData.Instance.Login(inptUserName.text, inptPassword.text);
         }
 
-        private void showLoginInput()
+        public void OnBtnStartClick()
         {
-            if (Input.anyKeyDown && state == LoginState.Ready && waitAnyClick.activeSelf)
+            if ((PlayerPrefs.HasKey("username") && PlayerPrefs.HasKey("password")))
+                Login();
+            else
             {
-                waitAnyClick.SetActive(false);
+                btnStart.SetActive(false);
                 loginInput.SetActive(true);
             }
         }

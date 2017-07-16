@@ -21,8 +21,11 @@ namespace AGrail
             get { return agentState; }
             set
             {
-                Debug.LogFormat("Agent state = {0}", value);
-                agentState = value;
+                Debug.LogFormat("Agent state = 0x{0}", Convert.ToString(value, 16));
+                if (agentState == (int)PlayerAgentState.CanResign)
+                    agentState |= value;
+                else
+                    agentState = value;
                 MessageSystem<MessageType>.Notify(MessageType.AgentStateChange);
                 FSM.ChangeState(calUIState(agentState), true, UIStateMsg.Init);
             }
