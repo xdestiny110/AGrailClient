@@ -13,11 +13,13 @@ namespace AGrail
         [SerializeField]
         private Transform root;
         [SerializeField]
-        private GameObject roomItemPrefab;        
+        private GameObject roomItemPrefab;
         [SerializeField]
         private GameObject loadingIcon;
         [SerializeField]
         private Transform content;
+        [SerializeField]
+        private GameObject title;
 
         private List<network.RoomListResponse.RoomInfo> roomInfos
         {
@@ -48,14 +50,14 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.RoomList, this);
             MessageSystem<MessageType>.Regist(MessageType.EnterRoom, this);
             MessageSystem<MessageType>.Regist(MessageType.ERROR, this);
-            root.localPosition = new Vector3(1280, 0, 0);
+            root.localPosition = new Vector3(Screen.width, 0, 0);
             root.DOLocalMoveX(0, 1.0f).OnComplete(
                 () =>
-                {                    
+                {
                     var go = GameObject.Find("GameTitle");
-                    go.transform.SetParent(root);
-                    //go.transform.GetChild(0).SetParent(root);                    
-                    //Destroy(go);
+                    (title.transform as RectTransform).sizeDelta = (go.transform.GetChild(0) as RectTransform).sizeDelta;
+                    Destroy(go);
+                    title.SetActive(true);
                 });
             if(Lobby.Instance.RoomInfo == null)
                 Lobby.Instance.GetRoomList();
@@ -77,7 +79,7 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.RoomList, this);
             MessageSystem<MessageType>.UnRegist(MessageType.EnterRoom, this);
             MessageSystem<MessageType>.UnRegist(MessageType.ERROR, this);
-            root.DOLocalMoveX(-1280, 1.0f).OnComplete(() => { gameObject.SetActive(false); base.OnHide(); });            
+            root.DOLocalMoveX(-Screen.width, 1.0f).OnComplete(() => { gameObject.SetActive(false); base.OnHide(); });            
         }
 
         public override void OnShow()
@@ -86,7 +88,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.EnterRoom, this);
             MessageSystem<MessageType>.Regist(MessageType.ERROR, this);
             gameObject.SetActive(true);
-            root.localPosition = new Vector3(-1280, 0, 0);            
+            root.localPosition = new Vector3(-Screen.width, 0, 0);
             root.DOLocalMoveX(0, 1.0f);
             if (Lobby.Instance.RoomInfo == null)
                 Lobby.Instance.GetRoomList();

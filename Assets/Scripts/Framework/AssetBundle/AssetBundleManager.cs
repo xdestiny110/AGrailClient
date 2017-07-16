@@ -56,7 +56,8 @@ namespace Framework.AssetBundle
             get
 #if !UNITY_EDITOR
             {
-                return false;
+                //服务器没完成的情况下暂时先忽略
+                return true;
             }
 #else
             {
