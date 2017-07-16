@@ -288,6 +288,7 @@ namespace AGrail
 					return;
 				case (uint)SkillID.MO_NV_ZHI_NU:
 					OKAction = () => {
+                        IsStart = true;
 						MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
 						sendReponseMsg (state, BattleData.Instance.MainPlayer.id,
 							null, null, new List<uint> () { 1, BattleData.Instance.Agent.SelectArgs[0] });
@@ -305,7 +306,6 @@ namespace AGrail
 					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "选择要摸取的手牌数量", selectList, mList);
 					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
 						string.Format("{0}: 是否发动魔女之怒", Skills[state].SkillName));
-					return;
 					return;
 				default:
 					base.UIStateChange (state, msg, paras);
