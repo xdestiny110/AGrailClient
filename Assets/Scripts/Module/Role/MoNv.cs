@@ -98,8 +98,8 @@ namespace AGrail
 					return player.team == BattleData.Instance.MainPlayer.team && BattleData.Instance.PlayerID != player.id;
 				case (uint)SkillID.CANG_YAN_FA_DIAN:
 				case (uint)SkillID.TIAN_HUO_DUAN_KONG:
-				case (uint)SkillID.TONG_KU_LIAN_JIE:
-					return true;
+                    return true;
+                case (uint)SkillID.TONG_KU_LIAN_JIE:
 				case (uint)SkillID.MO_NENG_FAN_ZHUAN:
 					return player.team != BattleData.Instance.MainPlayer.team;
 			}
@@ -261,7 +261,7 @@ namespace AGrail
 						BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
 					};
 					MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.SendHint,
-						string.Format ("{0}: 请选择目标队以及一张法术牌", Skills [state].SkillName));
+						string.Format ("{0}: 请选择目标队友以及一张法术牌", Skills [state].SkillName));
 					return;
 				case (uint)SkillID.TONG_KU_LIAN_JIE:
 					OKAction = () => {
@@ -271,7 +271,7 @@ namespace AGrail
 					};
 					CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
 					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-						string.Format("{0}: 请选择目标玩家", Skills[state].SkillName));
+						string.Format("{0}: 请选择目标对手", Skills[state].SkillName));
 					return;
 				case (uint)SkillID.MO_NENG_FAN_ZHUAN:
 					OKAction = () => {
@@ -295,7 +295,8 @@ namespace AGrail
 						BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
 					};
 					CancelAction = () => {
-						sendReponseMsg (state, BattleData.Instance.MainPlayer.id, null, null, new List<uint> () { 0 });
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                        sendReponseMsg (state, BattleData.Instance.MainPlayer.id, null, null, new List<uint> () { 0 });
 						BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
 					};
 					

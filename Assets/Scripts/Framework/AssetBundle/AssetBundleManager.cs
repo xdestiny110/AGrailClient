@@ -80,7 +80,15 @@ namespace Framework.AssetBundle
 #if UNITY_EDITOR
                 return UnityEditor.EditorUserBuildSettings.activeBuildTarget.ToString();
 #else
-                return Application.platform.ToString();
+                switch (Application.platform)
+                {
+                    case RuntimePlatform.WindowsPlayer:
+                        return "StandaloneWindows";
+                    case RuntimePlatform.Android:
+                        return "Android";
+                    default:
+                        return "Error";
+                }
 #endif
             }
         }
@@ -110,18 +118,24 @@ namespace Framework.AssetBundle
                 yield break;
             }
 
-            UnityWebRequest oldWww = UnityWebRequest.GetAssetBundle(Application.streamingAssetsPath + "/" + manifestFileName);
+            string manifestPath =
+#if UNITY_ANDROID && !UNITY_EDITOR
+                "jar:file://" + Application.dataPath + "!/assets/" + manifestFileName;
+#else
+                Application.streamingAssetsPath + "/" + manifestFileName;
+#endif
+            UnityWebRequest oldWww = UnityWebRequest.GetAssetBundle(manifestPath);
             yield return oldWww.Send();
-            if (!oldWww.isError)
+            if (!oldWww.isNetworkError)
                 localManifest = (oldWww.downloadHandler as DownloadHandlerAssetBundle).assetBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
             else
-                Debug.LogError("local manifest is null!");
+                Debug.LogErrorFormat("local manifest is null! Path = {0}", manifestPath);
 
             if (!IgnoreBundleServer)
             {
                 UnityWebRequest newWww = UnityWebRequest.GetAssetBundle(remoteSrv + manifestFileName + "/" + manifestFileName);
                 yield return newWww.Send();
-                if (!newWww.isError)
+                if (!newWww.isNetworkError)
                     remoteManifest = (newWww.downloadHandler as DownloadHandlerAssetBundle).assetBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
                 else
                     Debug.LogError("remote manifest is null!");
@@ -223,7 +237,7 @@ namespace Framework.AssetBundle
 
             www = UnityWebRequest.GetAssetBundle(uri, manifest.GetAssetBundleHash(bundleName), 0);
             yield return www.Send();
-            if (www.isError)
+            if (www.isNetworkError)
                 Debug.LogErrorFormat("Download bundle {0} from {1} failed.", bundleName, uri);
             else
             {

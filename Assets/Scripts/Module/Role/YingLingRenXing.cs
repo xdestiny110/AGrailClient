@@ -193,9 +193,9 @@ namespace AGrail
                 case 2704:
                     OKAction = () =>
                     {
-                        if (BattleData.Instance.MainPlayer.is_knelt)
-                        sendReponseMsg(2701, BattleData.Instance.MainPlayer.id,null, BattleData.Instance.Agent.SelectCards,
-                            new List<uint>() { 2, BattleData.Instance.Agent.SelectArgs[0] });
+                        if (BattleData.Instance.MainPlayer.is_knelt && BattleData.Instance.Agent.SelectArgs.Count > 0)
+                            sendReponseMsg(2701, BattleData.Instance.MainPlayer.id, null, BattleData.Instance.Agent.SelectCards,
+                                new List<uint>() { 2, BattleData.Instance.Agent.SelectArgs[0] });
                         else
                             sendReponseMsg(2701, BattleData.Instance.MainPlayer.id, null, BattleData.Instance.Agent.SelectCards,
                             new List<uint>() { 2, 0 });
@@ -213,8 +213,7 @@ namespace AGrail
                     mList.Clear();
                     if (BattleData.Instance.MainPlayer.is_knelt && (BattleData.Instance.MainPlayer.blue_token > 1))
                     {
-                        
-                        for (uint i = 0; i<BattleData.Instance.MainPlayer.blue_token; i++)
+                        for (uint i = 0; i < BattleData.Instance.MainPlayer.blue_token; i++)
                         {
                             selectList.Add(new List<uint>() { i });
                             mList.Add("个魔纹");
@@ -223,9 +222,10 @@ namespace AGrail
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                         string.Format("{0}: 请选择额外翻转的魔纹数量以及异系卡牌", Skills[state].SkillName));
                     }
-                    else { 
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("{0}: 请选择异系卡牌", Skills[state].SkillName));
+                    else
+                    {
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                            string.Format("{0}: 请选择异系卡牌", Skills[state].SkillName));
                     }
                     return;
 
