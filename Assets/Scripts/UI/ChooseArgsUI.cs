@@ -54,7 +54,7 @@ namespace AGrail
                     for (int i = 0; i < argsCache.Count; i++)
                         args.options.Add(new Dropdown.OptionData()
                         {
-                            text = string.Format("{0}个宝石与{1}个星石", argsCache[i][0], argsCache[i][1])
+                            text = string.Format("{0}个宝石与{1}个水晶", argsCache[i][0], argsCache[i][1])
                         });                    
                 }
                 else if(t == "Heal")
