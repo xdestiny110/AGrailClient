@@ -126,7 +126,7 @@ namespace Framework.AssetBundle
 #endif
             UnityWebRequest oldWww = UnityWebRequest.GetAssetBundle(manifestPath);
             yield return oldWww.Send();
-            if (!oldWww.isNetworkError)
+            if (!oldWww.isError)
                 localManifest = (oldWww.downloadHandler as DownloadHandlerAssetBundle).assetBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
             else
                 Debug.LogErrorFormat("local manifest is null! Path = {0}", manifestPath);
@@ -135,7 +135,7 @@ namespace Framework.AssetBundle
             {
                 UnityWebRequest newWww = UnityWebRequest.GetAssetBundle(remoteSrv + manifestFileName + "/" + manifestFileName);
                 yield return newWww.Send();
-                if (!newWww.isNetworkError)
+                if (!newWww.isError)
                     remoteManifest = (newWww.downloadHandler as DownloadHandlerAssetBundle).assetBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
                 else
                     Debug.LogError("remote manifest is null!");
@@ -237,7 +237,7 @@ namespace Framework.AssetBundle
 
             www = UnityWebRequest.GetAssetBundle(uri, manifest.GetAssetBundleHash(bundleName), 0);
             yield return www.Send();
-            if (www.isNetworkError)
+            if (www.isError)
                 Debug.LogErrorFormat("Download bundle {0} from {1} failed.", bundleName, uri);
             else
             {
