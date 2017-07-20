@@ -126,7 +126,7 @@ namespace AGrail
 
         public void OnBtnCreateClick()
         {
-            GameManager.UIInstance.PushWindow(WindowType.CreateRoomUI, WinMsg.Pause);
+            GameManager.UIInstance.PushWindow(WindowType.CreateRoomUI, WinMsg.Hide);
         }
 
         private Coroutine coroHandle = null;

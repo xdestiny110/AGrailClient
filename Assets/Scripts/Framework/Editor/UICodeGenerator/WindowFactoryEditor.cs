@@ -25,6 +25,13 @@ namespace Framework.UI
                 windowTypes.Add(goPrefab.name);
                 //writeWindowBase(goPrefab.name);
             }
+            uiPrefabs = EditorTool.AssetPathOfUnityFolder("Resources/" + WindowFactory.WindowPrefabPath, ".prefab");
+            foreach (var v in uiPrefabs)
+            {
+                var goPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(v);
+                windowTypes.Add(goPrefab.name);
+                //writeWindowBase(goPrefab.name);
+            }
             writeWindowType();
         }
 

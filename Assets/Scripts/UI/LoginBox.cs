@@ -12,7 +12,7 @@ namespace AGrail
         [SerializeField]
         private Transform root;
         [SerializeField]
-        private GameObject btnStart;
+        private GameObject btnStart;        
         [SerializeField]
         private GameObject loginInput;
         [SerializeField]
@@ -23,6 +23,8 @@ namespace AGrail
         private Text txtStatus;
         [SerializeField]
         private Button btnLogin;
+        [SerializeField]
+        private Button btnSwitchAccount;
         [SerializeField]
         private Transform titleImg;        
 
@@ -38,6 +40,11 @@ namespace AGrail
         {
             state = UserData.Instance.State;
             MessageSystem<MessageType>.Regist(MessageType.LoginState, this);
+            btnSwitchAccount.onClick.AddListener(() =>
+            {
+                btnStart.SetActive(false);
+                loginInput.SetActive(true);
+            });
             base.Awake();
         }
 
@@ -106,10 +113,12 @@ namespace AGrail
                         break;
                     case LoginState.Ready:
                         txtStatus.text = "";
+                        btnStart.SetActive(true);
                         if (PlayerPrefs.HasKey("username") && PlayerPrefs.HasKey("password"))
                         {
                             inptUserName.text = PlayerPrefs.GetString("username");
                             inptPassword.text = PlayerPrefs.GetString("password");
+                            btnSwitchAccount.gameObject.SetActive(true);
                         }
                         break;
                     case LoginState.Update:

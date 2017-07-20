@@ -20,7 +20,6 @@ namespace Framework.AssetBundle
                     var go = new GameObject("AssetBundleMgr");
                     instance = go.AddComponent<AssetBundleManager>();
                     DontDestroyOnLoad(go);
-                    instance.init();                    
                 }
                 return instance;
             }
@@ -93,54 +92,68 @@ namespace Framework.AssetBundle
             }
         }
 
+        private bool noCoro = true;
+        public float Progress
+        {
+            get
+            {
+                float val = 0;
+                foreach(var www in wwws)
+                    val += www.progress;
+                foreach (var req in reqs)
+                    val += req.downloadProgress;
+                var cnt = wwws.Count + reqs.Count;
+                val /= (cnt == 0) ? 1 : cnt;
+                if (cnt == 0 && !noCoro)
+                    val = 100;
+                return val;
+            }
+        }
+
         private const string remoteSrv = "http://10.0.2.114:7888/";
         private AssetBundleManifest localManifest = null;
         private AssetBundleManifest remoteManifest = null;
         private Dictionary<string, UnityEngine.AssetBundle> bundles = new Dictionary<string, UnityEngine.AssetBundle>();
-
+        private List<WWW> wwws = new List<WWW>();
+        private List<UnityWebRequest> reqs = new List<UnityWebRequest>();
 
         void init()
-        {            
+        {
             Debug.LogFormat("SimulationMode = {0}", SimulationMode);
             Caching.maximumAvailableDiskSpace = 200 * 1024 * 1024;
         }
 
-        public void LoadManifestAsyn(LoadManifestCB cb)
+        void Awake()
         {
-            StartCoroutine(LoadManifestCoro(cb));
+            init();
         }
 
-        public IEnumerator LoadManifestCoro(LoadManifestCB cb)
+        public void LoadManifestAsyn(Action<AssetBundleManifest> cb, Action errCb)
+        {
+            StartCoroutine(LoadManifestCoro(cb, errCb));
+        }
+
+        public IEnumerator LoadManifestCoro(Action<AssetBundleManifest> cb, Action errCb)
         {
             if (SimulationMode)
             {
-                cb.Cb(null);
+                noCoro = false;
+                if (cb != null)
+                    cb(null);
                 yield break;
             }
+            localManifest = null;
+            remoteManifest = null;
 
-            string manifestPath =
-#if UNITY_ANDROID && !UNITY_EDITOR
-                "jar:file://" + Application.dataPath + "!/assets/" + manifestFileName;
-#else
-                Application.streamingAssetsPath + "/" + manifestFileName;
-#endif
-            UnityWebRequest oldWww = UnityWebRequest.GetAssetBundle(manifestPath);
-            yield return oldWww.Send();
-            if (!oldWww.isNetworkError)
-                localManifest = (oldWww.downloadHandler as DownloadHandlerAssetBundle).assetBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
-            else
-                Debug.LogErrorFormat("local manifest is null! Path = {0}", manifestPath);
+            yield return StartCoroutine(downloadAssetBundleManifest(true));
+            if(!IgnoreBundleServer)
+                yield return StartCoroutine(downloadAssetBundleManifest(false));
 
-            if (!IgnoreBundleServer)
+            if (isError)
             {
-                UnityWebRequest newWww = UnityWebRequest.GetAssetBundle(remoteSrv + manifestFileName + "/" + manifestFileName);
-                yield return newWww.Send();
-                if (!newWww.isNetworkError)
-                    remoteManifest = (newWww.downloadHandler as DownloadHandlerAssetBundle).assetBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
-                else
-                    Debug.LogError("remote manifest is null!");
-                if (SimulationMode)
-                    yield break;
+                if (errCb != null)
+                    errCb();
+                yield break;
             }
 
             //两个Manifest进行比较
@@ -149,14 +162,46 @@ namespace Framework.AssetBundle
             if(remoteManifest != null)
             {
                 foreach (var v in remoteManifest.GetAllAssetBundles())
-                    yield return StartCoroutine(downloadAssetBundle(v));
-                cb.Cb(remoteManifest);
+                {
+                    if(localManifest != null)
+                    {
+                        if(localManifest.GetAssetBundleHash(v) != remoteManifest.GetAssetBundleHash(v))
+                            yield return StartCoroutine(downloadAssetBundle(remoteManifest, v, false));
+                        else
+                            yield return StartCoroutine(downloadAssetBundle(localManifest, v, true));
+                    }
+                    else
+                        yield return StartCoroutine(downloadAssetBundle(remoteManifest, v, false));
+                    if (isError)
+                    {
+                        if (errCb != null)
+                            errCb();
+                        yield break;
+                    }
+                }
+                if(cb != null)
+                    cb(remoteManifest);
+            }
+            else if(localManifest != null)
+            {
+                foreach (var v in localManifest.GetAllAssetBundles())
+                {
+                    yield return StartCoroutine(downloadAssetBundle(localManifest, v, true));
+                    if (isError)
+                    {
+                        if (errCb != null)
+                            errCb();
+                        yield break;
+                    }
+                }
+                if (cb != null)
+                    cb(localManifest);
             }
             else
             {
-                foreach (var v in localManifest.GetAllAssetBundles())
-                    yield return StartCoroutine(downloadAssetBundle(v));
-                cb.Cb(localManifest);
+                if (errCb != null)
+                    errCb();
+                Debug.LogError("localMainifest is null!");
             }
         }
 
@@ -192,7 +237,7 @@ namespace Framework.AssetBundle
 #endif
         }
 
-        public void LoadAssetAsyn(string assetbundleName, string assetName, LoadAssetCB cb)
+        public void LoadAssetAsyn(string assetbundleName, string assetName, Action<GameObject> cb)
         {
             assetbundleName = assetbundleName.ToLower();
 #if UNITY_EDITOR
@@ -205,56 +250,116 @@ namespace Framework.AssetBundle
 #endif
         }
 
-        public IEnumerator LoadAssetAsynCoro(string assetbundleName, string assetName, LoadAssetCB cb)
+        public IEnumerator LoadAssetAsynCoro(string assetbundleName, string assetName, Action<GameObject> cb)
         {
             assetbundleName = assetbundleName.ToLower();
             if (bundles.ContainsKey(assetbundleName))
             {
                 var req = bundles[assetbundleName].LoadAssetAsync<GameObject>(assetName);
                 yield return req;
-                cb.Cb(req.asset as GameObject);
+                if(cb != null)
+                    cb(req.asset as GameObject);
             }
             else
                 Debug.LogErrorFormat("There is no asset with name {0}/{1}", assetbundleName, assetName);
         }
 
-        private IEnumerator downloadAssetBundle(string bundleName)
+        private bool isError = false;
+        private IEnumerator downloadAssetBundleManifest(bool isLocal)
         {
-            string uri = "";
-            UnityWebRequest www = null;
-            AssetBundleManifest manifest = null;
-            if (remoteManifest == null || (localManifest.GetAllAssetBundles().Contains(bundleName) &&
-                remoteManifest.GetAssetBundleHash(bundleName) == localManifest.GetAssetBundleHash(bundleName)))
+            if (isLocal)
             {
-                manifest = localManifest;
-                uri = Application.streamingAssetsPath + "/" + bundleName;
+                var uri =
+#if UNITY_EDITOR
+                 "file://" + Application.streamingAssetsPath + "/" + manifestFileName;
+#elif UNITY_ANDROID
+                "jar:file://" + Application.dataPath + "!/assets/" + manifestFileName;
+#endif
+                using(var www = new WWW(uri))
+                {
+                    wwws.Add(www);
+                    noCoro = false;
+                    yield return www;
+                    if (!string.IsNullOrEmpty(www.error))
+                    {
+                        Debug.LogErrorFormat("Can not get manifest! Uri = {0}. Error = {1}", uri, www.error);
+                        isError = true;
+                    }
+                    else
+                        localManifest = www.assetBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
+                    wwws.Remove(www);
+                }
             }
             else
             {
-                manifest = remoteManifest;
-                uri = remoteSrv + "/" + manifestFileName + "/" + bundleName;
-            }
-
-            www = UnityWebRequest.GetAssetBundle(uri, manifest.GetAssetBundleHash(bundleName), 0);
-            yield return www.Send();
-            if (www.isNetworkError)
-                Debug.LogErrorFormat("Download bundle {0} from {1} failed.", bundleName, uri);
-            else
-            {
-                Debug.LogFormat("Download bundle {0} from {1} succeed.", bundleName, uri);
-                bundles.Add(bundleName, DownloadHandlerAssetBundle.GetContent(www));
+                var uri = remoteSrv + manifestFileName + "/" + manifestFileName;
+                using(var req = UnityWebRequest.GetAssetBundle(uri))
+                {
+                    reqs.Add(req);
+                    noCoro = false;
+                    yield return req.Send();
+                    if (req.isError)
+                    {
+                        Debug.LogErrorFormat("Can not get manifest! Uri = {0}.", uri);
+                        isError = true;
+                    }
+                    else
+                        remoteManifest = DownloadHandlerAssetBundle.GetContent(req).LoadAsset<AssetBundleManifest>("AssetBundleManifest");
+                    reqs.Remove(req);
+                }
             }
         }
-    }
 
-    public class LoadManifestCB
-    {
-        public Action<AssetBundleManifest> Cb = null;
-    }
-
-    public class LoadAssetCB
-    {
-        public Action<GameObject> Cb = null;
+        private IEnumerator downloadAssetBundle(AssetBundleManifest manifest, string bundleName, bool isLocal)
+        {
+            if (isLocal)
+            {
+                var uri =
+#if UNITY_EDITOR
+                 "file://" + Application.streamingAssetsPath + "/" + bundleName;
+#elif UNITY_ANDROID
+                "jar:file://" + Application.dataPath + "!/assets/" + bundleName;
+#endif
+                using (var www = WWW.LoadFromCacheOrDownload(uri, manifest.GetAssetBundleHash(bundleName)))
+                {
+                    wwws.Add(www);
+                    noCoro = false;
+                    yield return www;
+                    if (!string.IsNullOrEmpty(www.error))
+                    {
+                        Debug.LogErrorFormat("Download bundle {0} from {1} failed.", bundleName, uri);
+                        isError = true;
+                    }
+                    else
+                    {
+                        Debug.LogFormat("Download bundle {0} from {1} succeed.", bundleName, uri);
+                        bundles.Add(bundleName, www.assetBundle);
+                    }
+                    wwws.Remove(www);
+                }
+            }
+            else
+            {
+                var uri = remoteSrv + "/" + manifestFileName + "/" + bundleName;
+                using (var req = UnityWebRequest.GetAssetBundle(uri, manifest.GetAssetBundleHash(bundleName), 0))
+                {
+                    reqs.Add(req);
+                    noCoro = false;
+                    yield return req.Send();
+                    if (req.isError)
+                    {
+                        Debug.LogErrorFormat("Download bundle {0} from {1} failed.", bundleName, uri);
+                        isError = true;
+                    }
+                    else
+                    {
+                        Debug.LogFormat("Download bundle {0} from {1} succeed.", bundleName, uri);
+                        bundles.Add(bundleName, DownloadHandlerAssetBundle.GetContent(req));
+                    }
+                    reqs.Remove(req);
+                }
+            }
+        }
     }
 }
 

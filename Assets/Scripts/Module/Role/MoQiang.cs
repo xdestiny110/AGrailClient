@@ -50,13 +50,11 @@ namespace AGrail
             {
                 case 1:
                 case 2:
+                case 3:
+                case 4:
                 case 10:
                 case 11:
                     if (card.Type == Card.CardType.magic)
-                        return false;
-                    break;
-                case 3:
-                    if (card.Name == Card.CardName.圣光)
                         return false;
                     break;
                 case (uint)SkillID.暗之障壁:

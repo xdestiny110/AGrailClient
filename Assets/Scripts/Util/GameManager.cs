@@ -47,9 +47,8 @@ namespace AGrail
 
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
-            AssetBundleManager.Instance.LoadManifestAsyn(
-                new LoadManifestCB() { Cb = new Action<AssetBundleManifest>((m)=> { SceneManager.LoadScene(1); }) });
-
+            AssetBundleManager.Instance.LoadManifestAsyn(m => { /*SceneManager.LoadScene(1);*/ } , () => {  });
+            UIInstance.PushWindowFromResource(WindowType.Loading, WinMsg.None);
         }
 
         void OnLevelWasLoaded(int level)
@@ -58,9 +57,8 @@ namespace AGrail
             switch (level)
             {
                 case 1:
+                    UIInstance.ClearAllWindow();
                     UIInstance.PushWindow(WindowType.LoginBox, WinMsg.None);
-                    break;
-                case 2:
                     break;
             }
         }

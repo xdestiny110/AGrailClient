@@ -24,6 +24,23 @@ namespace Framework.UI
             return win;
         }
 
+        public WindowsBase PushWindowFromResource(WindowType type, WinMsg msg, Vector3 initPos = default(Vector3), params object[] parameters)
+        {
+            var go = WindowFactory.Instance.CreateWindows(type, true);
+            go.name = type.ToString();
+            go.transform.position = initPos;
+            var win = go.GetComponent<WindowsBase>();
+            win.Parameters = parameters;
+            WindowsBase topWin;
+            if (winStack.TryPeek(out topWin))
+            {
+                win.Canvas.sortingOrder = topWin.Canvas.sortingOrder + 1;
+                dealWinMsg(topWin, msg);
+            }
+            winStack.Push(win);
+            return win;
+        }
+
         public void PopWindow(WinMsg msg)
         {
             WindowsBase topWin;
@@ -35,6 +52,13 @@ namespace Framework.UI
             }
             else
                 throw new System.Exception("Winstack is empty!");
+        }
+
+        public void ClearAllWindow()
+        {
+            //只是全部弹出,用于切换场景            
+            while(winStack.Count > 0)
+                winStack.Pop();
         }
 
         public WindowType PeekWindow()
