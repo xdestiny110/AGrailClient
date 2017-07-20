@@ -5,6 +5,7 @@ using UnityEngine;
 using System;
 using UnityEngine.UI;
 using Framework.AssetBundle;
+using UnityEngine.SceneManagement;
 
 namespace AGrail
 {
@@ -23,14 +24,27 @@ namespace AGrail
 
         public override void Awake()
         {
-            Debug.Log("Show loading UI");
-            Invoke("refreshRate", 0.5f);
+            Debug.Log("Show loading UI");            
             base.Awake();
         }
 
-        private void refreshRate()
+        void Start()
         {
-            progress.text = AssetBundleManager.Instance.Progress.ToString();
+            StartCoroutine(refreshRate());
+        }
+
+        private IEnumerator refreshRate()
+        {
+            var val = AssetBundleManager.Instance.Progress;
+            while (val < 100)
+            {
+                progress.text = "Loading: " + val.ToString() + "%";
+                yield return new WaitForSeconds(0.3f);
+                val = AssetBundleManager.Instance.Progress;
+            }
+            progress.text = "Loading: " + val.ToString() + "%";
+            yield return new WaitForSeconds(1);
+            SceneManager.LoadScene(1);
         }
     }
 }

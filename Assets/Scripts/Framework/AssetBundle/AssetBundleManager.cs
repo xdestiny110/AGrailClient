@@ -92,6 +92,7 @@ namespace Framework.AssetBundle
             }
         }
 
+        private bool noCoro = true;
         public float Progress
         {
             get
@@ -103,6 +104,8 @@ namespace Framework.AssetBundle
                     val += req.downloadProgress;
                 var cnt = wwws.Count + reqs.Count;
                 val /= (cnt == 0) ? 1 : cnt;
+                if (cnt == 0 && !noCoro)
+                    val = 100;
                 return val;
             }
         }
@@ -274,6 +277,7 @@ namespace Framework.AssetBundle
                 using(var www = new WWW(uri))
                 {
                     wwws.Add(www);
+                    noCoro = false;
                     yield return www;
                     if (!string.IsNullOrEmpty(www.error))
                     {
@@ -291,6 +295,7 @@ namespace Framework.AssetBundle
                 using(var req = UnityWebRequest.GetAssetBundle(uri))
                 {
                     reqs.Add(req);
+                    noCoro = false;
                     yield return req.Send();
                     if (req.isError)
                     {
@@ -317,6 +322,7 @@ namespace Framework.AssetBundle
                 using (var www = WWW.LoadFromCacheOrDownload(uri, manifest.GetAssetBundleHash(bundleName)))
                 {
                     wwws.Add(www);
+                    noCoro = false;
                     yield return www;
                     if (!string.IsNullOrEmpty(www.error))
                     {
@@ -337,6 +343,7 @@ namespace Framework.AssetBundle
                 using (var req = UnityWebRequest.GetAssetBundle(uri, manifest.GetAssetBundleHash(bundleName), 0))
                 {
                     reqs.Add(req);
+                    noCoro = false;
                     yield return req.Send();
                     if (req.isError)
                     {
