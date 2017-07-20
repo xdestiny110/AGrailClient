@@ -12,10 +12,15 @@ namespace Framework.UI
 
         private Dictionary<WindowType, GameObject> goPool = new Dictionary<WindowType, GameObject>();
 
-        public GameObject CreateWindows(WindowType type)
+        public GameObject CreateWindows(WindowType type, bool isResource)
         {
             if (!goPool.ContainsKey(type))
-                goPool.Add(type, AssetBundleManager.Instance.LoadAsset(WindowPrefabPath, type.ToString()));
+            {
+                if (!isResource)
+                    goPool.Add(type, AssetBundleManager.Instance.LoadAsset(WindowPrefabPath, type.ToString()));
+                else
+                    goPool.Add(type, Resources.Load<GameObject>(WindowPrefabPath + "/" + type.ToString()));
+            }
             return GameObject.Instantiate(goPool[type]);
         }
     }

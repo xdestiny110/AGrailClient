@@ -47,8 +47,7 @@ namespace AGrail
 
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
-            AssetBundleManager.Instance.LoadManifestAsyn(
-                new LoadManifestCB() { Cb = new Action<AssetBundleManifest>((m)=> { SceneManager.LoadScene(1); }) });
+            AssetBundleManager.Instance.LoadManifestAsyn(m => SceneManager.LoadScene(1), () => {  });
 
         }
 
