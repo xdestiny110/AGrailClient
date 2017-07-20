@@ -137,6 +137,7 @@ namespace Framework.AssetBundle
         {
             if (SimulationMode)
             {
+                noCoro = false;
                 if (cb != null)
                     cb(null);
                 yield break;
