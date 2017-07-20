@@ -92,10 +92,27 @@ namespace Framework.AssetBundle
             }
         }
 
+        public float Progress
+        {
+            get
+            {
+                float val = 0;
+                foreach(var www in wwws)
+                    val += www.progress;
+                foreach (var req in reqs)
+                    val += req.downloadProgress;
+                var cnt = wwws.Count + reqs.Count;
+                val /= (cnt == 0) ? 1 : cnt;
+                return val;
+            }
+        }
+
         private const string remoteSrv = "http://10.0.2.114:7888/";
         private AssetBundleManifest localManifest = null;
         private AssetBundleManifest remoteManifest = null;
         private Dictionary<string, UnityEngine.AssetBundle> bundles = new Dictionary<string, UnityEngine.AssetBundle>();
+        private List<WWW> wwws = new List<WWW>();
+        private List<UnityWebRequest> reqs = new List<UnityWebRequest>();
 
         void init()
         {
@@ -256,6 +273,7 @@ namespace Framework.AssetBundle
 #endif
                 using(var www = new WWW(uri))
                 {
+                    wwws.Add(www);
                     yield return www;
                     if (!string.IsNullOrEmpty(www.error))
                     {
@@ -264,21 +282,24 @@ namespace Framework.AssetBundle
                     }
                     else
                         localManifest = www.assetBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
+                    wwws.Remove(www);
                 }
             }
             else
             {
                 var uri = remoteSrv + manifestFileName + "/" + manifestFileName;
-                using(var www = UnityWebRequest.GetAssetBundle(uri))
+                using(var req = UnityWebRequest.GetAssetBundle(uri))
                 {
-                    yield return www.Send();
-                    if (www.isError)
+                    reqs.Add(req);
+                    yield return req.Send();
+                    if (req.isError)
                     {
                         Debug.LogErrorFormat("Can not get manifest! Uri = {0}.", uri);
                         isError = true;
                     }
                     else
-                        remoteManifest = DownloadHandlerAssetBundle.GetContent(www).LoadAsset<AssetBundleManifest>("AssetBundleManifest");
+                        remoteManifest = DownloadHandlerAssetBundle.GetContent(req).LoadAsset<AssetBundleManifest>("AssetBundleManifest");
+                    reqs.Remove(req);
                 }
             }
         }
@@ -295,6 +316,7 @@ namespace Framework.AssetBundle
 #endif
                 using (var www = WWW.LoadFromCacheOrDownload(uri, manifest.GetAssetBundleHash(bundleName)))
                 {
+                    wwws.Add(www);
                     yield return www;
                     if (!string.IsNullOrEmpty(www.error))
                     {
@@ -306,15 +328,17 @@ namespace Framework.AssetBundle
                         Debug.LogFormat("Download bundle {0} from {1} succeed.", bundleName, uri);
                         bundles.Add(bundleName, www.assetBundle);
                     }
+                    wwws.Remove(www);
                 }
             }
             else
             {
                 var uri = remoteSrv + "/" + manifestFileName + "/" + bundleName;
-                using (var www = UnityWebRequest.GetAssetBundle(uri, manifest.GetAssetBundleHash(bundleName), 0))
+                using (var req = UnityWebRequest.GetAssetBundle(uri, manifest.GetAssetBundleHash(bundleName), 0))
                 {
-                    yield return www.Send();
-                    if (www.isError)
+                    reqs.Add(req);
+                    yield return req.Send();
+                    if (req.isError)
                     {
                         Debug.LogErrorFormat("Download bundle {0} from {1} failed.", bundleName, uri);
                         isError = true;
@@ -322,8 +346,9 @@ namespace Framework.AssetBundle
                     else
                     {
                         Debug.LogFormat("Download bundle {0} from {1} succeed.", bundleName, uri);
-                        bundles.Add(bundleName, DownloadHandlerAssetBundle.GetContent(www));
+                        bundles.Add(bundleName, DownloadHandlerAssetBundle.GetContent(req));
                     }
+                    reqs.Remove(req);
                 }
             }
         }

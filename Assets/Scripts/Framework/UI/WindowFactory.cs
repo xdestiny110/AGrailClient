@@ -12,7 +12,7 @@ namespace Framework.UI
 
         private Dictionary<WindowType, GameObject> goPool = new Dictionary<WindowType, GameObject>();
 
-        public GameObject CreateWindows(WindowType type, bool isResource)
+        public GameObject CreateWindows(WindowType type, bool isResource = false)
         {
             if (!goPool.ContainsKey(type))
             {
