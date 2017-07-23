@@ -4,14 +4,15 @@
     {
         None = 0,
         BattleQT,
+        BattleUIMobile,
         ChooseArgsUI,
         ChooseEnergy,
         CreateRoomUI,
         InputBox,
-        Loading,
         Lobby,
         LoginBox,
         RoleChoose31,
         RoleChooseAny,
+        Loading,
     }
 }

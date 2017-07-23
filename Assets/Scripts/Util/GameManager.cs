@@ -60,6 +60,10 @@ namespace AGrail
                     UIInstance.ClearAllWindow();
                     UIInstance.PushWindow(WindowType.LoginBox, WinMsg.None);
                     break;
+                case 2:
+                    UIInstance.ClearAllWindow();
+                    UIInstance.PushWindow(WindowType.BattleUIMobile, WinMsg.None);
+                    break;
             }
         }
 

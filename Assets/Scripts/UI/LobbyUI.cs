@@ -5,6 +5,7 @@ using DG.Tweening;
 using System;
 using System.Collections.Generic;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 namespace AGrail
 {   
@@ -105,8 +106,8 @@ namespace AGrail
                     roomInfos = Lobby.Instance.RoomInfo;
                     break;
                 case MessageType.EnterRoom:
-                    //GameManager.UIInstance.PushWindow(WindowType.Battle, WinMsg.Hide);
-                    GameManager.UIInstance.PushWindow(WindowType.BattleQT, WinMsg.Hide);
+                    //GameManager.UIInstance.PushWindow(WindowType.BattleQT, WinMsg.Hide);
+                    SceneManager.LoadScene(2);
                     break;
                 case MessageType.ERROR:
                     var errorProto = parameters[0] as network.Error;

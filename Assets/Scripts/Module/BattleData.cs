@@ -20,7 +20,7 @@ namespace AGrail
         public uint[] Crystal = new uint[2];
         public uint[] Grail = new uint[2];        
         public List<network.SinglePlayerInfo> PlayerInfos = new List<network.SinglePlayerInfo>();
-        public List<int> PlayerIdxOrder = new List<int>();
+        public List<int> PlayerIdxOrder = new List<int>();//按照顺序排列玩家ID, 第一个一定是主玩家
 
         public PlayerAgent Agent { get; private set; }
         public network.SinglePlayerInfo MainPlayer { get; private set; }
@@ -176,7 +176,9 @@ namespace AGrail
                             MainPlayer = player;
                         isInit = true;
                     }
-                    var idx = PlayerInfos.IndexOf(player);
+                    //这里可能有些乱...以后再整理吧
+                    var idx = PlayerInfos.IndexOf(player);                    
+                    idx = PlayerIdxOrder.IndexOf(idx);
                     if (v.readySpecified)
                     {
                         player.ready = v.ready;
