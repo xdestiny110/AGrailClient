@@ -270,7 +270,7 @@ namespace Framework.AssetBundle
             if (isLocal)
             {
                 var uri =
-#if UNITY_EDITOR
+#if UNITY_EDITOR || UNITY_STANDALONE
                  "file://" + Application.streamingAssetsPath + "/" + manifestFileName;
 #elif UNITY_ANDROID
                 "jar:file://" + Application.dataPath + "!/assets/" + manifestFileName;
@@ -315,7 +315,7 @@ namespace Framework.AssetBundle
             if (isLocal)
             {
                 var uri =
-#if UNITY_EDITOR
+#if UNITY_EDITOR || UNITY_STANDALONE
                  "file://" + Application.streamingAssetsPath + "/" + bundleName;
 #elif UNITY_ANDROID
                 "jar:file://" + Application.dataPath + "!/assets/" + bundleName;
