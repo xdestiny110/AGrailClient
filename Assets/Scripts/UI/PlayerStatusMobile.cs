@@ -42,15 +42,33 @@ namespace AGrail
 
         public uint ID { set; get; }
 
+        public string NickName
+        {
+            set
+            {
+                playerName.text = value;
+            }
+        }
+
         public uint RoleID
         {
             set
             {
                 role = RoleFactory.Create(value);
-                hero.texture = Resources.Load<Texture2D>("Hero/" + value.ToString());
+                if (ID == BattleData.Instance.MainPlayer.id)
+                    hero.texture = AssetBundleManager.Instance.LoadAsset<Texture2D>("hero_l", value.ToString() + "L");
+                else
+                    hero.texture = AssetBundleManager.Instance.LoadAsset<Texture2D>("hero_s", value.ToString() + "S");
+                if(hero.texture == null)
+                {
+                    if (ID == BattleData.Instance.MainPlayer.id)
+                        hero.texture = AssetBundleManager.Instance.LoadAsset<Texture2D>("hero_l", "0L");
+                    else
+                        hero.texture = AssetBundleManager.Instance.LoadAsset<Texture2D>("hero_s", "0S");
+                }
                 if (role.HasYellow)
                 {
-                    var prefab = AssetBundleManager.Instance.LoadAsset("battle", "token0");
+                    var prefab = AssetBundleManager.Instance.LoadAsset("battle", "Token0");
                     var go = Instantiate(prefab);
                     go.name = "token0";
                     go.transform.SetParent(basicAndExCardArea);
@@ -62,7 +80,7 @@ namespace AGrail
                 }
                 if (role.HasBlue)
                 {
-                    var prefab = AssetBundleManager.Instance.LoadAsset("battle", "token1");
+                    var prefab = AssetBundleManager.Instance.LoadAsset("battle", "Token1");
                     var go = Instantiate(prefab);
                     go.name = "token1";
                     go.transform.SetParent(basicAndExCardArea);
@@ -74,7 +92,7 @@ namespace AGrail
                 }
                 if (role.HasCoverd)
                 {
-                    var prefab = AssetBundleManager.Instance.LoadAsset("battle", "token2");
+                    var prefab = AssetBundleManager.Instance.LoadAsset("battle", "Token2");
                     var go = Instantiate(prefab);
                     go.name = "token2";
                     go.transform.SetParent(basicAndExCardArea);
@@ -94,12 +112,12 @@ namespace AGrail
                 if(value == Team.Blue)
                 {
                     redTeam.enabled = false;
-                    redTeam.enabled = true;
+                    blueTeam.enabled = true;
                 }
                 else
                 {
                     redTeam.enabled = true;
-                    redTeam.enabled = false;
+                    blueTeam.enabled = false;
                 }
             }
         }
@@ -213,9 +231,9 @@ namespace AGrail
             {
                 for (int i = 0; i < energyArea.childCount; i++)
                     Destroy(energyArea.GetChild(i).gameObject);
-                var prefab = AssetBundleManager.Instance.LoadAsset("battle", "gem");
+                var prefab = AssetBundleManager.Instance.LoadAsset("battle", "Gem");
                 addChildGO(energyArea, prefab, (int)value.Key);
-                prefab = AssetBundleManager.Instance.LoadAsset("battle", "crystal");
+                prefab = AssetBundleManager.Instance.LoadAsset("battle", "Crystal");
                 addChildGO(energyArea, prefab, (int)value.Value);
             }
         }
@@ -226,9 +244,9 @@ namespace AGrail
             {
                 for (int i = 0; i < handArea.childCount; i++)
                     Destroy(handArea.GetChild(i).gameObject);
-                var prefab = AssetBundleManager.Instance.LoadAsset("battle", "handcard");
+                var prefab = AssetBundleManager.Instance.LoadAsset("battle", "HandCard");
                 addChildGO(handArea, prefab, (int)Mathf.Min(value.Key, value.Value));
-                prefab = AssetBundleManager.Instance.LoadAsset("battle", "handcardempty");
+                prefab = AssetBundleManager.Instance.LoadAsset("battle", "HandCardEmpty");
                 addChildGO(handArea, prefab, (int)value.Value - (int)value.Key);                
                 if((int)value.Key - (int)value.Value > 0)
                 {
@@ -245,9 +263,9 @@ namespace AGrail
             {
                 for (int i = 0; i < healArea.childCount; i++)
                     Destroy(healArea.GetChild(i).gameObject);
-                var prefab = AssetBundleManager.Instance.LoadAsset("battle", "heal");
+                var prefab = AssetBundleManager.Instance.LoadAsset("battle", "Heal");
                 addChildGO(healArea, prefab, (int)value);
-                prefab = AssetBundleManager.Instance.LoadAsset("battle", "handcardempty");
+                prefab = AssetBundleManager.Instance.LoadAsset("battle", "HandCardEmpty");
                 addChildGO(healArea, prefab, (int)role.MaxHealCount - (int)value);
             }
         }

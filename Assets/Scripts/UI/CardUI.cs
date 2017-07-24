@@ -5,6 +5,7 @@ using UnityEngine.EventSystems;
 using Framework.Message;
 using System;
 using DG.Tweening;
+using Framework.AssetBundle;
 
 namespace AGrail
 {
@@ -62,7 +63,7 @@ namespace AGrail
             set
             {
                 card = value;
-                image.texture = Resources.Load<Texture2D>(card.AssetPath);
+                image.texture = AssetBundleManager.Instance.LoadAsset<Texture2D>("card", card.AssetPath);
                 for (int i = 0; i < propertyRoot.childCount; i++)
                     propertyRoot.GetChild(i).gameObject.SetActive(false);
                 if (card.Property != Card.CardProperty.无)                

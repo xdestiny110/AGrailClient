@@ -162,7 +162,33 @@ namespace AGrail
                     MessageSystem<MessageType>.Notify(MessageType.GrailChange, Team.Red, value.red_grail - Grail[(int)Team.Red]);
                     Grail[(int)Team.Red] = value.red_grail;
                 }
-
+                if (value.is_startedSpecified)
+                {
+                    //游戏开始，可能需要重新定位玩家位置                    
+                    if (!IsStarted && value.is_started)
+                    {
+                        PlayerIdxOrder.Clear();
+                        int t = -1;
+                        foreach (var v in value.player_infos)
+                        {
+                            var idx = value.player_infos.FindIndex(p => { return p.id == v.id; });
+                            PlayerIdxOrder.Add(idx);
+                            if (MainPlayer != null && v.id == MainPlayer.id)
+                                t = PlayerIdxOrder.Count - 1;
+                        }
+                        if (t != -1)
+                        {
+                            PlayerIdxOrder.AddRange(PlayerIdxOrder.GetRange(0, t));
+                            PlayerIdxOrder.RemoveRange(0, t);
+                        }
+                        MessageSystem<MessageType>.Notify(MessageType.GameStart);
+                    }
+                    //需要再发一次准备
+                    //以前是不用的...不知道现在改成这样的目的是什么
+                    var proto = new network.ReadyForGameRequest() { type = network.ReadyForGameRequest.Type.SEAT_READY };
+                    GameManager.TCPInstance.Send(new Protobuf() { Proto = proto, ProtoID = ProtoNameIds.READYFORGAMEREQUEST });
+                    IsStarted = value.is_started;
+                }
                 foreach (var v in value.player_infos)
                 {
                     var player = GetPlayerInfo(v.id);
@@ -277,33 +303,6 @@ namespace AGrail
                     }
                     if(v.basic_cards.Count > 0 || v.ex_cards.Count > 0 || v.delete_field.Count > 0)
                         MessageSystem<MessageType>.Notify(MessageType.PlayerBasicAndExCardChange, idx, player.basic_cards, player.ex_cards);
-                }
-                if (value.is_startedSpecified)
-                {
-                    //游戏开始，可能需要重新定位玩家位置                    
-                    if (!IsStarted && value.is_started)
-                    {
-                        PlayerIdxOrder.Clear();
-                        int t = -1;
-                        foreach(var v in value.player_infos)
-                        {
-                            var idx = PlayerInfos.FindIndex(p => { return p.id == v.id; });
-                            PlayerIdxOrder.Add(idx);
-                            if (MainPlayer != null && v.id == MainPlayer.id)
-                                t = PlayerIdxOrder.Count - 1;
-                        }
-                        if(t != -1)
-                        {
-                            PlayerIdxOrder.AddRange(PlayerIdxOrder.GetRange(0, t));
-                            PlayerIdxOrder.RemoveRange(0, t);
-                        }                        
-                        MessageSystem<MessageType>.Notify(MessageType.GameStart);
-                    }
-                    //需要再发一次准备
-                    //以前是不用的...不知道现在改成这样的目的是什么
-                    var proto = new network.ReadyForGameRequest() { type = network.ReadyForGameRequest.Type.SEAT_READY };
-                    GameManager.TCPInstance.Send(new Protobuf() { Proto = proto, ProtoID = ProtoNameIds.READYFORGAMEREQUEST });
-                    IsStarted = value.is_started;
                 }
             }
         }

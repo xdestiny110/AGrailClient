@@ -49,7 +49,8 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.GrailChange, this);
             MessageSystem<MessageType>.Regist(MessageType.SendHint, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerNickName, this);
-            MessageSystem<MessageType>.Regist(MessageType.PlayerRoleChange, this);            
+            MessageSystem<MessageType>.Regist(MessageType.PlayerTeamChange, this);
+            MessageSystem<MessageType>.Regist(MessageType.PlayerRoleChange, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerHandChange, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerHealChange, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerTokenChange, this);
@@ -63,28 +64,32 @@ namespace AGrail
             //依据数据初始化界面
             MessageSystem<MessageType>.Notify(MessageType.MoraleChange, Team.Red, BattleData.Instance.Morale[(int)Team.Red]);
             MessageSystem<MessageType>.Notify(MessageType.MoraleChange, Team.Blue, BattleData.Instance.Morale[(int)Team.Blue]);            
-            MessageSystem<MessageType>.Notify(MessageType.GemChange, Team.Red, 1);
+            MessageSystem<MessageType>.Notify(MessageType.GemChange, Team.Red, (int)BattleData.Instance.Gem[(int)Team.Red]);
             MessageSystem<MessageType>.Notify(MessageType.GemChange, Team.Blue, (int)BattleData.Instance.Gem[(int)Team.Blue]);
             MessageSystem<MessageType>.Notify(MessageType.CrystalChange, Team.Red, (int)BattleData.Instance.Crystal[(int)Team.Red]);
             MessageSystem<MessageType>.Notify(MessageType.CrystalChange, Team.Blue, (int)BattleData.Instance.Crystal[(int)Team.Blue]);
-            MessageSystem<MessageType>.Notify(MessageType.GrailChange, Team.Red, (int)BattleData.Instance.Grail[(int)Team.Red]);
-            MessageSystem<MessageType>.Notify(MessageType.GrailChange, Team.Blue, (int)BattleData.Instance.Grail[(int)Team.Blue]);            
+            MessageSystem<MessageType>.Notify(MessageType.GrailChange, Team.Red, BattleData.Instance.Grail[(int)Team.Red]);
+            MessageSystem<MessageType>.Notify(MessageType.GrailChange, Team.Blue, BattleData.Instance.Grail[(int)Team.Blue]);            
 
             var playerInfos = BattleData.Instance.PlayerInfos;
             var playerIdxOrder = BattleData.Instance.PlayerIdxOrder;
-            for (int i = 0; i < playerStatus.Count; i++)
+            if(playerIdxOrder.Count == playerInfos.Count && playerIdxOrder.Count > 0)
             {
-                var playerInfo = playerInfos[playerIdxOrder[i]];
-                playerStatus[i].ID = playerInfo.id;
-                MessageSystem<MessageType>.Notify(MessageType.PlayerNickName, i, playerInfo.nickname);
-                MessageSystem<MessageType>.Notify(MessageType.PlayerRoleChange, i, playerInfo.role_id);
-                MessageSystem<MessageType>.Notify(MessageType.PlayerHandChange, i, playerInfo.hands, playerInfo.max_hand);
-                MessageSystem<MessageType>.Notify(MessageType.PlayerHealChange, i, playerInfo.heal_count);
-                MessageSystem<MessageType>.Notify(MessageType.PlayerTokenChange, i, 
-                    playerInfo.yellow_token, playerInfo.blue_token, playerInfo.covered_count);
-                MessageSystem<MessageType>.Notify(MessageType.PlayerEnergeChange, i, playerInfo.gem, playerInfo.crystal);
-                MessageSystem<MessageType>.Notify(MessageType.PlayerKneltChange, i, playerInfo.is_knelt);
-                MessageSystem<MessageType>.Notify(MessageType.PlayerBasicAndExCardChange, i, playerInfo.basic_cards, playerInfo.ex_cards);
+                for (int i = 0; i < playerStatus.Count; i++)
+                {
+                    var playerInfo = playerInfos[playerIdxOrder[i]];
+                    playerStatus[i].ID = playerInfo.id;
+                    MessageSystem<MessageType>.Notify(MessageType.PlayerNickName, i, playerInfo.nickname);
+                    MessageSystem<MessageType>.Notify(MessageType.PlayerTeamChange, i, playerInfo.team);
+                    MessageSystem<MessageType>.Notify(MessageType.PlayerRoleChange, i, playerInfo.role_id);
+                    MessageSystem<MessageType>.Notify(MessageType.PlayerHandChange, i, playerInfo.hands, playerInfo.max_hand);
+                    MessageSystem<MessageType>.Notify(MessageType.PlayerHealChange, i, playerInfo.heal_count);
+                    MessageSystem<MessageType>.Notify(MessageType.PlayerTokenChange, i,
+                        playerInfo.yellow_token, playerInfo.blue_token, playerInfo.covered_count);
+                    MessageSystem<MessageType>.Notify(MessageType.PlayerEnergeChange, i, playerInfo.gem, playerInfo.crystal);
+                    MessageSystem<MessageType>.Notify(MessageType.PlayerKneltChange, i, playerInfo.is_knelt);
+                    MessageSystem<MessageType>.Notify(MessageType.PlayerBasicAndExCardChange, i, playerInfo.basic_cards, playerInfo.ex_cards);
+                }
             }
 
             base.Awake();
@@ -98,6 +103,7 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.GrailChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.SendHint, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerNickName, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.PlayerTeamChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerRoleChange, this);            
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerHandChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerHealChange, this);
@@ -135,6 +141,12 @@ namespace AGrail
                         hint.transform.parent.gameObject.SetActive(true);
                         hint.text = parameters[0].ToString();
                     }
+                    break;
+                case MessageType.PlayerNickName:
+                    playerStatus[(int)parameters[0]].NickName = parameters[1].ToString();
+                    break;
+                case MessageType.PlayerTeamChange:
+                    playerStatus[(int)parameters[0]].Team = (Team)(uint)parameters[1];
                     break;
                 case MessageType.PlayerRoleChange:
                     playerStatus[(int)parameters[0]].RoleID = (uint)parameters[1];
@@ -183,7 +195,7 @@ namespace AGrail
         {
             if (diffGem > 0)
             {
-                var prefab = AssetBundleManager.Instance.LoadAsset("battle", "gem");
+                var prefab = AssetBundleManager.Instance.LoadAsset("battle", "Gem");
                 for (int i = 0; i < diffGem; i++)
                 {
                     var go = Instantiate(prefab);
@@ -205,7 +217,7 @@ namespace AGrail
         {
             if (diffCrystal > 0)
             {
-                var prefab = AssetBundleManager.Instance.LoadAsset("battle", "crystal");
+                var prefab = AssetBundleManager.Instance.LoadAsset("battle", "Crystal");
                 for (int i = 0; i < diffCrystal; i++)
                 {
                     var go = Instantiate(prefab);
@@ -225,7 +237,7 @@ namespace AGrail
 
         private void grailChange(Team team, uint diffGrail)
         {
-            var prefab = AssetBundleManager.Instance.LoadAsset("battle", "grail");
+            var prefab = AssetBundleManager.Instance.LoadAsset("battle", "Grail");
             for (int i = 0; i < diffGrail; i++)
             {
                 var go = Instantiate(prefab);
@@ -243,7 +255,7 @@ namespace AGrail
             foreach (var v in card_ids)
             {
                 var card = Card.GetCard(v);
-                var go = Instantiate(AssetBundleManager.Instance.LoadAsset("card", card.AssetPath));
+                var go = Instantiate(AssetBundleManager.Instance.LoadAsset("battle", "Card"));
                 go.transform.SetParent(showCardArea);
                 go.transform.localScale = Vector3.one;
                 go.transform.localPosition = Vector3.zero;
