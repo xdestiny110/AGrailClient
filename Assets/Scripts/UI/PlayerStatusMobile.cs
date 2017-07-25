@@ -31,8 +31,7 @@ namespace AGrail
         private Transform energyArea;
         [SerializeField]
         private Transform basicAndExCardArea;
-        [SerializeField]
-        private Transform animationPos;
+        public Transform AnimationPos;
 
         private Button btnPlayer;
         private RoleBase role;

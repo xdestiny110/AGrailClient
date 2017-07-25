@@ -2573,7 +2573,7 @@ MonoBehaviour:
   healArea: {fileID: 224729947208404622}
   energyArea: {fileID: 224103663332903440}
   basicAndExCardArea: {fileID: 224083097917108198}
-  animationPos: {fileID: 224705362841421564}
+  AnimationPos: {fileID: 224479609739915164}
 --- !u!114 &114199902338178758
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2725,7 +2725,7 @@ MonoBehaviour:
   healArea: {fileID: 224141492548977306}
   energyArea: {fileID: 224794998314399216}
   basicAndExCardArea: {fileID: 224044789153896004}
-  animationPos: {fileID: 224308554699197846}
+  AnimationPos: {fileID: 224308554699197846}
 --- !u!114 &114244634321283984
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3020,7 +3020,7 @@ MonoBehaviour:
   healArea: {fileID: 224848810029104452}
   energyArea: {fileID: 224133560750472220}
   basicAndExCardArea: {fileID: 224064637162332340}
-  animationPos: {fileID: 224701308204338826}
+  AnimationPos: {fileID: 224701308204338826}
 --- !u!114 &114327928897885132
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3436,7 +3436,7 @@ MonoBehaviour:
   healArea: {fileID: 224969882822305938}
   energyArea: {fileID: 224724203829890966}
   basicAndExCardArea: {fileID: 224647603112324620}
-  animationPos: {fileID: 224272593898970814}
+  AnimationPos: {fileID: 224272593898970814}
 --- !u!114 &114464110129777098
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3778,7 +3778,7 @@ MonoBehaviour:
   healArea: {fileID: 224282360967660326}
   energyArea: {fileID: 224921847928979096}
   basicAndExCardArea: {fileID: 224351843093080120}
-  animationPos: {fileID: 224761960188841322}
+  AnimationPos: {fileID: 224761960188841322}
 --- !u!114 &114591594917601142
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5018,7 +5018,7 @@ MonoBehaviour:
   healArea: {fileID: 224949570838355390}
   energyArea: {fileID: 224879104562333810}
   basicAndExCardArea: {fileID: 224993296407129726}
-  animationPos: {fileID: 224589074921308324}
+  AnimationPos: {fileID: 224589074921308324}
 --- !u!114 &114957903908688852
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6326,9 +6326,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 125, y: -125}
   m_SizeDelta: {x: 250, y: 250}
-  m_Pivot: {x: 0, y: 1}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224282360967660326
 RectTransform:
   m_ObjectHideFlags: 1
@@ -6372,9 +6372,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 125, y: -125}
   m_SizeDelta: {x: 250, y: 250}
-  m_Pivot: {x: 0, y: 1}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224309285851517110
 RectTransform:
   m_ObjectHideFlags: 1
@@ -6951,9 +6951,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 125, y: -125}
   m_SizeDelta: {x: 250, y: 250}
-  m_Pivot: {x: 0, y: 1}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224629319788814442
 RectTransform:
   m_ObjectHideFlags: 1
@@ -7056,9 +7056,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 125, y: -125}
   m_SizeDelta: {x: 250, y: 250}
-  m_Pivot: {x: 0, y: 1}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224705362841421564
 RectTransform:
   m_ObjectHideFlags: 1
@@ -7275,9 +7275,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 125, y: -125}
   m_SizeDelta: {x: 250, y: 250}
-  m_Pivot: {x: 0, y: 1}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224763647049049226
 RectTransform:
   m_ObjectHideFlags: 1

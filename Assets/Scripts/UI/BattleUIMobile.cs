@@ -270,27 +270,30 @@ namespace AGrail
 
         private void actionAnim(uint src_id, uint dst_id)
         {
-            //int srcIdx = -1, dstIdx = -1;
-            //for (int i = 0; i < PlayersStatus.Count; i++)
-            //{
-            //    if (BattleData.Instance.PlayerInfos[i].id == src_id)
-            //        srcIdx = i;
-            //    if (BattleData.Instance.PlayerInfos[i].id == dst_id)
-            //        dstIdx = i;
-            //}
+            int srcIdx = -1, dstIdx = -1;
+            for (int i = 0; i < BattleData.Instance.PlayerInfos.Count; i++)
+            {
+                if (BattleData.Instance.PlayerInfos[i].id == src_id)
+                    srcIdx = i;
+                if (BattleData.Instance.PlayerInfos[i].id == dst_id)
+                    dstIdx = i;
+            }
 
-            //if (srcIdx < 0 || dstIdx < 0)
-            //{
-            //    Debug.LogErrorFormat("srcIdx = {0}, dstIdx = {1}", srcIdx, dstIdx);
-            //    Debug.LogErrorFormat("srcID = {0}, dstID = {1}", src_id, dst_id);
-            //    return;
-            //}
+            if (srcIdx < 0 || dstIdx < 0)
+            {
+                Debug.LogErrorFormat("srcIdx = {0}, dstIdx = {1}", srcIdx, dstIdx);
+                Debug.LogErrorFormat("srcID = {0}, dstID = {1}", src_id, dst_id);
+                return;
+            }
+            srcIdx = BattleData.Instance.PlayerIdxOrder.IndexOf(srcIdx);
+            dstIdx = BattleData.Instance.PlayerIdxOrder.IndexOf(dstIdx);
 
-            //var arrow = Instantiate(arrowPrefab);
-            //arrow.transform.SetParent(battleRoot);
-            //arrow.transform.position = PlayersStatus[srcIdx].transform.position;
-            //arrow.transform.localScale = Vector3.one;
-            //arrow.GetComponent<Arrow>().SetParms(PlayersStatus[srcIdx].transform.position, PlayersStatus[dstIdx].transform.position);
+            var prefab = AssetBundleManager.Instance.LoadAsset("battle", "Arrow");
+            var arrow = Instantiate(prefab);
+            arrow.transform.SetParent(root);
+            arrow.transform.position = playerStatus[srcIdx].transform.position;
+            arrow.transform.localScale = Vector3.one;
+            arrow.GetComponent<Arrow>().SetParms(playerStatus[srcIdx].AnimationPos.position, playerStatus[dstIdx].AnimationPos.position);
         }
     }
 }
