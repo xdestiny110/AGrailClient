@@ -11,6 +11,7 @@
         InputBox,
         Lobby,
         LoginBox,
+        ReadyRoom,
         RoleChoose31,
         RoleChooseAny,
         Loading,

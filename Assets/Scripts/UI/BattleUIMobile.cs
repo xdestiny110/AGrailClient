@@ -146,6 +146,8 @@ namespace AGrail
                     playerStatus[(int)parameters[0]].NickName = parameters[1].ToString();
                     break;
                 case MessageType.PlayerTeamChange:
+                    var playerInfo = BattleData.Instance.PlayerInfos[BattleData.Instance.PlayerIdxOrder[(int)parameters[0]]];
+                    playerStatus[(int)parameters[0]].ID = playerInfo.id;
                     playerStatus[(int)parameters[0]].Team = (Team)(uint)parameters[1];
                     break;
                 case MessageType.PlayerRoleChange:

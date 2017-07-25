@@ -44,7 +44,7 @@ namespace AGrail
 
         public void ChooseTeam()
         {
-
+            
         }
 
         public void OnEventTrigger(MessageType eventType, params object[] parameters)
@@ -204,7 +204,8 @@ namespace AGrail
                     }
                     //这里可能有些乱...以后再整理吧
                     var idx = PlayerInfos.IndexOf(player);                    
-                    idx = PlayerIdxOrder.IndexOf(idx);
+                    if(PlayerIdxOrder.Count > 0)
+                        idx = PlayerIdxOrder.IndexOf(idx);
                     if (v.readySpecified)
                     {
                         player.ready = v.ready;

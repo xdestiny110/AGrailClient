@@ -1,8 +1,6 @@
 ﻿using Framework.Message;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
 using UnityEngine.UI;
 using Framework.AssetBundle;
 
@@ -55,13 +53,13 @@ namespace AGrail
             set
             {
                 role = RoleFactory.Create(value);
-                if (ID == BattleData.Instance.MainPlayer.id)
+                if (ID == BattleData.Instance.MainPlayer.id || (ID == BattleData.Instance.PlayerInfos[0].id && BattleData.Instance.PlayerID == 9))
                     hero.texture = AssetBundleManager.Instance.LoadAsset<Texture2D>("hero_l", value.ToString() + "L");
                 else
                     hero.texture = AssetBundleManager.Instance.LoadAsset<Texture2D>("hero_s", value.ToString() + "S");
                 if(hero.texture == null)
                 {
-                    if (ID == BattleData.Instance.MainPlayer.id)
+                    if (ID == BattleData.Instance.MainPlayer.id || (ID == BattleData.Instance.PlayerInfos[0].id && BattleData.Instance.PlayerID == 9))
                         hero.texture = AssetBundleManager.Instance.LoadAsset<Texture2D>("hero_l", "0L");
                     else
                         hero.texture = AssetBundleManager.Instance.LoadAsset<Texture2D>("hero_s", "0S");

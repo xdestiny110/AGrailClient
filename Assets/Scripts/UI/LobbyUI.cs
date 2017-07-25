@@ -107,7 +107,10 @@ namespace AGrail
                     break;
                 case MessageType.EnterRoom:
                     //GameManager.UIInstance.PushWindow(WindowType.BattleQT, WinMsg.Hide);
-                    SceneManager.LoadScene(2);
+                    if (Lobby.Instance.SelectRoom.playing)
+                        SceneManager.LoadScene(2);
+                    else
+                        GameManager.UIInstance.PushWindow(WindowType.ReadyRoom, WinMsg.Hide);
                     break;
                 case MessageType.ERROR:
                     var errorProto = parameters[0] as network.Error;
