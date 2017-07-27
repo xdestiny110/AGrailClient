@@ -3,6 +3,9 @@ using System.Collections;
 using Framework.UI;
 using System;
 using UnityEngine.UI;
+using System.Collections.Generic;
+using Framework.AssetBundle;
+using UnityEngine.SceneManagement;
 
 namespace AGrail
 {
@@ -10,6 +13,8 @@ namespace AGrail
     {
         [SerializeField]
         private Transform root;
+        [SerializeField]
+        private List<GameObject> heros;
 
         public override WindowType Type
         {
@@ -21,25 +26,17 @@ namespace AGrail
 
         public override void Awake()
         {
-            foreach(var v in RoleChoose.Instance.RoleIDs)
+            for(int i = 0; i < 3; i++)
             {
-                var go = new GameObject();
-                go.transform.SetParent(root);
-                go.transform.localPosition = Vector3.zero;
-                go.transform.localRotation = Quaternion.identity;
-                go.transform.localScale = Vector3.one;
-                go.AddComponent<RawImage>().texture = Resources.Load<Texture2D>("Hero/" + v.ToString());
-                var btn = go.AddComponent<Button>();
-                var cb = btn.colors;
-                var c = cb.normalColor;
-                c.a = 0.5f;
-                cb.normalColor = c;
-                btn.colors = cb;
-                uint roleID = v;
-                btn.onClick.AddListener(()=>
+                var roleID = RoleChoose.Instance.RoleIDs[i];
+                var sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("hero_m", roleID.ToString() + "M");
+                if(sprite != null)                    
+                    heros[i].GetComponent<Image>().sprite = sprite;
+                heros[i].GetComponentInChildren<Text>().text = RoleFactory.Create(roleID).RoleName;
+                heros[i].GetComponent<Button>().onClick.AddListener(() =>
                 {
                     RoleChoose.Instance.Choose(roleID);
-                    GameManager.UIInstance.PopWindow(WinMsg.Resume);
+                    SceneManager.LoadScene(2);
                 });
             }
             base.Awake();

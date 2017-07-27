@@ -18,9 +18,9 @@ namespace AGrail
         [SerializeField]
         private Image select;
         [SerializeField]
-        private RawImage hero;
+        private Image hero;
         [SerializeField]
-        private RawImage knelt;
+        private Image knelt;
         [SerializeField]
         private Text playerName;
         [SerializeField]
@@ -39,6 +39,20 @@ namespace AGrail
 
         public uint ID { set; get; }
 
+        public bool IsEnable
+        {
+            set
+            {
+                btnPlayer.interactable = value;
+                foreach(var v in GetComponentsInChildren<Image>())
+                {
+                    var c = v.color;
+                    c.b = c.r = c.g = 128;
+                    v.color = c;
+                }
+            }
+        }
+
         public string NickName
         {
             set
@@ -52,17 +66,13 @@ namespace AGrail
             set
             {
                 role = RoleFactory.Create(value);
+                Sprite sprite;
                 if (ID == BattleData.Instance.MainPlayer.id || (ID == BattleData.Instance.PlayerInfos[0].id && BattleData.Instance.PlayerID == 9))
-                    hero.texture = AssetBundleManager.Instance.LoadAsset<Texture2D>("hero_l", value.ToString() + "L");
+                    sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("hero_l", value.ToString() + "L");
                 else
-                    hero.texture = AssetBundleManager.Instance.LoadAsset<Texture2D>("hero_s", value.ToString() + "S");
-                if(hero.texture == null)
-                {
-                    if (ID == BattleData.Instance.MainPlayer.id || (ID == BattleData.Instance.PlayerInfos[0].id && BattleData.Instance.PlayerID == 9))
-                        hero.texture = AssetBundleManager.Instance.LoadAsset<Texture2D>("hero_l", "0L");
-                    else
-                        hero.texture = AssetBundleManager.Instance.LoadAsset<Texture2D>("hero_s", "0S");
-                }
+                    sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("hero_s", value.ToString() + "S");
+                if (sprite != null)
+                    hero.sprite = sprite;
                 if (role.HasYellow)
                 {
                     var prefab = AssetBundleManager.Instance.LoadAsset("battle", "Token0");
@@ -133,7 +143,7 @@ namespace AGrail
             {
                 if (value)
                 {
-                    knelt.texture = Resources.Load<Texture2D>("Icons/" + role.Knelt);
+                    knelt.sprite = Resources.Load<Sprite>("Icons/" + role.Knelt);
                     knelt.enabled = true;
                 }
                 else
@@ -181,43 +191,44 @@ namespace AGrail
                 foreach (var v in value)
                 {
                     var card = Card.GetCard(v);
-                    GameObject prefab = null;
+                    GameObject prefab = AssetBundleManager.Instance.LoadAsset("battle", "Image");
+                    var go = Instantiate(prefab);                    
 
                     if (card.Name == Card.CardName.中毒)
-                        prefab = AssetBundleManager.Instance.LoadAsset("battle", "du");
+                        go.GetComponent<Image>().sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "du");
                     else if (card.Name == Card.CardName.圣盾 || card.HasSkill("天使之墙"))
-                        prefab = AssetBundleManager.Instance.LoadAsset("battle", "dun");
+                        go.GetComponent<Image>().sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "dun");
                     else if (card.Name == Card.CardName.虚弱)
-                        prefab = AssetBundleManager.Instance.LoadAsset("battle", "xu");
+                        go.GetComponent<Image>().sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "xu");
                     else if (card.HasSkill("威力赐福"))
-                        prefab = AssetBundleManager.Instance.LoadAsset("battle", "wei");
+                        go.GetComponent<Image>().sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "wei");
                     else if (card.HasSkill("迅捷赐福"))
-                        prefab = AssetBundleManager.Instance.LoadAsset("battle", "xun");
+                        go.GetComponent<Image>().sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "xun");
                     else if (card.HasSkill("地之封印"))
-                        prefab = AssetBundleManager.Instance.LoadAsset("battle", "difeng");
+                        go.GetComponent<Image>().sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "difeng");
                     else if (card.HasSkill("火之封印"))
-                        prefab = AssetBundleManager.Instance.LoadAsset("battle", "huofeng");
+                        go.GetComponent<Image>().sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "huofeng");
                     else if (card.HasSkill("水之封印"))
-                        prefab = AssetBundleManager.Instance.LoadAsset("battle", "shuifeng");
+                        go.GetComponent<Image>().sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "shuifeng");
                     else if (card.HasSkill("风之封印"))
-                        prefab = AssetBundleManager.Instance.LoadAsset("battle", "fengfeng");
+                        go.GetComponent<Image>().sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "fengfeng");
                     else if (card.HasSkill("雷之封印"))
-                        prefab = AssetBundleManager.Instance.LoadAsset("battle", "leifeng");
+                        go.GetComponent<Image>().sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "leifeng");
                     else if (card.Name == Card.CardName.五行束缚)
-                        prefab = AssetBundleManager.Instance.LoadAsset("battle", "shufu");
+                        go.GetComponent<Image>().sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "shufu");
                     else if (card.Name == Card.CardName.挑衅)
-                        prefab = AssetBundleManager.Instance.LoadAsset("battle", "tiaoxin");
+                        go.GetComponent<Image>().sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "tiaoxin");
                     else if (card.Name == Card.CardName.灵魂链接)
-                        prefab = AssetBundleManager.Instance.LoadAsset("battle", "lianjie");
+                        go.GetComponent<Image>().sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "lianjie");
                     else if (card.Name == Card.CardName.同生共死)
-                        prefab = AssetBundleManager.Instance.LoadAsset("battle", "tongsheng");
+                        go.GetComponent<Image>().sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "tongsheng");
                     else if (card.Name == Card.CardName.永恒乐章)
-                        prefab = AssetBundleManager.Instance.LoadAsset("battle", "yuezhang");
+                        go.GetComponent<Image>().sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "yuezhang");
                     else {
                         Debug.LogErrorFormat("Basic card is error! CardID = {0}", v);
                         return;
                     }
-                    addChildGO(basicAndExCardArea, prefab, 1);                
+                    addChildGO(basicAndExCardArea, go);
                 }
             }
         }
@@ -228,10 +239,20 @@ namespace AGrail
             {
                 for (int i = 0; i < energyArea.childCount; i++)
                     Destroy(energyArea.GetChild(i).gameObject);
-                var prefab = AssetBundleManager.Instance.LoadAsset("battle", "Gem");
-                addChildGO(energyArea, prefab, (int)value.Key);
-                prefab = AssetBundleManager.Instance.LoadAsset("battle", "Crystal");
-                addChildGO(energyArea, prefab, (int)value.Value);
+                var prefab = AssetBundleManager.Instance.LoadAsset("battle", "Image");
+                for(int i = 0; i < (int)value.Key; i++)
+                {
+                    var go = Instantiate(prefab);
+                    go.GetComponent<Image>().sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "gem");
+                    addChildGO(energyArea, go);
+                }
+
+                for (int i = 0; i < (int)value.Value; i++)
+                {
+                    var go = Instantiate(prefab);
+                    go.GetComponent<Image>().sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "crystal");
+                    addChildGO(energyArea, go);
+                }
             }
         }
 
@@ -241,10 +262,19 @@ namespace AGrail
             {
                 for (int i = 0; i < handArea.childCount; i++)
                     Destroy(handArea.GetChild(i).gameObject);
-                var prefab = AssetBundleManager.Instance.LoadAsset("battle", "HandCard");
-                addChildGO(handArea, prefab, (int)Mathf.Min(value.Key, value.Value));
-                prefab = AssetBundleManager.Instance.LoadAsset("battle", "HandCardEmpty");
-                addChildGO(handArea, prefab, (int)value.Value - (int)value.Key);                
+                var prefab = AssetBundleManager.Instance.LoadAsset("battle", "Image");
+                for(int i = 0;i< (int)Mathf.Min(value.Key, value.Value); i++)
+                {
+                    var go = Instantiate(prefab);
+                    go.GetComponent<Image>().sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "handcard");
+                    addChildGO(handArea, go);
+                }
+                for (int i = 0; i < (int)value.Value - (int)value.Key; i++)
+                {
+                    var go = Instantiate(prefab);
+                    go.GetComponent<Image>().sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "handcardempty");
+                    addChildGO(handArea, go);
+                }              
                 if((int)value.Key - (int)value.Value > 0)
                 {
                     //手牌超上限
@@ -260,10 +290,19 @@ namespace AGrail
             {
                 for (int i = 0; i < healArea.childCount; i++)
                     Destroy(healArea.GetChild(i).gameObject);
-                var prefab = AssetBundleManager.Instance.LoadAsset("battle", "Heal");
-                addChildGO(healArea, prefab, (int)value);
-                prefab = AssetBundleManager.Instance.LoadAsset("battle", "HandCardEmpty");
-                addChildGO(healArea, prefab, (int)role.MaxHealCount - (int)value);
+                var prefab = AssetBundleManager.Instance.LoadAsset("battle", "Image");
+                for (int i = 0; i < (int)value; i++)
+                {
+                    var go = Instantiate(prefab);
+                    go.GetComponent<Image>().sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "heal");
+                    addChildGO(healArea, go);
+                }
+                for (int i = 0; i < (int)role.MaxHealCount - (int)value; i++)
+                {
+                    var go = Instantiate(prefab);
+                    go.GetComponent<Image>().sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "handcardempty");
+                    addChildGO(healArea, go);
+                }
             }
         }
 
@@ -294,16 +333,12 @@ namespace AGrail
                 BattleData.Instance.Agent.RemoveSelectPlayer(ID);
         }
 
-        private void addChildGO(Transform parent, GameObject prefab, int cnt)
+        private void addChildGO(Transform parent, GameObject go)
         {
-            for(int i = 0; i < cnt; i++)
-            {
-                var go = Instantiate(prefab);
-                go.transform.SetParent(parent);                
-                go.transform.localPosition = Vector3.zero;
-                go.transform.localRotation = Quaternion.identity;
-                go.transform.localScale = Vector3.one;
-            }
+            go.transform.SetParent(parent);
+            go.transform.localPosition = Vector3.zero;
+            go.transform.localRotation = Quaternion.identity;
+            go.transform.localScale = Vector3.one;
         }
     }
 }

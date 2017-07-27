@@ -19,13 +19,21 @@ namespace AGrail
         [SerializeField]
         private Transform[] grails;
         [SerializeField]
-        private List<PlayerStatusMobile> playerStatus;
+        public List<PlayerStatusMobile> playerStatus;
         [SerializeField]
         private Transform showCardArea;
         [SerializeField]
         private Text hint;
         [SerializeField]
         private Text turn;
+
+        public List<PlayerStatusMobile> PlayerStatus
+        {
+            get
+            {
+                return playerStatus;
+            }
+        }
 
         public override WindowType Type
         {
@@ -39,7 +47,9 @@ namespace AGrail
         {
             if (Lobby.Instance.SelectRoom.max_player != 6)
             {
+                GameObject.Destroy(playerStatus[2].gameObject);
                 playerStatus.RemoveAt(2);
+                GameObject.Destroy(playerStatus[3].gameObject);
                 playerStatus.RemoveAt(3);                
             }
             
@@ -82,7 +92,7 @@ namespace AGrail
                     MessageSystem<MessageType>.Notify(MessageType.PlayerNickName, i, playerInfo.nickname);
                     MessageSystem<MessageType>.Notify(MessageType.PlayerTeamChange, i, playerInfo.team);
                     MessageSystem<MessageType>.Notify(MessageType.PlayerRoleChange, i, playerInfo.role_id);
-                    MessageSystem<MessageType>.Notify(MessageType.PlayerHandChange, i, playerInfo.hands, playerInfo.max_hand);
+                    MessageSystem<MessageType>.Notify(MessageType.PlayerHandChange, i, playerInfo.hand_count, playerInfo.max_hand);
                     MessageSystem<MessageType>.Notify(MessageType.PlayerHealChange, i, playerInfo.heal_count);
                     MessageSystem<MessageType>.Notify(MessageType.PlayerTokenChange, i,
                         playerInfo.yellow_token, playerInfo.blue_token, playerInfo.covered_count);
@@ -197,7 +207,7 @@ namespace AGrail
         {
             if (diffGem > 0)
             {
-                var prefab = AssetBundleManager.Instance.LoadAsset("battle", "Gem");
+                var prefab = AssetBundleManager.Instance.LoadAsset("battle", "Image");
                 for (int i = 0; i < diffGem; i++)
                 {
                     var go = Instantiate(prefab);
@@ -206,6 +216,7 @@ namespace AGrail
                     go.transform.localRotation = Quaternion.identity;
                     go.transform.localScale = Vector3.one;
                     go.transform.SetSiblingIndex(0);
+                    go.GetComponent<Image>().sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "gem");
                 }
             }
             else
@@ -219,7 +230,7 @@ namespace AGrail
         {
             if (diffCrystal > 0)
             {
-                var prefab = AssetBundleManager.Instance.LoadAsset("battle", "Crystal");
+                var prefab = AssetBundleManager.Instance.LoadAsset("battle", "Image");
                 for (int i = 0; i < diffCrystal; i++)
                 {
                     var go = Instantiate(prefab);
@@ -228,6 +239,7 @@ namespace AGrail
                     go.transform.localRotation = Quaternion.identity;
                     go.transform.localScale = Vector3.one;
                     go.transform.SetSiblingIndex(energies[(int)team].childCount - 1);
+                    go.GetComponent<Image>().sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "crystal");
                 }
             }
             else
@@ -239,7 +251,7 @@ namespace AGrail
 
         private void grailChange(Team team, uint diffGrail)
         {
-            var prefab = AssetBundleManager.Instance.LoadAsset("battle", "Grail");
+            var prefab = AssetBundleManager.Instance.LoadAsset("battle", "Image");
             for (int i = 0; i < diffGrail; i++)
             {
                 var go = Instantiate(prefab);
@@ -247,6 +259,7 @@ namespace AGrail
                 go.transform.localPosition = Vector3.zero;
                 go.transform.localRotation = Quaternion.identity;
                 go.transform.localScale = Vector3.one;
+                go.GetComponent<Image>().sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "grail");
             }
         }
 

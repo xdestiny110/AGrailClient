@@ -143,6 +143,7 @@ GameObject:
   - component: {fileID: 223604317256243182}
   - component: {fileID: 114392916131261630}
   - component: {fileID: 114158984360898078}
+  - component: {fileID: 225699088368489140}
   - component: {fileID: 114947669139518018}
   m_Layer: 5
   m_Name: ReadyRoom
@@ -2574,3 +2575,14 @@ RectTransform:
   m_AnchoredPosition: {x: 240, y: -250}
   m_SizeDelta: {x: 100, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!225 &225699088368489140
+CanvasGroup:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1492822060426714}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
