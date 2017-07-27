@@ -31,13 +31,13 @@ namespace AGrail
         private Transform energyArea;
         [SerializeField]
         private Transform basicAndExCardArea;
-        public Transform AnimationPos;
-
-        private Button btnPlayer;
+        
+        public Transform AnimationPos;        
         private RoleBase role;
         private Text token0, token1, token2;
+        private Button btnPlayer;
 
-        public uint ID { set; get; }
+        public uint ID { get; set; }
 
         public bool IsEnable
         {
@@ -47,7 +47,10 @@ namespace AGrail
                 foreach(var v in GetComponentsInChildren<Image>())
                 {
                     var c = v.color;
-                    c.b = c.r = c.g = 128;
+                    if (value && BattleData.Instance.PlayerID != 9)
+                        c.b = c.r = c.g = 1;
+                    else
+                        c.b = c.r = c.g = 0.5f;                    
                     v.color = c;
                 }
             }
@@ -67,7 +70,7 @@ namespace AGrail
             {
                 role = RoleFactory.Create(value);
                 Sprite sprite;
-                if (ID == BattleData.Instance.MainPlayer.id || (ID == BattleData.Instance.PlayerInfos[0].id && BattleData.Instance.PlayerID == 9))
+                if (ID == BattleData.Instance.PlayerID || (ID == BattleData.Instance.PlayerInfos[0].id && BattleData.Instance.PlayerID == 9))
                     sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("hero_l", value.ToString() + "L");
                 else
                     sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("hero_s", value.ToString() + "S");
@@ -310,6 +313,12 @@ namespace AGrail
         {
             btnPlayer = GetComponent<Button>();
             btnPlayer.onClick.AddListener(OnClick);
+            MessageSystem<MessageType>.Regist(MessageType.AgentSelectPlayer, this);
+        }
+
+        void OnDestroy()
+        {
+            MessageSystem<MessageType>.UnRegist(MessageType.AgentSelectPlayer, this);
         }
 
         public void OnEventTrigger(MessageType eventType, params object[] parameters)
@@ -318,16 +327,16 @@ namespace AGrail
             {
                 case MessageType.AgentSelectPlayer:
                     if (BattleData.Instance.Agent.SelectPlayers.Contains(ID))
-                        select.enabled = true;
+                        select.gameObject.SetActive(true);
                     else
-                        select.enabled = false;
+                        select.gameObject.SetActive(false);
                     break;
             }
         }
 
         public void OnClick()
         {
-            if (!select.enabled)
+            if (!select.isActiveAndEnabled)
                 BattleData.Instance.Agent.AddSelectPlayer(ID);
             else
                 BattleData.Instance.Agent.RemoveSelectPlayer(ID);

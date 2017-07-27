@@ -81,13 +81,12 @@ namespace AGrail
             MessageSystem<MessageType>.Notify(MessageType.GrailChange, Team.Red, BattleData.Instance.Grail[(int)Team.Red]);
             MessageSystem<MessageType>.Notify(MessageType.GrailChange, Team.Blue, BattleData.Instance.Grail[(int)Team.Blue]);            
 
-            var playerInfos = BattleData.Instance.PlayerInfos;
             var playerIdxOrder = BattleData.Instance.PlayerIdxOrder;
-            if(playerIdxOrder.Count == playerInfos.Count && playerIdxOrder.Count > 0)
+            if(playerIdxOrder.Count == BattleData.Instance.PlayerInfos.Count && playerIdxOrder.Count > 0)
             {
                 for (int i = 0; i < playerStatus.Count; i++)
                 {
-                    var playerInfo = playerInfos[playerIdxOrder[i]];
+                    var playerInfo = BattleData.Instance.GetPlayerInfo((uint)playerIdxOrder[i]);
                     playerStatus[i].ID = playerInfo.id;
                     MessageSystem<MessageType>.Notify(MessageType.PlayerNickName, i, playerInfo.nickname);
                     MessageSystem<MessageType>.Notify(MessageType.PlayerTeamChange, i, playerInfo.team);
@@ -156,7 +155,7 @@ namespace AGrail
                     playerStatus[(int)parameters[0]].NickName = parameters[1].ToString();
                     break;
                 case MessageType.PlayerTeamChange:
-                    var playerInfo = BattleData.Instance.PlayerInfos[BattleData.Instance.PlayerIdxOrder[(int)parameters[0]]];
+                    var playerInfo = BattleData.Instance.GetPlayerInfo((uint)BattleData.Instance.PlayerIdxOrder[(int)parameters[0]]);
                     playerStatus[(int)parameters[0]].ID = playerInfo.id;
                     playerStatus[(int)parameters[0]].Team = (Team)(uint)parameters[1];
                     break;
@@ -284,22 +283,15 @@ namespace AGrail
         private void actionAnim(uint src_id, uint dst_id)
         {
             int srcIdx = -1, dstIdx = -1;
-            for (int i = 0; i < BattleData.Instance.PlayerInfos.Count; i++)
-            {
-                if (BattleData.Instance.PlayerInfos[i].id == src_id)
-                    srcIdx = i;
-                if (BattleData.Instance.PlayerInfos[i].id == dst_id)
-                    dstIdx = i;
-            }
 
+            srcIdx = BattleData.Instance.PlayerIdxOrder.IndexOf((int)src_id);
+            dstIdx = BattleData.Instance.PlayerIdxOrder.IndexOf((int)dst_id);
             if (srcIdx < 0 || dstIdx < 0)
             {
                 Debug.LogErrorFormat("srcIdx = {0}, dstIdx = {1}", srcIdx, dstIdx);
                 Debug.LogErrorFormat("srcID = {0}, dstID = {1}", src_id, dst_id);
                 return;
             }
-            srcIdx = BattleData.Instance.PlayerIdxOrder.IndexOf(srcIdx);
-            dstIdx = BattleData.Instance.PlayerIdxOrder.IndexOf(dstIdx);
 
             var prefab = AssetBundleManager.Instance.LoadAsset("battle", "Arrow");
             var arrow = Instantiate(prefab);
@@ -307,6 +299,7 @@ namespace AGrail
             arrow.transform.position = playerStatus[srcIdx].transform.position;
             arrow.transform.localScale = Vector3.one;
             arrow.GetComponent<Arrow>().SetParms(playerStatus[srcIdx].AnimationPos.position, playerStatus[dstIdx].AnimationPos.position);
+            Debug.LogFormat("src pos = {0}, dst pos = {1}", playerStatus[srcIdx].AnimationPos.position, playerStatus[dstIdx].AnimationPos.position);
         }
     }
 }

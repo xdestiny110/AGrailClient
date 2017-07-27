@@ -3,7 +3,6 @@
     public enum WindowType
     {
         None = 0,
-        BattleQT,
         BattleUIMobile,
         ChooseArgsUI,
         ChooseEnergy,
@@ -11,9 +10,11 @@
         InputBox,
         Lobby,
         LoginBox,
+        OptionsUI,
         ReadyRoom,
         RoleChoose31,
         RoleChooseAny,
+        SpecialActionUI,
         Loading,
     }
 }

@@ -42,6 +42,8 @@ namespace AGrail
 
         void Awake()
         {
+            btn.onClick.AddListener(onBtnClick);
+
             MessageSystem<MessageType>.Regist(MessageType.AgentSelectSkill, this);
         }
 
@@ -63,7 +65,7 @@ namespace AGrail
             }
         }
 
-        public void OnBtnClick()
+        private void onBtnClick()
         {
             if (!selectBorder.enabled)            
                 BattleData.Instance.Agent.ChangeSelectSkill(skill.SkillID);                            

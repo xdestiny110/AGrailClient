@@ -45,7 +45,8 @@ namespace AGrail
         {
             get
             {
-                return WindowType.BattleQT;
+                throw new System.Exception();
+                //return WindowType.BattleQT;
             }
         }
 
@@ -242,8 +243,8 @@ namespace AGrail
         {
             if (Input.GetKeyDown(KeyCode.Escape) && CanvasGroup.interactable)
             {                
-                if (GameManager.UIInstance.PeekWindow() == WindowType.BattleQT)
-                    Lobby.Instance.LeaveRoom();
+                //if (GameManager.UIInstance.PeekWindow() == WindowType.BattleQT)
+                    //Lobby.Instance.LeaveRoom();
                 GameManager.UIInstance.PopWindow(WinMsg.Show);
             }
         }

@@ -142,7 +142,7 @@ namespace AGrail
                         {
                             foreach (var v in BattleData.Instance.PlayerIdxOrder)
                             {
-                                if (BattleData.Instance.PlayerInfos[v].team != BattleData.Instance.MainPlayer.team)
+                                if (BattleData.Instance.GetPlayerInfo((uint)v).team != BattleData.Instance.MainPlayer.team)
                                 {
                                     if (BattleData.Instance.PlayerInfos[v].id == playerIDs[0])
                                         return true;

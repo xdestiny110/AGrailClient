@@ -117,10 +117,10 @@ namespace AGrail
                     {
                         for(int i = BattleData.Instance.PlayerIdxOrder.Count - 1; i >= 0; i--)
                         {
-                            if(BattleData.Instance.PlayerInfos[BattleData.Instance.PlayerIdxOrder[i]].team !=
-                                BattleData.Instance.MainPlayer.team)
+                            var player = BattleData.Instance.GetPlayerInfo((uint)BattleData.Instance.PlayerIdxOrder[i]);
+                            if(player.team != BattleData.Instance.MainPlayer.team)
                             {
-                                if (BattleData.Instance.PlayerInfos[BattleData.Instance.PlayerIdxOrder[i]].id == playerIDs[0])
+                                if (player.id == playerIDs[0])
                                     return true;
                                 break;
                             }
@@ -136,20 +136,20 @@ namespace AGrail
                     {
                         for (int i = BattleData.Instance.PlayerIdxOrder.Count - 1; i >= 0; i--)
                         {
-                            if (BattleData.Instance.PlayerInfos[BattleData.Instance.PlayerIdxOrder[i]].team !=
-                                BattleData.Instance.MainPlayer.team)
+                            var player = BattleData.Instance.GetPlayerInfo((uint)BattleData.Instance.PlayerIdxOrder[i]);
+                            if (player.team != BattleData.Instance.MainPlayer.team)
                             {
-                                if (BattleData.Instance.PlayerInfos[BattleData.Instance.PlayerIdxOrder[i]].id == playerIDs[0])
+                                if (player.id == playerIDs[0])
                                     return true;
                                 break;
                             }
                         }
                         for (int i = 0; i < BattleData.Instance.PlayerIdxOrder.Count; i++)
                         {
-                            if (BattleData.Instance.PlayerInfos[BattleData.Instance.PlayerIdxOrder[i]].team !=
-                                BattleData.Instance.MainPlayer.team)
+                            var player = BattleData.Instance.GetPlayerInfo((uint)BattleData.Instance.PlayerIdxOrder[i]);
+                            if (player.team != BattleData.Instance.MainPlayer.team)
                             {
-                                if (BattleData.Instance.PlayerInfos[BattleData.Instance.PlayerIdxOrder[i]].id == playerIDs[0])
+                                if (player.id == playerIDs[0])
                                     return true;
                                 break;
                             }

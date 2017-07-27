@@ -19,9 +19,11 @@ namespace AGrail
         [SerializeField]
         private Button btnCancel;
         [SerializeField]
-        private Button BtnResign;
+        private Button btnResign;
         [SerializeField]
         private Button btnSpecial;
+        [SerializeField]
+        private Button btnSetting;
         [SerializeField]
         private Button btnCovered;
 
@@ -34,6 +36,7 @@ namespace AGrail
         void Awake()
         {
             players = GetComponent<BattleUIMobile>().PlayerStatus;
+            btnSetting.onClick.AddListener(onBtnSettingClick);
 
             MessageSystem<MessageType>.Regist(MessageType.AgentUpdate, this);
             MessageSystem<MessageType>.Regist(MessageType.AgentHandChange, this);
@@ -42,25 +45,6 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.AgentUIStateChange, this);
             MessageSystem<MessageType>.Regist(MessageType.ShowArgsUI, this);
             MessageSystem<MessageType>.Regist(MessageType.CloseArgsUI, this);
-
-            //先将确认键初始化为准备按钮
-            if (BattleData.Instance.PlayerID != 9)
-            {
-                btnOK.onClick.RemoveAllListeners();
-                btnOK.onClick.AddListener(() => 
-                {
-                    BattleData.Instance.Ready(BattleData.Instance.MainPlayer.ready ? false : true);                    
-                });
-                btnOK.gameObject.SetActive(true);
-                btnOK.interactable = true;
-                btnCancel.gameObject.SetActive(true);
-                btnCancel.interactable = false;
-            }
-            else
-            {
-                btnOK.interactable = false;
-                btnCancel.interactable = false;
-            }
         }
 
         void OnDestroy()
@@ -86,8 +70,8 @@ namespace AGrail
                     btnOK.onClick.AddListener(onBtnOKClick);
                     btnCancel.onClick.RemoveAllListeners();
                     btnCancel.onClick.AddListener(onBtnCancelClick);
-                    BtnResign.onClick.RemoveAllListeners();
-                    BtnResign.onClick.AddListener(onBtnResignClick);
+                    btnResign.onClick.RemoveAllListeners();
+                    btnResign.onClick.AddListener(onBtnResignClick);
                     //初始化技能键
                     var skillPrefab = AssetBundleManager.Instance.LoadAsset("battle", "Skill");
                     foreach (var v in BattleData.Instance.Agent.PlayerRole.Skills.Values)
@@ -140,21 +124,6 @@ namespace AGrail
             }
         }
 
-        public void OnBtnBuyClick()
-        {
-            BattleData.Instance.Agent.FSM.HandleMessage(UIStateMsg.ClickBtn, "Buy");
-        }
-
-        public void OnBtnExtractClick()
-        {
-            BattleData.Instance.Agent.FSM.HandleMessage(UIStateMsg.ClickBtn, "Extract");
-        }
-
-        public void OnBtnSynthetizeClick()
-        {
-            BattleData.Instance.Agent.FSM.HandleMessage(UIStateMsg.ClickBtn, "Syntheis");
-        }
-
         public void OnCoveredClick()
         {
             isShowCovered = !isShowCovered;
@@ -182,6 +151,16 @@ namespace AGrail
         private void onBtnResignClick()
         {
             BattleData.Instance.Agent.PlayerRole.ResignAction();
+        }
+
+        private void onBtnSpecialClick()
+        {
+            GameManager.UIInstance.PushWindow(Framework.UI.WindowType.ChooseArgsUI, Framework.UI.WinMsg.Pause);
+        }
+
+        private void onBtnSettingClick()
+        {
+            GameManager.UIInstance.PushWindow(Framework.UI.WindowType.OptionsUI, Framework.UI.WinMsg.None);
         }
 
         private void updateAgentCards()
@@ -223,7 +202,7 @@ namespace AGrail
             }
             for (int i = 0; i < players.Count; i++)
             {
-                if (BattleData.Instance.Agent.PlayerRole.CanSelect(BattleData.Instance.Agent.FSM.Current.StateNumber, BattleData.Instance.PlayerInfos[BattleData.Instance.PlayerIdxOrder[i]]))
+                if (BattleData.Instance.Agent.PlayerRole.CanSelect(BattleData.Instance.Agent.FSM.Current.StateNumber, BattleData.Instance.GetPlayerInfo((uint)BattleData.Instance.PlayerIdxOrder[i])))
                     players[i].IsEnable = true;
                 else
                     players[i].IsEnable = false;
@@ -232,7 +211,7 @@ namespace AGrail
                 BattleData.Instance.Agent.SelectCards, BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectSkill);
             btnCancel.interactable = BattleData.Instance.Agent.PlayerRole.CheckCancel(BattleData.Instance.Agent.FSM.Current.StateNumber,
                 BattleData.Instance.Agent.SelectCards, BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectSkill);
-            BtnResign.interactable = BattleData.Instance.Agent.PlayerRole.CheckResign(BattleData.Instance.Agent.FSM.Current.StateNumber);
+            btnResign.interactable = BattleData.Instance.Agent.PlayerRole.CheckResign(BattleData.Instance.Agent.FSM.Current.StateNumber);
             btnSpecial.interactable = BattleData.Instance.Agent.PlayerRole.CheckBuy(BattleData.Instance.Agent.FSM.Current.StateNumber) ||
                 BattleData.Instance.Agent.PlayerRole.CheckExtract(BattleData.Instance.Agent.FSM.Current.StateNumber) ||
                 BattleData.Instance.Agent.PlayerRole.CheckSynthetize(BattleData.Instance.Agent.FSM.Current.StateNumber);

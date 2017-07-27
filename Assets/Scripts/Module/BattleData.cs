@@ -77,7 +77,7 @@ namespace AGrail
 
         public void Reset()
         {
-            Morale = new uint[2];
+            Morale = new uint[2] { 15, 15 };
             Gem = new uint[2];
             Crystal = new uint[2];
             Grail = new uint[2];
@@ -110,13 +110,7 @@ namespace AGrail
                     //MessageSystem<MessageType>.Notify(MessageType.EnterRoom);
                 }
                 if (value.player_idSpecified)
-                {
-                    if (value.player_id == 9)
-                    {
-                        MainPlayer = new network.SinglePlayerInfo() { id = 9 };
-                        Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, false);
-                        MessageSystem<MessageType>.Notify(MessageType.AgentUpdate);
-                    }                        
+                {                     
                     PlayerID = value.player_id;
                 }                
                 Pile = value.pileSpecified ? value.pile : Pile;
@@ -163,23 +157,28 @@ namespace AGrail
                 }
                 if (value.is_startedSpecified)
                 {
-                    //游戏开始，可能需要重新定位玩家位置                    
+                    //游戏开始，可能需要重新定位玩家位置           
+                    UnityEngine.Debug.Log("game start");
                     if (!IsStarted && value.is_started)
                     {
-                        PlayerIdxOrder.Clear();
+                        PlayerIdxOrder.Clear();                        
                         int t = -1;
-                        foreach (var v in value.player_infos)
-                        {
-                            var idx = value.player_infos.FindIndex(p => { return p.id == v.id; });
-                            PlayerIdxOrder.Add(idx);
-                            if (MainPlayer != null && v.id == MainPlayer.id)
-                                t = PlayerIdxOrder.Count - 1;
+                        for (int i = 0; i < value.player_infos.Count; i++)
+                        {                            
+                            PlayerIdxOrder.Add((int)value.player_infos[i].id);
+                            if (value.player_infos[i].id == PlayerID)
+                            {
+                                MainPlayer = value.player_infos[i];
+                                t = i;
+                            }
                         }
                         if (t != -1)
                         {
                             PlayerIdxOrder.AddRange(PlayerIdxOrder.GetRange(0, t));
                             PlayerIdxOrder.RemoveRange(0, t);
                         }
+                        if (value.player_id == 9)
+                            MainPlayer = new network.SinglePlayerInfo() { id = 9 };                            
                         MessageSystem<MessageType>.Notify(MessageType.GameStart);
                     }
                     //需要再发一次准备
@@ -191,20 +190,18 @@ namespace AGrail
                 foreach (var v in value.player_infos)
                 {
                     var player = GetPlayerInfo(v.id);
-                    bool isInit = false;
                     if (player == null)
                     {
                         PlayerInfos.Add(v);
                         player = v;
                         player.max_hand = 6;
-                        if (player.id == PlayerID)
-                            MainPlayer = player;
-                        isInit = true;
                     }
+                    if (player.id == PlayerID && MainPlayer != player)
+                        MainPlayer = player;
                     //这里可能有些乱...以后再整理吧
-                    var idx = PlayerInfos.IndexOf(player);                    
+                    var idx = PlayerInfos.IndexOf(player);
                     if(PlayerIdxOrder.Count > 0)
-                        idx = PlayerIdxOrder.IndexOf(idx);
+                        idx = PlayerIdxOrder.IndexOf((int)player.id);
                     if (v.readySpecified)
                     {
                         player.ready = v.ready;
@@ -245,14 +242,14 @@ namespace AGrail
                         MessageSystem<MessageType>.Notify(MessageType.PlayerHandChange, idx, player.hand_count, player.max_hand);
                         if (MainPlayer != null && player.id == MainPlayer.id && v.hand_countSpecified)
                         {
-                            //第一次的时候不用更新手牌
-                            if (!isInit)
+                            //如果两个是同一个引用则不清空
+                            if(player != v)
                             {
                                 player.hands.Clear();
                                 foreach (var u in v.hands)
                                     player.hands.Add(u);
-                                MessageSystem<MessageType>.Notify(MessageType.AgentHandChange);
-                            }                            
+                            }                                
+                            MessageSystem<MessageType>.Notify(MessageType.AgentHandChange);
                         }
                     }
                     if (v.heal_countSpecified)
