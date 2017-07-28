@@ -296,7 +296,7 @@ namespace AGrail
             var prefab = AssetBundleManager.Instance.LoadAsset("battle", "Arrow");
             var arrow = Instantiate(prefab);
             arrow.transform.SetParent(root);
-            arrow.transform.position = playerStatus[srcIdx].transform.position;
+            arrow.transform.position = playerStatus[srcIdx].AnimationPos.position;
             arrow.transform.localScale = Vector3.one;
             arrow.GetComponent<Arrow>().SetParms(playerStatus[srcIdx].AnimationPos.position, playerStatus[dstIdx].AnimationPos.position);
             Debug.LogFormat("src pos = {0}, dst pos = {1}", playerStatus[srcIdx].AnimationPos.position, playerStatus[dstIdx].AnimationPos.position);

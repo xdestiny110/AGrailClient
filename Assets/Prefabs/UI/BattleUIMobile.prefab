@@ -1396,6 +1396,7 @@ GameObject:
   - component: {fileID: 114890583743688094}
   - component: {fileID: 114123898666842030}
   - component: {fileID: 114085667855106094}
+  - component: {fileID: 225486123821242816}
   m_Layer: 5
   m_Name: BattleUIMobile
   m_TagString: Untagged
@@ -6819,7 +6820,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -1236.9993, y: 305}
+  m_AnchoredPosition: {x: -1236.9991, y: 305}
   m_SizeDelta: {x: 86, y: 71}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224479609739915164
@@ -7410,7 +7411,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1154.5, y: -239.5}
+  m_AnchoredPosition: {x: 1154.4999, y: -239.5}
   m_SizeDelta: {x: 250, y: 250}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224763647049049226
@@ -8049,3 +8050,14 @@ RectTransform:
   m_AnchoredPosition: {x: 10, y: -15}
   m_SizeDelta: {x: 180, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!225 &225486123821242816
+CanvasGroup:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1756120064498718}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0

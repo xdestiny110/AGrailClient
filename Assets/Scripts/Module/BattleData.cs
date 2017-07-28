@@ -177,6 +177,7 @@ namespace AGrail
                             PlayerIdxOrder.AddRange(PlayerIdxOrder.GetRange(0, t));
                             PlayerIdxOrder.RemoveRange(0, t);
                         }
+                        PlayerIdxOrder.Reverse(1, PlayerIdxOrder.Count - 1);
                         if (value.player_id == 9)
                             MainPlayer = new network.SinglePlayerInfo() { id = 9 };                            
                         MessageSystem<MessageType>.Notify(MessageType.GameStart);

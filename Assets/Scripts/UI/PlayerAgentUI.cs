@@ -37,6 +37,7 @@ namespace AGrail
         {
             players = GetComponent<BattleUIMobile>().PlayerStatus;
             btnSetting.onClick.AddListener(onBtnSettingClick);
+            btnSpecial.onClick.AddListener(onBtnSpecialClick);
 
             MessageSystem<MessageType>.Regist(MessageType.AgentUpdate, this);
             MessageSystem<MessageType>.Regist(MessageType.AgentHandChange, this);
@@ -72,6 +73,8 @@ namespace AGrail
                     btnCancel.onClick.AddListener(onBtnCancelClick);
                     btnResign.onClick.RemoveAllListeners();
                     btnResign.onClick.AddListener(onBtnResignClick);
+                    btnCovered.onClick.RemoveAllListeners();
+                    btnCovered.onClick.AddListener(OnCoveredClick);
                     //初始化技能键
                     var skillPrefab = AssetBundleManager.Instance.LoadAsset("battle", "Skill");
                     foreach (var v in BattleData.Instance.Agent.PlayerRole.Skills.Values)
@@ -134,8 +137,8 @@ namespace AGrail
         private void onCoveredClick()
         {            
             updateAgentCards();
-            btnCovered.GetComponentInChildren<Text>().text =
-                isShowCovered ? "显示手牌" : "显示盖牌";
+            //btnCovered.GetComponentInChildren<Text>().text =
+            //    isShowCovered ? "显示手牌" : "显示盖牌";
         }
 
         private void onBtnOKClick()
@@ -155,7 +158,7 @@ namespace AGrail
 
         private void onBtnSpecialClick()
         {
-            GameManager.UIInstance.PushWindow(Framework.UI.WindowType.ChooseArgsUI, Framework.UI.WinMsg.Pause);
+            GameManager.UIInstance.PushWindow(Framework.UI.WindowType.SpecialActionUI, Framework.UI.WinMsg.Pause);
         }
 
         private void onBtnSettingClick()
