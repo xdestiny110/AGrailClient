@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using Framework.Message;
 using Framework.AssetBundle;
 using System.Linq;
+using DG.Tweening;
 
 namespace AGrail
 {
@@ -26,6 +27,16 @@ namespace AGrail
         private Text hint;
         [SerializeField]
         private Text turn;
+        [SerializeField]
+        private Transform logRoot;
+        [SerializeField]
+        private Text log;
+        [SerializeField]
+        private Transform chatRoot;
+        [SerializeField]
+        private Button btnExpand;
+        [SerializeField]
+        private Button btnShrink;
 
         public List<PlayerStatusMobile> PlayerStatus
         {
@@ -52,6 +63,9 @@ namespace AGrail
                 GameObject.Destroy(playerStatus[3].gameObject);
                 playerStatus.RemoveAt(3);                
             }
+
+            btnExpand.onClick.AddListener(onBtnExpandClick);
+            btnShrink.onClick.AddListener(onBtnShrinkClick);
             
             MessageSystem<MessageType>.Regist(MessageType.MoraleChange, this);
             MessageSystem<MessageType>.Regist(MessageType.GemChange, this);
@@ -70,6 +84,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.CARDMSG, this);
             MessageSystem<MessageType>.Regist(MessageType.SKILLMSG, this);
             MessageSystem<MessageType>.Regist(MessageType.TURNBEGIN, this);
+            MessageSystem<MessageType>.Regist(MessageType.LogChange, this);
 
             //依据数据初始化界面
             MessageSystem<MessageType>.Notify(MessageType.MoraleChange, Team.Red, BattleData.Instance.Morale[(int)Team.Red]);
@@ -123,6 +138,10 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.CARDMSG, this);
             MessageSystem<MessageType>.UnRegist(MessageType.SKILLMSG, this);
             MessageSystem<MessageType>.UnRegist(MessageType.TURNBEGIN, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.LogChange, this);
+
+            btnExpand.onClick.RemoveAllListeners();
+            btnShrink.onClick.RemoveAllListeners();
             base.OnDestroy();
         }
 
@@ -198,6 +217,9 @@ namespace AGrail
                         for (int i = 0; i < playerStatus.Count; i++)
                             playerStatus[i].Turn = (BattleData.Instance.PlayerInfos[i].id == tb.id) ? true : false;
                     }
+                    break;
+                case MessageType.LogChange:
+                    log.text = Dialog.Instance.Log;
                     break;
             }
         }
@@ -300,6 +322,18 @@ namespace AGrail
             arrow.transform.localScale = Vector3.one;
             arrow.GetComponent<Arrow>().SetParms(playerStatus[srcIdx].AnimationPos.position, playerStatus[dstIdx].AnimationPos.position);
             Debug.LogFormat("src pos = {0}, dst pos = {1}", playerStatus[srcIdx].AnimationPos.position, playerStatus[dstIdx].AnimationPos.position);
+        }
+
+        private void onBtnExpandClick()
+        {
+            logRoot.localPosition = new Vector3(Screen.width, 0, 0);
+            logRoot.DOLocalMoveX(0, 1.0f);
+        }
+
+        private void onBtnShrinkClick()
+        {
+            logRoot.localPosition = new Vector3(0, 0, 0);
+            logRoot.DOLocalMoveX(Screen.width, 1.0f);
         }
     }
 }
