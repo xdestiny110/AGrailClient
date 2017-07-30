@@ -30,6 +30,9 @@ namespace AGrail
             btnSynthetize.onClick.AddListener(onBtnSynthetizeClick);
             btnBack.onClick.AddListener(onBtnBackClick);
 
+            btnBuy.interactable = BattleData.Instance.Agent.PlayerRole.CheckBuy(BattleData.Instance.Agent.FSM.Current.StateNumber);
+            btnExtract.interactable = BattleData.Instance.Agent.PlayerRole.CheckExtract(BattleData.Instance.Agent.FSM.Current.StateNumber);
+            btnSynthetize.interactable = BattleData.Instance.Agent.PlayerRole.CheckSynthetize(BattleData.Instance.Agent.FSM.Current.StateNumber);
             base.Awake();
         }
 

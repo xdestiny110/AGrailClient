@@ -177,7 +177,6 @@ namespace AGrail
                             PlayerIdxOrder.AddRange(PlayerIdxOrder.GetRange(0, t));
                             PlayerIdxOrder.RemoveRange(0, t);
                         }
-                        PlayerIdxOrder.Reverse(1, PlayerIdxOrder.Count - 1);
                         if (value.player_id == 9)
                             MainPlayer = new network.SinglePlayerInfo() { id = 9 };                            
                         MessageSystem<MessageType>.Notify(MessageType.GameStart);
@@ -473,12 +472,7 @@ namespace AGrail
                     }
                 }
             }
-        }
-
-        public static Team GetOtherTeam(Team team)
-        {
-            return (team == Team.Blue) ? Team.Red : Team.Blue;
-        }
+        }        
     }
 
     public enum Team
@@ -486,6 +480,24 @@ namespace AGrail
         Blue = 0,
         Red,
         Other,
+    }
+
+    public static class Util
+    {
+        public static Team GetOtherTeam(Team team)
+        {
+            return (team == Team.Blue) ? Team.Red : Team.Blue;
+        }
+
+        public static bool HasSkillCard(uint skillID, List<uint> hands)
+        {
+            foreach(var v in hands)
+            {
+                if (Card.GetCard(v).HasSkill(skillID))
+                    return true;
+            }
+            return false;
+        }
     }
 }
 

@@ -47,9 +47,14 @@ namespace AGrail
                 foreach(var v in GetComponentsInChildren<Image>())
                 {
                     var c = v.color;
-                    if (value && BattleData.Instance.PlayerID != 9)
-                        c.b = c.r = c.g = 1;
-                    else
+                    c.b = c.r = c.g = 1;
+                    if (BattleData.Instance.PlayerID != 9 && 
+                        (BattleData.Instance.Agent.FSM.Current.StateNumber == (uint)StateEnum.Attack ||
+                        BattleData.Instance.Agent.FSM.Current.StateNumber == (uint)StateEnum.Attacked ||
+                        BattleData.Instance.Agent.FSM.Current.StateNumber == (uint)StateEnum.Magic ||
+                        BattleData.Instance.Agent.FSM.Current.StateNumber == (uint)StateEnum.Modaned ||
+                        BattleData.Instance.Agent.FSM.Current.StateNumber == (uint)StateEnum.Extract) &&
+                        !value)
                         c.b = c.r = c.g = 0.5f;                    
                     v.color = c;
                 }
@@ -262,7 +267,7 @@ namespace AGrail
         public KeyValuePair<uint, uint> HandCount
         {
             set
-            {
+            {                
                 for (int i = 0; i < handArea.childCount; i++)
                     Destroy(handArea.GetChild(i).gameObject);
                 var prefab = AssetBundleManager.Instance.LoadAsset("battle", "Image");
@@ -271,18 +276,14 @@ namespace AGrail
                     var go = Instantiate(prefab);
                     go.GetComponent<Image>().sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "handcard");
                     addChildGO(handArea, go);
+                    if (value.Key > value.Value)
+                        go.GetComponent<Image>().color = Color.red;
                 }
                 for (int i = 0; i < (int)value.Value - (int)value.Key; i++)
                 {
                     var go = Instantiate(prefab);
                     go.GetComponent<Image>().sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "handcardempty");
                     addChildGO(handArea, go);
-                }              
-                if((int)value.Key - (int)value.Value > 0)
-                {
-                    //手牌超上限
-                    for (int i = 0; i < handArea.childCount; i++)
-                        handArea.GetChild(i).GetComponent<Image>().color = Color.red;
                 }
             }
         }

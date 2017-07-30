@@ -82,8 +82,16 @@ namespace AGrail
         public void ChangeSelectSkill(uint? skillID)
         {
             SelectSkill = skillID;
-            MessageSystem<MessageType>.Notify(MessageType.AgentSelectSkill);
+            MessageSystem<MessageType>.Notify(MessageType.AgentSelectArgs);
             FSM.HandleMessage(UIStateMsg.ClickSkill);
+        }
+
+        public void AddSelectArgs(List<uint> args)
+        {
+            SelectArgs.Clear();
+            SelectArgs.AddRange(args);
+            MessageSystem<MessageType>.Notify(MessageType.AgentSelectSkill);
+            FSM.HandleMessage(UIStateMsg.ClickArgs);
         }
 
         private Type calUIState(int state)

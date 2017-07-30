@@ -215,7 +215,7 @@ namespace AGrail
                     if (tb.idSpecified)
                     {
                         for (int i = 0; i < playerStatus.Count; i++)
-                            playerStatus[i].Turn = (BattleData.Instance.PlayerInfos[i].id == tb.id) ? true : false;
+                            playerStatus[i].Turn = (BattleData.Instance.PlayerInfos[BattleData.Instance.PlayerIdxOrder[i]].id == tb.id) ? true : false;
                     }
                     break;
                 case MessageType.LogChange:
@@ -326,14 +326,14 @@ namespace AGrail
 
         private void onBtnExpandClick()
         {
-            logRoot.localPosition = new Vector3(Screen.width, 0, 0);
+            logRoot.localPosition = new Vector3(1280, 0, 0);
             logRoot.DOLocalMoveX(0, 1.0f);
         }
 
         private void onBtnShrinkClick()
         {
             logRoot.localPosition = new Vector3(0, 0, 0);
-            logRoot.DOLocalMoveX(Screen.width, 1.0f);
+            logRoot.DOLocalMoveX(1280, 1.0f);
         }
     }
 }

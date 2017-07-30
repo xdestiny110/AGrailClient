@@ -74,7 +74,7 @@ namespace AGrail
                             && additionalState == 0 && BattleData.Instance.Crystal[(int)BattleData.Instance.MainPlayer.team] > 0;
                     if (skill.SkillID == 1203)
                         return BattleData.Instance.MainPlayer.crystal + BattleData.Instance.MainPlayer.gem > 0 && additionalState == 0 
-                            && BattleData.Instance.Gem[(int)BattleData.GetOtherTeam((Team)BattleData.Instance.MainPlayer.team)] > 0;
+                            && BattleData.Instance.Gem[(int)Util.GetOtherTeam((Team)BattleData.Instance.MainPlayer.team)] > 0;
                     return skill.SkillID == 1201;
             }
             return base.CanSelect(uiState, skill);

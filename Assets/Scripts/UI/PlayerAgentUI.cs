@@ -46,6 +46,8 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.AgentUIStateChange, this);
             MessageSystem<MessageType>.Regist(MessageType.ShowArgsUI, this);
             MessageSystem<MessageType>.Regist(MessageType.CloseArgsUI, this);
+            MessageSystem<MessageType>.Regist(MessageType.ShowNewArgsUI, this);
+            MessageSystem<MessageType>.Regist(MessageType.CloseNewArgsUI, this);
         }
 
         void OnDestroy()
@@ -56,6 +58,9 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.AgentSelectSkill, this);
             MessageSystem<MessageType>.UnRegist(MessageType.AgentUIStateChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.ShowArgsUI, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.CloseArgsUI, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.ShowNewArgsUI, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.CloseNewArgsUI, this);
         }
 
         public void OnEventTrigger(MessageType eventType, params object[] parameters)
@@ -66,7 +71,7 @@ namespace AGrail
                     onUIStateChange();
                     break;
                 case MessageType.AgentUpdate:
-                    btnOK.interactable = false;
+                    btnOK.gameObject.SetActive(false);
                     btnOK.onClick.RemoveAllListeners();
                     btnOK.onClick.AddListener(onBtnOKClick);
                     btnCancel.onClick.RemoveAllListeners();
@@ -87,10 +92,10 @@ namespace AGrail
                         skillUIs.Add(go.GetComponent<SkillUI>());
                         skillUIs[skillUIs.Count - 1].Skill = v;
                     }
-                    btnSpecial.interactable = BattleData.Instance.Agent.PlayerRole.CheckBuy(BattleData.Instance.Agent.FSM.Current.StateNumber) ||
+                    btnSpecial.gameObject.SetActive(BattleData.Instance.Agent.PlayerRole.CheckBuy(BattleData.Instance.Agent.FSM.Current.StateNumber) ||
                         BattleData.Instance.Agent.PlayerRole.CheckExtract(BattleData.Instance.Agent.FSM.Current.StateNumber) ||
-                        BattleData.Instance.Agent.PlayerRole.CheckSynthetize(BattleData.Instance.Agent.FSM.Current.StateNumber);
-                    btnCovered.interactable = BattleData.Instance.Agent.PlayerRole.HasCoverd;
+                        BattleData.Instance.Agent.PlayerRole.CheckSynthetize(BattleData.Instance.Agent.FSM.Current.StateNumber));
+                    btnCovered.gameObject.SetActive(BattleData.Instance.Agent.PlayerRole.HasCoverd);
                     break;
                 case MessageType.AgentHandChange:
                     if (parameters.Length == 1)
@@ -112,8 +117,8 @@ namespace AGrail
                             v.IsEnable = false;
                     foreach (var v in players)
                             v.IsEnable = false;
-                    btnOK.interactable = false;
-                    btnCancel.interactable = false;
+                    btnOK.gameObject.SetActive(false);
+                    btnCancel.gameObject.SetActive(false);
                     break;
                 case MessageType.ShowArgsUI:
                     if (GameManager.UIInstance.PeekWindow() != Framework.UI.WindowType.ChooseArgsUI)
@@ -122,6 +127,14 @@ namespace AGrail
                     break;
                 case MessageType.CloseArgsUI:
                     if (GameManager.UIInstance.PeekWindow() == Framework.UI.WindowType.ChooseArgsUI)
+                        GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
+                    break;
+                case MessageType.ShowNewArgsUI:
+                    if (GameManager.UIInstance.PeekWindow() != Framework.UI.WindowType.ArgsUI)
+                        GameManager.UIInstance.PushWindow(Framework.UI.WindowType.ArgsUI, Framework.UI.WinMsg.None, Vector3.zero, parameters);
+                    break;
+                case MessageType.CloseNewArgsUI:
+                    if (GameManager.UIInstance.PeekWindow() == Framework.UI.WindowType.ArgsUI)
                         GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
                     break;
             }
@@ -210,15 +223,15 @@ namespace AGrail
                 else
                     players[i].IsEnable = false;
             }
-            btnOK.interactable = BattleData.Instance.Agent.PlayerRole.CheckOK(BattleData.Instance.Agent.FSM.Current.StateNumber,
-                BattleData.Instance.Agent.SelectCards, BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectSkill);
-            btnCancel.interactable = BattleData.Instance.Agent.PlayerRole.CheckCancel(BattleData.Instance.Agent.FSM.Current.StateNumber,
-                BattleData.Instance.Agent.SelectCards, BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectSkill);
-            btnResign.interactable = BattleData.Instance.Agent.PlayerRole.CheckResign(BattleData.Instance.Agent.FSM.Current.StateNumber);
-            btnSpecial.interactable = BattleData.Instance.Agent.PlayerRole.CheckBuy(BattleData.Instance.Agent.FSM.Current.StateNumber) ||
+            btnOK.gameObject.SetActive(BattleData.Instance.Agent.PlayerRole.CheckOK(BattleData.Instance.Agent.FSM.Current.StateNumber,
+                BattleData.Instance.Agent.SelectCards, BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectSkill));
+            btnCancel.gameObject.SetActive(BattleData.Instance.Agent.PlayerRole.CheckCancel(BattleData.Instance.Agent.FSM.Current.StateNumber,
+                BattleData.Instance.Agent.SelectCards, BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectSkill));
+            btnResign.gameObject.SetActive(BattleData.Instance.Agent.PlayerRole.CheckResign(BattleData.Instance.Agent.FSM.Current.StateNumber));
+            btnSpecial.gameObject.SetActive(BattleData.Instance.Agent.PlayerRole.CheckBuy(BattleData.Instance.Agent.FSM.Current.StateNumber) ||
                 BattleData.Instance.Agent.PlayerRole.CheckExtract(BattleData.Instance.Agent.FSM.Current.StateNumber) ||
-                BattleData.Instance.Agent.PlayerRole.CheckSynthetize(BattleData.Instance.Agent.FSM.Current.StateNumber);
-            btnCovered.interactable = BattleData.Instance.Agent.PlayerRole.HasCoverd;
+                BattleData.Instance.Agent.PlayerRole.CheckSynthetize(BattleData.Instance.Agent.FSM.Current.StateNumber));
+            btnCovered.gameObject.SetActive(BattleData.Instance.Agent.PlayerRole.HasCoverd);
             MessageSystem<MessageType>.Notify(MessageType.AgentSelectPlayer);
             MessageSystem<MessageType>.Notify(MessageType.AgentSelectCard);
             MessageSystem<MessageType>.Notify(MessageType.AgentSelectSkill);
