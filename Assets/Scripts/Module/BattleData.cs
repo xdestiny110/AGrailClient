@@ -161,10 +161,10 @@ namespace AGrail
                     UnityEngine.Debug.Log("game start");
                     if (!IsStarted && value.is_started)
                     {
-                        PlayerIdxOrder.Clear();                        
+                        PlayerIdxOrder.Clear();
                         int t = -1;
                         for (int i = 0; i < value.player_infos.Count; i++)
-                        {                            
+                        {
                             PlayerIdxOrder.Add((int)value.player_infos[i].id);
                             if (value.player_infos[i].id == PlayerID)
                             {

@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: ab7152b1bda6a634199cd6a0faf710a5
-timeCreated: 1500638534
+guid: d8a8c55ce2f37da4e9c8a4986b22eff8
+timeCreated: 1501414201
 licenseType: Pro
 TextureImporter:
   fileIDToRecycleName: {}
@@ -88,5 +88,5 @@ TextureImporter:
     outline: []
   spritePackingTag: 
   userData: 
-  assetBundleName: battle_texture
+  assetBundleName: 
   assetBundleVariant: 

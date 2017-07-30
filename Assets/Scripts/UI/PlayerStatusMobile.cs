@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Framework.AssetBundle;
+using Framework.UI;
 
 namespace AGrail
 {
@@ -274,10 +275,11 @@ namespace AGrail
                 for(int i = 0;i< (int)Mathf.Min(value.Key, value.Value); i++)
                 {
                     var go = Instantiate(prefab);
-                    go.GetComponent<Image>().sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "handcard");
-                    addChildGO(handArea, go);
                     if (value.Key > value.Value)
-                        go.GetComponent<Image>().color = Color.red;
+                        go.GetComponent<Image>().sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "handcardfull");
+                    else
+                        go.GetComponent<Image>().sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "handcard");
+                    addChildGO(handArea, go);
                 }
                 for (int i = 0; i < (int)value.Value - (int)value.Key; i++)
                 {
@@ -313,7 +315,8 @@ namespace AGrail
         void Awake()
         {
             btnPlayer = GetComponent<Button>();
-            btnPlayer.onClick.AddListener(OnClick);
+            btnPlayer.onClick.AddListener(onClick);
+            GetComponent<LongPress>().OnLongPress.AddListener(onLongPress);
             MessageSystem<MessageType>.Regist(MessageType.AgentSelectPlayer, this);
         }
 
@@ -335,12 +338,17 @@ namespace AGrail
             }
         }
 
-        public void OnClick()
+        private void onClick()
         {
             if (!select.isActiveAndEnabled)
                 BattleData.Instance.Agent.AddSelectPlayer(ID);
             else
                 BattleData.Instance.Agent.RemoveSelectPlayer(ID);
+        }
+
+        private void onLongPress()
+        {
+            GameManager.UIInstance.PushWindow(Framework.UI.WindowType.InfomationUI, Framework.UI.WinMsg.None, Vector3.zero, role);
         }
 
         private void addChildGO(Transform parent, GameObject go)

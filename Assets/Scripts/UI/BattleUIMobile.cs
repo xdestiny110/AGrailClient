@@ -215,7 +215,7 @@ namespace AGrail
                     if (tb.idSpecified)
                     {
                         for (int i = 0; i < playerStatus.Count; i++)
-                            playerStatus[i].Turn = (BattleData.Instance.PlayerInfos[BattleData.Instance.PlayerIdxOrder[i]].id == tb.id) ? true : false;
+                            playerStatus[i].Turn = (BattleData.Instance.GetPlayerInfo((uint)BattleData.Instance.PlayerIdxOrder[i]).id == tb.id) ? true : false;
                     }
                     break;
                 case MessageType.LogChange:

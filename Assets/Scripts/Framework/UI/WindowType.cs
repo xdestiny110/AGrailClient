@@ -8,6 +8,7 @@
         ChooseArgsUI,
         ChooseEnergy,
         CreateRoomUI,
+        InfomationUI,
         InputBox,
         Lobby,
         LoginBox,
