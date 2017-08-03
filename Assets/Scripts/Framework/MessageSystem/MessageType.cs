@@ -74,11 +74,14 @@
         AgentSelectCard,
         AgentSelectPlayer,
         AgentSelectSkill,
+        AgentSelectArgs,
         AgentStateChange,
         AgentUIStateChange,
         AgentHandChange,
         AgentUpdate,
         ShowArgsUI,
         CloseArgsUI,
+        ShowNewArgsUI,
+        CloseNewArgsUI,
     }
 }

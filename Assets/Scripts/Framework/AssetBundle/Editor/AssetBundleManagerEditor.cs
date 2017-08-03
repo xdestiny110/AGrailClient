@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AssetBundles;
@@ -40,6 +41,20 @@ namespace Framework.AssetBundle
             return true;
         }
 
+        private const string textureBasePath = "Textures";
+        private const string texturePrefabPath = "TexturePrefabs";
+        [MenuItem("Framework/AssetBundle/Build Texture Prefab")]
+        static void buildTexturePrefab()
+        {            
+            List<string> texturePrefabs = EditorTool.AssetPathOfUnityFolder(textureBasePath, true, ".png", ".jpg");
+            foreach(var v in texturePrefabs)
+            {
 
+            }
+            var texturePrefabSystemPath = EditorTool.UnityPathToSystemPath(texturePrefabPath);
+            if (!Directory.Exists(texturePrefabSystemPath))
+                Directory.CreateDirectory(texturePrefabSystemPath);
+            EditorTool.DeleteDirContent(texturePrefabSystemPath);
+        }
     }
 }

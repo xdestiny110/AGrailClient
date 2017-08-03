@@ -5,6 +5,7 @@ using DG.Tweening;
 using System;
 using System.Collections.Generic;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 namespace AGrail
 {   
@@ -51,14 +52,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.EnterRoom, this);
             MessageSystem<MessageType>.Regist(MessageType.ERROR, this);
             root.localPosition = new Vector3(Screen.width, 0, 0);
-            root.DOLocalMoveX(0, 1.0f).OnComplete(
-                () =>
-                {
-                    var go = GameObject.Find("GameTitle");
-                    (title.transform as RectTransform).sizeDelta = (go.transform.GetChild(0) as RectTransform).sizeDelta;
-                    Destroy(go);
-                    title.SetActive(true);
-                });
+            root.DOLocalMoveX(0, 1.0f);
             if(Lobby.Instance.RoomInfo == null)
                 Lobby.Instance.GetRoomList();
             else
@@ -105,8 +99,10 @@ namespace AGrail
                     roomInfos = Lobby.Instance.RoomInfo;
                     break;
                 case MessageType.EnterRoom:
-                    //GameManager.UIInstance.PushWindow(WindowType.Battle, WinMsg.Hide);
-                    GameManager.UIInstance.PushWindow(WindowType.BattleQT, WinMsg.Hide);
+                    if (Lobby.Instance.SelectRoom.playing)
+                        SceneManager.LoadScene(2);
+                    else
+                        GameManager.UIInstance.PushWindow(WindowType.ReadyRoom, WinMsg.Hide);
                     break;
                 case MessageType.ERROR:
                     var errorProto = parameters[0] as network.Error;

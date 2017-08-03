@@ -5,6 +5,7 @@ using UnityEngine.EventSystems;
 using Framework.Message;
 using System;
 using DG.Tweening;
+using Framework.AssetBundle;
 
 namespace AGrail
 {
@@ -62,7 +63,7 @@ namespace AGrail
             set
             {
                 card = value;
-                image.texture = Resources.Load<Texture2D>(card.AssetPath);
+                image.texture = AssetBundleManager.Instance.LoadAsset<Texture2D>("card", card.AssetPath);
                 for (int i = 0; i < propertyRoot.childCount; i++)
                     propertyRoot.GetChild(i).gameObject.SetActive(false);
                 if (card.Property != Card.CardProperty.无)                
@@ -120,12 +121,12 @@ namespace AGrail
         public void Disappear()
         {
             disappear = true;            
-            DOTween.To(() => image.color, x => image.color = x, new Color(1, 1, 1, 0), 20).SetOptions(true);
-            DOTween.To(() => txtSkill1.color, x => txtSkill1.color = x, new Color(1, 1, 1, 0), 20).SetOptions(true);
-            DOTween.To(() => txtSkill2.color, x => txtSkill2.color = x, new Color(1, 1, 1, 0), 20).SetOptions(true);
+            DOTween.To(() => image.color, x => image.color = x, new Color(1, 1, 1, 0), 5).SetOptions(true);
+            DOTween.To(() => txtSkill1.color, x => txtSkill1.color = x, new Color(1, 1, 1, 0), 5).SetOptions(true);
+            DOTween.To(() => txtSkill2.color, x => txtSkill2.color = x, new Color(1, 1, 1, 0), 5).SetOptions(true);
             var images = gameObject.GetComponentsInChildren<Image>();
             foreach(var v in images)
-                DOTween.To(() => v.color, x => v.color = x, new Color(1, 1, 1, 0), 20).SetOptions(true);
+                DOTween.To(() => v.color, x => v.color = x, new Color(1, 1, 1, 0), 5).SetOptions(true);
         }
 
         public void OnPointerEnter(BaseEventData eventData)

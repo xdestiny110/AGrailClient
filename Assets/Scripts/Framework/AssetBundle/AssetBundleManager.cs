@@ -205,36 +205,41 @@ namespace Framework.AssetBundle
             }
         }
 
-        public GameObject LoadAsset(string assetbundleName, string assetName)
+        public T LoadAsset<T>(string assetBundleName, string assetName) where T : UnityEngine.Object
         {
-            assetbundleName = assetbundleName.ToLower();
+            assetBundleName = assetBundleName.ToLower();
 #if UNITY_EDITOR
             if (SimulationMode)
             {
-                var assetPaths = UnityEditor.AssetDatabase.GetAssetPathsFromAssetBundleAndAssetName(assetbundleName, assetName);
+                var assetPaths = UnityEditor.AssetDatabase.GetAssetPathsFromAssetBundleAndAssetName(assetBundleName, assetName);
                 if (assetPaths.Length == 0)
                 {
-                    Debug.LogErrorFormat("There is no asset with name {0}/{1}", assetbundleName, assetName);
+                    Debug.LogErrorFormat("There is no asset with name {0}/{1}", assetBundleName, assetName);
                     return null;
                 }
-                return UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(assetPaths[0]);
+                return UnityEditor.AssetDatabase.LoadAssetAtPath<T>(assetPaths[0]);
             }
-            else if (bundles.ContainsKey(assetbundleName))
-                return bundles[assetbundleName].LoadAsset<GameObject>(assetName);
+            else if (bundles.ContainsKey(assetBundleName))
+                return bundles[assetBundleName].LoadAsset<T>(assetName);
             else
             {
-                Debug.LogErrorFormat("There is no asset with name {0}/{1}", assetbundleName, assetName);
+                Debug.LogErrorFormat("There is no asset with name {0}/{1}", assetBundleName, assetName);
                 return null;
             }
 #else
-            if (bundles.ContainsKey(assetbundleName))
-                return bundles[assetbundleName].LoadAsset<GameObject>(assetName);
+            if (bundles.ContainsKey(assetBundleName))
+                return bundles[assetBundleName].LoadAsset<T>(assetName);
             else
             {
-                Debug.LogErrorFormat("There is no asset with name {0}/{1}", assetbundleName, assetName);
+                Debug.LogErrorFormat("There is no asset with name {0}/{1}", assetBundleName, assetName);
                 return null;
             }
 #endif
+        }
+
+        public GameObject LoadAsset(string assetBundleName, string assetName)
+        {
+            return LoadAsset<GameObject>(assetBundleName, assetName);
         }
 
         public void LoadAssetAsyn(string assetbundleName, string assetName, Action<GameObject> cb)

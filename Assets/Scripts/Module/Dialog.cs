@@ -115,15 +115,15 @@ namespace AGrail
                         Log += string.Format("使用了技能{0}" + Environment.NewLine, skillMsg.skill_id);
                     break;
                 case MessageType.GOSSIP:
-                    var gossip = parameters[0] as network.Gossip;
-                    srcPlayer = BattleData.Instance.GetPlayerInfo(gossip.id);
-                    if (srcPlayer.role_idSpecified)
-                    {
-                        r1 = RoleFactory.Create(srcPlayer.role_id);
-                        Log += string.Format("<color=#0000FFFF>[{0}]: {1}</color>" + Environment.NewLine, r1.RoleName, gossip.txt);
-                    }
-                    else
-                        Log += string.Format("<color=#0000FFFF>[{0}]: {1}</color>" + Environment.NewLine, srcPlayer.nickname, gossip.txt);
+                    //var gossip = parameters[0] as network.Gossip;
+                    //srcPlayer = BattleData.Instance.GetPlayerInfo(gossip.id);
+                    //if (srcPlayer.role_idSpecified)
+                    //{
+                    //    r1 = RoleFactory.Create(srcPlayer.role_id);
+                    //    Log += string.Format("<color=#0000FFFF>[{0}]: {1}</color>" + Environment.NewLine, r1.RoleName, gossip.txt);
+                    //}
+                    //else
+                    //    Log += string.Format("<color=#0000FFFF>[{0}]: {1}</color>" + Environment.NewLine, srcPlayer.nickname, gossip.txt);
                     break;
                 case MessageType.PlayerLeave:
                     Log += string.Format("<color=#FF0000FF>玩家[{0}]离开房间</color>" + Environment.NewLine, (int)parameters[0]);

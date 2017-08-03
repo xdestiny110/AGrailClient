@@ -1,6 +1,3 @@
-using UnityEngine;
-using System.Collections;
-using System;
 using network;
 using System.Collections.Generic;
 using Framework.Message;
@@ -79,13 +76,15 @@ namespace AGrail
                 case 602:
                 case 605:
                 case 10:
-                    if(skill.SkillID == 601 || skill.SkillID == 602)
+                    if((skill.SkillID == 601 && Util.HasSkillCard(601, BattleData.Instance.MainPlayer.hands)) || 
+                        (skill.SkillID == 602 && Util.HasSkillCard(602, BattleData.Instance.MainPlayer.hands)))
                         return true;
                     if (skill.SkillID == 605 && BattleData.Instance.MainPlayer.gem + BattleData.Instance.MainPlayer.crystal >= 1)
                         return true;
                     return false;
                 case 11:
-                    if (skill.SkillID == 601 || skill.SkillID == 602)
+                    if ((skill.SkillID == 601 && Util.HasSkillCard(601, BattleData.Instance.MainPlayer.hands)) ||
+                        (skill.SkillID == 602 && Util.HasSkillCard(602, BattleData.Instance.MainPlayer.hands)))
                         return true;
                     if (skill.SkillID == 605 && additionalState != 6053 && 
                         BattleData.Instance.MainPlayer.gem + BattleData.Instance.MainPlayer.crystal >= 1)
@@ -179,6 +178,17 @@ namespace AGrail
             switch (state)
             {
                 case 601:
+                    if(BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == 1)
+                    {
+                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
+                            BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state);
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
+                    }
+                    CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                        string.Format("{0}: 请选择目标玩家以及独有技卡牌", Skills[state].SkillName));
+                    return;
                 case 602:
                     OKAction = () =>
                     {

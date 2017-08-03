@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using Framework.AssetBundle;
 
 namespace AGrail
 {
@@ -20,7 +21,7 @@ namespace AGrail
         private static Dictionary<uint, Card> cardDict = new Dictionary<uint, Card>();
         static Card()
         {
-            var txt = (Resources.Load<TextAsset>("cardDB")).text;
+            var txt = AssetBundleManager.Instance.LoadAsset<TextAsset>("battle", "cardDB").text;
             var strs = txt.Split('\n');
             foreach (var v in strs)
             {

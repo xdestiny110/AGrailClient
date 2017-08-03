@@ -50,8 +50,8 @@ namespace AGrail
                 sp_mo_dao = spMoDaoExtension.isOn,
             };
             Lobby.Instance.CreateRoom(proto);
-            GameManager.UIInstance.PopWindow(WinMsg.Pause);
-            GameManager.UIInstance.PushWindow(WindowType.BattleQT, WinMsg.Hide);
+            GameManager.UIInstance.PopWindow(WinMsg.None);
+            GameManager.UIInstance.PushWindow(WindowType.ReadyRoom, WinMsg.None);
         }
 
         public void OnCancelClick()

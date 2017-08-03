@@ -20,7 +20,7 @@ namespace AGrail
         public uint[] Crystal = new uint[2];
         public uint[] Grail = new uint[2];        
         public List<network.SinglePlayerInfo> PlayerInfos = new List<network.SinglePlayerInfo>();
-        public List<int> PlayerIdxOrder = new List<int>();
+        public List<int> PlayerIdxOrder = new List<int>();//按照顺序排列玩家ID, 第一个一定是主玩家
 
         public PlayerAgent Agent { get; private set; }
         public network.SinglePlayerInfo MainPlayer { get; private set; }
@@ -29,7 +29,6 @@ namespace AGrail
         {
             MessageSystem<MessageType>.Regist(MessageType.TURNBEGIN, this);
             MessageSystem<MessageType>.Regist(MessageType.GAMEINFO, this);
-            MessageSystem<MessageType>.Regist(MessageType.ROLEREQUEST, this);
             MessageSystem<MessageType>.Regist(MessageType.COMMANDREQUEST, this);
             MessageSystem<MessageType>.Regist(MessageType.ERROR, this);
             Reset();
@@ -44,7 +43,7 @@ namespace AGrail
 
         public void ChooseTeam()
         {
-
+            
         }
 
         public void OnEventTrigger(MessageType eventType, params object[] parameters)
@@ -78,7 +77,7 @@ namespace AGrail
 
         public void Reset()
         {
-            Morale = new uint[2];
+            Morale = new uint[2] { 15, 15 };
             Gem = new uint[2];
             Crystal = new uint[2];
             Grail = new uint[2];
@@ -111,13 +110,7 @@ namespace AGrail
                     //MessageSystem<MessageType>.Notify(MessageType.EnterRoom);
                 }
                 if (value.player_idSpecified)
-                {
-                    if (value.player_id == 9)
-                    {
-                        MainPlayer = new network.SinglePlayerInfo() { id = 9 };
-                        Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, false);
-                        MessageSystem<MessageType>.Notify(MessageType.AgentUpdate);
-                    }                        
+                {                     
                     PlayerID = value.player_id;
                 }                
                 Pile = value.pileSpecified ? value.pile : Pile;
@@ -162,21 +155,53 @@ namespace AGrail
                     MessageSystem<MessageType>.Notify(MessageType.GrailChange, Team.Red, value.red_grail - Grail[(int)Team.Red]);
                     Grail[(int)Team.Red] = value.red_grail;
                 }
-
+                if (value.is_startedSpecified)
+                {
+                    //游戏开始，可能需要重新定位玩家位置           
+                    UnityEngine.Debug.Log("game start");
+                    if (!IsStarted && value.is_started)
+                    {
+                        PlayerIdxOrder.Clear();
+                        int t = -1;
+                        for (int i = 0; i < value.player_infos.Count; i++)
+                        {
+                            PlayerIdxOrder.Add((int)value.player_infos[i].id);
+                            if (value.player_infos[i].id == PlayerID)
+                            {
+                                MainPlayer = value.player_infos[i];
+                                t = i;
+                            }
+                        }
+                        if (t != -1)
+                        {
+                            PlayerIdxOrder.AddRange(PlayerIdxOrder.GetRange(0, t));
+                            PlayerIdxOrder.RemoveRange(0, t);
+                        }
+                        if (value.player_id == 9)
+                            MainPlayer = new network.SinglePlayerInfo() { id = 9 };                            
+                        MessageSystem<MessageType>.Notify(MessageType.GameStart);
+                    }
+                    //需要再发一次准备
+                    //以前是不用的...不知道现在改成这样的目的是什么
+                    var proto = new network.ReadyForGameRequest() { type = network.ReadyForGameRequest.Type.SEAT_READY };
+                    GameManager.TCPInstance.Send(new Protobuf() { Proto = proto, ProtoID = ProtoNameIds.READYFORGAMEREQUEST });
+                    IsStarted = value.is_started;
+                }
                 foreach (var v in value.player_infos)
                 {
                     var player = GetPlayerInfo(v.id);
-                    bool isInit = false;
                     if (player == null)
                     {
                         PlayerInfos.Add(v);
                         player = v;
                         player.max_hand = 6;
-                        if (player.id == PlayerID)
-                            MainPlayer = player;
-                        isInit = true;
                     }
+                    if (player.id == PlayerID && MainPlayer != player)
+                        MainPlayer = player;
+                    //这里可能有些乱...以后再整理吧
                     var idx = PlayerInfos.IndexOf(player);
+                    if(PlayerIdxOrder.Count > 0)
+                        idx = PlayerIdxOrder.IndexOf((int)player.id);
                     if (v.readySpecified)
                     {
                         player.ready = v.ready;
@@ -217,14 +242,14 @@ namespace AGrail
                         MessageSystem<MessageType>.Notify(MessageType.PlayerHandChange, idx, player.hand_count, player.max_hand);
                         if (MainPlayer != null && player.id == MainPlayer.id && v.hand_countSpecified)
                         {
-                            //第一次的时候不用更新手牌
-                            if (!isInit)
+                            //如果两个是同一个引用则不清空
+                            if(player != v)
                             {
                                 player.hands.Clear();
                                 foreach (var u in v.hands)
                                     player.hands.Add(u);
-                                MessageSystem<MessageType>.Notify(MessageType.AgentHandChange);
-                            }                            
+                            }                                
+                            MessageSystem<MessageType>.Notify(MessageType.AgentHandChange);
                         }
                     }
                     if (v.heal_countSpecified)
@@ -275,33 +300,6 @@ namespace AGrail
                     }
                     if(v.basic_cards.Count > 0 || v.ex_cards.Count > 0 || v.delete_field.Count > 0)
                         MessageSystem<MessageType>.Notify(MessageType.PlayerBasicAndExCardChange, idx, player.basic_cards, player.ex_cards);
-                }
-                if (value.is_startedSpecified)
-                {
-                    //游戏开始，可能需要重新定位玩家位置                    
-                    if (!IsStarted && value.is_started)
-                    {
-                        PlayerIdxOrder.Clear();
-                        int t = -1;
-                        foreach(var v in value.player_infos)
-                        {
-                            var idx = PlayerInfos.FindIndex(p => { return p.id == v.id; });
-                            PlayerIdxOrder.Add(idx);
-                            if (MainPlayer != null && v.id == MainPlayer.id)
-                                t = PlayerIdxOrder.Count - 1;
-                        }
-                        if(t != -1)
-                        {
-                            PlayerIdxOrder.AddRange(PlayerIdxOrder.GetRange(0, t));
-                            PlayerIdxOrder.RemoveRange(0, t);
-                        }                        
-                        MessageSystem<MessageType>.Notify(MessageType.GameStart);
-                    }
-                    //需要再发一次准备
-                    //以前是不用的...不知道现在改成这样的目的是什么
-                    var proto = new network.ReadyForGameRequest() { type = network.ReadyForGameRequest.Type.SEAT_READY };
-                    GameManager.TCPInstance.Send(new Protobuf() { Proto = proto, ProtoID = ProtoNameIds.READYFORGAMEREQUEST });
-                    IsStarted = value.is_started;
                 }
             }
         }
@@ -474,12 +472,7 @@ namespace AGrail
                     }
                 }
             }
-        }
-
-        public static Team GetOtherTeam(Team team)
-        {
-            return (team == Team.Blue) ? Team.Red : Team.Blue;
-        }
+        }        
     }
 
     public enum Team
@@ -487,6 +480,24 @@ namespace AGrail
         Blue = 0,
         Red,
         Other,
+    }
+
+    public static class Util
+    {
+        public static Team GetOtherTeam(Team team)
+        {
+            return (team == Team.Blue) ? Team.Red : Team.Blue;
+        }
+
+        public static bool HasSkillCard(uint skillID, List<uint> hands)
+        {
+            foreach(var v in hands)
+            {
+                if (Card.GetCard(v).HasSkill(skillID))
+                    return true;
+            }
+            return false;
+        }
     }
 }
 
