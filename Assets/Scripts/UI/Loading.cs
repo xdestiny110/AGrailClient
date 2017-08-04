@@ -38,11 +38,22 @@ namespace AGrail
             var val = AssetBundleManager.Instance.Progress;
             while (val < 100)
             {
-                progress.text = "Loading: " + val.ToString() + "%";
+                progress.text = "验证远端资源更新: " + val.ToString() + "%";
                 yield return new WaitForSeconds(0.3f);
                 val = AssetBundleManager.Instance.Progress;
             }
-            progress.text = "Loading: " + val.ToString() + "%";
+
+            StartCoroutine(WindowFactory.Instance.PreloadAllWindow());
+            var str = "场景资源预加载.";
+            var idx = 0;
+            while (!WindowFactory.Instance.allWindowReady)
+            {
+                progress.text = str;
+                for (int i = 0; i < idx; i++)
+                    progress.text += ".";
+                idx = (idx + 1) % 3;
+                yield return new WaitForSeconds(0.5f);
+            }           
             yield return new WaitForSeconds(1);
             SceneManager.LoadScene(1);
         }

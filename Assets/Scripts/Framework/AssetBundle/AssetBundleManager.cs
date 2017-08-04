@@ -206,7 +206,7 @@ namespace Framework.AssetBundle
         }
 
         public T LoadAsset<T>(string assetBundleName, string assetName) where T : UnityEngine.Object
-        {
+        {            
             assetBundleName = assetBundleName.ToLower();
 #if UNITY_EDITOR
             if (SimulationMode)
@@ -242,7 +242,7 @@ namespace Framework.AssetBundle
             return LoadAsset<GameObject>(assetBundleName, assetName);
         }
 
-        public void LoadAssetAsyn(string assetbundleName, string assetName, Action<GameObject> cb)
+        public void LoadAssetAsyn<T>(string assetbundleName, string assetName, Action<T> cb) where T : UnityEngine.Object
         {
             assetbundleName = assetbundleName.ToLower();
 #if UNITY_EDITOR
@@ -255,18 +255,39 @@ namespace Framework.AssetBundle
 #endif
         }
 
-        public IEnumerator LoadAssetAsynCoro(string assetbundleName, string assetName, Action<GameObject> cb)
+        public IEnumerator LoadAssetAsynCoro<T>(string assetbundleName, string assetName, Action<T> cb) where T : UnityEngine.Object
         {
             assetbundleName = assetbundleName.ToLower();
             if (bundles.ContainsKey(assetbundleName))
             {
-                var req = bundles[assetbundleName].LoadAssetAsync<GameObject>(assetName);
+                var req = bundles[assetbundleName].LoadAssetAsync<T>(assetName);
                 yield return req;
                 if(cb != null)
-                    cb(req.asset as GameObject);
+                    cb(req.asset as T);
             }
             else
                 Debug.LogErrorFormat("There is no asset with name {0}/{1}", assetbundleName, assetName);
+        }
+
+        public AssetBundleRequest LoadAssetAsynCoro<T>(string assetbundleName, string assetName) where T : UnityEngine.Object
+        {
+            assetbundleName = assetbundleName.ToLower();
+#if UNITY_EDITOR
+
+            if (SimulationMode)
+                LoadAsset(assetbundleName, assetName);
+            else if (bundles.ContainsKey(assetbundleName))            
+                return bundles[assetbundleName].LoadAssetAsync<T>(assetName);                            
+            else
+                Debug.LogErrorFormat("There is no asset with name {0}/{1}", assetbundleName, assetName);
+            return null;
+#else
+            if (bundles.ContainsKey(assetbundleName))            
+                return bundles[assetbundleName].LoadAssetAsync<T>(assetName);                            
+            else
+                Debug.LogErrorFormat("There is no asset with name {0}/{1}", assetbundleName, assetName);
+            return null;
+#endif
         }
 
         private bool isError = false;

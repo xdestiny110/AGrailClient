@@ -56,7 +56,7 @@ namespace AGrail
 
         public override void OnHide()
         {            
-            root.transform.DOLocalMoveX(Screen.width, 1.0f);
+            root.transform.DOLocalMoveX(-1280, 1.0f);
         }
 
         public override void OnEventTrigger(MessageType eventType, params object[] parameters)

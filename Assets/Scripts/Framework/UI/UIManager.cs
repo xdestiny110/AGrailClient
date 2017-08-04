@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 namespace Framework.UI
 {
@@ -9,7 +10,10 @@ namespace Framework.UI
 
         public WindowsBase PushWindow(WindowType type, WinMsg msg, Vector3 initPos = default(Vector3), params object[] parameters)
         {
+            var guid = System.Guid.NewGuid();
+            TimeScope.Start(guid, "push window " + type.ToString());
             var go = WindowFactory.Instance.CreateWindows(type);
+            TimeScope.Stop(guid);
             go.name = type.ToString();
             go.transform.position = initPos;
             var win = go.GetComponent<WindowsBase>();
@@ -22,6 +26,13 @@ namespace Framework.UI
             }                
             winStack.Push(win);
             return win;
+        }
+
+        public IEnumerator PushWindowAsyn(WindowType type, WinMsg msg, Vector3 initPos = default(Vector3), params object[] parameters)
+        {            
+            //先加载等待画面            
+            yield return WindowFactory.Instance.CreateWindowsAnyn(type);
+            //之后再完善
         }
 
         public WindowsBase PushWindowFromResource(WindowType type, WinMsg msg, Vector3 initPos = default(Vector3), params object[] parameters)

@@ -144,9 +144,10 @@ namespace AGrail
                     return cardIDs.Count > 0;
                 case (uint)SkillID.灵魂镜像:
                     return cardIDs.Count == Math.Min(BattleData.Instance.MainPlayer.hand_count, 3) && playerIDs.Count == 1;
+                case (uint)SkillID.灵魂链接:
+                    return playerIDs.Count == 1;
                 case (uint)SkillID.灵魂增幅:
                 case (uint)SkillID.灵魂转换:
-                case (uint)SkillID.灵魂链接:
                 case (uint)SkillID.灵魂链接响应:
                     return true;
             }
