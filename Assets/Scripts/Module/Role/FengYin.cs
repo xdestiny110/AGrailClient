@@ -79,15 +79,15 @@ namespace AGrail
                 case 403:
                 case 404:
                 case 405:
+                    
                 case 407:
                 case 408:
                 case 10:
                 case 11:
-                    if (skill.SkillID >= 401 && skill.SkillID <= 405)
-                        return true;
-                    else if ((skill.SkillID == 407 || skill.SkillID == 408) &&
-                        BattleData.Instance.MainPlayer.gem + BattleData.Instance.MainPlayer.crystal >= 1)
-                        return true;
+                    if (skill.SkillID >= 401 && skill.SkillID <= 405) 
+                        return  Util.HasCard(skill.SkillID, BattleData.Instance.MainPlayer.hands);
+                    else if (skill.SkillID == 407 || skill.SkillID == 408)
+                        return BattleData.Instance.MainPlayer.gem + BattleData.Instance.MainPlayer.crystal >= 1;
                     break;
             }
             return base.CanSelect(uiState, skill);
@@ -169,17 +169,30 @@ namespace AGrail
                 case 403:
                 case 404:
                 case 405:
-                case 407:                
-                    OKAction = () =>
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == 1)
                     {
                         sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
                             BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state,
                             BattleData.Instance.Agent.SelectArgs);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
                     };
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                         string.Format("{0}: 请选择目标玩家以及独有技卡牌", Skills[state].SkillName));
+                    return;
+                case 407:
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1 )
+                    {
+                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
+                            BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state,
+                            BattleData.Instance.Agent.SelectArgs);
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
+                    };
+                    CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                        string.Format("{0}: 请选择目标玩家", Skills[state].SkillName));
                     return;
                 case 408:
                     OKAction = () =>

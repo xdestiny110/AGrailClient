@@ -489,7 +489,7 @@ namespace AGrail
             return (team == Team.Blue) ? Team.Red : Team.Blue;
         }
 
-        public static bool HasSkillCard(uint skillID, List<uint> hands)
+        public static bool HasCard(uint skillID, List<uint> hands)
         {
             foreach(var v in hands)
             {
@@ -497,6 +497,25 @@ namespace AGrail
                     return true;
             }
             return false;
+        }
+        public static bool HasCard(Card.CardElement cardElement, List<uint> hands,int num = 1)
+        {
+            int count = 0;
+            foreach (var v in hands)
+            {
+                if ((Card.GetCard(v).Element) == cardElement) count++;
+            }
+            return count >= num;
+
+        }
+        public static bool HasCard(Card.CardType cardType, List<uint> hands, int num = 1)
+        {
+            int count = 0;
+            foreach (var v in hands)
+            {
+                if ((Card.GetCard(v).Type) == cardType) count++;
+            }
+            return count >= num;
         }
     }
 }

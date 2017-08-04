@@ -84,8 +84,12 @@ namespace AGrail
                 case 703:
                 case 10:
                 case 11:
-                    if(skill.SkillID >= 701 && skill.SkillID <= 703)
-                        return true;
+                    if (skill.SkillID == 701)
+                        return Util.HasCard(601, BattleData.Instance.MainPlayer.hands);
+                    if (skill.SkillID == 702)
+                        return Util.HasCard(Card.CardElement.water, BattleData.Instance.MainPlayer.hands); 
+                    if (skill.SkillID == 703)
+                        return Util.HasCard(Card.CardElement.wind, BattleData.Instance.MainPlayer.hands);
                     return false;
             }
             return base.CanSelect(uiState, skill);

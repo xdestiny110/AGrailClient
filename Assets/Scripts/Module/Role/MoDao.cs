@@ -75,10 +75,14 @@ namespace AGrail
                 case 801:
                 case 803:
                 case 804:
-                    if (skill.SkillID == 801 || skill.SkillID == 803)
-                        return true;
-                    if (skill.SkillID == 804 && BattleData.Instance.MainPlayer.gem > 0)
-                        return true;
+                    if (skill.SkillID == 801)
+                        return Util.HasCard(Card.CardType.magic, BattleData.Instance.MainPlayer.hands);
+
+                    if (skill.SkillID == 803)
+                        return ( Util.HasCard(Card.CardElement.fire, BattleData.Instance.MainPlayer.hands) || Util.HasCard(Card.CardElement.earth, BattleData.Instance.MainPlayer.hands) );
+
+                    if (skill.SkillID == 804)
+                        return BattleData.Instance.MainPlayer.gem > 0;
                     return false;
             }
             return base.CanSelect(uiState, skill);
@@ -181,9 +185,33 @@ namespace AGrail
             switch (state)
             {
                 case 801:
-                case 803:
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 2 && BattleData.Instance.Agent.SelectCards.Count == 1)
+                    {
+                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
+                            BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state,
+                            BattleData.Instance.Agent.SelectArgs);
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
+                    };
+                    CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                        string.Format("{0}: 请选择目标玩家以及卡牌", Skills[state].SkillName));
+                    return;
                 case 804:
-                    OKAction = () => 
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 2 )
+                    {
+                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
+                            BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state,
+                            BattleData.Instance.Agent.SelectArgs);
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
+                    };
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                        string.Format("{0}: 请选择目标玩家", Skills[state].SkillName));
+                    CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
+                    return;
+                case 803:
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == 1)
                     {
                         sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
                             BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state,
@@ -191,18 +219,8 @@ namespace AGrail
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
-                    break;
-            }
-            switch (state)
-            {
-                case 801:
-                case 803:
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                         string.Format("{0}: 请选择目标玩家以及卡牌", Skills[state].SkillName));
-                    break;
-                case 804:
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("{0}: 请选择目标玩家", Skills[state].SkillName));
                     return;
             }
             base.UIStateChange(state, msg, paras);

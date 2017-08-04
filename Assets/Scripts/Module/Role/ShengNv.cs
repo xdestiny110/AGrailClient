@@ -76,15 +76,15 @@ namespace AGrail
                 case 602:
                 case 605:
                 case 10:
-                    if((skill.SkillID == 601 && Util.HasSkillCard(601, BattleData.Instance.MainPlayer.hands)) || 
-                        (skill.SkillID == 602 && Util.HasSkillCard(602, BattleData.Instance.MainPlayer.hands)))
+                    if((skill.SkillID == 601 && Util.HasCard(601, BattleData.Instance.MainPlayer.hands)) || 
+                        (skill.SkillID == 602 && Util.HasCard(602, BattleData.Instance.MainPlayer.hands)))
                         return true;
                     if (skill.SkillID == 605 && BattleData.Instance.MainPlayer.gem + BattleData.Instance.MainPlayer.crystal >= 1)
                         return true;
                     return false;
                 case 11:
-                    if ((skill.SkillID == 601 && Util.HasSkillCard(601, BattleData.Instance.MainPlayer.hands)) ||
-                        (skill.SkillID == 602 && Util.HasSkillCard(602, BattleData.Instance.MainPlayer.hands)))
+                    if ((skill.SkillID == 601 && Util.HasCard(601, BattleData.Instance.MainPlayer.hands)) ||
+                        (skill.SkillID == 602 && Util.HasCard(602, BattleData.Instance.MainPlayer.hands)))
                         return true;
                     if (skill.SkillID == 605 && additionalState != 6053 && 
                         BattleData.Instance.MainPlayer.gem + BattleData.Instance.MainPlayer.crystal >= 1)
