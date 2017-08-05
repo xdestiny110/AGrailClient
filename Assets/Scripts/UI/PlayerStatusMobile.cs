@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Framework.AssetBundle;
 using Framework.UI;
+using DG.Tweening;
 
 namespace AGrail
 {
@@ -335,6 +336,21 @@ namespace AGrail
                     else
                         select.gameObject.SetActive(false);
                     break;
+            }
+        }
+
+        public void TurnBegin()
+        {
+            Turn = true;
+            if(ID == BattleData.Instance.PlayerID)
+            {
+                turn.transform.localScale = new Vector3(2, 2, 1);
+                turn.transform.DOScale(new Vector3(1.5f, 1.5f, 1), 1.5f);
+            }
+            else
+            {
+                turn.transform.localScale = new Vector3(1.5f, 1.5f, 1);
+                turn.transform.DOScale(Vector3.one, 1.5f);
             }
         }
 

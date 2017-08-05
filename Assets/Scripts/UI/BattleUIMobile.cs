@@ -73,6 +73,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.GrailChange, this);
             MessageSystem<MessageType>.Regist(MessageType.SendHint, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerNickName, this);
+            MessageSystem<MessageType>.Regist(MessageType.PlayerActionChange, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerTeamChange, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerRoleChange, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerHandChange, this);
@@ -89,13 +90,13 @@ namespace AGrail
 
             //依据数据初始化界面
             MessageSystem<MessageType>.Notify(MessageType.MoraleChange, Team.Red, BattleData.Instance.Morale[(int)Team.Red]);
-            MessageSystem<MessageType>.Notify(MessageType.MoraleChange, Team.Blue, BattleData.Instance.Morale[(int)Team.Blue]);            
+            MessageSystem<MessageType>.Notify(MessageType.MoraleChange, Team.Blue, BattleData.Instance.Morale[(int)Team.Blue]);
             MessageSystem<MessageType>.Notify(MessageType.GemChange, Team.Red, (int)BattleData.Instance.Gem[(int)Team.Red]);
             MessageSystem<MessageType>.Notify(MessageType.GemChange, Team.Blue, (int)BattleData.Instance.Gem[(int)Team.Blue]);
             MessageSystem<MessageType>.Notify(MessageType.CrystalChange, Team.Red, (int)BattleData.Instance.Crystal[(int)Team.Red]);
             MessageSystem<MessageType>.Notify(MessageType.CrystalChange, Team.Blue, (int)BattleData.Instance.Crystal[(int)Team.Blue]);
             MessageSystem<MessageType>.Notify(MessageType.GrailChange, Team.Red, BattleData.Instance.Grail[(int)Team.Red]);
-            MessageSystem<MessageType>.Notify(MessageType.GrailChange, Team.Blue, BattleData.Instance.Grail[(int)Team.Blue]);            
+            MessageSystem<MessageType>.Notify(MessageType.GrailChange, Team.Blue, BattleData.Instance.Grail[(int)Team.Blue]);
 
             var playerIdxOrder = BattleData.Instance.PlayerIdxOrder;
             if(playerIdxOrder.Count == BattleData.Instance.PlayerInfos.Count && playerIdxOrder.Count > 0)
@@ -115,6 +116,10 @@ namespace AGrail
                     MessageSystem<MessageType>.Notify(MessageType.PlayerKneltChange, i, playerInfo.is_knelt);
                     MessageSystem<MessageType>.Notify(MessageType.PlayerBasicAndExCardChange, i, playerInfo.basic_cards, playerInfo.ex_cards);
                 }
+                if(BattleData.Instance.CurrentPlayerID == 9)
+                    MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, playerIdxOrder[0]);
+                else
+                    MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, BattleData.Instance.CurrentPlayerID);
             }
 
             base.Awake();
@@ -128,8 +133,9 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.GrailChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.SendHint, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerNickName, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.PlayerActionChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerTeamChange, this);
-            MessageSystem<MessageType>.UnRegist(MessageType.PlayerRoleChange, this);            
+            MessageSystem<MessageType>.UnRegist(MessageType.PlayerRoleChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerHandChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerHealChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerTokenChange, this);
@@ -217,8 +223,17 @@ namespace AGrail
                     if (tb.idSpecified)
                     {
                         for (int i = 0; i < playerStatus.Count; i++)
-                            playerStatus[i].Turn = (BattleData.Instance.GetPlayerInfo((uint)BattleData.Instance.PlayerIdxOrder[i]).id == tb.id) ? true : false;
+                        {
+                            if (BattleData.Instance.GetPlayerInfo((uint)BattleData.Instance.PlayerIdxOrder[i]).id == tb.id)
+                                PlayerStatus[i].TurnBegin();
+                            else
+                                playerStatus[i].Turn = false;
+                        }
                     }
+                    break;
+                case MessageType.PlayerActionChange:
+                    for (int i = 0; i < playerStatus.Count; i++)
+                        playerStatus[i].Turn = (playerStatus[i].ID == (uint)parameters[0]);
                     break;
                 case MessageType.LogChange:
                     log.text = Dialog.Instance.Log;

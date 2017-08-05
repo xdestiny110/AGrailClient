@@ -70,6 +70,7 @@
         PlayerNickName,
         PlayerIsReady,
         PlayerBasicAndExCardChange,
+        PlayerActionChange,
         LogChange,
         ChatChange,
         AgentSelectCard,
