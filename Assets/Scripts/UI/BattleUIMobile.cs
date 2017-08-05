@@ -37,6 +37,10 @@ namespace AGrail
         private Button btnExpand;
         [SerializeField]
         private Button btnShrink;
+        [SerializeField]
+        private InputField inptChat;
+        [SerializeField]
+        private Button btnSubmit;
 
         public List<PlayerStatusMobile> PlayerStatus
         {
@@ -66,6 +70,8 @@ namespace AGrail
 
             btnExpand.onClick.AddListener(onBtnExpandClick);
             btnShrink.onClick.AddListener(onBtnShrinkClick);
+            btnSubmit.onClick.AddListener(delegate { onBtnSubmitClick(null); });
+            inptChat.onEndEdit.AddListener(onBtnSubmitClick);
             
             MessageSystem<MessageType>.Regist(MessageType.MoraleChange, this);
             MessageSystem<MessageType>.Regist(MessageType.GemChange, this);
@@ -117,7 +123,7 @@ namespace AGrail
                     MessageSystem<MessageType>.Notify(MessageType.PlayerBasicAndExCardChange, i, playerInfo.basic_cards, playerInfo.ex_cards);
                 }
                 if(BattleData.Instance.CurrentPlayerID == 9)
-                    MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, playerIdxOrder[0]);
+                    MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, (uint)playerIdxOrder[0]);
                 else
                     MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, BattleData.Instance.CurrentPlayerID);
             }
@@ -371,6 +377,13 @@ namespace AGrail
         {
             logRoot.localPosition = new Vector3(0, 0, 0);
             logRoot.DOLocalMoveX(1280, 1.0f);
+        }
+
+        private void onBtnSubmitClick(string str)
+        {
+            if (!string.IsNullOrEmpty(inptChat.text))
+                Dialog.Instance.SendTalk(inptChat.text);
+            inptChat.text = string.Empty;
         }
     }
 }

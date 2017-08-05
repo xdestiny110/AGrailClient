@@ -61,6 +61,13 @@ namespace Framework.UI
                 if (assetbundleReq == null || assetbundleReq.asset == null) continue;
                 yield return assetbundleReq;
                 goPool.Add((WindowType)Enum.Parse(typeof(WindowType), v), assetbundleReq.asset as GameObject);
+                try
+                {
+                    //应对awake中会出现的报错
+                    var go = GameObject.Instantiate(assetbundleReq.asset);
+                    GameObject.Destroy(go);
+                }
+                catch (Exception e) { }                
             }
             allWindowReady = true;
         }

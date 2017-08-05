@@ -342,7 +342,7 @@ namespace AGrail
         public void TurnBegin()
         {
             Turn = true;
-            if(ID == BattleData.Instance.PlayerID)
+            if(ID == BattleData.Instance.PlayerID || (BattleData.Instance.PlayerID == 9 && ID == BattleData.Instance.PlayerIdxOrder[0]))
             {
                 turn.transform.localScale = new Vector3(2, 2, 1);
                 turn.transform.DOScale(new Vector3(1.5f, 1.5f, 1), 1.5f);
