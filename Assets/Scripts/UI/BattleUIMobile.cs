@@ -85,6 +85,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.SKILLMSG, this);
             MessageSystem<MessageType>.Regist(MessageType.TURNBEGIN, this);
             MessageSystem<MessageType>.Regist(MessageType.LogChange, this);
+            MessageSystem<MessageType>.Regist(MessageType.ChatChange, this);
 
             //依据数据初始化界面
             MessageSystem<MessageType>.Notify(MessageType.MoraleChange, Team.Red, BattleData.Instance.Morale[(int)Team.Red]);
@@ -139,6 +140,7 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.SKILLMSG, this);
             MessageSystem<MessageType>.UnRegist(MessageType.TURNBEGIN, this);
             MessageSystem<MessageType>.UnRegist(MessageType.LogChange, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.ChatChange, this);
 
             btnExpand.onClick.RemoveAllListeners();
             btnShrink.onClick.RemoveAllListeners();
@@ -220,6 +222,9 @@ namespace AGrail
                     break;
                 case MessageType.LogChange:
                     log.text = Dialog.Instance.Log;
+                    break;
+                case MessageType.ChatChange:
+                    chatChange();
                     break;
             }
         }
@@ -322,6 +327,23 @@ namespace AGrail
             arrow.transform.localScale = Vector3.one;
             arrow.GetComponent<Arrow>().SetParms(playerStatus[srcIdx].AnimationPos.position, playerStatus[dstIdx].AnimationPos.position);
             Debug.LogFormat("src pos = {0}, dst pos = {1}", playerStatus[srcIdx].AnimationPos.position, playerStatus[dstIdx].AnimationPos.position);
+        }
+
+        private void chatChange()
+        {
+            var go = Instantiate<GameObject>(AssetBundleManager.Instance.LoadAsset("battle", "ChatItem"));
+            go.transform.parent = chatRoot;
+            go.transform.localScale = Vector3.one;
+            go.transform.localPosition = Vector3.zero;
+            go.transform.localRotation = Quaternion.identity;
+            var chatItem = go.GetComponent<ChatItem>();
+            var chat = Dialog.Instance.Chat.Last();
+            chatItem.RoleID = chat.RoleID;
+            chatItem.Msg = BattleData.Instance.GetPlayerInfo(chat.ID).nickname + ": " + chat.msg;
+            if (chat.ID != BattleData.Instance.PlayerID)
+                chatItem.IsMainPlayer = false;
+
+            //生成气泡文字
         }
 
         private void onBtnExpandClick()

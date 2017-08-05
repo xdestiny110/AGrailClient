@@ -71,6 +71,7 @@
         PlayerIsReady,
         PlayerBasicAndExCardChange,
         LogChange,
+        ChatChange,
         AgentSelectCard,
         AgentSelectPlayer,
         AgentSelectSkill,
