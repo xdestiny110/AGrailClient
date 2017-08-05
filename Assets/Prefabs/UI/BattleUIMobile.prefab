@@ -460,6 +460,7 @@ GameObject:
   - component: {fileID: 222525710823168832}
   - component: {fileID: 114320883203766582}
   - component: {fileID: 114620859551316368}
+  - component: {fileID: 114414267176124678}
   m_Layer: 5
   m_Name: PlayerStatusMobileL
   m_TagString: Untagged
@@ -874,6 +875,7 @@ GameObject:
   - component: {fileID: 222532289775144848}
   - component: {fileID: 114458656125766472}
   - component: {fileID: 114775592249474348}
+  - component: {fileID: 114816808821809902}
   m_Layer: 5
   m_Name: PlayerStatusMobileU
   m_TagString: Untagged
@@ -1147,6 +1149,7 @@ GameObject:
   - component: {fileID: 222703355619363658}
   - component: {fileID: 114952272027885842}
   - component: {fileID: 114022275371786996}
+  - component: {fileID: 114767440563202458}
   m_Layer: 5
   m_Name: PlayerStatusMobileUL
   m_TagString: Untagged
@@ -1197,6 +1200,7 @@ GameObject:
   - component: {fileID: 222897618959078046}
   - component: {fileID: 114239873604225284}
   - component: {fileID: 114334574694518578}
+  - component: {fileID: 114786565242146508}
   m_Layer: 5
   m_Name: PlayerStatusMobileUR
   m_TagString: Untagged
@@ -1934,6 +1938,7 @@ GameObject:
   - component: {fileID: 222632670883159974}
   - component: {fileID: 114583823703638552}
   - component: {fileID: 114961276142101500}
+  - component: {fileID: 114881401826401118}
   m_Layer: 5
   m_Name: PlayerStatusMobileR
   m_TagString: Untagged
@@ -2375,7 +2380,7 @@ MonoBehaviour:
     m_HighlightedTrigger: Highlighted
     m_PressedTrigger: Pressed
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 0}
   m_OnClick:
     m_PersistentCalls:
@@ -3505,7 +3510,7 @@ MonoBehaviour:
     m_HighlightedTrigger: Highlighted
     m_PressedTrigger: Pressed
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 0}
   m_OnClick:
     m_PersistentCalls:
@@ -3711,6 +3716,24 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114414267176124678
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1181360588314474}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0626d9a68dd1eae4d881910c0aab9cde, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_OnLongPress:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  LONG_PRESS_TIME: 0.5
+  interceptBtn: {fileID: 114620859551316368}
 --- !u!114 &114425671933503016
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4559,7 +4582,7 @@ MonoBehaviour:
     m_HighlightedTrigger: Highlighted
     m_PressedTrigger: Pressed
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 0}
   m_OnClick:
     m_PersistentCalls:
@@ -5071,6 +5094,24 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114767440563202458
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1551263584125370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0626d9a68dd1eae4d881910c0aab9cde, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_OnLongPress:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  LONG_PRESS_TIME: 0.5
+  interceptBtn: {fileID: 114022275371786996}
 --- !u!114 &114767744382392638
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5128,7 +5169,7 @@ MonoBehaviour:
     m_HighlightedTrigger: Highlighted
     m_PressedTrigger: Pressed
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 0}
   m_OnClick:
     m_PersistentCalls:
@@ -5185,6 +5226,24 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114786565242146508
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1563384676294834}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0626d9a68dd1eae4d881910c0aab9cde, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_OnLongPress:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  LONG_PRESS_TIME: 0.5
+  interceptBtn: {fileID: 114334574694518578}
 --- !u!114 &114789550383943916
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5212,6 +5271,24 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114816808821809902
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1436657241632888}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0626d9a68dd1eae4d881910c0aab9cde, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_OnLongPress:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  LONG_PRESS_TIME: 0.5
+  interceptBtn: {fileID: 114775592249474348}
 --- !u!114 &114817607197172378
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5549,6 +5626,24 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: 
+--- !u!114 &114881401826401118
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1910456403609114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0626d9a68dd1eae4d881910c0aab9cde, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_OnLongPress:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  LONG_PRESS_TIME: 0.5
+  interceptBtn: {fileID: 114961276142101500}
 --- !u!114 &114888041745560838
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5842,7 +5937,7 @@ MonoBehaviour:
     m_HighlightedTrigger: Highlighted
     m_PressedTrigger: Pressed
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 0}
   m_OnClick:
     m_PersistentCalls:
@@ -5910,7 +6005,7 @@ MonoBehaviour:
     m_HighlightedTrigger: Highlighted
     m_PressedTrigger: Pressed
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 0}
   m_OnClick:
     m_PersistentCalls:
