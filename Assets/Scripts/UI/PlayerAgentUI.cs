@@ -118,7 +118,9 @@ namespace AGrail
                     foreach (var v in players)
                             v.IsEnable = false;
                     btnOK.gameObject.SetActive(false);
-                    btnCancel.gameObject.SetActive(false);
+                    btnCancel.gameObject.SetActive(false);                    
+                    while (GameManager.UIInstance.PeekWindow() != Framework.UI.WindowType.BattleUIMobile)
+                        GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
                     break;
                 case MessageType.ShowArgsUI:
                     if (GameManager.UIInstance.PeekWindow() != Framework.UI.WindowType.ChooseArgsUI)
@@ -171,7 +173,7 @@ namespace AGrail
 
         private void onBtnSpecialClick()
         {
-            GameManager.UIInstance.PushWindow(Framework.UI.WindowType.SpecialActionUI, Framework.UI.WinMsg.Pause);
+            GameManager.UIInstance.PushWindow(Framework.UI.WindowType.SpecialActionUI, Framework.UI.WinMsg.None);
         }
 
         private void onBtnSettingClick()
