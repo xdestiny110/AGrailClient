@@ -241,12 +241,13 @@ namespace AGrail
                     }
                     return;
                 case (uint)SkillID.腥红十字:
-                    OKAction = () =>
+                    if(BattleData.Instance.Agent.SelectCards.Count == 2 && BattleData.Instance.Agent.SelectPlayers.Count == 1)
                     {
                         sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
                             BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                    };
+                        return;
+                    }
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                         string.Format("{0}: 选择两张法术牌及一个目标玩家", Skills[state].SkillName));

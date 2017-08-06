@@ -218,6 +218,7 @@ namespace AGrail
                         args.Add(BattleData.Instance.Agent.SelectArgs[0]);
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, args);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
                     };
                     CancelAction = () =>
                     {
