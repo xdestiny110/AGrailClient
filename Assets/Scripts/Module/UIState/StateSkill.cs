@@ -67,6 +67,7 @@ namespace AGrail
                     break;
                 case UIStateMsg.ClickCard:
                 case UIStateMsg.ClickPlayer:
+                case UIStateMsg.ClickArgs:
                     base.Process(msg, paras);
                     break;
             }

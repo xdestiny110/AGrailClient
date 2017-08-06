@@ -125,8 +125,7 @@ namespace AGrail
                     return cardIDs.Count > 0;
                 case (uint)SkillID.幻影星辰:
                     return playerIDs.Count == 1;
-                case (uint)SkillID.暗之解放:
-                case (uint)SkillID.漆黑之枪:
+                case (uint)SkillID.暗之解放:                
                     return true;
             }
             return base.CheckOK(uiState, cardIDs, playerIDs, skillID);
@@ -151,7 +150,7 @@ namespace AGrail
             switch (state)
             {
                 case (uint)SkillID.充盈:
-                    if ( BattleData.Instance.Agent.SelectCards.Count == 1)
+                    if (BattleData.Instance.Agent.SelectCards.Count == 1)
                     {
                         sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
                             null, BattleData.Instance.Agent.SelectCards, state, null);
@@ -178,7 +177,7 @@ namespace AGrail
                         string.Format("是否发动{0}", Skills[state].SkillName));
                     return;
                 case (uint)SkillID.幻影星辰:
-                    if (BattleData.Instance.Agent.SelectCards.Count == 1)
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1)
                     {
                         IsStart = true;
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectPlayers,
@@ -212,9 +211,9 @@ namespace AGrail
                         string.Format("是否发动{0}", Skills[state].SkillName));
                     return;
                 case (uint)SkillID.漆黑之枪:
-                    OKAction = () =>
+                    if (msg == UIStateMsg.ClickArgs)
                     {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         var args = new List<uint>() { 1 };
                         args.Add(BattleData.Instance.Agent.SelectArgs[0]);
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, args);
@@ -225,15 +224,15 @@ namespace AGrail
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                     };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                     List<List<uint>> selectList = new List<List<uint>>();
                     var mList = new List<string>();
                     for(uint i = BattleData.Instance.MainPlayer.crystal + BattleData.Instance.MainPlayer.gem; i > 0; i--)
                     {
                         selectList.Add(new List<uint>() { i });
-                        mList.Add(" 个能量");
+                        mList.Add(i.ToString() + "个能量");
                     }                        
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "选择能量", selectList, mList);
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                         string.Format("{0}: 请选择要使用的能量", Skills[state].SkillName));
                     return;
