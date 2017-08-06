@@ -116,13 +116,10 @@ namespace AGrail
 				case (uint)SkillID.TIAN_HUO_DUAN_KONG:
 				case (uint)SkillID.TONG_KU_LIAN_JIE:
 				case (uint)SkillID.YONG_SHENG_YIN_SHI_JI:
-
-
-
-					if (skill.SkillID == (uint)SkillID.CANG_YAN_FA_DIAN) 
-						return true;
-					if (skill.SkillID == (uint)SkillID.TIAN_HUO_DUAN_KONG)
-						return (BattleData.Instance.MainPlayer.yellow_token > 0) || (BattleData.Instance.MainPlayer.is_knelt);
+					if (skill.SkillID == (uint)SkillID.CANG_YAN_FA_DIAN)
+                        return Util.HasCard(Card.CardElement.fire, BattleData.Instance.MainPlayer.hands);
+                    if (skill.SkillID == (uint)SkillID.TIAN_HUO_DUAN_KONG)
+						return ( (BattleData.Instance.MainPlayer.yellow_token > 0 && Util.HasCard(Card.CardElement.fire, BattleData.Instance.MainPlayer.hands,2)) || (BattleData.Instance.MainPlayer.is_knelt) );
 					if (skill.SkillID == (uint)SkillID.TONG_KU_LIAN_JIE) 
 						return (BattleData.Instance.MainPlayer.crystal + BattleData.Instance.MainPlayer.gem > 0);
 					return false;
@@ -223,13 +220,13 @@ namespace AGrail
 					else base.UIStateChange (state, msg, paras);
 					return;
 				case (uint)SkillID.CANG_YAN_FA_DIAN:
-					OKAction = () =>
-					{
-						sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == 1)
+                    {
+                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
 							BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state);
 						BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-					};
-
+                        return;
+                    };
 					CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
 
 					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
@@ -237,13 +234,13 @@ namespace AGrail
 					return;
 				
 				case (uint)SkillID.TIAN_HUO_DUAN_KONG:
-					OKAction = () =>
-					{
-						sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == 2)
+                    {
+                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
 							BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state);
 						BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-					};
-
+                        return;
+                    };
 					CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
 
 					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
@@ -251,11 +248,13 @@ namespace AGrail
 					return;
 
 				case (uint)SkillID.TI_SHEN_WAN_OU:
-					OKAction = () => {
-						sendReponseMsg (state, BattleData.Instance.MainPlayer.id,
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == 1)
+                    {
+                        sendReponseMsg (state, BattleData.Instance.MainPlayer.id,
 							BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, new List<uint>() { 1 });
 						BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
-					};
+                        return;
+                    };
 					CancelAction = () => {
 						sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
 						BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
@@ -264,8 +263,9 @@ namespace AGrail
 						string.Format ("{0}: 请选择目标队友以及一张法术牌", Skills [state].SkillName));
 					return;
 				case (uint)SkillID.TONG_KU_LIAN_JIE:
-					OKAction = () => {
-						sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1)
+                    {
+                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
 							BattleData.Instance.Agent.SelectPlayers, null, state, new List<uint>() { 1 });
 						BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
 					};

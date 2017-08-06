@@ -81,7 +81,11 @@ namespace AGrail
                 case 1802:
                 case 10:
                 case 11:
-                    return skill.SkillID >= 1801 && skill.SkillID <= 1802;
+                    if (skill.SkillID >= 1801)
+                        return Util.HasCard(Card.CardElement.wind, BattleData.Instance.MainPlayer.hands);
+                    if (skill.SkillID >= 1802)
+                        return Util.HasCard(Card.CardElement.thunder, BattleData.Instance.MainPlayer.hands);
+                    return false;
             }
             return base.CanSelect(uiState, skill);
         }
@@ -195,12 +199,13 @@ namespace AGrail
                     break;
                 case 1801:
                 case 1802:
-                    OKAction = () =>
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 2 && BattleData.Instance.Agent.SelectCards.Count == 1)
                     {
                         sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
                             BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state,
                             BattleData.Instance.Agent.SelectArgs);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
                     };
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,

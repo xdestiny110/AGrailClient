@@ -84,11 +84,10 @@ namespace AGrail
             switch (uiState)
             {                
                 case (uint)SkillID.充盈:
-                    return skill.SkillID == (uint)SkillID.充盈;
                 case 10:
                 case 11:
                     if (skill.SkillID == (uint)SkillID.充盈 && additionalState != 29011)
-                        return true;
+                        return ( Util.HasCard(Card.CardType.magic, BattleData.Instance.MainPlayer.hands) || Util.HasCard(Card.CardElement.thunder, BattleData.Instance.MainPlayer.hands) );
                     return false;
             }
             return base.CanSelect(uiState, skill);
@@ -152,11 +151,12 @@ namespace AGrail
             switch (state)
             {
                 case (uint)SkillID.充盈:
-                    OKAction = () =>
+                    if ( BattleData.Instance.Agent.SelectCards.Count == 1)
                     {
                         sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
                             null, BattleData.Instance.Agent.SelectCards, state, null);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
                     };
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
@@ -178,12 +178,13 @@ namespace AGrail
                         string.Format("是否发动{0}", Skills[state].SkillName));
                     return;
                 case (uint)SkillID.幻影星辰:
-                    OKAction = () =>
+                    if (BattleData.Instance.Agent.SelectCards.Count == 1)
                     {
                         IsStart = true;
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectPlayers,
                             null, new List<uint>() { 2 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
                     };
                     CancelAction = () =>
                     {

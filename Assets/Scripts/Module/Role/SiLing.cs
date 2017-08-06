@@ -76,10 +76,12 @@ namespace AGrail
                 case 1303:
                 case 1304:
                 case 1305:
+                    if (skill.SkillID == 1303)
+                        return Util.HasCard(Card.CardElement.earth, BattleData.Instance.MainPlayer.hands);
                     if (skill.SkillID == 1305 && BattleData.Instance.MainPlayer.gem > 0)
                         return true;
                     if (skill.SkillID == 1304 && BattleData.Instance.MainPlayer.heal_count >= 2)
-                        return true;
+                        return Util.HasCard("same", BattleData.Instance.MainPlayer.hands,2);
                     return skill.SkillID == 1303;
             }
             return base.CanSelect(uiState, skill);

@@ -82,7 +82,9 @@ namespace AGrail
                 case 905:
                 case 10:
                 case 11:
-                    return skill.SkillID == 905 && BattleData.Instance.MainPlayer.is_knelt;
+                    if (skill.SkillID == 905 && BattleData.Instance.MainPlayer.is_knelt && Util.HasCard(Card.CardType.magic, BattleData.Instance.MainPlayer.hands, 2))
+                        return true;
+                    return false;
             }
             return base.CanSelect(uiState, skill);
         }
@@ -173,10 +175,11 @@ namespace AGrail
                         string.Format("是否发动{0}", Skills[state].SkillName));
                     return;
                 case 905:
-                    OKAction = () =>
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == 2)
                     {
                         sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
                     };
                     CancelAction = () =>
                     {

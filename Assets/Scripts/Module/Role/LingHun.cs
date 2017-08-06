@@ -93,11 +93,11 @@ namespace AGrail
                 case (uint)SkillID.灵魂召还:
                 case (uint)SkillID.灵魂镜像:
                     if (skill.SkillID == (uint)SkillID.灵魂震爆 && BattleData.Instance.MainPlayer.yellow_token >= 3)
-                        return true;
+                        return Util.HasCard(2201, BattleData.Instance.MainPlayer.hands);
                     if (skill.SkillID == (uint)SkillID.灵魂赐予 && BattleData.Instance.MainPlayer.blue_token >= 3)
-                        return true;
-                    if (skill.SkillID == (uint)SkillID.灵魂召还)                        
-                        return true;
+                        return Util.HasCard(2202, BattleData.Instance.MainPlayer.hands);
+                    if (skill.SkillID == (uint)SkillID.灵魂召还)
+                        return Util.HasCard(Card.CardType.magic, BattleData.Instance.MainPlayer.hands);
                     if (skill.SkillID == (uint)SkillID.灵魂镜像 && BattleData.Instance.MainPlayer.yellow_token >= 2)
                         return true;
                     return false;
@@ -179,11 +179,12 @@ namespace AGrail
             {
                 case (uint)SkillID.灵魂震爆:
                 case (uint)SkillID.灵魂赐予:
-                    OKAction = () =>
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == 1)
                     {
                         sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id, 
                             BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
                     };
                     CancelAction = () =>
                     {
@@ -266,7 +267,7 @@ namespace AGrail
                         string.Format("是否发动{0}", Skills[state].SkillName));
                     return;
                 case (uint)SkillID.灵魂链接:
-                    OKAction = () =>
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1 )
                     {
                         IsStart = true;
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, 

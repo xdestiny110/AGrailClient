@@ -91,8 +91,10 @@ namespace AGrail
                 case (uint)SKILLID.神圣领域:
                     if (skill.SkillID == 1506 && BattleData.Instance.MainPlayer.crystal + BattleData.Instance.MainPlayer.gem > 0)
                         return true;
-                    if (skill.SkillID >= 1502 && skill.SkillID <= 1503)
-                        return true;
+                    if (skill.SkillID >= 1502 )
+                        return Util.HasCard(Card.CardType.magic, BattleData.Instance.MainPlayer.hands,2);
+                    if (skill.SkillID >= 1503 )
+                        return Util.HasCard(Card.CardElement.water, BattleData.Instance.MainPlayer.hands);
                     return false;
             }
             return base.CanSelect(uiState, skill);
@@ -203,21 +205,23 @@ namespace AGrail
                         string.Format("{0}: 选择两张法术", Skills[state].SkillName));
                     return;
                 case (uint)SKILLID.水之神力:
-                    OKAction = () =>
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == 1)
                     {
                         sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id, 
                             BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
                     };
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                         string.Format("{0}: 选择一张水系牌以及目标队友", Skills[state].SkillName));                    
                     return;
                 case (uint)SKILLID.水之神力给牌:
-                    OKAction = () =>
+                    if (BattleData.Instance.Agent.SelectCards.Count == 1)
                     {
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, BattleData.Instance.Agent.SelectCards);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
                     };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                         string.Format("{0}: 选择要给予的牌", Skills[state].SkillName));

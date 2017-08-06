@@ -85,8 +85,10 @@ namespace AGrail
                 case (uint)SkillID.血之诅咒:
                     if (skill.SkillID == (uint)SkillID.血之诅咒 && BattleData.Instance.MainPlayer.gem > 0)
                         return true;
-                    if ((skill.SkillID == (uint)SkillID.逆流 || skill.SkillID == (uint)SkillID.血之悲鸣) && BattleData.Instance.MainPlayer.is_knelt)
+                    if (skill.SkillID == (uint)SkillID.逆流 && BattleData.Instance.MainPlayer.is_knelt)
                         return true;
+                    if (skill.SkillID == (uint)SkillID.血之悲鸣 && BattleData.Instance.MainPlayer.is_knelt)
+                        return Util.HasCard(2301, BattleData.Instance.MainPlayer.hands);
                     if (skill.SkillID == (uint)SkillID.同生共死 && additionalState == 0)
                         return true;                    
                     return false;
@@ -188,12 +190,13 @@ namespace AGrail
                         string.Format("{0}: 请选择目标玩家以及伤害", Skills[state].SkillName));
                     return;
                 case (uint)SkillID.同生共死:
-                    OKAction = () =>
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1)
                     {
                         additionalState = 1;
                         sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
                             BattleData.Instance.Agent.SelectPlayers, null, state, null);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
                     };
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
@@ -233,11 +236,12 @@ namespace AGrail
                         string.Format("{0}: 弃2张牌", Skills[state].SkillName));
                     return;
                 case (uint)SkillID.血之诅咒:
-                    OKAction = () =>
-                    {                        
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1)
+                    {
                         sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
                             BattleData.Instance.Agent.SelectPlayers, null, state, null);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
                     };
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,

@@ -157,12 +157,7 @@ namespace AGrail
                     break;
                 case 6:
                 //case 7:
-                    return true;                    
-                case 12:
-                case 13:
-                case 14:
-                    return !IsStart;
-                case 15:
+                    return true;
                 case 1602:
                     return true;                    
             }
@@ -206,8 +201,7 @@ namespace AGrail
         public virtual bool CheckBuy(uint uiState)
         {
             var m = BattleData.Instance.MainPlayer;
-            if (uiState == 10 && m.max_hand - m.hand_count >= 3 &&
-                BattleData.Instance.Gem[m.team] + BattleData.Instance.Crystal[m.team] <= 4 && !IsStart)
+            if (uiState == 10 && m.max_hand - m.hand_count >= 3 && !IsStart)
                 return true;
             return false;
         }
@@ -484,11 +478,29 @@ namespace AGrail
                         }
                         CancelAction = () =>
                         {
-                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                             BattleData.Instance.Agent.FSM.BackState(UIStateMsg.ClickBtn);
                         };
                         selectList = new List<List<uint>>() { new List<uint>() { 1, 0 }, new List<uint>() { 0, 1 } };                        
                         explainList = new List<string>() { "1个宝石", "1个水晶" };
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, explainList);
+                    }
+                    else if (BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team] + BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team] == 5)
+                    {
+                        if (msg == UIStateMsg.ClickArgs)
+                        {
+                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                            BattleData.Instance.Agent.PlayerRole.Buy(0, 0);
+                            BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                            return;
+                        }
+                        CancelAction = () =>
+                        {
+                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                            BattleData.Instance.Agent.FSM.BackState(UIStateMsg.ClickBtn);
+                        };
+                        selectList = new List<List<uint>>() { new List<uint>() { 0, 0 }};
+                        explainList = new List<string>() { "不增加星石" };
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, explainList);
                     }
                     else

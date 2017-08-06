@@ -78,7 +78,11 @@ namespace AGrail
                 case 1003:
                     if (skill.SkillID == 1003 && BattleData.Instance.MainPlayer.gem > 0)
                         return true;
-                    return skill.SkillID >= 1001 && skill.SkillID <= 1002;
+                    if (skill.SkillID == 1001)
+                        return Util.HasCard(Card.CardElement.water, BattleData.Instance.MainPlayer.hands);
+                    if (skill.SkillID == 1002)
+                        return Util.HasCard(Card.CardType.magic, BattleData.Instance.MainPlayer.hands);
+                    return false;
             }
             return base.CanSelect(uiState, skill);
         }
@@ -150,7 +154,7 @@ namespace AGrail
                         string.Format("{0}: 请选择水系牌", Skills[state].SkillName));
                     return;
                 case 1002:
-                    OKAction = () =>
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == 1)
                     {
                         sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
                             BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state);

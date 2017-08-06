@@ -92,7 +92,7 @@ namespace AGrail
                 case (uint)SkillID.腥红十字:
                     if (skill.SkillID == (uint)SkillID.腥红十字 &&
                         BattleData.Instance.MainPlayer.gem + BattleData.Instance.MainPlayer.crystal > 0)
-                        return true;
+                        return (BattleData.Instance.MainPlayer.yellow_token >= 1 && Util.HasCard(Card.CardType.magic, BattleData.Instance.MainPlayer.hands,2) );
                     return false;
             }
             return base.CanSelect(uiState, skill);

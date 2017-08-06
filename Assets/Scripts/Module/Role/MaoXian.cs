@@ -71,11 +71,13 @@ namespace AGrail
                 case 1204:
                     if(skill.SkillID == 1204)
                         return BattleData.Instance.MainPlayer.crystal + BattleData.Instance.MainPlayer.gem > 0 
-                            && additionalState == 0 && BattleData.Instance.Crystal[(int)BattleData.Instance.MainPlayer.team] > 0;
+                            && additionalState == 0  ;
                     if (skill.SkillID == 1203)
                         return BattleData.Instance.MainPlayer.crystal + BattleData.Instance.MainPlayer.gem > 0 && additionalState == 0 
                             && BattleData.Instance.Gem[(int)Util.GetOtherTeam((Team)BattleData.Instance.MainPlayer.team)] > 0;
-                    return skill.SkillID == 1201;
+                    if (skill.SkillID == 1201)
+                        return Util.HasCard("same", BattleData.Instance.MainPlayer.hands, 2);
+                    return false;
             }
             return base.CanSelect(uiState, skill);
         }
@@ -108,7 +110,8 @@ namespace AGrail
                 foreach(var v in BattleData.Instance.PlayerInfos)
                 {
                     var r = RoleFactory.Create(v.role_id);
-                    if (v.team == BattleData.Instance.MainPlayer.team && r.MaxEnergyCount > v.gem + v.crystal)
+                    if (v.team == BattleData.Instance.MainPlayer.team && r.MaxEnergyCount > v.gem + v.crystal
+                        && BattleData.Instance.Gem[v.team] + BattleData.Instance.Crystal[v.team] > 0)
                         return true;
                 }                
             }                
@@ -160,6 +163,7 @@ namespace AGrail
         public override void UIStateChange(uint state, UIStateMsg msg, params object[] paras)
         {
             List<List<uint>> selectList;
+            List<string> explainList;
             switch (state)
             {
                 case 10:
@@ -171,12 +175,30 @@ namespace AGrail
                         BattleData.Instance.Agent.PlayerRole.Buy(1, 0);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     }
+                    else if (BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team] + BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team] == 5)
+                    {
+                        if (msg == UIStateMsg.ClickArgs)
+                        {
+                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                            BattleData.Instance.Agent.PlayerRole.Buy(0, 0);
+                            BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                            return;
+                        }
+                        CancelAction = () =>
+                        {
+                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                            BattleData.Instance.Agent.FSM.BackState(UIStateMsg.ClickBtn);
+                        };
+                        selectList = new List<List<uint>>() { new List<uint>() { 0, 0 } };
+                        explainList = new List<string>() { "不增加星石" };
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, explainList);
+                    }
                     else
                     {
                         BattleData.Instance.Agent.PlayerRole.Buy(2, 0);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     }
-                    return;
+                    break;
                 case 13:
                     OKAction = () =>
                     {
@@ -187,7 +209,7 @@ namespace AGrail
                     CancelAction = () =>
                     {
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
-                        BattleData.Instance.Agent.FSM.BackState(UIStateMsg.ClickBtn);
+                        BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
                     };
                     if (msg == UIStateMsg.ClickPlayer)
                     {

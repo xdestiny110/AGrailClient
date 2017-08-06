@@ -4,6 +4,7 @@ using Framework;
 using Framework.Message;
 using Framework.Network;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace AGrail
 {   
@@ -514,18 +515,18 @@ namespace AGrail
             return (team == Team.Blue) ? Team.Red : Team.Blue;
         }
 
-        public static bool HasCard(uint skillID, List<uint> hands)
+        public static bool HasCard(uint skillID, List<uint> hands,uint num = 1)
         {
-            foreach(var v in hands)
+            uint count = 0;
+            foreach (var v in hands)
             {
-                if (Card.GetCard(v).HasSkill(skillID))
-                    return true;
+                if (Card.GetCard(v).HasSkill(skillID)) count++;
             }
-            return false;
+            return count>=num;
         }
-        public static bool HasCard(Card.CardElement cardElement, List<uint> hands,int num = 1)
+        public static bool HasCard(Card.CardElement cardElement, List<uint> hands,uint num = 1)
         {
-            int count = 0;
+            uint count = 0;
             foreach (var v in hands)
             {
                 if ((Card.GetCard(v).Element) == cardElement) count++;
@@ -533,12 +534,46 @@ namespace AGrail
             return count >= num;
 
         }
-        public static bool HasCard(Card.CardType cardType, List<uint> hands, int num = 1)
+        public static bool HasCard(Card.CardType cardType, List<uint> hands, uint num = 1)
         {
-            int count = 0;
+            uint count = 0;
             foreach (var v in hands)
             {
                 if ((Card.GetCard(v).Type) == cardType) count++;
+            }
+            return count >= num;
+        }
+        public static bool HasCard(string condition, List<uint> hands, uint num = 2)
+        {
+            uint water=0,wind=0,earth=0,fire=0,darkness=0,light=0,thunder=0,count=0;
+            foreach (var v in hands)
+            {
+                switch (Card.GetCard(v).Element)
+                {
+                    case Card.CardElement.fire: fire++;  break;
+                    case Card.CardElement.water: water++;  break;
+                    case Card.CardElement.earth: earth++;  break;
+                    case Card.CardElement.darkness: darkness++;  break;
+                    case Card.CardElement.light: light++;  break;
+                    case Card.CardElement.thunder: thunder++;  break;
+                    case Card.CardElement.wind: wind++;  break;
+                    default: break;
+                }
+            }
+            List<uint> element = new List<uint>() { water, wind, earth, fire, darkness, light, thunder };
+            switch (condition)
+            {
+                case "same":
+                    count = element.Max();
+                    break;
+                case "differ":
+                    foreach (var v in element)
+                    {
+                        if  (v > 0)count++;
+                    }
+                    break;
+                default:
+                    break;
             }
             return count >= num;
         }

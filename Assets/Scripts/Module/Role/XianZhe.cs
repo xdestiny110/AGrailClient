@@ -79,7 +79,11 @@ namespace AGrail
                 case 1703:
                 case 10:
                 case 11:
-                    return skill.SkillID >= 1702 && skill.SkillID <= 1703 && BattleData.Instance.MainPlayer.gem > 0;
+                    if (skill.SkillID == 1702 && BattleData.Instance.MainPlayer.gem > 0)
+                        return Util.HasCard("differ", BattleData.Instance.MainPlayer.hands,2);
+                    if (skill.SkillID == 1703 && BattleData.Instance.MainPlayer.gem > 0)
+                        return Util.HasCard("differ", BattleData.Instance.MainPlayer.hands,3);
+                    return false;
             }
             return base.CanSelect(uiState, skill);
         }
