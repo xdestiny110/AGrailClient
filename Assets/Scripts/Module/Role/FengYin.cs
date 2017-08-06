@@ -136,7 +136,6 @@ namespace AGrail
                         return true;
                     return false;
                 case 407:
-                case 408:
                     if (playerIDs.Count == 1)
                         return true;
                     return false;
@@ -195,28 +194,39 @@ namespace AGrail
                         string.Format("{0}: 请选择目标玩家", Skills[state].SkillName));
                     return;
                 case 408:
-                    OKAction = () =>
+                    if (msg == UIStateMsg.ClickArgs)
                     {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
                             BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectArgs, state);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
                     };
                     CancelAction = () => 
                     {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);                        
                     };
                     if(msg == UIStateMsg.ClickPlayer)
                     {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         if(BattleData.Instance.Agent.SelectPlayers.Count > 0)
                         {                            
                             var s = BattleData.Instance.GetPlayerInfo(BattleData.Instance.Agent.SelectPlayers[0]);
                             var selectList = new List<List<uint>>();
+                            var explainList = new List<string>();
                             foreach (var v in s.basic_cards)
+                            { 
                                 selectList.Add(new List<uint>() { v });
-                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "Card", selectList);
+                                var name = Card.GetCard(v).Name.ToString();
+                                if (Card.GetCard(v).Type == Card.CardType.attack)
+                                {
+                                    var property  = Card.GetCard(v).Property.ToString();
+                                    name = name + "-" + property;
+                                }
+                                explainList.Add(name);
+                            }
+                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, explainList);
                             MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                                 "封印破碎: 请选择要移除的基础效果");
                         }

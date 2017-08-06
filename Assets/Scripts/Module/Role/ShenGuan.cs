@@ -91,9 +91,9 @@ namespace AGrail
                 case (uint)SKILLID.神圣领域:
                     if (skill.SkillID == 1506 && BattleData.Instance.MainPlayer.crystal + BattleData.Instance.MainPlayer.gem > 0)
                         return true;
-                    if (skill.SkillID >= 1502 )
+                    if (skill.SkillID == 1502 )
                         return Util.HasCard(Card.CardType.magic, BattleData.Instance.MainPlayer.hands,2);
-                    if (skill.SkillID >= 1503 )
+                    if (skill.SkillID == 1503 )
                         return Util.HasCard(Card.CardElement.water, BattleData.Instance.MainPlayer.hands);
                     return false;
             }
@@ -191,11 +191,12 @@ namespace AGrail
                         string.Format("是否发动{0}", Skills[state].SkillName));
                     return;
                 case (uint)SKILLID.神圣祈福:
-                    OKAction = () =>
+                    if (BattleData.Instance.Agent.SelectCards.Count == 2)
                     {
                         sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id, null, 
                             BattleData.Instance.Agent.SelectCards, state);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
                     };
                     CancelAction = () =>
                     {
