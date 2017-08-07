@@ -104,7 +104,6 @@ namespace AGrail
             {
                 case 1401:
                 case 1402:                
-                case 1405:
                     return true;
                 case 1403:
                     return playerIDs.Count == 1;                    
@@ -194,22 +193,23 @@ namespace AGrail
                         string.Format("{0}: 请选择目标角色", Skills[state].SkillName));
                     return;
                 case 1405:
-                    OKAction = () =>
+                    if (msg == UIStateMsg.ClickArgs)
                     {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
                             null, null, state, BattleData.Instance.Agent.SelectArgs);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
                     };
                     CancelAction = () =>
                     {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
                     };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                     var selectList = new List<List<uint>>() { new List<uint>() { 0 }, new List<uint>() { 1 } };
-                    var mList = new List<string>() { "弃掉你的所有手牌", "将手牌补到上限，【战绩区】+1【宝石】" };                    
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "判决天平", selectList, mList);
+                    var mList = new List<string>() { "弃掉你的所有手牌", "将手牌补到上限，【战绩区】+1【宝石】" };
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                         string.Format("{0}: 请选择一个效果进行发动", Skills[state].SkillName));
                     return;

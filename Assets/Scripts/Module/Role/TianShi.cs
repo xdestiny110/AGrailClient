@@ -131,8 +131,6 @@ namespace AGrail
                     if (cardIDs.Count == 1 && playerIDs.Count >= 1)
                         return true;
                     return false;
-                case 704:
-                    return true;                    
             }
             return base.CheckOK(uiState, cardIDs, playerIDs, skillID);
         }
@@ -185,39 +183,37 @@ namespace AGrail
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
                     };
-                    if (msg == UIStateMsg.ClickPlayer)
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                    if (BattleData.Instance.Agent.SelectPlayers.Count > 0 && BattleData.Instance.Agent.SelectCards.Count == 1)
                     {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
-                        if (BattleData.Instance.Agent.SelectPlayers.Count > 0)
+                        var s = BattleData.Instance.GetPlayerInfo(BattleData.Instance.Agent.SelectPlayers[0]);
+                        selectList = new List<List<uint>>();
+                        explainList = new List<string>();
+                        foreach (var v in s.basic_cards)
                         {
-                            var s = BattleData.Instance.GetPlayerInfo(BattleData.Instance.Agent.SelectPlayers[0]);
-                            selectList = new List<List<uint>>();
-                            explainList = new List<string>();
-                            foreach (var v in s.basic_cards)
+                            selectList.Add(new List<uint>() { v });
+                            var name = Card.GetCard(v).Name.ToString();
+                            if (Card.GetCard(v).Type == Card.CardType.attack)
                             {
-                                selectList.Add(new List<uint>() { v });
-                                var name = Card.GetCard(v).Name.ToString();
-                                if (Card.GetCard(v).Type == Card.CardType.attack)
-                                {
-                                    var property = Card.GetCard(v).Property.ToString();
-                                    name = name + "-" + property;
-                                }
-                                explainList.Add(name);
+                                var property = Card.GetCard(v).Property.ToString();
+                                name = name + "-" + property;
                             }
-                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, explainList);
-                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                                "风之洁净: 请选择要移除的基础效果");
+                            explainList.Add(name);
                         }
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, explainList);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                            "风之洁净: 请选择要移除的基础效果");
                     }
-                    if (BattleData.Instance.Agent.SelectPlayers.Count <= 0)
+                    else
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                             string.Format("{0}: 请选择目标玩家以及卡牌", Skills[state].SkillName));
                     return;
                 case 704:
-                    OKAction = () => 
+                    if (msg == UIStateMsg.ClickPlayer)
                     {                        
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectPlayers);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
                     };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                         string.Format("{0}: 请选择目标玩家为其增加一点治疗", Skills[state].SkillName));
