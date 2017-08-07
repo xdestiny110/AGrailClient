@@ -41,6 +41,7 @@ namespace AGrail
                 MessageSystem<MessageType>.Notify(MessageType.AgentSelectPlayer);
                 MessageSystem<MessageType>.Notify(MessageType.AgentSelectCard);
                 MessageSystem<MessageType>.Notify(MessageType.CloseArgsUI);
+                MessageSystem<MessageType>.Notify(MessageType.CloseNewArgsUI);
             }
             base.Enter(msg, paras);
         }
@@ -60,6 +61,7 @@ namespace AGrail
                         MessageSystem<MessageType>.Notify(MessageType.AgentSelectPlayer);
                         MessageSystem<MessageType>.Notify(MessageType.AgentSelectCard);
                         MessageSystem<MessageType>.Notify(MessageType.CloseArgsUI);
+                        MessageSystem<MessageType>.Notify(MessageType.CloseNewArgsUI);
                     }                        
                     else
                         //点了别的技能
