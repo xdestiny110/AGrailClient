@@ -178,9 +178,11 @@ namespace AGrail
 				case (uint)SkillID.TIAN_HUO_DUAN_KONG:
 					return cardIDs.Count == 2 && playerIDs.Count == 1;
 				case (uint)SkillID.TI_SHEN_WAN_OU:
+                    return cardIDs.Count == 1 && playerIDs.Count == 1;
 				case (uint)SkillID.TONG_KU_LIAN_JIE:
+                    return playerIDs.Count == 1;
 				case (uint)SkillID.MO_NENG_FAN_ZHUAN:
-					return playerIDs.Count == 1;
+					return playerIDs.Count == 1 && cardIDs.Count > 1;
 				case (uint)SkillID.MO_NV_ZHI_NU:
 					return true;
 				default:

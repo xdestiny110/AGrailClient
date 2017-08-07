@@ -33,6 +33,14 @@ namespace AGrail
             }
         }
 
+        public override string HeroName
+        {
+            get
+            {
+                return "帕蒂";
+            }
+        }
+
         public FengYin()
         {
             for (uint i = 401; i <= 408; i++)
@@ -62,8 +70,9 @@ namespace AGrail
                 case 403:
                 case 404:
                 case 405:
+                    return (BattleData.Instance.Agent.SelectCards.Count == 1 && player.team != BattleData.Instance.MainPlayer.team);
                 case 407:
-                    return (player.team != BattleData.Instance.MainPlayer.team);
+                    return player.team != BattleData.Instance.MainPlayer.team;
                 case 408:
                     return player.basic_cards.Count > 0;
             }

@@ -545,18 +545,18 @@ namespace AGrail
         }
         public static bool HasCard(string condition, List<uint> hands, uint num = 2)
         {
-            uint water=0,wind=0,earth=0,fire=0,darkness=0,light=0,thunder=0,count=0;
+            uint water = 0, wind = 0, earth = 0, fire = 0, darkness = 0, light = 0, thunder = 0, count = 0;
             foreach (var v in hands)
             {
                 switch (Card.GetCard(v).Element)
                 {
-                    case Card.CardElement.fire: fire++;  break;
-                    case Card.CardElement.water: water++;  break;
-                    case Card.CardElement.earth: earth++;  break;
-                    case Card.CardElement.darkness: darkness++;  break;
-                    case Card.CardElement.light: light++;  break;
-                    case Card.CardElement.thunder: thunder++;  break;
-                    case Card.CardElement.wind: wind++;  break;
+                    case Card.CardElement.fire: fire++; break;
+                    case Card.CardElement.water: water++; break;
+                    case Card.CardElement.earth: earth++; break;
+                    case Card.CardElement.darkness: darkness++; break;
+                    case Card.CardElement.light: light++; break;
+                    case Card.CardElement.thunder: thunder++; break;
+                    case Card.CardElement.wind: wind++; break;
                     default: break;
                 }
             }
@@ -569,7 +569,7 @@ namespace AGrail
                 case "differ":
                     foreach (var v in element)
                     {
-                        if  (v > 0)count++;
+                        if (v > 0) count++;
                     }
                     break;
                 default:

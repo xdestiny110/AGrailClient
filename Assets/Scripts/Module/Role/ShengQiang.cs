@@ -31,6 +31,14 @@ namespace AGrail
             }
         }
 
+        public override string HeroName
+        {
+            get
+            {
+                return "斯庇尔";
+            }
+        }
+
         public override uint MaxHealCount
         {
             get
@@ -62,7 +70,8 @@ namespace AGrail
             switch (uiState)
             {
                 case 1002:
-                    return player.id != BattleData.Instance.PlayerID && player.heal_count > 0;
+                    return BattleData.Instance.Agent.SelectCards.Count == 1 && 
+                        player.id != BattleData.Instance.PlayerID && player.heal_count > 0;
             }
             return base.CanSelect(uiState, player);
         }
@@ -76,8 +85,8 @@ namespace AGrail
                 case 1001:
                 case 1002:
                 case 1003:
-                    if (skill.SkillID == 1003 && BattleData.Instance.MainPlayer.gem > 0)
-                        return true;
+                    if (skill.SkillID == 1003)
+                        return BattleData.Instance.MainPlayer.gem > 0;
                     if (skill.SkillID == 1001)
                         return Util.HasCard(Card.CardElement.water, BattleData.Instance.MainPlayer.hands);
                     if (skill.SkillID == 1002)

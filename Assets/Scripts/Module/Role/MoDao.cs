@@ -30,6 +30,14 @@ namespace AGrail
             }
         }
 
+        public override string HeroName
+        {
+            get
+            {
+                return "妮亚";
+            }
+        }
+
         public MoDao()
         {
             for (uint i = 801; i <= 804; i++)
@@ -60,6 +68,7 @@ namespace AGrail
             {
                 case 801:
                 case 803:
+                    return BattleData.Instance.Agent.SelectCards.Count == 1;
                 case 804:
                     return player.team != BattleData.Instance.MainPlayer.team;
             }

@@ -30,6 +30,14 @@ namespace AGrail
             }
         }
 
+        public override string HeroName
+        {
+            get
+            {
+                return "艾丽卡";
+            }
+        }
+
         public override string Knelt
         {
             get
@@ -61,9 +69,10 @@ namespace AGrail
             {
                 case 601:
                 case 602:
+                    return BattleData.Instance.Agent.SelectCards.Count == 1;
                 case 603:
                 case 605:
-                    return true;
+                    return true;                    
             }
             return base.CanSelect(uiState, player);
         }
@@ -202,8 +211,12 @@ namespace AGrail
                         string.Format("{0}: 请选择目标玩家以及独有技卡牌", Skills[state].SkillName));
                     return;
                 case 603:
-                    OKAction = () => { sendReponseMsg(state, BattleData.Instance.MainPlayer.id, 
-                        BattleData.Instance.Agent.SelectPlayers, null, new List<uint>() { 1 }); };
+                    if(BattleData.Instance.Agent.SelectPlayers.Count == 1)
+                    {
+                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id,
+                        BattleData.Instance.Agent.SelectPlayers, null, new List<uint>() { 1 });
+                        return;
+                    }
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                         "冰霜祷言: 请选择目标玩家为其增加一点治疗");
                     return;
@@ -222,7 +235,7 @@ namespace AGrail
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, "是否发动怜悯");
                     return;
                 case 605:
-                    OKAction = () =>
+                    if(BattleData.Instance.Agent.SelectPlayers.Count == 1)
                     {
                         if (additionalState == 0)
                         {
@@ -231,18 +244,18 @@ namespace AGrail
                             selectPlayers.Add(BattleData.Instance.Agent.SelectPlayers[0]);
                             BattleData.Instance.Agent.RemoveSelectPlayer(BattleData.Instance.Agent.SelectPlayers[0]);
                         }
-                        else if(additionalState == 6051)
+                        else if (additionalState == 6051)
                         {
                             additionalState++;
                             selectPlayers.Add(BattleData.Instance.Agent.SelectPlayers[0]);
                             BattleData.Instance.Agent.RemoveSelectPlayer(BattleData.Instance.Agent.SelectPlayers[0]);
                         }
-                        else if(additionalState == 6052)
+                        else if (additionalState == 6052)
                         {
                             additionalState++;
                             selectPlayers.Add(BattleData.Instance.Agent.SelectPlayers[0]);
                             BattleData.Instance.Agent.RemoveSelectPlayer(BattleData.Instance.Agent.SelectPlayers[0]);
-                            BattleData.Instance.Agent.SelectArgs.Clear();                            
+                            BattleData.Instance.Agent.SelectArgs.Clear();
                             foreach (var v in selectPlayers)
                             {
                                 var idx = BattleData.Instance.Agent.SelectPlayers.FindIndex((t) => { return t == v; });
@@ -256,8 +269,8 @@ namespace AGrail
                             }
                             sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
                                 BattleData.Instance.Agent.SelectPlayers, null, 605, BattleData.Instance.Agent.SelectArgs);
-                        }                        
-                    };
+                        }
+                    }
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
                     if(additionalState == 0)
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,

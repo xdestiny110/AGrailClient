@@ -30,6 +30,14 @@ namespace AGrail
             }
         }
 
+        public override string HeroName
+        {
+            get
+            {
+                return "莉莉安娜";
+            }
+        }
+
         public MaoXian()
         {
             for (uint i = 1201; i <= 1206; i++)
@@ -41,8 +49,9 @@ namespace AGrail
             switch (uiState)
             {
                 case 1201:
-                    return BattleData.Instance.Agent.SelectCards.Count == 0 ||
-                        card.Element == Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Element;                    
+                    return BattleData.Instance.Agent.SelectArgs.Count == 1 && 
+                        (BattleData.Instance.Agent.SelectCards.Count == 0 ||
+                        card.Element == Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Element);
             }
             return base.CanSelect(uiState, card, isCovered);
         }
@@ -52,7 +61,8 @@ namespace AGrail
             switch (uiState)
             {
                 case 1201:
-                    return player.team != BattleData.Instance.MainPlayer.team;
+                    return BattleData.Instance.Agent.SelectCards.Count == qizhaSelectCard && 
+                        player.team != BattleData.Instance.MainPlayer.team;
                 case 13:                    
                     var r = RoleFactory.Create(player.role_id);
                     return player.team == BattleData.Instance.MainPlayer.team && r.MaxEnergyCount > player.gem + player.crystal;
@@ -82,12 +92,13 @@ namespace AGrail
             return base.CanSelect(uiState, skill);
         }
 
+        private uint qizhaSelectCard = 3;
         public override uint MaxSelectCard(uint uiState)
         {
             switch (uiState)
             {
                 case 1201:
-                    return 3;                    
+                    return qizhaSelectCard;
             }
             return base.MaxSelectCard(uiState);
         }
@@ -260,42 +271,39 @@ namespace AGrail
                             string.Format("{0}: 请选择能量要给予的对象", Skills[1202].SkillName));
                     return;
                 case 1201:
-                    if (msg == UIStateMsg.ClickArgs)
-                    {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
-                        sendActionMsg(BasicActionType.ACTION_ATTACK_SKILL, BattleData.Instance.MainPlayer.id,
-                            BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state,
-                            BattleData.Instance.Agent.SelectArgs);
-                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                        return;
-                    };
                     CancelAction = () => 
                     {
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
                     };
-                    if(BattleData.Instance.Agent.SelectCards.Count == 2 && BattleData.Instance.Agent.SelectPlayers.Count > 0)
+                    if (BattleData.Instance.Agent.SelectArgs.Count == 0)
                     {
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         selectList = new List<List<uint>>() { new List<uint>() { 45 }, new List<uint>() { 133 },
                         new List<uint>() { 87 }, new List<uint>() { 66 }, new List<uint>() { 110 }};
                         explainList = new List<string>() { "地", "水", "火", "风", "雷" };
+                        if(Util.HasCard("same", BattleData.Instance.MainPlayer.hands, 3))
+                        {
+                            selectList.Add(new List<uint>() { 39 });
+                            explainList.Add("暗");
+                        }
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, explainList);
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                            string.Format("{0}: 请先选择同系牌和攻击目标, 再点击属性", Skills[state].SkillName));
-                    }
-                    else if (BattleData.Instance.Agent.SelectCards.Count == 3 && BattleData.Instance.Agent.SelectPlayers.Count > 0)
-                    {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
-                        selectList = new List<List<uint>>() { new List<uint>() { 39 } };
-                        explainList = new List<string>() { "暗" };
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, explainList);
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                            string.Format("{0}: 请先选择同系牌和攻击目标, 再点击属性", Skills[state].SkillName));
                     }
                     else
+                    {
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
-
+                        if (BattleData.Instance.Agent.SelectArgs[0] == 39)
+                            qizhaSelectCard = 3;
+                        else
+                            qizhaSelectCard = 2;
+                        if (BattleData.Instance.Agent.SelectCards.Count == qizhaSelectCard && BattleData.Instance.Agent.SelectPlayers.Count == 1)
+                        {
+                            sendActionMsg(BasicActionType.ACTION_ATTACK_SKILL, BattleData.Instance.MainPlayer.id,
+                                BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state,
+                                BattleData.Instance.Agent.SelectArgs);
+                            BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        }
+                    }
                     return;
                 case 1203:
                 case 1204:

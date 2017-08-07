@@ -10,6 +10,7 @@ namespace AGrail
         public abstract RoleID RoleID { get; }
         public abstract string RoleName { get; }
         public abstract Card.CardProperty RoleProperty { get; }
+        public virtual string HeroName { get { return "白板"; } }
         public virtual uint MaxHealCount { get { return 2; } }
         public virtual uint MaxEnergyCount { get { return 3; } }
         public virtual bool HasYellow { get { return false; } }
@@ -261,11 +262,12 @@ namespace AGrail
         }
 
         public virtual bool CanSelect(uint uiState, network.SinglePlayerInfo player)
-        {
+        {            
             switch (uiState)
             {
                 case 1:
-                    if (player.team != BattleData.Instance.MainPlayer.team &&
+                    if (BattleData.Instance.Agent.SelectCards.Count == 1 && 
+                        player.team != BattleData.Instance.MainPlayer.team &&
                         !(player.role_id == (uint)RoleID.AnSha && player.is_knelt))
                     {
                         if (BattleData.Instance.MainPlayer.ex_cards.Contains(1001) && player.role_id != (uint)RoleID.YongZhe)
@@ -274,7 +276,8 @@ namespace AGrail
                     }                        
                     break;
                 case 2:
-                    if (BattleData.Instance.Agent.SelectCards.Count == 1 && Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Name == Card.CardName.魔弹)
+                    if (BattleData.Instance.Agent.SelectCards.Count == 1 && 
+                        Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Name == Card.CardName.魔弹)
                     {
                         foreach(var v in BattleData.Instance.PlayerIdxOrder)
                         {

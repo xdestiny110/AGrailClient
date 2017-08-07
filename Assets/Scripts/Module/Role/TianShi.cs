@@ -1,5 +1,3 @@
-using UnityEngine;
-using System.Collections;
 using System;
 using network;
 using System.Collections.Generic;
@@ -30,6 +28,14 @@ namespace AGrail
             get
             {
                 return Card.CardProperty.圣;
+            }
+        }
+
+        public override string HeroName
+        {
+            get
+            {
+                return "玛利亚";
             }
         }
 
@@ -64,13 +70,14 @@ namespace AGrail
                         if (c.Name == Card.CardName.圣盾 || c.HasSkill(701))
                             return false;
                     }
-                    return true;
+                    return BattleData.Instance.Agent.SelectCards.Count == 1;
                 case 703:
                 case 705:
-                    return player.basic_cards.Count > 0;
+                    return BattleData.Instance.Agent.SelectCards.Count == 1 && player.basic_cards.Count > 0;
                 case 702:
+                    return BattleData.Instance.Agent.SelectCards.Count == 1;
                 case 704:
-                    return true;
+                    return true;                    
             }
             return base.CanSelect(uiState, player);
         }
@@ -156,6 +163,17 @@ namespace AGrail
             switch (state)
             {
                 case 701:
+                    if(BattleData.Instance.Agent.SelectCards.Count == 1 && BattleData.Instance.Agent.SelectPlayers.Count == 1)
+                    {
+                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
+                            BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state,
+                            BattleData.Instance.Agent.SelectArgs);
+                        return;
+                    }
+                    CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                        string.Format("{0}: 请选择目标玩家以及卡牌", Skills[state].SkillName));
+                    return;
                 case 702:                                        
                     OKAction = () =>
                     {

@@ -30,6 +30,14 @@ namespace AGrail
             }
         }
 
+        public override string HeroName
+        {
+            get
+            {
+                return "塔格奥";
+            }
+        }
+
         public override uint MaxHealCount
         {
             get
@@ -51,8 +59,9 @@ namespace AGrail
                 case 1303:
                     return card.Element == Card.CardElement.earth;
                 case 1304:
-                    return BattleData.Instance.Agent.SelectCards.Count == 0 ||
-                        card.Element == Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Element;
+                    return BattleData.Instance.Agent.SelectArgs.Count == 1 && 
+                        (BattleData.Instance.Agent.SelectCards.Count == 0 ||
+                        card.Element == Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Element);
             }
             return base.CanSelect(uiState, card, isCovered);
         }
@@ -62,7 +71,7 @@ namespace AGrail
             switch (uiState)
             {
                 case 1304:
-                    return true;
+                    return BattleData.Instance.Agent.SelectCards.Count >= 2;
             }
             return base.CanSelect(uiState, player);
         }
@@ -78,8 +87,8 @@ namespace AGrail
                 case 1305:
                     if (skill.SkillID == 1303)
                         return Util.HasCard(Card.CardElement.earth, BattleData.Instance.MainPlayer.hands);
-                    if (skill.SkillID == 1305 && BattleData.Instance.MainPlayer.gem > 0)
-                        return true;
+                    if (skill.SkillID == 1305)
+                        return BattleData.Instance.MainPlayer.gem > 0;
                     if (skill.SkillID == 1304 && BattleData.Instance.MainPlayer.heal_count >= 2)
                         return Util.HasCard("same", BattleData.Instance.MainPlayer.hands,2);
                     return skill.SkillID == 1303;
@@ -164,38 +173,37 @@ namespace AGrail
                         string.Format("{0}: 请选择地系卡牌", Skills[state].SkillName));
                     return;
                 case 1304:
-                    if (msg == UIStateMsg.ClickArgs)
-                    {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
-                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
-                            BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, 
-                            state, BattleData.Instance.Agent.SelectArgs);
-                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                        return;
-                    };
                     CancelAction = () => 
                     {
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
                     };
+                    if(BattleData.Instance.Agent.SelectArgs.Count == 0)
+                    {
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
-                        if (BattleData.Instance.Agent.SelectPlayers.Count > 0 && BattleData.Instance.Agent.SelectCards.Count >= 2)
+                        var selectList = new List<List<uint>>();
+                        var explainList = new List<string>();
+                        for (uint i = BattleData.Instance.MainPlayer.heal_count; i >= 2; i--)
                         {
-                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
-                            var selectList = new List<List<uint>>();
-                            var explainList = new List<string>();
-                            for (uint i = BattleData.Instance.MainPlayer.heal_count; i >= 2; i--)
-                            {
-                                selectList.Add(new List<uint>() { i });
-                                explainList.Add(i + "个治疗");
-                            }
-                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, explainList);
-                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                            string.Format("{0}: 点击你要使用的治疗数来发动", Skills[state].SkillName));
+                            selectList.Add(new List<uint>() { i });
+                            explainList.Add(i + "个治疗");
                         }
-                        else
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, explainList);
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("{0}: 请选择目标及同系牌,然后点击治疗数", Skills[state].SkillName));
+                            string.Format("{0}: 点击你要使用的治疗数来发动", Skills[state].SkillName));
+                    }
+                    else
+                    {
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                        if (BattleData.Instance.Agent.SelectCards.Count >= 2 && BattleData.Instance.Agent.SelectPlayers.Count == 1)
+                        {
+                            sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
+                                BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards,
+                                state, BattleData.Instance.Agent.SelectArgs);
+                            BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                            return;
+                        }
+                    }
                     return;
                 case 1305:
                     OKAction = () =>

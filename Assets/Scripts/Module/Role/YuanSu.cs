@@ -30,6 +30,14 @@ namespace AGrail
             }
         }
 
+        public override string HeroName
+        {
+            get
+            {
+                return "索尔斯";
+            }
+        }
+
         public override bool HasYellow
         {
             get
@@ -98,6 +106,7 @@ namespace AGrail
                 case 1103:
                 case 1104:
                 case 1105:
+                    return BattleData.Instance.Agent.SelectCards.Count >= 1;
                 case 1106:
                 case 1107:
                     return true;
@@ -204,7 +213,7 @@ namespace AGrail
                 case 1103:
                 case 1104:
                 case 1105:
-                    OKAction = () =>
+                    if(BattleData.Instance.Agent.SelectCards.Count >= 1 && BattleData.Instance.Agent.SelectPlayers.Count == 1)
                     {
                         sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
                             BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state);

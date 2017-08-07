@@ -29,6 +29,29 @@ namespace AGrail
             }
         }
 
+        public override string HeroName
+        {
+            get
+            {
+                return "维斯特姆";
+            }
+        }
+
+        public override bool IsStart
+        {
+            get
+            {
+                return base.IsStart;
+            }
+
+            set
+            {
+                if(!value)
+                    additionalState = 0;
+                base.IsStart = value;
+            }
+        }
+
         public JianSheng()
         {
             for (uint i = 101; i <= 105; i++)
@@ -37,9 +60,8 @@ namespace AGrail
 
         public override bool CanSelect(uint uiState, Card card, bool isCovered)
         {
-            if (additionalState == 103 &&
-                (card.Element != Card.CardElement.wind || card.Type != Card.CardType.attack))
-                return false;
+            if (additionalState == 103)
+                return card.Element == Card.CardElement.wind;            
             return base.CanSelect(uiState, card, isCovered);
         }
 
@@ -109,15 +131,6 @@ namespace AGrail
                     return;
             }
             base.UIStateChange(state, msg, paras);
-            if (additionalState == 103)
-            {
-                //这代码真傻...应该做成list的
-                //但懒得改了
-                var t1 = OKAction;
-                var t2 = ResignAction;
-                OKAction = () => { t1(); additionalState = 0; };
-                ResignAction = () => { t2(); additionalState = 0; };
-            }
         }
     }
 }
