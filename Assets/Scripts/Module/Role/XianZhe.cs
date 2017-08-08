@@ -30,6 +30,14 @@ namespace AGrail
             }
         }
 
+        public override string HeroName
+        {
+            get
+            {
+                return "诺雷杰";
+            }
+        }
+
         public override uint MaxEnergyCount
         {
             get
@@ -63,10 +71,11 @@ namespace AGrail
         {
             switch (uiState)
             {
-                case 1702:                    
-                case 1703:
+                case 1702:
                 case 1704:
-                    return true;
+                    return BattleData.Instance.Agent.SelectCards.Count > 1;
+                case 1703:
+                    return BattleData.Instance.Agent.SelectCards.Count > 2;
             }
             return base.CanSelect(uiState, player);
         }
@@ -143,6 +152,18 @@ namespace AGrail
             switch (state)
             {
                 case 1702:
+                    if(BattleData.Instance.Agent.SelectPlayers.Count == 1)
+                    {
+                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
+                            BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state,
+                            BattleData.Instance.Agent.SelectArgs);
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
+                    }
+                    CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                        string.Format("{0}: 请选择目标玩家以及异系卡牌", Skills[state].SkillName));
+                    return;
                 case 1703:
                     OKAction = () =>
                     {
@@ -156,7 +177,7 @@ namespace AGrail
                         string.Format("{0}: 请选择目标玩家以及异系卡牌", Skills[state].SkillName));
                     return;
                 case 1704:
-                    OKAction = () =>
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1)
                     {
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id,
                             BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards);

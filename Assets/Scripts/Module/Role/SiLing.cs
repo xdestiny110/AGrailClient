@@ -173,14 +173,14 @@ namespace AGrail
                         string.Format("{0}: 请选择地系卡牌", Skills[state].SkillName));
                     return;
                 case 1304:
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                     CancelAction = () => 
                     {
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
                     };
                     if(BattleData.Instance.Agent.SelectArgs.Count == 0)
-                    {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                    {                        
                         var selectList = new List<List<uint>>();
                         var explainList = new List<string>();
                         for (uint i = BattleData.Instance.MainPlayer.heal_count; i >= 2; i--)
@@ -193,8 +193,7 @@ namespace AGrail
                             string.Format("{0}: 点击你要使用的治疗数来发动", Skills[state].SkillName));
                     }
                     else
-                    {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                    {                        
                         if (BattleData.Instance.Agent.SelectCards.Count >= 2 && BattleData.Instance.Agent.SelectPlayers.Count == 1)
                         {
                             sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,

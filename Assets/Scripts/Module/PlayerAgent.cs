@@ -59,6 +59,13 @@ namespace AGrail
             FSM.HandleMessage(UIStateMsg.ClickPlayer);
         }
 
+        public void RemoveAllSelectPlayer()
+        {
+            SelectPlayers.Clear();
+            MessageSystem<MessageType>.Notify(MessageType.AgentSelectPlayer);
+            FSM.HandleMessage(UIStateMsg.ClickPlayer);
+        }
+
         public void AddSelectCard(uint cardID)
         {
             if (!SelectCards.Contains(cardID))
@@ -75,6 +82,13 @@ namespace AGrail
         {
             if (SelectCards.Contains(cardID))
                 SelectCards.Remove(cardID);               
+            MessageSystem<MessageType>.Notify(MessageType.AgentSelectCard);
+            FSM.HandleMessage(UIStateMsg.ClickCard);
+        }
+
+        public void RemoveAllSelectCard()
+        {
+            SelectCards.Clear();
             MessageSystem<MessageType>.Notify(MessageType.AgentSelectCard);
             FSM.HandleMessage(UIStateMsg.ClickCard);
         }

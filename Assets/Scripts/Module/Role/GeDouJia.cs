@@ -42,6 +42,14 @@ namespace AGrail
             }
         }
 
+        public override string HeroName
+        {
+            get
+            {
+                return "凌薇";
+            }
+        }
+
         public override string Knelt
         {
             get
@@ -143,7 +151,7 @@ namespace AGrail
                             BattleData.Instance.Agent.SelectPlayers, null, new List<uint>() { 1 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                         return;
-                    };
+                    }
                     CancelAction = () =>
                     {
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
@@ -155,32 +163,32 @@ namespace AGrail
                 case 2002:
                 case 2005:
                 case XULICANGYAN:
-                    OKAction = () =>
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                    if (msg == UIStateMsg.ClickArgs)
                     {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
                         sendReponseMsg(XULICANGYAN, BattleData.Instance.MainPlayer.id, null, null, BattleData.Instance.Agent.SelectArgs);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                    };
+                        return;
+                    }
                     CancelAction = () =>
                     {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         sendReponseMsg(XULICANGYAN, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
                     selectList.Clear();
                     mList.Clear();
                     if(state == 2002 || state == XULICANGYAN)
                     {
                         selectList.Add(new List<uint>() { 1 });
-                        mList.Add(" 蓄力一击");
+                        mList.Add("蓄力一击");
                     }                        
                     if (state == 2005 || state == XULICANGYAN)
                     {
                         selectList.Add(new List<uint>() { 2 });
-                        mList.Add(" 苍炎之魂");
+                        mList.Add("苍炎之魂");
                     }                        
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "选择技能", selectList, mList);
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, string.Format("请选择发动技能"));
                     return;
                 case 2004:
@@ -216,29 +224,30 @@ namespace AGrail
                         string.Format("斗神天驱: 弃到三张牌并点击确定"));
                     return;
                 case BAISHIDOUSHEN:
-                    OKAction = () => 
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                    if (msg == UIStateMsg.ClickArgs)
                     {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         if (BattleData.Instance.Agent.SelectArgs[0] == 1)
                             BattleData.Instance.Agent.Cmd.respond_id = 2004;
                         else
                             BattleData.Instance.Agent.Cmd.respond_id = 2006;
                         BattleData.Instance.Agent.FSM.ChangeState<StateSkill>(UIStateMsg.Init, true);
-                    };
+                        return;
+                    }
                     CancelAction = () =>
                     {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         sendReponseMsg(BAISHIDOUSHEN, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                    };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                    };                    
                     selectList.Clear();
                     mList.Clear();
                     selectList.Add(new List<uint>() { 1 });
-                    mList.Add(" 百式幻龙拳");
+                    mList.Add("百式幻龙拳");
                     selectList.Add(new List<uint>() { 2 });
-                    mList.Add(" 斗神天驱");
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "选择技能", selectList, mList);
+                    mList.Add("斗神天驱");
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, string.Format("请选择发动技能"));
                     return;
             }

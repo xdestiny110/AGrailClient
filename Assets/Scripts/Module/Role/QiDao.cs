@@ -41,6 +41,14 @@ namespace AGrail
             }
         }
 
+        public override string HeroName
+        {
+            get
+            {
+                return "珐珞";
+            }
+        }
+
         public override string Knelt
         {
             get
@@ -75,7 +83,9 @@ namespace AGrail
                 case 1601:
                 case 1602:
                 case 1604:
-                    return player.team == BattleData.Instance.MainPlayer.team && player.id != BattleData.Instance.PlayerID;
+                    return BattleData.Instance.Agent.SelectCards.Count == MaxSelectCard(uiState) &&
+                        player.team == BattleData.Instance.MainPlayer.team && 
+                        player.id != BattleData.Instance.PlayerID;                
                 case 1605:
                     return true;
             }
@@ -200,7 +210,7 @@ namespace AGrail
                     };
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                            string.Format("{0}: 请选择两张手牌舍弃；选择一个目标队友增加一点治疗", Skills[state].SkillName));
+                            string.Format("{0}:舍弃两张手牌,选择一个目标队友增加一点治疗", Skills[state].SkillName));
                     return;
                 case 1605:
                     if (BattleData.Instance.Agent.SelectPlayers.Count == 1 )

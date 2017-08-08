@@ -30,6 +30,14 @@ namespace AGrail
             }
         }
 
+        public override string HeroName
+        {
+            get
+            {
+                return "赛尔娜";
+            }
+        }
+
         public override bool HasYellow
         {
             get
