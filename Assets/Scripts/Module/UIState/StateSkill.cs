@@ -40,7 +40,6 @@ namespace AGrail
                 BattleData.Instance.Agent.SelectArgs.Clear();
                 MessageSystem<MessageType>.Notify(MessageType.AgentSelectPlayer);
                 MessageSystem<MessageType>.Notify(MessageType.AgentSelectCard);
-                MessageSystem<MessageType>.Notify(MessageType.CloseArgsUI);
                 MessageSystem<MessageType>.Notify(MessageType.CloseNewArgsUI);
             }
             base.Enter(msg, paras);
@@ -60,7 +59,6 @@ namespace AGrail
                         BattleData.Instance.Agent.SelectArgs.Clear();
                         MessageSystem<MessageType>.Notify(MessageType.AgentSelectPlayer);
                         MessageSystem<MessageType>.Notify(MessageType.AgentSelectCard);
-                        MessageSystem<MessageType>.Notify(MessageType.CloseArgsUI);
                         MessageSystem<MessageType>.Notify(MessageType.CloseNewArgsUI);
                     }                        
                     else

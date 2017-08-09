@@ -219,9 +219,9 @@ namespace AGrail
                         string.Format("是否发动{0}", Skills[state].SkillName));
                     return;
                 case (uint)SkillID.漆黑之枪:
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                     if (msg == UIStateMsg.ClickArgs)
-                    {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                    {                        
                         var args = new List<uint>() { 1 };
                         args.Add(BattleData.Instance.Agent.SelectArgs[0]);
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, args);
@@ -230,7 +230,7 @@ namespace AGrail
                     };
                     CancelAction = () =>
                     {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                     };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);

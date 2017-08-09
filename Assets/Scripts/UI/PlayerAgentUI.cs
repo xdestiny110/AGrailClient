@@ -44,8 +44,6 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.AgentStateChange, this);
             MessageSystem<MessageType>.Regist(MessageType.AgentSelectSkill, this);
             MessageSystem<MessageType>.Regist(MessageType.AgentUIStateChange, this);
-            MessageSystem<MessageType>.Regist(MessageType.ShowArgsUI, this);
-            MessageSystem<MessageType>.Regist(MessageType.CloseArgsUI, this);
             MessageSystem<MessageType>.Regist(MessageType.ShowNewArgsUI, this);
             MessageSystem<MessageType>.Regist(MessageType.CloseNewArgsUI, this);
         }
@@ -57,8 +55,6 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.AgentStateChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.AgentSelectSkill, this);
             MessageSystem<MessageType>.UnRegist(MessageType.AgentUIStateChange, this);
-            MessageSystem<MessageType>.UnRegist(MessageType.ShowArgsUI, this);
-            MessageSystem<MessageType>.UnRegist(MessageType.CloseArgsUI, this);
             MessageSystem<MessageType>.UnRegist(MessageType.ShowNewArgsUI, this);
             MessageSystem<MessageType>.UnRegist(MessageType.CloseNewArgsUI, this);
         }
@@ -120,15 +116,6 @@ namespace AGrail
                     btnOK.gameObject.SetActive(false);
                     btnCancel.gameObject.SetActive(false);                    
                     while (GameManager.UIInstance.PeekWindow() != Framework.UI.WindowType.BattleUIMobile)
-                        GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
-                    break;
-                case MessageType.ShowArgsUI:
-                    if (GameManager.UIInstance.PeekWindow() != Framework.UI.WindowType.ChooseArgsUI)
-                        GameManager.UIInstance.PushWindow(Framework.UI.WindowType.ChooseArgsUI,
-                            Framework.UI.WinMsg.None, Vector3.zero, parameters);
-                    break;
-                case MessageType.CloseArgsUI:
-                    if (GameManager.UIInstance.PeekWindow() == Framework.UI.WindowType.ChooseArgsUI)
                         GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
                     break;
                 case MessageType.ShowNewArgsUI:

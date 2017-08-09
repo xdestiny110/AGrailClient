@@ -245,7 +245,7 @@ namespace AGrail
                     };
                     CancelAction = () =>
                     {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         sendReponseMsg(2703, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
@@ -259,7 +259,7 @@ namespace AGrail
                             selectList.Add(new List<uint>() { i - 1 });
                             mList.Add("个战纹");
                         }
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "额外战纹", selectList, mList);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                             string.Format("{0}: 请选择额外翻转的战纹", Skills[state].SkillName));
                     }
@@ -286,8 +286,7 @@ namespace AGrail
                     if (msg == UIStateMsg.ClickArgs)
                     {
                         sendReponseMsg(27051, BattleData.Instance.MainPlayer.id,null,null, new List<uint>() { 1, BattleData.Instance.Agent.SelectArgs[0] });
-                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);                        
                         return;
                     }
                     selectList.Clear();

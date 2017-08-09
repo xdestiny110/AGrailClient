@@ -308,8 +308,8 @@ namespace AGrail
 					};
 					selectList = new List<List<uint>>() { new List<uint>() { 0 }, new List<uint>() { 1 },
 						new List<uint>() { 2 }};
-					var mList = new List<string>() { "","",""};
-					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "选择要摸取的手牌数量", selectList, mList);
+					var mList = new List<string>() { "0张手牌","1张手牌","2张手牌"};
+					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
 					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
 						string.Format("{0}: 是否发动魔女之怒", Skills[state].SkillName));
 					return;
