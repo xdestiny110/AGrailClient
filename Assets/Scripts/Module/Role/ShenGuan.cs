@@ -85,7 +85,7 @@ namespace AGrail
                     if(additionalState == 15061)
                         return BattleData.Instance.Agent.SelectCards.Count == Math.Min(BattleData.Instance.MainPlayer.hand_count, 2);
                     if(additionalState == 15062)
-                        return player.team == BattleData.Instance.MainPlayer.team &&
+                        return player.team == BattleData.Instance.MainPlayer.team && player.id != BattleData.Instance.PlayerID &&
                             BattleData.Instance.Agent.SelectCards.Count == Math.Min(BattleData.Instance.MainPlayer.hand_count, 2);
                     return false;
             }
@@ -122,8 +122,6 @@ namespace AGrail
                 case (uint)SKILLID.水之神力给牌:
                     return 1;
                 case (uint)SKILLID.神圣领域:
-                    if (additionalState == 15061 || additionalState == 15062)
-                        return 0;
                     return 2;
             }
             return base.MaxSelectCard(uiState);

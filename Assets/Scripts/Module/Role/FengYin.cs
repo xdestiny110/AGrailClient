@@ -87,16 +87,21 @@ namespace AGrail
                 case 402:
                 case 403:
                 case 404:
-                case 405:
-                    
+                case 405:                    
                 case 407:
                 case 408:
                 case 10:
                 case 11:
                     if (skill.SkillID >= 401 && skill.SkillID <= 405) 
                         return  Util.HasCard(skill.SkillID, BattleData.Instance.MainPlayer.hands);
-                    else if (skill.SkillID == 407 || skill.SkillID == 408)
+                    else if (skill.SkillID == 407)
                         return BattleData.Instance.MainPlayer.gem + BattleData.Instance.MainPlayer.crystal >= 1;
+                    else if(skill.SkillID == 408 && BattleData.Instance.MainPlayer.gem + BattleData.Instance.MainPlayer.crystal >= 1)
+                    {
+                        foreach (var v in BattleData.Instance.PlayerInfos)
+                            if (v.basic_cards.Count > 0)
+                                return true;
+                    }                        
                     break;
             }
             return base.CanSelect(uiState, skill);

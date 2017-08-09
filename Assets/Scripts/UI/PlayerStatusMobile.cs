@@ -51,12 +51,14 @@ namespace AGrail
                     var c = v.color;
                     c.b = c.r = c.g = 1;
                     if (BattleData.Instance.PlayerID != 9 && 
-                        (BattleData.Instance.Agent.FSM.Current.StateNumber == (uint)StateEnum.Attack ||
+                        (BattleData.Instance.Agent.FSM.Current.StateNumber == (uint)StateEnum.Any ||
+                        BattleData.Instance.Agent.FSM.Current.StateNumber == (uint)StateEnum.AttackAndMagic ||
+                        BattleData.Instance.Agent.FSM.Current.StateNumber == (uint)StateEnum.Attack ||
                         BattleData.Instance.Agent.FSM.Current.StateNumber == (uint)StateEnum.Attacked ||
                         BattleData.Instance.Agent.FSM.Current.StateNumber == (uint)StateEnum.Magic ||
                         BattleData.Instance.Agent.FSM.Current.StateNumber == (uint)StateEnum.Modaned ||
-                        BattleData.Instance.Agent.FSM.Current.StateNumber == (uint)StateEnum.Extract) &&
-                        !value)
+                        BattleData.Instance.Agent.FSM.Current.StateNumber == (uint)StateEnum.Extract ||
+                        BattleData.Instance.Agent.FSM.Current.StateNumber >= 100) && !value)
                         c.b = c.r = c.g = 0.5f;                    
                     v.color = c;
                 }

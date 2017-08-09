@@ -73,7 +73,7 @@ namespace AGrail
                     return BattleData.Instance.Agent.SelectCards.Count == 1;
                 case 703:
                 case 705:
-                    return BattleData.Instance.Agent.SelectCards.Count == 1 && player.basic_cards.Count > 0;
+                    return BattleData.Instance.Agent.SelectCards.Count == MaxSelectCard(uiState) && player.basic_cards.Count > 0;
                 case 702:
                     return BattleData.Instance.Agent.SelectCards.Count == 1;
                 case 704:
@@ -95,8 +95,12 @@ namespace AGrail
                         return Util.HasCard(601, BattleData.Instance.MainPlayer.hands);
                     if (skill.SkillID == 702)
                         return Util.HasCard(Card.CardElement.water, BattleData.Instance.MainPlayer.hands); 
-                    if (skill.SkillID == 703)
-                        return Util.HasCard(Card.CardElement.wind, BattleData.Instance.MainPlayer.hands);
+                    if (skill.SkillID == 703 && Util.HasCard(Card.CardElement.wind, BattleData.Instance.MainPlayer.hands))
+                    {
+                        foreach (var v in BattleData.Instance.PlayerInfos)
+                            if (v.basic_cards.Count > 0)
+                                return true;
+                    }
                     return false;
             }
             return base.CanSelect(uiState, skill);

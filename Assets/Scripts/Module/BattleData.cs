@@ -292,11 +292,12 @@ namespace AGrail
                     if (v.yellow_tokenSpecified || v.blue_tokenSpecified || v.covered_countSpecified)
                         MessageSystem<MessageType>.Notify(MessageType.PlayerTokenChange,
                             idx, player.yellow_token, player.blue_token, player.covered_count);
-                    if (v.basic_cards.Count > 0)
-                        player.basic_cards = v.basic_cards;
+                    if (v.basic_cards.Count > 0 && player.GetHashCode() != v.GetHashCode())
+                            player.basic_cards = v.basic_cards;                 
                     if (v.ex_cards.Count > 0)
                     {
-                        player.ex_cards = v.ex_cards;
+                        if(player.GetHashCode() != v.GetHashCode())
+                            player.ex_cards = v.ex_cards;
                         //为了进行卡牌编号的区分, 专有牌的序号都+1000
                         for (int i = 0; i < player.ex_cards.Count; i++)
                             player.ex_cards[i] += 1000;
