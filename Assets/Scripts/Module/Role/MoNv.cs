@@ -31,6 +31,14 @@ namespace AGrail
             }
         }
 
+        public override string HeroName
+        {
+            get
+            {
+                return "莉莉丝";
+            }
+        }
+
         public override bool HasYellow
         {
             get
@@ -72,8 +80,6 @@ namespace AGrail
 						return true;
 					else
 						return false;
-
-					
 				case (uint)SkillID.CANG_YAN_FA_DIAN:
 					return (realElement == Card.CardElement.fire);
 				case (uint)SkillID.TIAN_HUO_DUAN_KONG:
@@ -95,10 +101,12 @@ namespace AGrail
 			switch (uiState)
 			{
 				case (uint)SkillID.TI_SHEN_WAN_OU:
-					return player.team == BattleData.Instance.MainPlayer.team && BattleData.Instance.PlayerID != player.id;
+					return BattleData.Instance.Agent.SelectCards.Count == 1 &&
+                        player.team == BattleData.Instance.MainPlayer.team && 
+                        BattleData.Instance.PlayerID != player.id;
 				case (uint)SkillID.CANG_YAN_FA_DIAN:
 				case (uint)SkillID.TIAN_HUO_DUAN_KONG:
-                    return true;
+                    return BattleData.Instance.Agent.SelectCards.Count == MaxSelectCard(uiState);
                 case (uint)SkillID.TONG_KU_LIAN_JIE:
 				case (uint)SkillID.MO_NENG_FAN_ZHUAN:
 					return player.team != BattleData.Instance.MainPlayer.team;
@@ -123,7 +131,6 @@ namespace AGrail
 					if (skill.SkillID == (uint)SkillID.TONG_KU_LIAN_JIE) 
 						return (BattleData.Instance.MainPlayer.crystal + BattleData.Instance.MainPlayer.gem > 0);
 					return false;
-
 				case (uint)SkillID.TI_SHEN_WAN_OU:
 				case (uint)SkillID.MO_NENG_FAN_ZHUAN:
 					return false;
@@ -230,7 +237,6 @@ namespace AGrail
                         return;
                     };
 					CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
-
 					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
 						string.Format("{0}: 请选择目标玩家以及火系卡牌", Skills[state].SkillName));
 					return;
@@ -244,7 +250,6 @@ namespace AGrail
                         return;
                     };
 					CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
-
 					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
 						string.Format("{0}: 请选择目标玩家以及火系卡牌", Skills[state].SkillName));
 					return;
@@ -289,20 +294,18 @@ namespace AGrail
 						string.Format ("{0}: 请选择目标对手", Skills[state].SkillName));
 					return;
 				case (uint)SkillID.MO_NV_ZHI_NU:
-					OKAction = () => {
-                        IsStart = true;
-						MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                    if (msg == UIStateMsg.ClickArgs) {
+                        IsStart = true;						
 						sendReponseMsg (state, BattleData.Instance.MainPlayer.id,
 							null, null, new List<uint> () { 1, BattleData.Instance.Agent.SelectArgs[0] });
 						BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
 					};
 					CancelAction = () => {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         sendReponseMsg (state, BattleData.Instance.MainPlayer.id, null, null, new List<uint> () { 0 });
 						BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
 					};
-					
-					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
 					selectList = new List<List<uint>>() { new List<uint>() { 0 }, new List<uint>() { 1 },
 						new List<uint>() { 2 }};
 					var mList = new List<string>() { "","",""};

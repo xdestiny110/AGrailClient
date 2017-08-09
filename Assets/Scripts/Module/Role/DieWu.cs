@@ -31,6 +31,14 @@ namespace AGrail
             }
         }
 
+        public override string HeroName
+        {
+            get
+            {
+                return "华胥";
+            }
+        }
+
         public override bool HasYellow
         {
             get
@@ -74,7 +82,8 @@ namespace AGrail
                     return isCovered &&
                         (BattleData.Instance.Agent.SelectCards.Count == 0 || Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Element == card.Element);
                 case (uint)SkillID.倒逆之蝶:                    
-                    return (isCovered && additionalState == 24082) || (additionalState == 0 && !isCovered);
+                    return (isCovered && additionalState == 24082) || 
+                        (additionalState == 0 && !isCovered && BattleData.Instance.Agent.SelectCards.Count != MaxSelectCard(uiState));
             }
             return base.CanSelect(uiState, card, isCovered);
         }
@@ -120,8 +129,9 @@ namespace AGrail
                 case (uint)SkillID.朝圣:
                     return 1;
                 case (uint)SkillID.镜花水月:
-                case (uint)SkillID.倒逆之蝶:
                     return 2;
+                case (uint)SkillID.倒逆之蝶:
+                    return Math.Min(BattleData.Instance.MainPlayer.hand_count, 2);                    
             }
             return base.MaxSelectCard(uiState);
         }
@@ -188,25 +198,26 @@ namespace AGrail
             switch (state)
             {
                 case (uint)SkillID.舞动:
-                    OKAction = () =>
-                    {                        
-                        if (BattleData.Instance.Agent.SelectCards.Count == 0)
-                            sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
-                                null, null, state, new List<uint>() { 1 });
-                        else
-                            sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
+                    if(BattleData.Instance.Agent.SelectCards.Count == 1)
+                    {
+                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
                                 null, BattleData.Instance.Agent.SelectCards, state, new List<uint>() { 2 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
+                    }
+                    OKAction = () =>
+                    {
+                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
+                            null, null, state, new List<uint>() { 1 });
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
                     };
-                    CancelAction = () =>
-                    {                        
-                        BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
-                    };                    
+                    CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };                    
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                         string.Format("{0}: 选择一张牌弃置，不选视为摸牌", Skills[state].SkillName));
                     return;
                 case (uint)SkillID.朝圣:
-                    OKAction = () =>
+                    if(BattleData.Instance.Agent.SelectCards.Count == 1)
                     {
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentHandChange, false);
                         var args = new List<uint>() { 1 };
@@ -214,7 +225,8 @@ namespace AGrail
                             args.Add(BattleData.Instance.Agent.SelectCards[0]);
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, args);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                    };
+                        return;
+                    }
                     CancelAction = () =>
                     {
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentHandChange, false);
@@ -227,12 +239,13 @@ namespace AGrail
                     return;
                 case (uint)SkillID.毒粉:
                 case (uint)SkillID.镜花水月:
-                    OKAction = () =>
+                    if(BattleData.Instance.Agent.SelectCards.Count == MaxSelectCard(state))
                     {
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentHandChange, false);
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, 
                             BattleData.Instance.Agent.SelectCards, new List<uint>() { 1 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
                     };
                     CancelAction = () =>
                     {
@@ -274,58 +287,60 @@ namespace AGrail
                             string.Format("{0}: 非法术牌请直接取消", Skills[state].SkillName));
                     return;
                 case (uint)SkillID.倒逆之蝶:
-                    OKAction = () =>
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                    if (additionalState == 24081 && BattleData.Instance.Agent.SelectPlayers.Count == 1)
                     {
-                        if(additionalState == 0)
-                        {
-                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
-                            additionalState = BattleData.Instance.Agent.SelectArgs[0] + (uint)SkillID.倒逆之蝶 * 10;
-                            selectCards.Clear();
-                            selectCards.AddRange(BattleData.Instance.Agent.SelectCards);
-                            while (BattleData.Instance.Agent.SelectCards.Count > 0)
-                                BattleData.Instance.Agent.RemoveSelectCard(BattleData.Instance.Agent.SelectCards[0]);
-                        }
-                        else if(additionalState == 24081)
-                        {
-                            sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectPlayers,
-                                selectCards, state, BattleData.Instance.Agent.SelectArgs);
-                            BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                        }
-                        else if(additionalState == 24082)
-                        {
-                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentHandChange, true);
-                            foreach (var v in BattleData.Instance.Agent.SelectCards)
-                                BattleData.Instance.Agent.SelectArgs.Add(v);
-                            sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id, null,
-                                selectCards, state, BattleData.Instance.Agent.SelectArgs);
-                            BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                        }
-                        else if(additionalState == 24083)
-                        {
-                            sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id, null,
-                                selectCards, state, BattleData.Instance.Agent.SelectArgs);
-                            BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                        }
-                    };
+                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectPlayers,
+                            selectCards, state, BattleData.Instance.Agent.SelectArgs);
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
+                    }
+                    else if (additionalState == 24082 && BattleData.Instance.Agent.SelectCards.Count == 2)
+                    {
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentHandChange, true);
+                        foreach (var v in BattleData.Instance.Agent.SelectCards)
+                            BattleData.Instance.Agent.SelectArgs.Add(v);
+                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id, null,
+                            selectCards, state, BattleData.Instance.Agent.SelectArgs);
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
+                    }
+                    else if (additionalState == 24083)
+                    {
+                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id, null,
+                            selectCards, state, BattleData.Instance.Agent.SelectArgs);
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
+                    }
                     CancelAction = () =>
                     {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
                     };
-                    if(additionalState == 0 && msg == UIStateMsg.ClickSkill)
-                    {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
-                        selectList.Add(new List<uint>() { 1 });
-                        mList.Add(" 对目标角色造成1点法术伤害");
-                        selectList.Add(new List<uint>() { 2 });
-                        mList.Add(" 移除2个【茧】,移除1个【蛹】");
-                        selectList.Add(new List<uint>() { 3 });
-                        mList.Add(" 对自己造成4点法术伤害,移除1个【蛹】");
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "选择以下一项发动", selectList, mList);
+                    if (additionalState == 0 && msg == UIStateMsg.ClickSkill)                    
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                            string.Format("{0}: 弃两张牌并选择要发动的技能", Skills[state].SkillName));
+                            string.Format("{0}: 弃两张牌", Skills[state].SkillName));                    
+                    else if (additionalState == 0 && BattleData.Instance.Agent.SelectCards.Count == MaxSelectCard(state))
+                    {
+                        selectList.Add(new List<uint>() { 1 });
+                        mList.Add("对目标角色造成1点法术伤害");
+                        selectList.Add(new List<uint>() { 2 });
+                        mList.Add("移除2个【茧】,移除1个【蛹】");
+                        selectList.Add(new List<uint>() { 3 });
+                        mList.Add("对自己造成4点法术伤害,移除1个【蛹】");
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                            string.Format("{0}: 选择要发动的技能", Skills[state].SkillName));
                     }
-                    else if(additionalState == 24081)
+                    else if (additionalState == 0 && msg == UIStateMsg.ClickArgs)
+                    {
+                        additionalState = BattleData.Instance.Agent.SelectArgs[0] + (uint)SkillID.倒逆之蝶 * 10;
+                        selectCards.Clear();
+                        selectCards.AddRange(BattleData.Instance.Agent.SelectCards);
+                        BattleData.Instance.Agent.RemoveAllSelectCard();
+                    }                        
+
+                    if(additionalState == 24081)
                     {
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                             string.Format("{0}: 选择一个目标角色", Skills[state].SkillName));
@@ -333,13 +348,8 @@ namespace AGrail
                     else if(additionalState == 24082)
                     {
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                            string.Format("{0}: 选择两张牌", Skills[state].SkillName));
+                            string.Format("{0}: 选择两张茧", Skills[state].SkillName));
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentHandChange, true);
-                    }
-                    else if(additionalState == 24083)
-                    {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                            string.Format("是否发动{0}", Skills[state].SkillName));
                     }
                     return;
             }

@@ -76,7 +76,7 @@ namespace AGrail
                 case (uint)SkillID.雷光散射:
                     return card.Element == Card.CardElement.thunder && isCovered;               
                 case (uint)SkillID.充能:
-                    return !isCovered && additionalState != 26041;
+                    return !isCovered && BattleData.Instance.Agent.SelectArgs.Count == 1;
                 case (uint)SkillID.充能盖牌:
                 case (uint)SkillID.魔眼盖牌:
                     return !isCovered;
@@ -96,7 +96,7 @@ namespace AGrail
                 case (uint)SkillID.魔眼:
                     return true;
                 case (uint)SkillID.雷光散射:
-                    return player.team != BattleData.Instance.MainPlayer.team;
+                    return BattleData.Instance.Agent.SelectCards.Count > 1 && player.team != BattleData.Instance.MainPlayer.team;
             }
             return base.CanSelect(uiState, player);
         }
@@ -221,12 +221,12 @@ namespace AGrail
                         "请选择目标");
                     return;
                 case (uint)SkillID.充能:
-                    if(msg == UIStateMsg.ClickArgs)
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                    if(BattleData.Instance.Agent.SelectCards.Count == 2)
                     {
                         IsStart = true;
                         isChongNengUsed = true;
                         chongNengCnt = BattleData.Instance.Agent.SelectArgs[0];
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null,
                             BattleData.Instance.Agent.SelectCards, new List<uint>() { 1, (uint)BattleData.Instance.Agent.SelectCards.Count, BattleData.Instance.Agent.SelectArgs[0] });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
@@ -238,9 +238,11 @@ namespace AGrail
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    if (BattleData.Instance.Agent.SelectCards.Count == (int)MaxSelectCard(state))
+                    if(msg == UIStateMsg.ClickArgs)
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                        string.Format("{0}: 弃到4张牌", Skills[state].SkillName));
+                    else
                     {
-                        additionalState = 26041;
                         selectList.Clear();
                         mList.Clear();
                         for (uint i = 0; i < 5; i++)
@@ -249,10 +251,7 @@ namespace AGrail
                             mList.Add("摸" + i.ToString() + "张牌");
                         }
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
-                    }
-                    else
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                                string.Format("{0}: 弃到4张牌", Skills[state].SkillName));                    
+                    }                  
                     return;
                 case (uint)SkillID.充能盖牌:
                     OKAction = () => 
