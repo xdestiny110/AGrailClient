@@ -10,7 +10,7 @@ namespace AGrail
         public abstract RoleID RoleID { get; }
         public abstract string RoleName { get; }
         public abstract Card.CardProperty RoleProperty { get; }
-        public virtual string HeroName { get { return "白板"; } }
+        public abstract string HeroName { get; }
         public virtual uint MaxHealCount { get { return 2; } }
         public virtual uint MaxEnergyCount { get { return 3; } }
         public virtual bool HasYellow { get { return false; } }

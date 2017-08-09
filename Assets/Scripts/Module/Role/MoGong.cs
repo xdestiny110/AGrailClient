@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using network;
 using UnityEngine;
 using Framework.Message;
+using System;
 
 namespace AGrail
 {
@@ -57,6 +58,14 @@ namespace AGrail
                     isChongNengUsed = false;
                 }
                 base.IsStart = value;
+            }
+        }
+
+        public override string HeroName
+        {
+            get
+            {
+                return "泰罗莎";
             }
         }
 

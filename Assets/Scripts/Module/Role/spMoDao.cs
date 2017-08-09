@@ -1,6 +1,7 @@
 ﻿using network;
 using System.Collections.Generic;
 using Framework.Message;
+using System;
 
 namespace AGrail
 {
@@ -27,6 +28,14 @@ namespace AGrail
             get
             {
                 return Card.CardProperty.咏;
+            }
+        }
+
+        public override string HeroName
+        {
+            get
+            {
+                return "妮亚";
             }
         }
 
