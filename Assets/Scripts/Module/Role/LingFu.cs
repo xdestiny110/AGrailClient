@@ -219,7 +219,10 @@ namespace AGrail
                         return;
                     }
                     else if (BattleData.Instance.Agent.SelectCards.Count == 0)
-                        BattleData.Instance.Agent.RemoveAllSelectPlayer();
+                    {
+                        BattleData.Instance.Agent.SelectPlayers.Clear();
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSelectPlayer);
+                    }                        
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                         string.Format("{0}: 请选择目标玩家以及卡牌", Skills[state].SkillName));

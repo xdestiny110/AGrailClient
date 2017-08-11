@@ -282,10 +282,13 @@ namespace AGrail
                         player.blue_token = v.blue_token;
                     if (v.covered_countSpecified)
                     {
-                        player.covered_count = v.covered_count;
-                        player.covereds.Clear();
-                        foreach (var u in v.covereds)
-                            player.covereds.Add(u);
+                        if (player != v)
+                        {
+                            player.covered_count = v.covered_count;
+                            player.covereds.Clear();
+                            foreach (var u in v.covereds)
+                                player.covereds.Add(u);
+                        }
                         if(MainPlayer != null && v.id == MainPlayer.id)
                             MessageSystem<MessageType>.Notify(MessageType.AgentHandChange);
                     }
