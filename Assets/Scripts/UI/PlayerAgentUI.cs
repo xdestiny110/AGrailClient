@@ -107,20 +107,20 @@ namespace AGrail
                     break;
                 case MessageType.AgentStateChange:
                     //保证在初始状态 
-                    foreach (var v in cardUIs)
-                            v.IsEnable = false;
-                    foreach (var v in skillUIs)
-                            v.IsEnable = false;
-                    foreach (var v in players)
-                            v.IsEnable = false;
-                    btnOK.gameObject.SetActive(false);
-                    btnCancel.gameObject.SetActive(false);                    
-                    while (GameManager.UIInstance.PeekWindow() != Framework.UI.WindowType.BattleUIMobile)
-                        GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
+                    //foreach (var v in cardUIs)
+                    //        v.IsEnable = false;
+                    //foreach (var v in skillUIs)
+                    //        v.IsEnable = false;
+                    //foreach (var v in players)
+                    //        v.IsEnable = false;
+                    //btnOK.gameObject.SetActive(false);
+                    //btnCancel.gameObject.SetActive(false);
+                    //while (GameManager.UIInstance.PeekWindow() != Framework.UI.WindowType.BattleUIMobile)
+                    //    GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
                     break;
                 case MessageType.ShowNewArgsUI:
                     if (GameManager.UIInstance.PeekWindow() != Framework.UI.WindowType.ArgsUI)
-                        GameManager.UIInstance.PushWindow(Framework.UI.WindowType.ArgsUI, Framework.UI.WinMsg.None, Vector3.zero, parameters);
+                        GameManager.UIInstance.PushWindow(Framework.UI.WindowType.ArgsUI, Framework.UI.WinMsg.None, -1, Vector3.zero, parameters);
                     break;
                 case MessageType.CloseNewArgsUI:
                     if (GameManager.UIInstance.PeekWindow() == Framework.UI.WindowType.ArgsUI)

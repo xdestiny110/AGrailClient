@@ -366,7 +366,7 @@ namespace AGrail
 
         private void onLongPress()
         {
-            GameManager.UIInstance.PushWindow(Framework.UI.WindowType.InfomationUI, Framework.UI.WinMsg.None, Vector3.zero, role);
+            GameManager.UIInstance.PushWindow(Framework.UI.WindowType.InfomationUI, Framework.UI.WinMsg.None, -1, Vector3.zero, role);
         }
 
         private void addChildGO(Transform parent, GameObject go)

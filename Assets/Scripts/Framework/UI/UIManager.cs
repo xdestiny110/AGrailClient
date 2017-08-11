@@ -1,14 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using System.Linq;
 
 namespace Framework.UI
 {
     public class UIManager
     {
-        private Stack<WindowsBase> winStack = new Stack<WindowsBase>();
+        private List<WindowsBase> winStack = new List<WindowsBase>();
 
-        public WindowsBase PushWindow(WindowType type, WinMsg msg, Vector3 initPos = default(Vector3), params object[] parameters)
+        public WindowsBase PushWindow(WindowType type, WinMsg msg, int sortLayer = -1, Vector3 initPos = default(Vector3), params object[] parameters)
         {
             var guid = System.Guid.NewGuid();
             TimeScope.Start(guid, "push window " + type.ToString());
@@ -18,13 +19,26 @@ namespace Framework.UI
             go.transform.position = initPos;
             var win = go.GetComponent<WindowsBase>();
             win.Parameters = parameters;
-            WindowsBase topWin;
-            if(winStack.TryPeek(out topWin))
+            if(winStack.Count > 0)
             {
-                win.Canvas.sortingOrder = topWin.Canvas.sortingOrder + 1;
-                dealWinMsg(topWin, msg);
-            }                
-            winStack.Push(win);
+                dealWinMsg(winStack.Last(), msg);
+                if (sortLayer == -1)
+                {
+                    if (win.Canvas.sortingOrder == 0)
+                        win.Canvas.sortingOrder = winStack.Last().Canvas.sortingOrder + 1;
+                }
+                else
+                    win.Canvas.sortingOrder = sortLayer;
+            }
+            winStack.Add(win);
+            winStack.Sort((w1, w2) => 
+            {
+                if (w1.Canvas.sortingOrder < w2.Canvas.sortingOrder)
+                    return -1;
+                else if (w1.Canvas.sortingOrder >= w2.Canvas.sortingOrder)
+                    return 1;
+                return 0;
+            });
             return win;
         }
 
@@ -35,46 +49,58 @@ namespace Framework.UI
             //之后再完善
         }
 
-        public WindowsBase PushWindowFromResource(WindowType type, WinMsg msg, Vector3 initPos = default(Vector3), params object[] parameters)
+        public WindowsBase PushWindowFromResource(WindowType type, WinMsg msg, int sortLayer = -1, Vector3 initPos = default(Vector3), params object[] parameters)
         {
             var go = WindowFactory.Instance.CreateWindows(type, true);
             go.name = type.ToString();
             go.transform.position = initPos;
             var win = go.GetComponent<WindowsBase>();
             win.Parameters = parameters;
-            WindowsBase topWin;
-            if (winStack.TryPeek(out topWin))
+            if (winStack.Count > 0)
             {
-                win.Canvas.sortingOrder = topWin.Canvas.sortingOrder + 1;
-                dealWinMsg(topWin, msg);
+                dealWinMsg(winStack.Last(), msg);
+                if (sortLayer == -1)
+                {
+                    if (win.Canvas.sortingOrder == 0)
+                        win.Canvas.sortingOrder = winStack.Last().Canvas.sortingOrder + 1;
+                }
+                else
+                    win.Canvas.sortingOrder = sortLayer;
             }
-            winStack.Push(win);
+            winStack.Add(win);
+            winStack.Sort((w1, w2) =>
+            {
+                if (w1.Canvas.sortingOrder < w2.Canvas.sortingOrder)
+                    return -1;
+                else if (w1.Canvas.sortingOrder >= w2.Canvas.sortingOrder)
+                    return 1;
+                return 0;
+            });
             return win;
         }
 
         public void PopWindow(WinMsg msg)
         {
-            WindowsBase topWin;
-            if (winStack.TryPop(out topWin))
-            {                
-                GameObject.Destroy(topWin.gameObject);
-                if (winStack.TryPeek(out topWin))                
-                    dealWinMsg(topWin, msg);
-            }
+            if(winStack.Count > 0)
+            {
+                GameObject.Destroy(winStack.Last().gameObject);
+                winStack.RemoveAt(winStack.Count - 1);
+                if (winStack.Count > 0)
+                    dealWinMsg(winStack.Last(), msg);
+            }            
             else
                 throw new System.Exception("Winstack is empty!");
         }
 
         public void ClearAllWindow()
         {
-            //只是全部弹出,用于切换场景            
-            while(winStack.Count > 0)
-                winStack.Pop();
+            //只是全部弹出,用于切换场景
+            winStack.Clear();
         }
 
         public WindowType PeekWindow()
         {
-            return winStack.Peek().Type;
+            return winStack.Last().Type;
         }
 
         private void dealWinMsg(WindowsBase topWin, WinMsg msg)

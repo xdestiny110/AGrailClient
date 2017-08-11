@@ -107,7 +107,7 @@ namespace AGrail
                 case MessageType.ERROR:
                     var errorProto = parameters[0] as network.Error;
                     if (errorProto.id == 31)
-                        GameManager.UIInstance.PushWindow(Framework.UI.WindowType.InputBox, Framework.UI.WinMsg.Pause, Vector3.zero,
+                        GameManager.UIInstance.PushWindow(Framework.UI.WindowType.InputBox, Framework.UI.WinMsg.Pause, -1, Vector3.zero,
                             new Action<string>((str) => { GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.Resume); }),
                             new Action<string>((str) => { GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.Resume); }),
                     "瞎蒙果然是不行的~");
