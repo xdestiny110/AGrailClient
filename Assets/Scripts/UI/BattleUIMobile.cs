@@ -67,6 +67,7 @@ namespace AGrail
                 GameObject.Destroy(playerStatus[3].gameObject);
                 playerStatus.RemoveAt(3);                
             }
+            Dialog.Instance.Reset();
 
             btnExpand.onClick.AddListener(onBtnExpandClick);
             btnShrink.onClick.AddListener(onBtnShrinkClick);

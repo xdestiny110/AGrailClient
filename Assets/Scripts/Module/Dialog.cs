@@ -46,6 +46,7 @@ namespace AGrail
         public void Reset()
         {
             Log = string.Empty;
+            Chat.Clear();
         }
 
         public void SendTalk(string str)

@@ -96,7 +96,7 @@ namespace AGrail
         public void ChangeSelectSkill(uint? skillID)
         {
             SelectSkill = skillID;
-            MessageSystem<MessageType>.Notify(MessageType.AgentSelectArgs);
+            MessageSystem<MessageType>.Notify(MessageType.AgentSelectSkill);
             FSM.HandleMessage(UIStateMsg.ClickSkill);
         }
 
@@ -104,7 +104,7 @@ namespace AGrail
         {
             SelectArgs.Clear();
             SelectArgs.AddRange(args);
-            MessageSystem<MessageType>.Notify(MessageType.AgentSelectSkill);
+            MessageSystem<MessageType>.Notify(MessageType.AgentSelectArgs);
             FSM.HandleMessage(UIStateMsg.ClickArgs);
         }
 

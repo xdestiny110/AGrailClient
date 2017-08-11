@@ -269,6 +269,7 @@ namespace AGrail
                             }
                             sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
                                 BattleData.Instance.Agent.SelectPlayers, null, 605, BattleData.Instance.Agent.SelectArgs);
+                            BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                         }
                     }
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };

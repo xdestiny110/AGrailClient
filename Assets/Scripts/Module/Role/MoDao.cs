@@ -216,7 +216,7 @@ namespace AGrail
                         return;
                     };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("{0}: 请选择目标玩家", Skills[state].SkillName));
+                        string.Format("{0}: 请选择两个目标对手", Skills[state].SkillName));
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
                     return;
                 case 803:
