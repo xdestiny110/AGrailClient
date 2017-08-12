@@ -10,6 +10,7 @@ namespace AGrail
         public abstract RoleID RoleID { get; }
         public abstract string RoleName { get; }
         public abstract Card.CardProperty RoleProperty { get; }
+        public abstract string HeroName { get; }
         public virtual uint MaxHealCount { get { return 2; } }
         public virtual uint MaxEnergyCount { get { return 3; } }
         public virtual bool HasYellow { get { return false; } }
@@ -275,11 +276,12 @@ namespace AGrail
         }
 
         public virtual bool CanSelect(uint uiState, network.SinglePlayerInfo player)
-        {
+        {            
             switch (uiState)
             {
                 case 1:
-                    if (player.team != BattleData.Instance.MainPlayer.team &&
+                    if (BattleData.Instance.Agent.SelectCards.Count == 1 && 
+                        player.team != BattleData.Instance.MainPlayer.team &&
                         !(player.role_id == (uint)RoleID.AnSha && player.is_knelt))
                     {
                         if (BattleData.Instance.MainPlayer.ex_cards.Contains(1001) && player.role_id != (uint)RoleID.YongZhe)
@@ -288,7 +290,8 @@ namespace AGrail
                     }                        
                     break;
                 case 2:
-                    if (BattleData.Instance.Agent.SelectCards.Count == 1 && Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Name == Card.CardName.魔弹)
+                    if (BattleData.Instance.Agent.SelectCards.Count == 1 && 
+                        Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Name == Card.CardName.魔弹)
                     {
                         foreach(var v in BattleData.Instance.PlayerIdxOrder)
                         {
@@ -679,12 +682,12 @@ namespace AGrail
 						3 - BattleData.Instance.Agent.SelectArgs [0]
 					});
 					BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
-					MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseArgsUI);
+					//MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseArgsUI);
 
 				}
 				;
 				CancelAction = () => {
-					MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseArgsUI);
+					//MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseArgsUI);
 					sendReponseMsg (state, BattleData.Instance.MainPlayer.id, null, null, new List<uint> () { 0 });
 					BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
 				};
@@ -720,14 +723,14 @@ namespace AGrail
 						sendReponseMsg (state, BattleData.Instance.MainPlayer.id,
 							BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, BattleData.Instance.Agent.SelectArgs);
 						BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
-						MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseArgsUI);
+						//MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseArgsUI);
 					}
 
 
 						};
 						CancelAction = () => 
 						{
-							MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+							//MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
 							BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
 						};
 						selectList = new List<List<uint>>() { new List<uint>() { 1 }, new List<uint>() { 2 }};
@@ -742,10 +745,10 @@ namespace AGrail
 							sendReponseMsg (state, BattleData.Instance.MainPlayer.id,
 								BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, BattleData.Instance.Agent.SelectArgs);
 							BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
-							MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+							//MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
 						};
 						CancelAction = () => {
-							MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+							//MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
 							sendReponseMsg (state, BattleData.Instance.MainPlayer.id, null, null, new List<uint> () { 0 });
 							BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
 						};
@@ -765,11 +768,11 @@ namespace AGrail
 					sendReponseMsg (state, BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, 
 						new List<uint> () { BattleData.Instance.Agent.SelectArgs [0] / 3 + 1, BattleData.Instance.Agent.SelectArgs [0] });
 					BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
-					MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseArgsUI);
+					//MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseArgsUI);
 				}
 				;
 				CancelAction = () => {
-					MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseArgsUI);
+					//MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseArgsUI);
 					BattleData.Instance.Agent.FSM.BackState (UIStateMsg.Init);
 				};
 
@@ -777,13 +780,21 @@ namespace AGrail
 				mList = new List<string> ();
 				uint Gem = BattleData.Instance.Gem [BattleData.Instance.MainPlayer.team];
 				uint Crystal = BattleData.Instance.Crystal [BattleData.Instance.MainPlayer.team];
-				if (BattleData.Instance.Gem [BattleData.Instance.MainPlayer.team] > 0) {
-					selectList.Add (new List<uint> () { 2 });
-					mList.Add ("提炼我方战绩区的1【宝石】");
-				}
-				if (BattleData.Instance.Crystal [BattleData.Instance.MainPlayer.team] > 0) {
-					selectList.Add (new List<uint> () {1 });
-					mList.Add ("提炼我方战绩区的1【水晶】");
+
+				//gem = BattleData.Instance.MainPlayer.gem;
+				//crystal = BattleData.Instance.MainPlayer.crystal;
+				//maxEnergyCnt = BattleData.Instance.Agent.PlayerRole.MaxEnergyCount;
+				if (BattleData.Instance.Agent.PlayerRole.MaxEnergyCount - BattleData.Instance.MainPlayer.gem - BattleData.Instance.MainPlayer.crystal > 0)
+				{
+					if (BattleData.Instance.Gem [BattleData.Instance.MainPlayer.team] > 0) {
+						selectList.Add (new List<uint> () { 2 });
+						mList.Add ("提炼我方战绩区的1【宝石】");
+					}
+
+					if (BattleData.Instance.Crystal [BattleData.Instance.MainPlayer.team] > 0) {
+						selectList.Add (new List<uint> () {1 });
+						mList.Add ("提炼我方战绩区的1【水晶】");
+					}
 				}
 				selectList.Add (new List<uint> () {3 });
 				mList.Add ("+1【治疗】,我方战绩区+1【宝石】");

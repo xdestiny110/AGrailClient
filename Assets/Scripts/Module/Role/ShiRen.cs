@@ -14,13 +14,6 @@ namespace AGrail
 			}
 		}
 
-		public override string RoleName
-		{
-			get
-			{
-				return "吟游诗人";
-			}
-		}
 
 		public override Card.CardProperty RoleProperty
 		{
@@ -43,6 +36,23 @@ namespace AGrail
 			for (uint i = 3101; i <= 3107; i++)
 				Skills.Add(i, Skill.GetSkill(i));
 		}
+
+		public override string RoleName
+		{
+			get
+			{
+				return "吟游诗人";
+			}
+		}
+
+		public override string HeroName
+		{
+			get
+			{
+				return "詹姆";
+			}
+		}
+
 
 		public override bool CanSelect(uint uiState, Card card, bool isCovered)
 		{
@@ -159,7 +169,8 @@ namespace AGrail
 						sendReponseMsg (state, BattleData.Instance.MainPlayer.id,
 							BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, new List<uint>() { 1 });
 						BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
-						MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+						//MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
 					};
 					CancelAction = () => {
 						sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
@@ -178,10 +189,12 @@ namespace AGrail
 						BattleData.Instance.Agent.SelectArgs [0] / 5 + 1
 					});
 					BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
-					MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseArgsUI);
+					//MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseArgsUI);
+					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
 				};
 				CancelAction = () => {
-					MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseArgsUI);
+					//MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseArgsUI);
+					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
 					BattleData.Instance.Agent.FSM.BackState (UIStateMsg.Init);
 				};
 				selectList.Clear ();
@@ -209,6 +222,7 @@ namespace AGrail
 				{
 					sendReponseMsg(state, BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectPlayers, null, new List<uint>() { 1 });
 						//sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 1 });
+					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
 					BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
 				};
 				CancelAction = () =>
