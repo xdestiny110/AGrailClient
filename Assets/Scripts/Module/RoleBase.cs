@@ -683,13 +683,11 @@ namespace AGrail
 					});
 					BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
 					//MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseArgsUI);
-					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
 
 				}
 				;
 				CancelAction = () => {
 					//MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseArgsUI);
-					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
 					sendReponseMsg (state, BattleData.Instance.MainPlayer.id, null, null, new List<uint> () { 0 });
 					BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
 				};
@@ -726,7 +724,6 @@ namespace AGrail
 							BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, BattleData.Instance.Agent.SelectArgs);
 						BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
 						//MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseArgsUI);
-						MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
 					}
 
 
@@ -734,7 +731,6 @@ namespace AGrail
 						CancelAction = () => 
 						{
 							//MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
-					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
 							BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
 						};
 						selectList = new List<List<uint>>() { new List<uint>() { 1 }, new List<uint>() { 2 }};
@@ -749,12 +745,10 @@ namespace AGrail
 							sendReponseMsg (state, BattleData.Instance.MainPlayer.id,
 								BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, BattleData.Instance.Agent.SelectArgs);
 							BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
-					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
 							//MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
 						};
 						CancelAction = () => {
 							//MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
-					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
 							sendReponseMsg (state, BattleData.Instance.MainPlayer.id, null, null, new List<uint> () { 0 });
 							BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
 						};
@@ -774,13 +768,11 @@ namespace AGrail
 					sendReponseMsg (state, BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, 
 						new List<uint> () { BattleData.Instance.Agent.SelectArgs [0] / 3 + 1, BattleData.Instance.Agent.SelectArgs [0] });
 					BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
-					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
 					//MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseArgsUI);
 				}
 				;
 				CancelAction = () => {
 					//MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseArgsUI);
-					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
 					BattleData.Instance.Agent.FSM.BackState (UIStateMsg.Init);
 				};
 
