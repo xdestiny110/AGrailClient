@@ -10,7 +10,6 @@ namespace AGrail
         public abstract RoleID RoleID { get; }
         public abstract string RoleName { get; }
         public abstract Card.CardProperty RoleProperty { get; }
-        public abstract string HeroName { get; }
         public virtual uint MaxHealCount { get { return 2; } }
         public virtual uint MaxEnergyCount { get { return 3; } }
         public virtual bool HasYellow { get { return false; } }
@@ -161,6 +160,16 @@ namespace AGrail
                     return true;
                 case 1602:
                     return true;                    
+  
+
+				case 3105:	//激昂狂想曲-代价
+				case 3106:	//胜利交响诗-代价
+				case 31061:	//胜利交响诗-效果
+					return true;                
+				//case 31052:	//激昂狂想曲-效果
+			
+
+                        
             }
             return false;
         }
@@ -177,6 +186,10 @@ namespace AGrail
                 case 13:
                 case 14:
                 case 1602:
+				case 3105:	//激昂狂想曲-代价
+				case 31052:	//激昂狂想曲-效果
+				case 3106:	//胜利交响诗-代价
+				case 31061:	//胜利交响诗-效果
                     return true;
                 case 5:
                     if (BattleData.Instance.Agent.Cmd.args[0] == 801 || BattleData.Instance.Agent.Cmd.args[0] == 805 ||
@@ -262,12 +275,11 @@ namespace AGrail
         }
 
         public virtual bool CanSelect(uint uiState, network.SinglePlayerInfo player)
-        {            
+        {
             switch (uiState)
             {
                 case 1:
-                    if (BattleData.Instance.Agent.SelectCards.Count == 1 && 
-                        player.team != BattleData.Instance.MainPlayer.team &&
+                    if (player.team != BattleData.Instance.MainPlayer.team &&
                         !(player.role_id == (uint)RoleID.AnSha && player.is_knelt))
                     {
                         if (BattleData.Instance.MainPlayer.ex_cards.Contains(1001) && player.role_id != (uint)RoleID.YongZhe)
@@ -276,8 +288,7 @@ namespace AGrail
                     }                        
                     break;
                 case 2:
-                    if (BattleData.Instance.Agent.SelectCards.Count == 1 && 
-                        Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Name == Card.CardName.魔弹)
+                    if (BattleData.Instance.Agent.SelectCards.Count == 1 && Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Name == Card.CardName.魔弹)
                     {
                         foreach(var v in BattleData.Instance.PlayerIdxOrder)
                         {
@@ -296,6 +307,12 @@ namespace AGrail
                     if (BattleData.Instance.Agent.SelectCards.Count == 1 && Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Element != Card.CardElement.light)
                         return player.team != BattleData.Instance.MainPlayer.team && player.id != BattleData.Instance.Agent.Cmd.args[3];                    
                     break;
+				case 31052:	//激昂狂想曲-效果
+					//if (BattleData.Instance.Agent.SelectArgs [0] == 1)
+					///	return player.team != BattleData.Instance.MainPlayer.team;
+					//else
+						return player.team != BattleData.Instance.MainPlayer.team;
+
             }
             return false;
         }
@@ -313,6 +330,9 @@ namespace AGrail
                 case 2:
                 case 3:
                     return 1;
+				case 31052:	//激昂狂想曲-效果
+						return 2;
+					
             }
             return 0;
         }
@@ -340,6 +360,7 @@ namespace AGrail
         public System.Action ResignAction = null;
         public virtual void UIStateChange(uint state, UIStateMsg msg, params object[] paras)
         {
+			List<string> mList;
             List<List<uint>> selectList;
             List<string> explainList;
             uint tGem, tCrystal ;
@@ -648,7 +669,131 @@ namespace AGrail
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                         string.Format("是否发动{0}", Skill.GetSkill(state).SkillName));
                     break;
-            }
+			case 3105:	//激昂狂想曲-代价
+				if (msg == UIStateMsg.ClickArgs) {
+					
+					sendReponseMsg (state, BattleData.Instance.MainPlayer.id,
+						BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, new List<uint> () {
+						BattleData.Instance.Agent.SelectArgs [0] / 4 + 1,
+						BattleData.Instance.Agent.SelectArgs [0] - 1,
+						3 - BattleData.Instance.Agent.SelectArgs [0]
+					});
+					BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
+					MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseArgsUI);
+
+				}
+				;
+				CancelAction = () => {
+					MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseArgsUI);
+					sendReponseMsg (state, BattleData.Instance.MainPlayer.id, null, null, new List<uint> () { 0 });
+					BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
+				};
+				selectList = new List<List<uint>> ();
+
+				mList = new List<string> ();
+				if (BattleData.Instance.Crystal [BattleData.Instance.MainPlayer.team] > 1) {
+					selectList.Add (new List<uint> (){ 1 });
+					mList.Add ("移除我方战绩区2【水晶】");
+				}
+				if ((BattleData.Instance.Gem [BattleData.Instance.MainPlayer.team] > 0) && (BattleData.Instance.Crystal [BattleData.Instance.MainPlayer.team] > 0)) {
+					selectList.Add (new List<uint> (){ 2 });
+					mList.Add ("移除我方战绩区1【水晶】1【宝石】");
+				}
+				if (BattleData.Instance.Gem [BattleData.Instance.MainPlayer.team] > 1) {
+					selectList.Add (new List<uint> (){ 3 });
+					mList.Add ("移除我方战绩区2【宝石】");
+				}
+				uint watch2 = BattleData.Instance.MainPlayer.role_id;
+				if (BattleData.Instance.MainPlayer.role_id != 31)
+				{
+					selectList.Add(new List<uint> (){4 });
+					mList.Add ("将永恒乐章转移给吟游诗人");
+				}
+										
+				MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
+				MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, string.Format("选择发动激昂狂想曲的条件"));
+					return;
+				case 31052:	//激昂狂想曲-效果
+						if (msg == UIStateMsg.ClickArgs)
+						{
+					if (((BattleData.Instance.Agent.SelectArgs [0] == 1) && (BattleData.Instance.Agent.SelectPlayers.Count == 2)) || (BattleData.Instance.Agent.SelectArgs [0] == 2)) {
+						sendReponseMsg (state, BattleData.Instance.MainPlayer.id,
+							BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, BattleData.Instance.Agent.SelectArgs);
+						BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
+						MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseArgsUI);
+					}
+
+
+						};
+						CancelAction = () => 
+						{
+							MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+							BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
+						};
+						selectList = new List<List<uint>>() { new List<uint>() { 1 }, new List<uint>() { 2 }};
+						mList = new List<string>() { "对两名目标对手造成1点法术伤害","弃2张牌"};
+				MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
+				MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+												string.Format("选择发动激昂狂想曲的效果"));
+						return;
+					case 3106:	//胜利交响诗-代价
+						if (msg == UIStateMsg.ClickArgs)
+						{
+							sendReponseMsg (state, BattleData.Instance.MainPlayer.id,
+								BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, BattleData.Instance.Agent.SelectArgs);
+							BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
+							MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+						};
+						CancelAction = () => {
+							MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+							sendReponseMsg (state, BattleData.Instance.MainPlayer.id, null, null, new List<uint> () { 0 });
+							BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
+						};
+						selectList = new List<List<uint>>() { new List<uint>() { 1 }};
+						mList = new List<string>() { "对吟游诗人造成3点法术伤害"};
+				if (BattleData.Instance.MainPlayer.role_id != 31)
+				{
+					selectList.Add(new List<uint> (){2 });
+					mList.Add ("将永恒乐章转移给吟游诗人");
+				}
+				MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
+				MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+												string.Format("选择发动胜利交响诗的条件"));
+						return;
+			case 31061:	//胜利交响诗-效果
+				if (msg == UIStateMsg.ClickArgs) {
+					sendReponseMsg (state, BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, 
+						new List<uint> () { BattleData.Instance.Agent.SelectArgs [0] / 3 + 1, BattleData.Instance.Agent.SelectArgs [0] });
+					BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
+					MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseArgsUI);
+				}
+				;
+				CancelAction = () => {
+					MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseArgsUI);
+					BattleData.Instance.Agent.FSM.BackState (UIStateMsg.Init);
+				};
+
+				selectList = new List<List<uint>> ();
+				mList = new List<string> ();
+				uint Gem = BattleData.Instance.Gem [BattleData.Instance.MainPlayer.team];
+				uint Crystal = BattleData.Instance.Crystal [BattleData.Instance.MainPlayer.team];
+				if (BattleData.Instance.Gem [BattleData.Instance.MainPlayer.team] > 0) {
+					selectList.Add (new List<uint> () { 2 });
+					mList.Add ("提炼我方战绩区的1【宝石】");
+				}
+				if (BattleData.Instance.Crystal [BattleData.Instance.MainPlayer.team] > 0) {
+					selectList.Add (new List<uint> () {1 });
+					mList.Add ("提炼我方战绩区的1【水晶】");
+				}
+				selectList.Add (new List<uint> () {3 });
+				mList.Add ("+1【治疗】,我方战绩区+1【宝石】");
+
+				MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
+				MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+												string.Format("选择发动胜利交响诗的效果"));
+
+				return;	
+			}
             if(BattleData.Instance.Agent.AgentState.Check(PlayerAgentState.CanResign))
                 ResignAction = () =>
                 {
