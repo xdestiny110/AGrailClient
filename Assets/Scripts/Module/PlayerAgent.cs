@@ -59,6 +59,13 @@ namespace AGrail
             FSM.HandleMessage(UIStateMsg.ClickPlayer);
         }
 
+        public void RemoveAllSelectPlayer()
+        {
+            SelectPlayers.Clear();
+            MessageSystem<MessageType>.Notify(MessageType.AgentSelectPlayer);
+            FSM.HandleMessage(UIStateMsg.ClickPlayer);
+        }
+
         public void AddSelectCard(uint cardID)
         {
             if (!SelectCards.Contains(cardID))
@@ -79,11 +86,26 @@ namespace AGrail
             FSM.HandleMessage(UIStateMsg.ClickCard);
         }
 
+        public void RemoveAllSelectCard()
+        {
+            SelectCards.Clear();
+            MessageSystem<MessageType>.Notify(MessageType.AgentSelectCard);
+            FSM.HandleMessage(UIStateMsg.ClickCard);
+        }
+
         public void ChangeSelectSkill(uint? skillID)
         {
             SelectSkill = skillID;
             MessageSystem<MessageType>.Notify(MessageType.AgentSelectSkill);
             FSM.HandleMessage(UIStateMsg.ClickSkill);
+        }
+
+        public void AddSelectArgs(List<uint> args)
+        {
+            SelectArgs.Clear();
+            SelectArgs.AddRange(args);
+            MessageSystem<MessageType>.Notify(MessageType.AgentSelectArgs);
+            FSM.HandleMessage(UIStateMsg.ClickArgs);
         }
 
         private Type calUIState(int state)

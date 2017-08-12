@@ -12,7 +12,7 @@ namespace AGrail
         [SerializeField]
         private Transform root;
         [SerializeField]
-        private GameObject btnStart;
+        private GameObject btnStart;        
         [SerializeField]
         private GameObject loginInput;
         [SerializeField]
@@ -23,6 +23,8 @@ namespace AGrail
         private Text txtStatus;
         [SerializeField]
         private Button btnLogin;
+        [SerializeField]
+        private Button btnSwitchAccount;
         [SerializeField]
         private Transform titleImg;        
 
@@ -38,6 +40,11 @@ namespace AGrail
         {
             state = UserData.Instance.State;
             MessageSystem<MessageType>.Regist(MessageType.LoginState, this);
+            btnSwitchAccount.onClick.AddListener(() =>
+            {
+                btnStart.SetActive(false);
+                loginInput.SetActive(true);
+            });
             base.Awake();
         }
 
@@ -48,19 +55,8 @@ namespace AGrail
         }
 
         public override void OnHide()
-        {
-            var go = new GameObject();
-            go.transform.localPosition = Vector3.zero;
-            go.name = "GameTitle";
-            var canvas = go.AddComponent<Canvas>();
-            canvas.sortingOrder = 99;
-            canvas.renderMode = RenderMode.ScreenSpaceCamera;
-            canvas.worldCamera = Camera.main;
-            titleImg.SetParent(go.transform);
-            titleImg.transform.DOLocalMoveY(Screen.height / 800.0f * 330, 1);
-            titleImg.transform.DOScaleX(Screen.width / 1200.0f * 0.8f, 1);
-            titleImg.transform.DOScaleY(Screen.height / 800.0f * 0.8f, 1);
-            root.transform.DOLocalMoveX(-1280, 1).OnComplete(() => { base.OnHide(); gameObject.SetActive(false); });
+        {            
+            root.transform.DOLocalMoveX(-1280, 1.0f);
         }
 
         public override void OnEventTrigger(MessageType eventType, params object[] parameters)
@@ -106,10 +102,12 @@ namespace AGrail
                         break;
                     case LoginState.Ready:
                         txtStatus.text = "";
+                        btnStart.SetActive(true);
                         if (PlayerPrefs.HasKey("username") && PlayerPrefs.HasKey("password"))
                         {
                             inptUserName.text = PlayerPrefs.GetString("username");
                             inptPassword.text = PlayerPrefs.GetString("password");
+                            btnSwitchAccount.gameObject.SetActive(true);
                         }
                         break;
                     case LoginState.Update:

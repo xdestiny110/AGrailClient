@@ -18,10 +18,17 @@ namespace Framework.UI
         [MenuItem("Framework/Window Factory")]        
         public static void GenerateCode()
         {
-            List<string> uiPrefabs = EditorTool.AssetPathOfUnityFolder("Prefabs/" + WindowFactory.WindowPrefabPath, ".prefab");
+            List<string> uiPrefabs = EditorTool.AssetPathOfUnityFolder("Prefabs/" + WindowFactory.WindowPrefabPath, false, ".prefab");
             foreach (var v in uiPrefabs)
             {
-                var goPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(v);                
+                var goPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(v);
+                windowTypes.Add(goPrefab.name);
+                //writeWindowBase(goPrefab.name);
+            }
+            uiPrefabs = EditorTool.AssetPathOfUnityFolder("Resources/" + WindowFactory.WindowPrefabPath, false, ".prefab");
+            foreach (var v in uiPrefabs)
+            {
+                var goPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(v);
                 windowTypes.Add(goPrefab.name);
                 //writeWindowBase(goPrefab.name);
             }

@@ -29,6 +29,14 @@ namespace AGrail
             }
         }
 
+        public override string HeroName
+        {
+            get
+            {
+                return "无念";
+            }
+        }
+
         public override string Knelt
         {
             get

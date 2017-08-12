@@ -30,6 +30,14 @@ namespace AGrail
             }
         }
 
+        public override string HeroName
+        {
+            get
+            {
+                return "米涅瓦";
+            }
+        }
+
         public override string Knelt
         {
             get
@@ -116,11 +124,12 @@ namespace AGrail
             switch (state)
             {
                 case (uint)SkillID.秩序之印:
-                    OKAction = () => 
+                    if(msg == UIStateMsg.ClickSkill)
                     {
                         sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id, null, null, state);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                    };
+                        return;
+                    }
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                        string.Format("{0}:摸2张牌,你+1治疗并+1水晶", Skills[state].SkillName));
@@ -142,9 +151,9 @@ namespace AGrail
                     return;
                 case (uint)SkillID.军神威光:
                     //偷个懒，去掉选择能量的步骤
-                    OKAction = () =>
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                    if(msg == UIStateMsg.ClickArgs)
                     {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
                         if (BattleData.Instance.Agent.SelectArgs[0] == 2)
                         {
                             if (BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team] >= 2)
@@ -156,19 +165,19 @@ namespace AGrail
                         }
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, BattleData.Instance.Agent.SelectArgs);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                    };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                        return;
+                    }
                     var selectList = new List<List<uint>>();
                     var mList = new List<string>();
                     selectList.Add(new List<uint>() { 1 });
-                    mList.Add(". +1治疗");
+                    mList.Add("+1治疗");
                     if(BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team] + 
                         BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team] > 1)
                     {
                         selectList.Add(new List<uint>() { 2 });
-                        mList.Add(". 去除战绩区两星石,无视上限+2治疗");
+                        mList.Add("去除战绩区两星石,无视上限+2治疗");
                     }
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "选择技能", selectList, mList);
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                         string.Format("{0}:选一项技能发动", Skills[state].SkillName));
                     return;

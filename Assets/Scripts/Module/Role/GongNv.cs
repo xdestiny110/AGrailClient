@@ -30,6 +30,14 @@ namespace AGrail
             }
         }
 
+        public override string HeroName
+        {
+            get
+            {
+                return "安娜";
+            }
+        }
+
         public GongNv()
         {
             for (uint i = 301; i <= 305; i++)
@@ -55,6 +63,7 @@ namespace AGrail
             switch (uiState)
             {
                 case 302:
+                    return BattleData.Instance.Agent.SelectCards.Count == 1;
                 case 303:                    
                     return true;
                     
@@ -64,13 +73,18 @@ namespace AGrail
 
         public override bool CanSelect(uint uiState, Skill skill)
         {
-            if (uiState == 10 || uiState == 11 || uiState == 302 || uiState == 303)
+            switch (uiState)
             {
-                if (skill.SkillID == 302)
-                    return true;
-                if (skill.SkillID == 303 && BattleData.Instance.MainPlayer.gem + BattleData.Instance.MainPlayer.crystal > 0)
-                    return true;
-            }                
+                case 302:
+                case 303:
+                case 11:
+                case 10:
+                    if (skill.SkillID == 302)
+                        return Util.HasCard(302, BattleData.Instance.MainPlayer.hands);
+                    if (skill.SkillID == 303)
+                        return BattleData.Instance.MainPlayer.gem + BattleData.Instance.MainPlayer.crystal > 0;
+                    return false;
+            }
             return base.CanSelect(uiState, skill);
         }
 
@@ -173,11 +187,25 @@ namespace AGrail
                         string.Format("是否发动{0}", Skills[state].SkillName));
                     return;
                 case 302:
-                case 303:
-                    OKAction = () =>
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == 1)
                     {
                         sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
+                    };
+                    CancelAction = () =>
+                    {
+                        BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
+                    };
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                        string.Format("{0}: 请选择目标玩家以及独有技卡牌", Skills[state].SkillName));
+                    return;
+                case 303:
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1)
+                    {
+                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state);
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
                     };
                     CancelAction = () =>
                     {

@@ -1,10 +1,7 @@
-﻿using Framework;
+﻿using Framework.AssetBundle;
 using Framework.Message;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
-using DG.Tweening;
 
 namespace AGrail
 {
@@ -14,10 +11,6 @@ namespace AGrail
     public class AudioManager : MonoBehaviour, IMessageListener<MessageType>
     {
         public static AudioManager Instance { private set; get; }
-
-        [SerializeField]
-        private List<AudioClip> audioClips = new List<AudioClip>();
-
         private Queue<AudioSource> sources = new Queue<AudioSource>();
 
         void Awake()
@@ -49,34 +42,37 @@ namespace AGrail
                 case MessageType.CARDMSG:
                     var cardMsg = parameters[0] as network.CardMsg;
                     if (cardMsg.dst_idSpecified)
-                        playAudio(audioClips[(Card.GetCard(cardMsg.card_ids[0]).Type == Card.CardType.attack) ? 0 : 2]);
+                    {
+                        var card = Card.GetCard(cardMsg.card_ids[0]);
+                        if(card.Type == Card.CardType.attack)                        
+                            playAudio(AssetBundleManager.Instance.LoadAsset<AudioClip>("audio", "atk-" + card.Element.ToString()));
+                        else
+                            playAudio(AssetBundleManager.Instance.LoadAsset<AudioClip>("audio", "spell-" + card.Name.ToString()));
+                    }                        
                     break;
                 case MessageType.PlayerHealChange:
-                    playAudio(audioClips[1]);                    
+                    playAudio(AssetBundleManager.Instance.LoadAsset<AudioClip>("audio", "sys-heal"));
                     break;
                 case MessageType.HITMSG:
-                    playAudio(audioClips[3]);
+                    playAudio(AssetBundleManager.Instance.LoadAsset<AudioClip>("audio", "sys-hit"));
                     break;
                 case MessageType.HURTMSG:
-                    playAudio(audioClips[4]);
+                    playAudio(AssetBundleManager.Instance.LoadAsset<AudioClip>("audio", "sys-hurt"));
                     break;
                 case MessageType.MoraleChange:
-                    playAudio(audioClips[5]);
+                    playAudio(AssetBundleManager.Instance.LoadAsset<AudioClip>("audio", "sys-morale"));
                     break;
                 case MessageType.GemChange:
                 case MessageType.CrystalChange:
-                    playAudio(audioClips[6]);
+                    playAudio(AssetBundleManager.Instance.LoadAsset<AudioClip>("audio", "sys-energy"));
                     break;
                 case MessageType.ChooseRole:
-                    playAudio(audioClips[7]);
+                    playAudio(AssetBundleManager.Instance.LoadAsset<AudioClip>("audio", "sys-turn"));
                     break;
                 case MessageType.TURNBEGIN:
                     var tb = parameters[0] as network.TurnBegin;
-                    if (tb.idSpecified && tb.id == BattleData.Instance.PlayerID)
-                    {
-                        playAudio(audioClips[7]);
-                        break;
-                    }                    
+                    if (tb.idSpecified)                    
+                        playAudio(AssetBundleManager.Instance.LoadAsset<AudioClip>("audio", BattleData.Instance.GetPlayerInfo(tb.id).role_id.ToString()));
                     break;
             }
         }

@@ -29,6 +29,14 @@ namespace AGrail
             }
         }
 
+        public override string HeroName
+        {
+            get
+            {
+                return "阿基特";
+            }
+        }
+
         public KuangZhan()
         {
             for (uint i = 201; i <= 203; i++)

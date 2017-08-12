@@ -2,6 +2,8 @@
 using Framework.UI;
 using UnityEngine.UI;
 using Framework.Network;
+using System.Linq;
+using System;
 
 namespace AGrail
 {
@@ -10,7 +12,7 @@ namespace AGrail
         [SerializeField]
         private InputField roomTitle;
         [SerializeField]
-        private Dropdown roleChoose;
+        private ToggleGroup roleChoose;
         [SerializeField]
         private Toggle fourPeople;
         [SerializeField]
@@ -22,7 +24,7 @@ namespace AGrail
         [SerializeField]
         private Toggle spMoDaoExtension;
         [SerializeField]
-        private Dropdown seatModeChoose;
+        private ToggleGroup seatModeChoose;
 
         public override WindowType Type
         {
@@ -33,28 +35,28 @@ namespace AGrail
         }
 
         public void OnOKClick()
-        {
+        {            
             var proto = new network.CreateRoomRequest()
             {
                 allow_guest = true,
                 max_player = fourPeople.isOn ? 4 : 6,
-                role_strategy = (network.ROLE_STRATEGY)(roleChoose.value + 1),
+                role_strategy = (network.ROLE_STRATEGY)Enum.Parse(typeof(network.ROLE_STRATEGY), roleChoose.ActiveToggles().First().name),
                 room_name = roomTitle.text,
                 password = password.text,
-                seat_mode = seatModeChoose.value + 1,
+                seat_mode = (int)Enum.Parse(typeof(network.SEAT_MODE), seatModeChoose.ActiveToggles().First().name),
                 first_extension = firstExtension.isOn,
                 second_extension = firstExtension.isOn,
                 silence = false,
                 sp_mo_dao = spMoDaoExtension.isOn,
             };
             Lobby.Instance.CreateRoom(proto);
-            GameManager.UIInstance.PopWindow(WinMsg.Pause);
-            GameManager.UIInstance.PushWindow(WindowType.BattleQT, WinMsg.Hide);
+            GameManager.UIInstance.PopWindow(WinMsg.None);
+            GameManager.UIInstance.PushWindow(WindowType.ReadyRoom, WinMsg.None);
         }
 
         public void OnCancelClick()
         {
-            GameManager.UIInstance.PopWindow(WinMsg.Resume);
+            GameManager.UIInstance.PopWindow(WinMsg.Show);
         }
 
     }

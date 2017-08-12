@@ -4,6 +4,7 @@ using Framework.UI;
 using System;
 using UnityEngine.UI;
 using System.Text.RegularExpressions;
+using UnityEngine.SceneManagement;
 
 namespace AGrail
 {
@@ -38,7 +39,7 @@ namespace AGrail
         {
             var m = re.Matches(roleList.options[roleList.value].text);
             RoleChoose.Instance.Choose(uint.Parse(m[0].Value));
-            GameManager.UIInstance.PopWindow(WinMsg.Resume);
+            SceneManager.LoadScene(2);
         }
     }
 }

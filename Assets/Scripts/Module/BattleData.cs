@@ -4,6 +4,7 @@ using Framework;
 using Framework.Message;
 using Framework.Network;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace AGrail
 {   
@@ -20,16 +21,26 @@ namespace AGrail
         public uint[] Crystal = new uint[2];
         public uint[] Grail = new uint[2];        
         public List<network.SinglePlayerInfo> PlayerInfos = new List<network.SinglePlayerInfo>();
-        public List<int> PlayerIdxOrder = new List<int>();
+        public List<int> PlayerIdxOrder = new List<int>();//按照顺序排列玩家ID, 第一个一定是主玩家
 
         public PlayerAgent Agent { get; private set; }
         public network.SinglePlayerInfo MainPlayer { get; private set; }
+
+        private uint currentPlayerID = 9;
+        public uint CurrentPlayerID
+        {
+            set
+            {
+                currentPlayerID = value;
+                MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, currentPlayerID);
+            }
+            get { return currentPlayerID; }
+        }
 
         public BattleData() : base()
         {
             MessageSystem<MessageType>.Regist(MessageType.TURNBEGIN, this);
             MessageSystem<MessageType>.Regist(MessageType.GAMEINFO, this);
-            MessageSystem<MessageType>.Regist(MessageType.ROLEREQUEST, this);
             MessageSystem<MessageType>.Regist(MessageType.COMMANDREQUEST, this);
             MessageSystem<MessageType>.Regist(MessageType.ERROR, this);
             Reset();
@@ -44,7 +55,7 @@ namespace AGrail
 
         public void ChooseTeam()
         {
-
+            
         }
 
         public void OnEventTrigger(MessageType eventType, params object[] parameters)
@@ -78,7 +89,7 @@ namespace AGrail
 
         public void Reset()
         {
-            Morale = new uint[2];
+            Morale = new uint[2] { 15, 15 };
             Gem = new uint[2];
             Crystal = new uint[2];
             Grail = new uint[2];
@@ -89,6 +100,7 @@ namespace AGrail
             RoomID = null;
             PlayerID = null;
             IsStarted = false;
+            CurrentPlayerID = 9;
         }
 
         public network.SinglePlayerInfo GetPlayerInfo(uint playerID)
@@ -111,13 +123,7 @@ namespace AGrail
                     //MessageSystem<MessageType>.Notify(MessageType.EnterRoom);
                 }
                 if (value.player_idSpecified)
-                {
-                    if (value.player_id == 9)
-                    {
-                        MainPlayer = new network.SinglePlayerInfo() { id = 9 };
-                        Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, false);
-                        MessageSystem<MessageType>.Notify(MessageType.AgentUpdate);
-                    }                        
+                {                     
                     PlayerID = value.player_id;
                 }                
                 Pile = value.pileSpecified ? value.pile : Pile;
@@ -162,21 +168,53 @@ namespace AGrail
                     MessageSystem<MessageType>.Notify(MessageType.GrailChange, Team.Red, value.red_grail - Grail[(int)Team.Red]);
                     Grail[(int)Team.Red] = value.red_grail;
                 }
-
+                if (value.is_startedSpecified)
+                {
+                    //游戏开始，可能需要重新定位玩家位置           
+                    UnityEngine.Debug.Log("game start");
+                    if (!IsStarted && value.is_started)
+                    {
+                        PlayerIdxOrder.Clear();
+                        int t = -1;
+                        for (int i = 0; i < value.player_infos.Count; i++)
+                        {
+                            PlayerIdxOrder.Add((int)value.player_infos[i].id);
+                            if (value.player_infos[i].id == PlayerID)
+                            {
+                                MainPlayer = value.player_infos[i];
+                                t = i;
+                            }
+                        }
+                        if (t != -1)
+                        {
+                            PlayerIdxOrder.AddRange(PlayerIdxOrder.GetRange(0, t));
+                            PlayerIdxOrder.RemoveRange(0, t);
+                        }
+                        if (value.player_id == 9)
+                            MainPlayer = new network.SinglePlayerInfo() { id = 9 };                            
+                        MessageSystem<MessageType>.Notify(MessageType.GameStart);
+                    }
+                    //需要再发一次准备
+                    //以前是不用的...不知道现在改成这样的目的是什么
+                    var proto = new network.ReadyForGameRequest() { type = network.ReadyForGameRequest.Type.SEAT_READY };
+                    GameManager.TCPInstance.Send(new Protobuf() { Proto = proto, ProtoID = ProtoNameIds.READYFORGAMEREQUEST });
+                    IsStarted = value.is_started;
+                }
                 foreach (var v in value.player_infos)
                 {
                     var player = GetPlayerInfo(v.id);
-                    bool isInit = false;
                     if (player == null)
                     {
                         PlayerInfos.Add(v);
                         player = v;
                         player.max_hand = 6;
-                        if (player.id == PlayerID)
-                            MainPlayer = player;
-                        isInit = true;
                     }
+                    if (player.id == PlayerID && MainPlayer != player)
+                        MainPlayer = player;
+                    //这里可能有些乱...以后再整理吧
                     var idx = PlayerInfos.IndexOf(player);
+                    if(PlayerIdxOrder.Count > 0)
+                        idx = PlayerIdxOrder.IndexOf((int)player.id);
                     if (v.readySpecified)
                     {
                         player.ready = v.ready;
@@ -217,14 +255,14 @@ namespace AGrail
                         MessageSystem<MessageType>.Notify(MessageType.PlayerHandChange, idx, player.hand_count, player.max_hand);
                         if (MainPlayer != null && player.id == MainPlayer.id && v.hand_countSpecified)
                         {
-                            //第一次的时候不用更新手牌
-                            if (!isInit)
+                            //如果两个是同一个引用则不清空
+                            if(player != v)
                             {
                                 player.hands.Clear();
                                 foreach (var u in v.hands)
                                     player.hands.Add(u);
-                                MessageSystem<MessageType>.Notify(MessageType.AgentHandChange);
-                            }                            
+                            }                                
+                            MessageSystem<MessageType>.Notify(MessageType.AgentHandChange);
                         }
                     }
                     if (v.heal_countSpecified)
@@ -244,21 +282,25 @@ namespace AGrail
                         player.blue_token = v.blue_token;
                     if (v.covered_countSpecified)
                     {
-                        player.covered_count = v.covered_count;
-                        player.covereds.Clear();
-                        foreach (var u in v.covereds)
-                            player.covereds.Add(u);
+                        if (player != v)
+                        {
+                            player.covered_count = v.covered_count;
+                            player.covereds.Clear();
+                            foreach (var u in v.covereds)
+                                player.covereds.Add(u);
+                        }
                         if(MainPlayer != null && v.id == MainPlayer.id)
                             MessageSystem<MessageType>.Notify(MessageType.AgentHandChange);
                     }
                     if (v.yellow_tokenSpecified || v.blue_tokenSpecified || v.covered_countSpecified)
                         MessageSystem<MessageType>.Notify(MessageType.PlayerTokenChange,
                             idx, player.yellow_token, player.blue_token, player.covered_count);
-                    if (v.basic_cards.Count > 0)
-                        player.basic_cards = v.basic_cards;
+                    if (v.basic_cards.Count > 0 && player.GetHashCode() != v.GetHashCode())
+                            player.basic_cards = v.basic_cards;                 
                     if (v.ex_cards.Count > 0)
                     {
-                        player.ex_cards = v.ex_cards;
+                        if(player.GetHashCode() != v.GetHashCode())
+                            player.ex_cards = v.ex_cards;
                         //为了进行卡牌编号的区分, 专有牌的序号都+1000
                         for (int i = 0; i < player.ex_cards.Count; i++)
                             player.ex_cards[i] += 1000;
@@ -276,33 +318,6 @@ namespace AGrail
                     if(v.basic_cards.Count > 0 || v.ex_cards.Count > 0 || v.delete_field.Count > 0)
                         MessageSystem<MessageType>.Notify(MessageType.PlayerBasicAndExCardChange, idx, player.basic_cards, player.ex_cards);
                 }
-                if (value.is_startedSpecified)
-                {
-                    //游戏开始，可能需要重新定位玩家位置                    
-                    if (!IsStarted && value.is_started)
-                    {
-                        PlayerIdxOrder.Clear();
-                        int t = -1;
-                        foreach(var v in value.player_infos)
-                        {
-                            var idx = PlayerInfos.FindIndex(p => { return p.id == v.id; });
-                            PlayerIdxOrder.Add(idx);
-                            if (MainPlayer != null && v.id == MainPlayer.id)
-                                t = PlayerIdxOrder.Count - 1;
-                        }
-                        if(t != -1)
-                        {
-                            PlayerIdxOrder.AddRange(PlayerIdxOrder.GetRange(0, t));
-                            PlayerIdxOrder.RemoveRange(0, t);
-                        }                        
-                        MessageSystem<MessageType>.Notify(MessageType.GameStart);
-                    }
-                    //需要再发一次准备
-                    //以前是不用的...不知道现在改成这样的目的是什么
-                    var proto = new network.ReadyForGameRequest() { type = network.ReadyForGameRequest.Type.SEAT_READY };
-                    GameManager.TCPInstance.Send(new Protobuf() { Proto = proto, ProtoID = ProtoNameIds.READYFORGAMEREQUEST });
-                    IsStarted = value.is_started;
-                }
             }
         }
 
@@ -318,7 +333,7 @@ namespace AGrail
                 foreach (var v in value.commands)
                 {
                     RoleBase r = null;
-                    //能够有多重响应                    
+                    //能够有多重响应
                     switch (v.respond_id)
                     {
                         case 0:
@@ -333,6 +348,7 @@ namespace AGrail
                         case (uint)network.BasicRespondType.RESPOND_REPLY_ATTACK:
                             r = RoleFactory.Create(GetPlayerInfo(v.args[2]).role_id);
                             Dialog.Instance.Log += "等待" + r.RoleName + "应战响应" + Environment.NewLine;
+                            CurrentPlayerID = v.args[2];
                             if (v.args[2] != MainPlayer.id)
                             {
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
@@ -344,6 +360,7 @@ namespace AGrail
                         case (uint)network.BasicRespondType.RESPOND_DISCARD:
                             r = RoleFactory.Create(GetPlayerInfo(v.dst_ids[0]).role_id);
                             Dialog.Instance.Log += "等待" + r.RoleName + "弃牌响应" + Environment.NewLine;
+                            CurrentPlayerID = v.dst_ids[0];
                             if (v.dst_ids[0] != MainPlayer.id)
                             {
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
@@ -355,6 +372,7 @@ namespace AGrail
                         case (uint)network.BasicRespondType.RESPOND_DISCARD_COVER:
                             r = RoleFactory.Create(GetPlayerInfo(v.dst_ids[0]).role_id);
                             Dialog.Instance.Log += "等待" + r.RoleName + "弃盖牌响应" + Environment.NewLine;
+                            CurrentPlayerID = v.dst_ids[0];
                             if (v.dst_ids[0] != MainPlayer.id)
                             {
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
@@ -366,6 +384,7 @@ namespace AGrail
                         case (uint)network.BasicRespondType.RESPOND_HEAL:
                             r = RoleFactory.Create(GetPlayerInfo(v.args[0]).role_id);
                             Dialog.Instance.Log += "等待" + r.RoleName + "治疗响应" + Environment.NewLine;
+                            CurrentPlayerID = v.args[0];
                             if (v.args[0] != MainPlayer.id)
                             {
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
@@ -377,6 +396,7 @@ namespace AGrail
                         case (uint)network.BasicRespondType.RESPOND_WEAKEN:
                             r = RoleFactory.Create(GetPlayerInfo(v.args[0]).role_id);
                             Dialog.Instance.Log += "等待" + r.RoleName + "虚弱响应" + Environment.NewLine;
+                            CurrentPlayerID = v.args[0];
                             if (v.args[0] != MainPlayer.id)
                             {
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
@@ -388,6 +408,7 @@ namespace AGrail
                         case (uint)network.BasicRespondType.RESPOND_BULLET:
                             r = RoleFactory.Create(GetPlayerInfo(v.args[0]).role_id);
                             Dialog.Instance.Log += "等待" + r.RoleName + "魔弹响应" + Environment.NewLine;
+                            CurrentPlayerID = v.args[0];
                             if (v.args[0] != MainPlayer.id)
                             {
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
@@ -399,6 +420,7 @@ namespace AGrail
                         case (uint)network.BasicRespondType.RESPOND_ADDITIONAL_ACTION:
                             r = RoleFactory.Create(GetPlayerInfo(v.src_id).role_id);
                             Dialog.Instance.Log += "等待" + r.RoleName + "额外行动响应" + Environment.NewLine;
+                            CurrentPlayerID = v.src_id;
                             if (v.src_id != MainPlayer.id)
                             {
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
@@ -408,6 +430,7 @@ namespace AGrail
                             Agent.AgentState = (int)PlayerAgentState.AdditionAction;
                             break;
                         case (uint)network.BasicActionType.ACTION_ANY:
+                            CurrentPlayerID = v.src_id;
                             if (v.src_id != MainPlayer.id)
                             {
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
@@ -418,6 +441,7 @@ namespace AGrail
                                 (int)PlayerAgentState.CanAttack | (int)PlayerAgentState.CanMagic | (int)PlayerAgentState.CanSpecial;
                             break;
                         case (uint)network.BasicActionType.ACTION_ATTACK_MAGIC:
+                            CurrentPlayerID = v.src_id;
                             if (v.src_id != MainPlayer.id)
                             {
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
@@ -427,6 +451,7 @@ namespace AGrail
                             Agent.AgentState = (int)PlayerAgentState.CanMagic | (int)PlayerAgentState.CanAttack;
                             break;
                         case (uint)network.BasicActionType.ACTION_ATTACK:
+                            CurrentPlayerID = v.src_id;
                             if (v.src_id != MainPlayer.id)
                             {
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
@@ -436,6 +461,7 @@ namespace AGrail
                             Agent.AgentState = (int)PlayerAgentState.CanAttack;
                             break;
                         case (uint)network.BasicActionType.ACTION_MAGIC:
+                            CurrentPlayerID = v.src_id;
                             if (v.src_id != MainPlayer.id)
                             {
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
@@ -446,6 +472,7 @@ namespace AGrail
                             break;
                         case (uint)network.BasicActionType.ACTION_NONE:
                             //无法行动
+                            CurrentPlayerID = v.src_id;
                             if (v.src_id != MainPlayer.id)
                             {
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
@@ -463,6 +490,7 @@ namespace AGrail
                                 Dialog.Instance.Log += "等待" + r.RoleName + "响应技能" + Skill.GetSkill(v.respond_id).SkillName + Environment.NewLine;
                             else
                                 Dialog.Instance.Log += "等待" + r.RoleName + "响应技能" + v.respond_id.ToString() + Environment.NewLine;
+                            CurrentPlayerID = v.src_id;
                             if (v.src_id != MainPlayer.id)
                             {
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
@@ -474,12 +502,7 @@ namespace AGrail
                     }
                 }
             }
-        }
-
-        public static Team GetOtherTeam(Team team)
-        {
-            return (team == Team.Blue) ? Team.Red : Team.Blue;
-        }
+        }        
     }
 
     public enum Team
@@ -487,6 +510,77 @@ namespace AGrail
         Blue = 0,
         Red,
         Other,
+    }
+
+    public static class Util
+    {
+        public static Team GetOtherTeam(Team team)
+        {
+            return (team == Team.Blue) ? Team.Red : Team.Blue;
+        }
+
+        public static bool HasCard(uint skillID, List<uint> hands,uint num = 1)
+        {
+            uint count = 0;
+            foreach (var v in hands)
+            {
+                if (Card.GetCard(v).HasSkill(skillID)) count++;
+            }
+            return count>=num;
+        }
+        public static bool HasCard(Card.CardElement cardElement, List<uint> hands,uint num = 1)
+        {
+            uint count = 0;
+            foreach (var v in hands)
+            {
+                if ((Card.GetCard(v).Element) == cardElement) count++;
+            }
+            return count >= num;
+
+        }
+        public static bool HasCard(Card.CardType cardType, List<uint> hands, uint num = 1)
+        {
+            uint count = 0;
+            foreach (var v in hands)
+            {
+                if ((Card.GetCard(v).Type) == cardType) count++;
+            }
+            return count >= num;
+        }
+        public static bool HasCard(string condition, List<uint> hands, uint num = 2)
+        {
+            uint water = 0, wind = 0, earth = 0, fire = 0, darkness = 0, light = 0, thunder = 0, count = 0;
+            foreach (var v in hands)
+            {
+                switch (Card.GetCard(v).Element)
+                {
+                    case Card.CardElement.fire: fire++; break;
+                    case Card.CardElement.water: water++; break;
+                    case Card.CardElement.earth: earth++; break;
+                    case Card.CardElement.darkness: darkness++; break;
+                    case Card.CardElement.light: light++; break;
+                    case Card.CardElement.thunder: thunder++; break;
+                    case Card.CardElement.wind: wind++; break;
+                    default: break;
+                }
+            }
+            List<uint> element = new List<uint>() { water, wind, earth, fire, darkness, light, thunder };
+            switch (condition)
+            {
+                case "same":
+                    count = element.Max();
+                    break;
+                case "differ":
+                    foreach (var v in element)
+                    {
+                        if (v > 0) count++;
+                    }
+                    break;
+                default:
+                    break;
+            }
+            return count >= num;
+        }
     }
 }
 

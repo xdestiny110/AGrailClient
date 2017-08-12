@@ -1,6 +1,3 @@
-using UnityEngine;
-using System.Collections;
-using System;
 using network;
 using System.Collections.Generic;
 using Framework.Message;
@@ -30,6 +27,14 @@ namespace AGrail
             get
             {
                 return Card.CardProperty.圣;
+            }
+        }
+
+        public override string HeroName
+        {
+            get
+            {
+                return "艾丽卡";
             }
         }
 
@@ -64,9 +69,10 @@ namespace AGrail
             {
                 case 601:
                 case 602:
+                    return BattleData.Instance.Agent.SelectCards.Count == 1;
                 case 603:
                 case 605:
-                    return true;
+                    return true;                    
             }
             return base.CanSelect(uiState, player);
         }
@@ -79,13 +85,15 @@ namespace AGrail
                 case 602:
                 case 605:
                 case 10:
-                    if(skill.SkillID == 601 || skill.SkillID == 602)
+                    if((skill.SkillID == 601 && Util.HasCard(601, BattleData.Instance.MainPlayer.hands)) || 
+                        (skill.SkillID == 602 && Util.HasCard(602, BattleData.Instance.MainPlayer.hands)))
                         return true;
                     if (skill.SkillID == 605 && BattleData.Instance.MainPlayer.gem + BattleData.Instance.MainPlayer.crystal >= 1)
                         return true;
                     return false;
                 case 11:
-                    if (skill.SkillID == 601 || skill.SkillID == 602)
+                    if ((skill.SkillID == 601 && Util.HasCard(601, BattleData.Instance.MainPlayer.hands)) ||
+                        (skill.SkillID == 602 && Util.HasCard(602, BattleData.Instance.MainPlayer.hands)))
                         return true;
                     if (skill.SkillID == 605 && additionalState != 6053 && 
                         BattleData.Instance.MainPlayer.gem + BattleData.Instance.MainPlayer.crystal >= 1)
@@ -179,6 +187,17 @@ namespace AGrail
             switch (state)
             {
                 case 601:
+                    if(BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == 1)
+                    {
+                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
+                            BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state);
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
+                    }
+                    CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                        string.Format("{0}: 请选择目标玩家以及独有技卡牌", Skills[state].SkillName));
+                    return;
                 case 602:
                     OKAction = () =>
                     {
@@ -192,8 +211,12 @@ namespace AGrail
                         string.Format("{0}: 请选择目标玩家以及独有技卡牌", Skills[state].SkillName));
                     return;
                 case 603:
-                    OKAction = () => { sendReponseMsg(state, BattleData.Instance.MainPlayer.id, 
-                        BattleData.Instance.Agent.SelectPlayers, null, new List<uint>() { 1 }); };
+                    if(BattleData.Instance.Agent.SelectPlayers.Count == 1)
+                    {
+                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id,
+                        BattleData.Instance.Agent.SelectPlayers, null, new List<uint>() { 1 });
+                        return;
+                    }
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                         "冰霜祷言: 请选择目标玩家为其增加一点治疗");
                     return;
@@ -212,7 +235,7 @@ namespace AGrail
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, "是否发动怜悯");
                     return;
                 case 605:
-                    OKAction = () =>
+                    if(BattleData.Instance.Agent.SelectPlayers.Count == 1)
                     {
                         if (additionalState == 0)
                         {
@@ -221,18 +244,18 @@ namespace AGrail
                             selectPlayers.Add(BattleData.Instance.Agent.SelectPlayers[0]);
                             BattleData.Instance.Agent.RemoveSelectPlayer(BattleData.Instance.Agent.SelectPlayers[0]);
                         }
-                        else if(additionalState == 6051)
+                        else if (additionalState == 6051)
                         {
                             additionalState++;
                             selectPlayers.Add(BattleData.Instance.Agent.SelectPlayers[0]);
                             BattleData.Instance.Agent.RemoveSelectPlayer(BattleData.Instance.Agent.SelectPlayers[0]);
                         }
-                        else if(additionalState == 6052)
+                        else if (additionalState == 6052)
                         {
                             additionalState++;
                             selectPlayers.Add(BattleData.Instance.Agent.SelectPlayers[0]);
                             BattleData.Instance.Agent.RemoveSelectPlayer(BattleData.Instance.Agent.SelectPlayers[0]);
-                            BattleData.Instance.Agent.SelectArgs.Clear();                            
+                            BattleData.Instance.Agent.SelectArgs.Clear();
                             foreach (var v in selectPlayers)
                             {
                                 var idx = BattleData.Instance.Agent.SelectPlayers.FindIndex((t) => { return t == v; });
@@ -246,8 +269,9 @@ namespace AGrail
                             }
                             sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
                                 BattleData.Instance.Agent.SelectPlayers, null, 605, BattleData.Instance.Agent.SelectArgs);
-                        }                        
-                    };
+                            BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        }
+                    }
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
                     if(additionalState == 0)
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,

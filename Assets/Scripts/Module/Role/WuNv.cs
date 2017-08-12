@@ -31,6 +31,14 @@ namespace AGrail
             }
         }
 
+        public override string HeroName
+        {
+            get
+            {
+                return "紫苑";
+            }
+        }
+
         public override string Knelt
         {
             get
@@ -63,10 +71,10 @@ namespace AGrail
         {
             switch (uiState)
             {
-                case (uint)SkillID.血之悲鸣:
+                case (uint)SkillID.血之悲鸣:                    
                 case (uint)SkillID.同生共死:
                 case (uint)SkillID.血之诅咒:
-                    return true;
+                    return BattleData.Instance.Agent.SelectCards.Count == MaxSelectCard(uiState);
                 case (uint)SkillID.血之哀伤:
                     return !player.ex_cards.Contains(1003);
             }
@@ -83,12 +91,14 @@ namespace AGrail
                 case (uint)SkillID.同生共死:
                 case (uint)SkillID.逆流:
                 case (uint)SkillID.血之诅咒:
-                    if (skill.SkillID == (uint)SkillID.血之诅咒 && BattleData.Instance.MainPlayer.gem > 0)
-                        return true;
-                    if ((skill.SkillID == (uint)SkillID.逆流 || skill.SkillID == (uint)SkillID.血之悲鸣) && BattleData.Instance.MainPlayer.is_knelt)
-                        return true;
-                    if (skill.SkillID == (uint)SkillID.同生共死 && additionalState == 0)
-                        return true;                    
+                    if (skill.SkillID == (uint)SkillID.血之诅咒)
+                        return BattleData.Instance.MainPlayer.gem > 0;
+                    if (skill.SkillID == (uint)SkillID.逆流)
+                        return BattleData.Instance.MainPlayer.is_knelt;
+                    if (skill.SkillID == (uint)SkillID.血之悲鸣 && BattleData.Instance.MainPlayer.is_knelt)
+                        return Util.HasCard(2301, BattleData.Instance.MainPlayer.hands);
+                    if (skill.SkillID == (uint)SkillID.同生共死)
+                        return additionalState == 0;                    
                     return false;
             }
             return base.CanSelect(uiState, skill);
@@ -162,38 +172,46 @@ namespace AGrail
             switch (state)
             {
                 case (uint)SkillID.血之悲鸣:
-                    OKAction = () => 
-                    {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                    if(BattleData.Instance.Agent.SelectArgs.Count == 1 && 
+                        BattleData.Instance.Agent.SelectPlayers.Count == 1)
+                    {                        
                         sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
                             BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state,
                             BattleData.Instance.Agent.SelectArgs);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
                     };
                     CancelAction = () =>
                     {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
                     };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
-                    selectList.Clear();
-                    mList.Clear();
-                    for(uint i = 1; i<= 3; i++)
+                    if(BattleData.Instance.Agent.SelectArgs.Count == 0)
                     {
-                        selectList.Add(new List<uint>() { i });
-                        mList.Add("点伤害");
+                        selectList.Clear();
+                        mList.Clear();
+                        for (uint i = 1; i <= 3; i++)
+                        {
+                            selectList.Add(new List<uint>() { i });
+                            mList.Add(i + "点伤害");
+                        }
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                            string.Format("{0}: 请选择要造成的伤害", Skills[state].SkillName));
                     }
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "血之悲鸣伤害", selectList, mList);
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("{0}: 请选择目标玩家以及伤害", Skills[state].SkillName));
+                    else
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                        string.Format("{0}: 请选择目标玩家", Skills[state].SkillName));
                     return;
                 case (uint)SkillID.同生共死:
-                    OKAction = () =>
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1)
                     {
                         additionalState = 1;
                         sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
                             BattleData.Instance.Agent.SelectPlayers, null, state, null);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
                     };
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
@@ -222,34 +240,37 @@ namespace AGrail
                         string.Format("{0}: 请选择转移目标。不选择视为收回", Skills[state].SkillName));
                     return;
                 case (uint)SkillID.逆流:
-                    OKAction = () =>
+                    if(BattleData.Instance.Agent.SelectCards.Count == 2)
                     {
                         sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
                             null, BattleData.Instance.Agent.SelectCards, state, null);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
                     };
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                         string.Format("{0}: 弃2张牌", Skills[state].SkillName));
                     return;
                 case (uint)SkillID.血之诅咒:
-                    OKAction = () =>
-                    {                        
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1)
+                    {
                         sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
                             BattleData.Instance.Agent.SelectPlayers, null, state, null);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
                     };
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                         string.Format("{0}: 选择目标玩家", Skills[state].SkillName));
                     return;
                 case (uint)SkillID.血之诅咒弃牌:
-                    OKAction = () =>
+                    if(BattleData.Instance.Agent.SelectCards.Count == MaxSelectCard(state))
                     {
                         sendReponseMsg((uint)state, BattleData.Instance.MainPlayer.id, null,
                             BattleData.Instance.Agent.SelectCards, null);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                    };
+                        return;
+                    }
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                         string.Format("{0}: 选择要舍弃的手牌", Skills[state].SkillName));
                     return;

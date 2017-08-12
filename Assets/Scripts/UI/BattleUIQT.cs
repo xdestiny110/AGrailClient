@@ -45,7 +45,8 @@ namespace AGrail
         {
             get
             {
-                return WindowType.BattleQT;
+                throw new System.Exception();
+                //return WindowType.BattleQT;
             }
         }
 
@@ -88,7 +89,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.SKILLMSG, this);
             MessageSystem<MessageType>.Regist(MessageType.TURNBEGIN, this);
 
-            root.localPosition = new Vector3(1280, 0, 0);
+            root.localPosition = new Vector3(Screen.width, 0, 0);
             root.DOLocalMoveX(0, 1.0f).OnComplete(() => { GameManager.AddUpdateAction(onESCClick); });
             base.Awake();
         }
@@ -242,8 +243,8 @@ namespace AGrail
         {
             if (Input.GetKeyDown(KeyCode.Escape) && CanvasGroup.interactable)
             {                
-                if (GameManager.UIInstance.PeekWindow() == WindowType.BattleQT)
-                    Lobby.Instance.LeaveRoom();
+                //if (GameManager.UIInstance.PeekWindow() == WindowType.BattleQT)
+                    //Lobby.Instance.LeaveRoom();
                 GameManager.UIInstance.PopWindow(WinMsg.Show);
             }
         }

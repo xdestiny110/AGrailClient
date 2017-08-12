@@ -47,20 +47,34 @@ namespace AGrail
 
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
-            AssetBundleManager.Instance.LoadManifestAsyn(
-                new LoadManifestCB() { Cb = new Action<AssetBundleManifest>((m)=> { SceneManager.LoadScene(1); }) });
+            SceneManager.sceneLoaded += SceneManager_sceneLoaded;
+            SceneManager.sceneUnloaded += SceneManager_sceneUnloaded;
 
+            AssetBundleManager.Instance.LoadManifestAsyn(m => { /*SceneManager.LoadScene(1);*/ } , () => {  });
+            UIInstance.PushWindowFromResource(WindowType.Loading, WinMsg.None);
         }
 
-        void OnLevelWasLoaded(int level)
+        private int previousSceneIdx = -1;
+        private void SceneManager_sceneUnloaded(Scene arg0)
         {
-            Debug.LogFormat("Level = {0}", level);
-            switch (level)
+            previousSceneIdx = arg0.buildIndex;
+        }
+
+        private void SceneManager_sceneLoaded(Scene arg0, LoadSceneMode arg1)
+        {
+            Debug.LogFormat("From Level {0} to level {1}", previousSceneIdx, arg0.buildIndex);
+            switch (arg0.buildIndex)
             {
                 case 1:
-                    UIInstance.PushWindow(WindowType.LoginBox, WinMsg.None);
+                    UIInstance.ClearAllWindow();
+                    if (previousSceneIdx == 2)
+                        UIInstance.PushWindow(WindowType.Lobby, WinMsg.None);
+                    else
+                        UIInstance.PushWindow(WindowType.LoginBox, WinMsg.None);
                     break;
                 case 2:
+                    UIInstance.ClearAllWindow();
+                    UIInstance.PushWindow(WindowType.BattleUIMobile, WinMsg.None);
                     break;
             }
         }

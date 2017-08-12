@@ -5,6 +5,7 @@ using Framework.Message;
 using System;
 using System.Linq;
 using Framework.Network;
+using System.Collections.Generic;
 
 namespace AGrail
 {
@@ -21,6 +22,14 @@ namespace AGrail
             }
         }
 
+        public class ChatPerson
+        {
+            public uint ID;
+            public uint? RoleID = null;
+            public string msg;
+        }
+        public List<ChatPerson> Chat = new List<ChatPerson>();
+
         public Dialog() : base()
         {
             MessageSystem<MessageType>.Regist(MessageType.ACTION, this);
@@ -30,13 +39,14 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.HURTMSG, this);
             MessageSystem<MessageType>.Regist(MessageType.GOSSIP, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerLeave, this);
-            MessageSystem<MessageType>.Regist(MessageType.TURNBEGIN, this);            
+            MessageSystem<MessageType>.Regist(MessageType.TURNBEGIN, this);
             Reset();
         }
 
         public void Reset()
         {
             Log = string.Empty;
+            Chat.Clear();
         }
 
         public void SendTalk(string str)
@@ -118,12 +128,10 @@ namespace AGrail
                     var gossip = parameters[0] as network.Gossip;
                     srcPlayer = BattleData.Instance.GetPlayerInfo(gossip.id);
                     if (srcPlayer.role_idSpecified)
-                    {
-                        r1 = RoleFactory.Create(srcPlayer.role_id);
-                        Log += string.Format("<color=#0000FFFF>[{0}]: {1}</color>" + Environment.NewLine, r1.RoleName, gossip.txt);
-                    }
+                        Chat.Add(new ChatPerson() { ID = srcPlayer.id, RoleID = srcPlayer.role_id, msg = gossip.txt });
                     else
-                        Log += string.Format("<color=#0000FFFF>[{0}]: {1}</color>" + Environment.NewLine, srcPlayer.nickname, gossip.txt);
+                        Chat.Add(new ChatPerson() { ID = srcPlayer.id, msg = gossip.txt });
+                    MessageSystem<MessageType>.Notify(MessageType.ChatChange);
                     break;
                 case MessageType.PlayerLeave:
                     Log += string.Format("<color=#FF0000FF>玩家[{0}]离开房间</color>" + Environment.NewLine, (int)parameters[0]);

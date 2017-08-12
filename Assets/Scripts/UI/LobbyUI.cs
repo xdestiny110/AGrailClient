@@ -5,6 +5,7 @@ using DG.Tweening;
 using System;
 using System.Collections.Generic;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 namespace AGrail
 {   
@@ -13,11 +14,13 @@ namespace AGrail
         [SerializeField]
         private Transform root;
         [SerializeField]
-        private GameObject roomItemPrefab;        
+        private GameObject roomItemPrefab;
         [SerializeField]
         private GameObject loadingIcon;
         [SerializeField]
         private Transform content;
+        [SerializeField]
+        private GameObject title;
 
         private List<network.RoomListResponse.RoomInfo> roomInfos
         {
@@ -48,15 +51,8 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.RoomList, this);
             MessageSystem<MessageType>.Regist(MessageType.EnterRoom, this);
             MessageSystem<MessageType>.Regist(MessageType.ERROR, this);
-            root.localPosition = new Vector3(1280, 0, 0);
-            root.DOLocalMoveX(0, 1.0f).OnComplete(
-                () =>
-                {                    
-                    var go = GameObject.Find("GameTitle");
-                    go.transform.SetParent(root);
-                    //go.transform.GetChild(0).SetParent(root);                    
-                    //Destroy(go);
-                });
+            root.localPosition = new Vector3(Screen.width, 0, 0);
+            root.DOLocalMoveX(0, 1.0f);
             if(Lobby.Instance.RoomInfo == null)
                 Lobby.Instance.GetRoomList();
             else
@@ -77,7 +73,7 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.RoomList, this);
             MessageSystem<MessageType>.UnRegist(MessageType.EnterRoom, this);
             MessageSystem<MessageType>.UnRegist(MessageType.ERROR, this);
-            root.DOLocalMoveX(-1280, 1.0f).OnComplete(() => { gameObject.SetActive(false); base.OnHide(); });            
+            root.DOLocalMoveX(-Screen.width, 1.0f).OnComplete(() => { gameObject.SetActive(false); base.OnHide(); });            
         }
 
         public override void OnShow()
@@ -86,7 +82,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.EnterRoom, this);
             MessageSystem<MessageType>.Regist(MessageType.ERROR, this);
             gameObject.SetActive(true);
-            root.localPosition = new Vector3(-1280, 0, 0);            
+            root.localPosition = new Vector3(-Screen.width, 0, 0);
             root.DOLocalMoveX(0, 1.0f);
             if (Lobby.Instance.RoomInfo == null)
                 Lobby.Instance.GetRoomList();
@@ -103,13 +99,15 @@ namespace AGrail
                     roomInfos = Lobby.Instance.RoomInfo;
                     break;
                 case MessageType.EnterRoom:
-                    //GameManager.UIInstance.PushWindow(WindowType.Battle, WinMsg.Hide);
-                    GameManager.UIInstance.PushWindow(WindowType.BattleQT, WinMsg.Hide);
+                    if (Lobby.Instance.SelectRoom.playing)
+                        SceneManager.LoadScene(2);
+                    else
+                        GameManager.UIInstance.PushWindow(WindowType.ReadyRoom, WinMsg.Hide);
                     break;
                 case MessageType.ERROR:
                     var errorProto = parameters[0] as network.Error;
                     if (errorProto.id == 31)
-                        GameManager.UIInstance.PushWindow(Framework.UI.WindowType.InputBox, Framework.UI.WinMsg.Pause, Vector3.zero,
+                        GameManager.UIInstance.PushWindow(Framework.UI.WindowType.InputBox, Framework.UI.WinMsg.Pause, -1, Vector3.zero,
                             new Action<string>((str) => { GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.Resume); }),
                             new Action<string>((str) => { GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.Resume); }),
                     "瞎蒙果然是不行的~");
@@ -124,7 +122,7 @@ namespace AGrail
 
         public void OnBtnCreateClick()
         {
-            GameManager.UIInstance.PushWindow(WindowType.CreateRoomUI, WinMsg.Pause);
+            GameManager.UIInstance.PushWindow(WindowType.CreateRoomUI, WinMsg.Hide);
         }
 
         private Coroutine coroHandle = null;
