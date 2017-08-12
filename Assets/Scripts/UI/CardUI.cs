@@ -117,21 +117,16 @@ namespace AGrail
             }    
         }
 
-        private bool disappear = false;
+        private bool isDisappear = false;
         public void Disappear()
         {
-            disappear = true;            
-            DOTween.To(() => image.color, x => image.color = x, new Color(1, 1, 1, 0), 5).SetOptions(true);
-            DOTween.To(() => txtSkill1.color, x => txtSkill1.color = x, new Color(1, 1, 1, 0), 5).SetOptions(true);
-            DOTween.To(() => txtSkill2.color, x => txtSkill2.color = x, new Color(1, 1, 1, 0), 5).SetOptions(true);
-            var images = gameObject.GetComponentsInChildren<Image>();
-            foreach(var v in images)
-                DOTween.To(() => v.color, x => v.color = x, new Color(1, 1, 1, 0), 5).SetOptions(true);
-        }
+            isDisappear = true;
+            Invoke("disappear", 3);
+        }        
 
         public void OnPointerEnter(BaseEventData eventData)
         {
-            if (disappear) return;
+            if (isDisappear) return;
             var pos = canvas.transform.localPosition;
             pos.y += 10;
             canvas.transform.localPosition = pos;
@@ -141,12 +136,22 @@ namespace AGrail
 
         public void OnPointerExit(BaseEventData eventData)
         {
-            if (disappear) return;
+            if (isDisappear) return;
             var pos = canvas.transform.localPosition;
             pos.y = 0;
             canvas.transform.localPosition = pos;
             canvas.overrideSorting = false;
             canvas.sortingOrder = 0;
+        }
+
+        private void disappear()
+        {
+            DOTween.To(() => image.color, x => image.color = x, new Color(1, 1, 1, 0), 0.5f).SetOptions(true);
+            DOTween.To(() => txtSkill1.color, x => txtSkill1.color = x, new Color(1, 1, 1, 0), 0.5f).SetOptions(true);
+            DOTween.To(() => txtSkill2.color, x => txtSkill2.color = x, new Color(1, 1, 1, 0), 0.5f).SetOptions(true);
+            var images = gameObject.GetComponentsInChildren<Image>();
+            foreach (var v in images)
+                DOTween.To(() => v.color, x => v.color = x, new Color(1, 1, 1, 0), 0.5f).SetOptions(true);
         }
     }
 }

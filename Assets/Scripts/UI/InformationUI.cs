@@ -44,7 +44,8 @@ namespace AGrail
             {
                 base.Parameters = value;
                 var role = Parameters[0] as RoleBase;
-                roleName.text = role.RoleName;                
+                roleName.text = role.RoleName;
+                heroName.text = role.HeroName;
                 heroProperty.sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", role.RoleProperty.ToString());
                 var sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("hero_l", ((int)role.RoleID).ToString() + "L");
                 if (sprite != null)

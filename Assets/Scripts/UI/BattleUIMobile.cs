@@ -239,8 +239,8 @@ namespace AGrail
                     }
                     break;
                 case MessageType.PlayerActionChange:
-                    for (int i = 0; i < playerStatus.Count; i++)
-                        playerStatus[i].Turn = (playerStatus[i].ID == (uint)parameters[0]);
+                    //for (int i = 0; i < playerStatus.Count; i++)
+                    //    playerStatus[i].Turn = (playerStatus[i].ID == (uint)parameters[0]);
                     break;
                 case MessageType.LogChange:
                     log.text = Dialog.Instance.Log;

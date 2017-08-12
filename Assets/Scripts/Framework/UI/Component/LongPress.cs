@@ -1,13 +1,12 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace Framework.UI
-{    
-    public class LongPress : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+{
+    public class LongPress : UIBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         [FormerlySerializedAs("onLongPress")]
         [SerializeField]

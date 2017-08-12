@@ -22,6 +22,8 @@ namespace AGrail
         [SerializeField]
         private Image hero;
         [SerializeField]
+        private Image property;
+        [SerializeField]
         private Image knelt;
         [SerializeField]
         private Text playerName;
@@ -85,6 +87,7 @@ namespace AGrail
                     sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("hero_s", value.ToString() + "S");
                 if (sprite != null)
                     hero.sprite = sprite;
+                property.sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", role.RoleProperty.ToString());
                 if (role.HasYellow)
                 {
                     var prefab = AssetBundleManager.Instance.LoadAsset("battle", "Token0");
@@ -275,7 +278,7 @@ namespace AGrail
                 for (int i = 0; i < handArea.childCount; i++)
                     Destroy(handArea.GetChild(i).gameObject);
                 var prefab = AssetBundleManager.Instance.LoadAsset("battle", "Image");
-                for(int i = 0;i< (int)Mathf.Min(value.Key, value.Value); i++)
+                for (int i = 0; i < value.Key; i++)
                 {
                     var go = Instantiate(prefab);
                     if (value.Key > value.Value)
@@ -346,13 +349,13 @@ namespace AGrail
             Turn = true;
             if(ID == BattleData.Instance.PlayerID || (BattleData.Instance.PlayerID == 9 && ID == BattleData.Instance.PlayerIdxOrder[0]))
             {
-                turn.transform.localScale = new Vector3(2, 2, 1);
-                turn.transform.DOScale(new Vector3(1.5f, 1.5f, 1), 1.5f);
+                turn.transform.localScale = new Vector3(2.5f, 2.5f, 1);
+                turn.transform.DOScale(new Vector3(2, 2, 1), 1.5f);
             }
             else
             {
-                turn.transform.localScale = new Vector3(1.5f, 1.5f, 1);
-                turn.transform.DOScale(Vector3.one, 1.5f);
+                turn.transform.localScale = new Vector3(2, 2, 1);
+                turn.transform.DOScale(new Vector3(1.3f, 1.3f, 1), 1.5f);
             }
         }
 
