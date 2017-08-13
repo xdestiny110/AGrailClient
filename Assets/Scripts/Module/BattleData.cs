@@ -207,7 +207,8 @@ namespace AGrail
                     {
                         PlayerInfos.Add(v);
                         player = v;
-                        player.max_hand = 6;
+                        if (!player.max_handSpecified)
+                            player.max_hand = 6;
                     }
                     if (player.id == PlayerID && MainPlayer != player)
                         MainPlayer = player;
