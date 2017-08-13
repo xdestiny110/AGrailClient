@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 namespace Framework.UI
 {
@@ -14,6 +15,11 @@ namespace Framework.UI
         [FormerlySerializedAs("onDrop")]
         [SerializeField]
         private OnDropEventTriiger onDrop = new OnDropEventTriiger();
+
+        [SerializeField]
+        private bool bindToButtonInteractable = false;
+        [SerializeField]
+        private Button btn;
 
         public OnDropEventTriiger OnDropEvent
         {
@@ -28,10 +34,14 @@ namespace Framework.UI
             }
         }
 
-        public void OnDrop(GameObject go, PointerEventData d)
+        public bool OnDrop(GameObject go, PointerEventData d)
         {
-            if (OnDropEvent != null)
+            if (isActiveAndEnabled && ((bindToButtonInteractable && btn.interactable) || !bindToButtonInteractable) && OnDropEvent != null)
+            {
                 OnDropEvent.Invoke(go, d);
+                return true;
+            }
+            return false;
         }
     }
 }

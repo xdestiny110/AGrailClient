@@ -1,14 +1,14 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using Framework.Message;
-using System;
 using DG.Tweening;
 using Framework.AssetBundle;
+using Framework.UI;
 
 namespace AGrail
 {
+    [RequireComponent(typeof(Dragable))]
     public class CardUI : MonoBehaviour,  IMessageListener<MessageType>
     {
         [SerializeField]
@@ -83,8 +83,14 @@ namespace AGrail
             get { return card; }
         }
 
+        private Dragable dragable;
+
         void Awake()
         {
+            dragable = GetComponent<Dragable>();
+            dragable.OnBeginDragEvent.AddListener(onBeginDrag);
+            dragable.OnDragingEvent.AddListener(onDraging);
+            dragable.OnEndDragEvent.AddListener(onEndDrag);
             MessageSystem<MessageType>.Regist(MessageType.AgentSelectCard, this);
         }
 
@@ -152,6 +158,28 @@ namespace AGrail
             var images = gameObject.GetComponentsInChildren<Image>();
             foreach (var v in images)
                 DOTween.To(() => v.color, x => v.color = x, new Color(1, 1, 1, 0), 0.5f).SetOptions(true);
+        }
+
+        private void onBeginDrag(GameObject go, PointerEventData d)
+        {
+
+        }
+
+        private void onDraging(GameObject go, PointerEventData d)
+        {
+
+        }
+
+        private void onEndDrag(GameObject go, PointerEventData d, bool dropSuccess)
+        {
+            if (dropSuccess)
+            {
+
+            }
+            else
+            {
+
+            }
         }
     }
 }

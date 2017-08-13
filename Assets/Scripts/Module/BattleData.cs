@@ -258,10 +258,12 @@ namespace AGrail
                             //如果两个是同一个引用则不清空
                             if(player != v)
                             {
+                                var except = v.hands.Except(player.hands);
+                                var intersect = player.hands.Intersect(v.hands);
                                 player.hands.Clear();
-                                foreach (var u in v.hands)
-                                    player.hands.Add(u);
-                            }                                
+                                player.hands.AddRange(intersect);
+                                player.hands.AddRange(except);
+                            }
                             MessageSystem<MessageType>.Notify(MessageType.AgentHandChange);
                         }
                     }

@@ -9,6 +9,7 @@ using UnityEngine.EventSystems;
 
 namespace AGrail
 {
+    [RequireComponent(typeof(Dropable))]
     [RequireComponent(typeof(LongPress))]
     [RequireComponent(typeof(Button))]
     public class PlayerStatusMobile : MonoBehaviour, IMessageListener<MessageType>
@@ -42,6 +43,7 @@ namespace AGrail
         private RoleBase role;
         private Text token0, token1, token2;
         private Button btnPlayer;
+        private Dropable dropable;
 
         public uint ID { get; set; }
 
@@ -50,6 +52,7 @@ namespace AGrail
             set
             {
                 btnPlayer.interactable = value;
+                dropable.enabled = value;
                 foreach(var v in GetComponentsInChildren<Image>())
                 {
                     var c = v.color;
@@ -325,6 +328,8 @@ namespace AGrail
             btnPlayer = GetComponent<Button>();
             btnPlayer.onClick.AddListener(onClick);
             GetComponent<LongPress>().OnLongPress.AddListener(onLongPress);
+            dropable = GetComponent<Dropable>();
+            dropable.OnDropEvent.AddListener(onDrop);
             MessageSystem<MessageType>.Regist(MessageType.AgentSelectPlayer, this);
         }
 
@@ -372,6 +377,11 @@ namespace AGrail
         private void onLongPress()
         {
             GameManager.UIInstance.PushWindow(Framework.UI.WindowType.InfomationUI, Framework.UI.WinMsg.None, -1, Vector3.zero, role);
+        }
+
+        private void onDrop(GameObject go, PointerEventData d)
+        {
+
         }
 
         private void addChildGO(Transform parent, GameObject go)

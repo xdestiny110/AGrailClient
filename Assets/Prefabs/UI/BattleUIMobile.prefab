@@ -341,6 +341,7 @@ GameObject:
   - component: {fileID: 114979551727211436}
   - component: {fileID: 114191764923656498}
   - component: {fileID: 114591620267147970}
+  - component: {fileID: 114117430473700828}
   m_Layer: 5
   m_Name: MainPlayer
   m_TagString: Untagged
@@ -463,6 +464,7 @@ GameObject:
   - component: {fileID: 114320883203766582}
   - component: {fileID: 114620859551316368}
   - component: {fileID: 114414267176124678}
+  - component: {fileID: 114271321120630564}
   m_Layer: 5
   m_Name: PlayerStatusMobileL
   m_TagString: Untagged
@@ -947,6 +949,7 @@ GameObject:
   - component: {fileID: 114458656125766472}
   - component: {fileID: 114775592249474348}
   - component: {fileID: 114816808821809902}
+  - component: {fileID: 114631787748511572}
   m_Layer: 5
   m_Name: PlayerStatusMobileU
   m_TagString: Untagged
@@ -1031,6 +1034,7 @@ GameObject:
   - component: {fileID: 224479609739915164}
   - component: {fileID: 114927363647220192}
   - component: {fileID: 114610649685265744}
+  - component: {fileID: 114745428822718388}
   m_Layer: 5
   m_Name: HandArea
   m_TagString: Untagged
@@ -1273,6 +1277,7 @@ GameObject:
   - component: {fileID: 114952272027885842}
   - component: {fileID: 114022275371786996}
   - component: {fileID: 114767440563202458}
+  - component: {fileID: 114705634498346784}
   m_Layer: 5
   m_Name: PlayerStatusMobileUL
   m_TagString: Untagged
@@ -1324,6 +1329,7 @@ GameObject:
   - component: {fileID: 114239873604225284}
   - component: {fileID: 114334574694518578}
   - component: {fileID: 114786565242146508}
+  - component: {fileID: 114422736984494040}
   m_Layer: 5
   m_Name: PlayerStatusMobileUR
   m_TagString: Untagged
@@ -2096,6 +2102,7 @@ GameObject:
   - component: {fileID: 114583823703638552}
   - component: {fileID: 114961276142101500}
   - component: {fileID: 114881401826401118}
+  - component: {fileID: 114028516365476766}
   m_Layer: 5
   m_Name: PlayerStatusMobileR
   m_TagString: Untagged
@@ -2618,6 +2625,24 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114028516365476766
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1910456403609114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54324650f6666e3439ccd76fa711b347, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onDrop:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: Framework.UI.Dropable+OnDropEventTriiger, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  bindToButtonInteractable: 1
+  btn: {fileID: 114961276142101500}
 --- !u!114 &114029426052776160
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2931,6 +2956,24 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: 15
+--- !u!114 &114117430473700828
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1149500669761680}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54324650f6666e3439ccd76fa711b347, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onDrop:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: Framework.UI.Dropable+OnDropEventTriiger, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  bindToButtonInteractable: 1
+  btn: {fileID: 114979551727211436}
 --- !u!114 &114123898666842030
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3597,6 +3640,24 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: 
+--- !u!114 &114271321120630564
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1181360588314474}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54324650f6666e3439ccd76fa711b347, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onDrop:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: Framework.UI.Dropable+OnDropEventTriiger, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  bindToButtonInteractable: 1
+  btn: {fileID: 114620859551316368}
 --- !u!114 &114277206138851504
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4173,6 +4234,24 @@ MonoBehaviour:
       PublicKeyToken=null
   LONG_PRESS_TIME: 0.5
   interceptBtn: {fileID: 114620859551316368}
+--- !u!114 &114422736984494040
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1563384676294834}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54324650f6666e3439ccd76fa711b347, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onDrop:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: Framework.UI.Dropable+OnDropEventTriiger, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  bindToButtonInteractable: 1
+  btn: {fileID: 114334574694518578}
 --- !u!114 &114425671933503016
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5084,6 +5163,24 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114631787748511572
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1436657241632888}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54324650f6666e3439ccd76fa711b347, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onDrop:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: Framework.UI.Dropable+OnDropEventTriiger, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  bindToButtonInteractable: 1
+  btn: {fileID: 114775592249474348}
 --- !u!114 &114641964163643762
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5259,6 +5356,24 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114705634498346784
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1551263584125370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54324650f6666e3439ccd76fa711b347, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onDrop:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: Framework.UI.Dropable+OnDropEventTriiger, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  bindToButtonInteractable: 1
+  btn: {fileID: 114022275371786996}
 --- !u!114 &114716943362412062
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5447,6 +5562,24 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.ScrollRect+ScrollRectEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &114745428822718388
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1469762431907320}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54324650f6666e3439ccd76fa711b347, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onDrop:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: Framework.UI.Dropable+OnDropEventTriiger, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  bindToButtonInteractable: 0
+  btn: {fileID: 0}
 --- !u!114 &114745998984520294
 MonoBehaviour:
   m_ObjectHideFlags: 1

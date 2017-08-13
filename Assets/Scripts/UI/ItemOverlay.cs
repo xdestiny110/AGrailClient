@@ -1,9 +1,12 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using Framework.UI;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
-namespace UnityEngine.UI
+namespace AGrail
 {
     [RequireComponent(typeof(GridLayoutGroup))]
+    [RequireComponent(typeof(Dropable))]
     public class ItemOverlay : MonoBehaviour
     {
         private GridLayoutGroup layout = null;
@@ -17,6 +20,7 @@ namespace UnityEngine.UI
             layoutCellSizeX = layout.cellSize.x;
             layoutSizeX = (transform as RectTransform).sizeDelta.x;
             noOverLayCnt = (int)(layoutSizeX / layoutCellSizeX);
+            GetComponent<Dropable>().OnDropEvent.AddListener(onDrop);
         }
 
         void Update()
@@ -29,6 +33,29 @@ namespace UnityEngine.UI
                 spacing.x = 0;
 
             layout.spacing = spacing;
+        }
+
+        private void onDrop(GameObject go, PointerEventData d)
+        {
+            Vector2 localPos;
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(transform as RectTransform, d.position, d.enterEventCamera, out localPos))
+            {
+                var cnt = transform.childCount;
+                for (int i = 0; i < transform.childCount; i++)
+                {
+                    if (transform.GetChild(i).localPosition.x >= localPos.x)
+                    {
+                        cnt = i;
+                        break;
+                    }
+                }
+                go.transform.parent = transform;
+                go.transform.SetSiblingIndex(cnt);
+
+                BattleData.Instance.MainPlayer.hands.Clear();
+                for (int i = 0; i < transform.childCount; i++)
+                    BattleData.Instance.MainPlayer.hands.Add(transform.GetChild(i).GetComponent<CardUI>().Card.ID);
+            }
         }
     }
 }

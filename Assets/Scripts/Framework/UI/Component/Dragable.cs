@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 namespace Framework.UI
 {
@@ -12,12 +13,14 @@ namespace Framework.UI
         private bool isRaycastValid = true;
 
         [Serializable]
-        public class OnDragEndEventTriiger : UnityEvent<GameObject, PointerEventData> { }
+        public class OnBeginDragEventTriiger : UnityEvent<GameObject, PointerEventData> { }
+        [Serializable]
+        public class OnEndDragEventTrigger : UnityEvent<GameObject, PointerEventData, bool> { }
 
         [FormerlySerializedAs("onBeginDrag")]
         [SerializeField]
-        private OnDragEndEventTriiger onBeginDrag;
-        public OnDragEndEventTriiger OnBeginDragEvent
+        private OnBeginDragEventTriiger onBeginDrag;
+        public OnBeginDragEventTriiger OnBeginDragEvent
         {
             get
             {
@@ -32,8 +35,8 @@ namespace Framework.UI
 
         [FormerlySerializedAs("onDraging")]
         [SerializeField]
-        private OnDragEndEventTriiger onDraging;
-        public OnDragEndEventTriiger OnDragingEvent
+        private OnBeginDragEventTriiger onDraging;
+        public OnBeginDragEventTriiger OnDragingEvent
         {
             get
             {
@@ -48,8 +51,8 @@ namespace Framework.UI
 
         [FormerlySerializedAs("onEndDrag")]
         [SerializeField]
-        private OnDragEndEventTriiger onEndDrag;
-        public OnDragEndEventTriiger OnEndDragEvent
+        private OnEndDragEventTrigger onEndDrag;
+        public OnEndDragEventTrigger OnEndDragEvent
         {
             get
             {
@@ -62,12 +65,17 @@ namespace Framework.UI
             }
         }
 
-        protected override void Awake()
+        [SerializeField]
+        private bool bindToButtonInteractable = false;
+        [SerializeField]
+        private Button btn;
+
+        protected override void Start()
         {
             rootCanvas = transform.root.GetComponent<Canvas>();
             if (rootCanvas == null)
                 Debug.LogErrorFormat("Cannot find root canvas! name = {0}", gameObject.name);
-            base.Awake();
+            base.Start();
         }
 
         private Vector3 lastMousePos = Vector3.zero;
@@ -83,35 +91,45 @@ namespace Framework.UI
 
         public void OnBeginDrag(PointerEventData eventData)
         {
-            transform.parent = rootCanvas.transform;
-            transform.SetAsLastSibling();
-            isRaycastValid = false;
-            if (OnBeginDragEvent != null)
-                OnBeginDragEvent.Invoke(gameObject, eventData);
+            if (isActiveAndEnabled && ((bindToButtonInteractable && btn.interactable) || !bindToButtonInteractable))
+            {
+                transform.parent = rootCanvas.transform;
+                transform.SetAsLastSibling();
+                isRaycastValid = false;
+                if (OnBeginDragEvent != null)
+                    OnBeginDragEvent.Invoke(gameObject, eventData);
+            }
         }
 
         public void OnDrag(PointerEventData eventData)
         {
-            Vector3 mouseWorldPosition;
-            if (RectTransformUtility.ScreenPointToWorldPointInRectangle(transform as RectTransform, eventData.position, 
-                eventData.pressEventCamera, out mouseWorldPosition))
+            if (isActiveAndEnabled && ((bindToButtonInteractable && btn.interactable) || !bindToButtonInteractable))
             {
-                if (lastMousePos != Vector3.zero)
-                    gameObject.transform.position += mouseWorldPosition - lastMousePos;
-                lastMousePos = mouseWorldPosition;
+                Vector3 mouseWorldPosition;
+                if (RectTransformUtility.ScreenPointToWorldPointInRectangle(transform as RectTransform, eventData.position,
+                    eventData.pressEventCamera, out mouseWorldPosition))
+                {
+                    if (lastMousePos != Vector3.zero)
+                        gameObject.transform.position += mouseWorldPosition - lastMousePos;
+                    lastMousePos = mouseWorldPosition;
+                }
+                if (OnDragingEvent != null)
+                    OnDragingEvent.Invoke(gameObject, eventData);
             }
-            if (OnDragingEvent != null)
-                OnDragingEvent.Invoke(gameObject, eventData);
         }
 
         public void OnEndDrag(PointerEventData eventData)
         {
-            var go = eventData.pointerCurrentRaycast.gameObject;
-            if (go != null && go.GetComponentInParent<Dropable>() != null)
-                go.GetComponentInParent<Dropable>().OnDrop(gameObject, eventData);
-            isRaycastValid = true;
-            if (OnEndDragEvent != null)
-                OnEndDragEvent.Invoke(go, eventData);
+            if (isActiveAndEnabled && ((bindToButtonInteractable && btn.interactable) || !bindToButtonInteractable))
+            {
+                var go = eventData.pointerCurrentRaycast.gameObject;
+                bool flag = false;
+                if (go != null && go.GetComponentInParent<Dropable>() != null)
+                    flag = go.GetComponentInParent<Dropable>().OnDrop(gameObject, eventData);
+                isRaycastValid = true;
+                if (OnEndDragEvent != null)
+                    OnEndDragEvent.Invoke(go, eventData, flag);
+            }
         }
 
         public bool IsRaycastLocationValid(Vector2 sp, Camera eventCamera)
