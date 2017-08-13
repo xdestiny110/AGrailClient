@@ -6,13 +6,45 @@ using UnityEngine.Serialization;
 
 namespace Framework.UI
 {
-    public class Dragable : UIBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, ICanvasRaycastFilter
+    public class Dragable : UIBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, ICanvasRaycastFilter, IPointerDownHandler
     {
         private Canvas rootCanvas;
         private bool isRaycastValid = true;
 
-        [SerializeField]
+        [Serializable]
         public class OnDragEndEventTriiger : UnityEvent<GameObject, PointerEventData> { }
+
+        [FormerlySerializedAs("onBeginDrag")]
+        [SerializeField]
+        private OnDragEndEventTriiger onBeginDrag;
+        public OnDragEndEventTriiger OnBeginDragEvent
+        {
+            get
+            {
+                return onBeginDrag;
+            }
+
+            set
+            {
+                onBeginDrag = value;
+            }
+        }
+
+        [FormerlySerializedAs("onDraging")]
+        [SerializeField]
+        private OnDragEndEventTriiger onDraging;
+        public OnDragEndEventTriiger OnDragingEvent
+        {
+            get
+            {
+                return onDraging;
+            }
+
+            set
+            {
+                onDraging = value;
+            }
+        }
 
         [FormerlySerializedAs("onEndDrag")]
         [SerializeField]
@@ -38,11 +70,24 @@ namespace Framework.UI
             base.Awake();
         }
 
+        private Vector3 lastMousePos = Vector3.zero;
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            Vector3 mouseWorldPosition;
+            if (RectTransformUtility.ScreenPointToWorldPointInRectangle(transform as RectTransform, eventData.position,
+                eventData.pressEventCamera, out mouseWorldPosition))
+                lastMousePos = mouseWorldPosition;
+            else
+                lastMousePos = Vector3.zero;
+        }
+
         public void OnBeginDrag(PointerEventData eventData)
         {
             transform.parent = rootCanvas.transform;
             transform.SetAsLastSibling();
             isRaycastValid = false;
+            if (OnBeginDragEvent != null)
+                OnBeginDragEvent.Invoke(gameObject, eventData);
         }
 
         public void OnDrag(PointerEventData eventData)
@@ -51,8 +96,12 @@ namespace Framework.UI
             if (RectTransformUtility.ScreenPointToWorldPointInRectangle(transform as RectTransform, eventData.position, 
                 eventData.pressEventCamera, out mouseWorldPosition))
             {
-                gameObject.transform.position = mouseWorldPosition;
+                if (lastMousePos != Vector3.zero)
+                    gameObject.transform.position += mouseWorldPosition - lastMousePos;
+                lastMousePos = mouseWorldPosition;
             }
+            if (OnDragingEvent != null)
+                OnDragingEvent.Invoke(gameObject, eventData);
         }
 
         public void OnEndDrag(PointerEventData eventData)

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
@@ -7,7 +8,7 @@ namespace Framework.UI
 {
     public class Dropable : UIBehaviour
     {
-        [SerializeField]
+        [Serializable]
         public class OnDropEventTriiger : UnityEvent<GameObject, PointerEventData> { }
 
         [FormerlySerializedAs("onDrop")]
