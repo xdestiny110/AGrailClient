@@ -20,7 +20,7 @@ namespace AGrail
         [SerializeField]
         private Text txtSkill2;
         [SerializeField]
-        private RawImage image;
+        private Image image;
         [SerializeField]
         private Transform propertyRoot;
         [SerializeField]
@@ -63,7 +63,7 @@ namespace AGrail
             set
             {
                 card = value;
-                image.texture = AssetBundleManager.Instance.LoadAsset<Texture2D>("card", card.AssetPath);
+                image.sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("card", card.AssetPath);
                 for (int i = 0; i < propertyRoot.childCount; i++)
                     propertyRoot.GetChild(i).gameObject.SetActive(false);
                 if (card.Property != Card.CardProperty.无)                
@@ -114,7 +114,7 @@ namespace AGrail
                     BattleData.Instance.Agent.AddSelectCard(card.ID);
                 else
                     BattleData.Instance.Agent.RemoveSelectCard(card.ID);
-            }    
+            }
         }
 
         private bool isDisappear = false;

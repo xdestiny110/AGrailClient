@@ -123,9 +123,9 @@ namespace AGrail
                     //MessageSystem<MessageType>.Notify(MessageType.EnterRoom);
                 }
                 if (value.player_idSpecified)
-                {                     
+                {
                     PlayerID = value.player_id;
-                }                
+                }
                 Pile = value.pileSpecified ? value.pile : Pile;
                 Discard = value.discardSpecified ? value.discard : Discard;                
                 if (value.blue_moraleSpecified)
@@ -139,7 +139,7 @@ namespace AGrail
                     MessageSystem<MessageType>.Notify(MessageType.MoraleChange, Team.Red, Morale[(int)Team.Red]);
                 }
                 if (value.blue_gemSpecified)
-                {                    
+                {
                     MessageSystem<MessageType>.Notify(MessageType.GemChange, Team.Blue, (int)value.blue_gem - (int)Gem[(int)Team.Blue]);
                     Gem[(int)Team.Blue] = value.blue_gem;
                 }
@@ -170,7 +170,7 @@ namespace AGrail
                 }
                 if (value.is_startedSpecified)
                 {
-                    //游戏开始，可能需要重新定位玩家位置           
+                    //游戏开始，可能需要重新定位玩家位置
                     UnityEngine.Debug.Log("game start");
                     if (!IsStarted && value.is_started)
                     {
@@ -295,11 +295,11 @@ namespace AGrail
                     if (v.yellow_tokenSpecified || v.blue_tokenSpecified || v.covered_countSpecified)
                         MessageSystem<MessageType>.Notify(MessageType.PlayerTokenChange,
                             idx, player.yellow_token, player.blue_token, player.covered_count);
-                    if (v.basic_cards.Count > 0 && player.GetHashCode() != v.GetHashCode())
-                            player.basic_cards = v.basic_cards;                 
+                    if (v.basic_cards.Count > 0 && player != v)
+                            player.basic_cards = v.basic_cards;
                     if (v.ex_cards.Count > 0)
                     {
-                        if(player.GetHashCode() != v.GetHashCode())
+                        if(player != v)
                             player.ex_cards = v.ex_cards;
                         //为了进行卡牌编号的区分, 专有牌的序号都+1000
                         for (int i = 0; i < player.ex_cards.Count; i++)
@@ -503,84 +503,6 @@ namespace AGrail
                 }
             }
         }        
-    }
-
-    public enum Team
-    {
-        Blue = 0,
-        Red,
-        Other,
-    }
-
-    public static class Util
-    {
-        public static Team GetOtherTeam(Team team)
-        {
-            return (team == Team.Blue) ? Team.Red : Team.Blue;
-        }
-
-        public static bool HasCard(uint skillID, List<uint> hands,uint num = 1)
-        {
-            uint count = 0;
-            foreach (var v in hands)
-            {
-                if (Card.GetCard(v).HasSkill(skillID)) count++;
-            }
-            return count>=num;
-        }
-        public static bool HasCard(Card.CardElement cardElement, List<uint> hands,uint num = 1)
-        {
-            uint count = 0;
-            foreach (var v in hands)
-            {
-                if ((Card.GetCard(v).Element) == cardElement) count++;
-            }
-            return count >= num;
-
-        }
-        public static bool HasCard(Card.CardType cardType, List<uint> hands, uint num = 1)
-        {
-            uint count = 0;
-            foreach (var v in hands)
-            {
-                if ((Card.GetCard(v).Type) == cardType) count++;
-            }
-            return count >= num;
-        }
-        public static bool HasCard(string condition, List<uint> hands, uint num = 2)
-        {
-            uint water = 0, wind = 0, earth = 0, fire = 0, darkness = 0, light = 0, thunder = 0, count = 0;
-            foreach (var v in hands)
-            {
-                switch (Card.GetCard(v).Element)
-                {
-                    case Card.CardElement.fire: fire++; break;
-                    case Card.CardElement.water: water++; break;
-                    case Card.CardElement.earth: earth++; break;
-                    case Card.CardElement.darkness: darkness++; break;
-                    case Card.CardElement.light: light++; break;
-                    case Card.CardElement.thunder: thunder++; break;
-                    case Card.CardElement.wind: wind++; break;
-                    default: break;
-                }
-            }
-            List<uint> element = new List<uint>() { water, wind, earth, fire, darkness, light, thunder };
-            switch (condition)
-            {
-                case "same":
-                    count = element.Max();
-                    break;
-                case "differ":
-                    foreach (var v in element)
-                    {
-                        if (v > 0) count++;
-                    }
-                    break;
-                default:
-                    break;
-            }
-            return count >= num;
-        }
     }
 }
 

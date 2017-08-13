@@ -5,9 +5,11 @@ using UnityEngine.UI;
 using Framework.AssetBundle;
 using Framework.UI;
 using DG.Tweening;
+using UnityEngine.EventSystems;
 
 namespace AGrail
 {
+    [RequireComponent(typeof(LongPress))]
     [RequireComponent(typeof(Button))]
     public class PlayerStatusMobile : MonoBehaviour, IMessageListener<MessageType>
     {
@@ -61,7 +63,7 @@ namespace AGrail
                         BattleData.Instance.Agent.FSM.Current.StateNumber == (uint)StateEnum.Modaned ||
                         BattleData.Instance.Agent.FSM.Current.StateNumber == (uint)StateEnum.Extract ||
                         BattleData.Instance.Agent.FSM.Current.StateNumber >= 100) && !value)
-                        c.b = c.r = c.g = 0.5f;                    
+                        c.b = c.r = c.g = 0.5f;
                     v.color = c;
                 }
             }
@@ -158,11 +160,11 @@ namespace AGrail
             {
                 if (value)
                 {
-                    knelt.sprite = Resources.Load<Sprite>("Icons/" + role.Knelt);
-                    knelt.enabled = true;
+                    knelt.sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", role.Knelt);
+                    knelt.gameObject.SetActive(true);
                 }
                 else
-                    knelt.enabled = false;
+                    knelt.gameObject.SetActive(false);
             }
         }
 
@@ -274,7 +276,7 @@ namespace AGrail
         public KeyValuePair<uint, uint> HandCount
         {
             set
-            {                
+            {
                 for (int i = 0; i < handArea.childCount; i++)
                     Destroy(handArea.GetChild(i).gameObject);
                 var prefab = AssetBundleManager.Instance.LoadAsset("battle", "Image");
