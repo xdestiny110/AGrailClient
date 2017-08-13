@@ -218,15 +218,17 @@ namespace AGrail
 			List<List<uint>> selectList = new List<List<uint>>();
 			switch (state) 
 			{
-				case 1:	//躺斩
-					if (BattleData.Instance.MainPlayer.is_knelt)
-					OKAction = () =>
-					{
-						sendActionMsg(BasicActionType.ACTION_ATTACK_SKILL, BattleData.Instance.MainPlayer.id,
+			case 1:	//躺斩
+				if (BattleData.Instance.MainPlayer.is_knelt) {
+					MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.SendHint,
+						"请选择目标");
+					if (BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == 1) {
+						sendActionMsg (BasicActionType.ACTION_ATTACK_SKILL, BattleData.Instance.MainPlayer.id,
 							BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, (uint)SkillID.MO_NV_ZHI_NU_ATTACK);
-						BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-					};
-					else base.UIStateChange (state, msg, paras);
+						BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
+					}
+				}          
+				else base.UIStateChange (state, msg, paras);
 					return;
 				case (uint)SkillID.CANG_YAN_FA_DIAN:
                     if (BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == 1)
@@ -275,6 +277,7 @@ namespace AGrail
                         sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
 							BattleData.Instance.Agent.SelectPlayers, null, state, new List<uint>() { 1 });
 						BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
+						return;
 					};
 					CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
 					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
@@ -294,12 +297,14 @@ namespace AGrail
 						string.Format ("{0}: 请选择目标对手", Skills[state].SkillName));
 					return;
 				case (uint)SkillID.MO_NV_ZHI_NU:
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                    //MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                     if (msg == UIStateMsg.ClickArgs) {
                         IsStart = true;						
 						sendReponseMsg (state, BattleData.Instance.MainPlayer.id,
 							null, null, new List<uint> () { 1, BattleData.Instance.Agent.SelectArgs[0] });
+						MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
 						BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
+						return;
 					};
 					CancelAction = () => {
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
