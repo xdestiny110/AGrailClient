@@ -16,4 +16,10 @@ public class Test
     {
         Skill.GetSkill(301);
     }
+
+    [MenuItem("Framework/Test/TestHint")]
+    public static void TestHint()
+    {
+        StateHint.GetHint(StateEnum.Any);
+    }
 }
