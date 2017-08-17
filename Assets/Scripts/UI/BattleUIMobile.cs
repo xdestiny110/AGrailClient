@@ -34,9 +34,11 @@ namespace AGrail
         [SerializeField]
         private Transform chatRoot;
         [SerializeField]
-        private Button btnExpand;
+        private Transform chat;
         [SerializeField]
-        private Button btnShrink;
+        private Button btnLogExpand;
+        [SerializeField]
+        private Button btnChatExpand;
         [SerializeField]
         private InputField inptChat;
         [SerializeField]
@@ -69,8 +71,8 @@ namespace AGrail
             }
             Dialog.Instance.Reset();
 
-            btnExpand.onClick.AddListener(onBtnExpandClick);
-            btnShrink.onClick.AddListener(onBtnShrinkClick);
+            btnLogExpand.onClick.AddListener(delegate { onBtnLogExpandClick(true); });
+            btnChatExpand.onClick.AddListener(delegate { onBtnChatExpandClick(true); });
             btnSubmit.onClick.AddListener(delegate { onBtnSubmitClick(null); });
             inptChat.onEndEdit.AddListener(onBtnSubmitClick);
             
@@ -154,9 +156,7 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.TURNBEGIN, this);
             MessageSystem<MessageType>.UnRegist(MessageType.LogChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.ChatChange, this);
-
-            btnExpand.onClick.RemoveAllListeners();
-            btnShrink.onClick.RemoveAllListeners();
+            
             base.OnDestroy();
         }
 
@@ -354,7 +354,7 @@ namespace AGrail
         private void chatChange()
         {
             var go = Instantiate<GameObject>(AssetBundleManager.Instance.LoadAsset("battle", "ChatItem"));
-            go.transform.parent = chatRoot;
+            go.transform.parent = this.chat;
             go.transform.localScale = Vector3.one;
             go.transform.localPosition = Vector3.zero;
             go.transform.localRotation = Quaternion.identity;
@@ -368,16 +368,44 @@ namespace AGrail
             //生成气泡文字
         }
 
-        private void onBtnExpandClick()
+        private Tweener logTweener = null;
+        private void onBtnLogExpandClick(bool flag)
         {
-            logRoot.localPosition = new Vector3(1280, 0, 0);
-            logRoot.DOLocalMoveX(0, 1.0f);
+            if (logTweener != null && logTweener.IsPlaying())
+                return;
+            btnLogExpand.onClick.RemoveAllListeners();
+            if (flag)
+            {
+                logRoot.localPosition = new Vector3(960, 0, 0);
+                logTweener = logRoot.DOLocalMoveX(320, 0.5f);
+                btnLogExpand.onClick.AddListener(delegate { onBtnLogExpandClick(false); });
+            }
+            else
+            {
+                logRoot.localPosition = new Vector3(320, 0, 0);
+                logTweener = logRoot.DOLocalMoveX(960, 0.5f);
+                btnLogExpand.onClick.AddListener(delegate { onBtnLogExpandClick(true); });
+            }
         }
 
-        private void onBtnShrinkClick()
-        {
-            logRoot.localPosition = new Vector3(0, 0, 0);
-            logRoot.DOLocalMoveX(1280, 1.0f);
+        private Tweener chatTweener = null;
+        private void onBtnChatExpandClick(bool flag)
+        {            
+            if (chatTweener != null && chatTweener.IsPlaying())
+                return;
+            btnChatExpand.onClick.RemoveAllListeners();
+            if (flag)
+            {
+                chatRoot.localPosition = new Vector3(-960, 0, 0);
+                chatTweener = chatRoot.DOLocalMoveX(-320, 0.5f);
+                btnChatExpand.onClick.AddListener(delegate { onBtnChatExpandClick(false); });
+            }
+            else
+            {
+                chatRoot.localPosition = new Vector3(-320, 0, 0);
+                chatTweener = chatRoot.DOLocalMoveX(-960, 0.5f);
+                btnChatExpand.onClick.AddListener(delegate { onBtnChatExpandClick(true); });
+            }
         }
 
         private void onBtnSubmitClick(string str)
