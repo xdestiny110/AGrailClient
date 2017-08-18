@@ -66,9 +66,13 @@ namespace AGrail
 
         public override void Awake()
         {
-            root.localScale = Vector3.one * 0.1f;
-            root.DOScale(1, 0.5f).OnComplete(()=> { btnClose.onClick.AddListener(() => { GameManager.UIInstance.PopWindow(WinMsg.None); }); });            
-
+            var graphics = root.GetComponentsInChildren<Graphic>();
+            foreach(var v in graphics)
+            {
+                v.color = new Color(1, 1, 1, 0);
+                DOTween.To(() => v.color, x => v.color = x, new Color(1, 1, 1, 1), 0.5f).SetOptions(true);
+            }
+            btnClose.onClick.AddListener(() => { GameManager.UIInstance.PopWindow(WinMsg.None); });
             base.Awake();
         }
 
