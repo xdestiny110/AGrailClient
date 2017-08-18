@@ -69,8 +69,13 @@ namespace AGrail
             var graphics = root.GetComponentsInChildren<Graphic>();
             foreach(var v in graphics)
             {
-                v.color = new Color(1, 1, 1, 0);
-                DOTween.To(() => v.color, x => v.color = x, new Color(1, 1, 1, 1), 0.5f).SetOptions(true);
+                if (root.name == v.name) continue;
+                var cSrc = v.color;
+                cSrc.a = 0;
+                var cDst = v.color;
+                cDst.a = 1;
+                v.color = cSrc;
+                DOTween.To(() => v.color, x => v.color = x, cDst, 1).SetOptions(true);
             }
             btnClose.onClick.AddListener(() => { GameManager.UIInstance.PopWindow(WinMsg.None); });
             base.Awake();

@@ -235,9 +235,8 @@ namespace AGrail
                     }
                     break;
                 case MessageType.PlayerActionChange:
-                    //for (int i = 0; i < playerStatus.Count; i++)
-                    //    playerStatus[i].Turn = (playerStatus[i].ID == (uint)parameters[0]);
-                    MessageSystem<MessageType>.Notify(MessageType.SendHint, parameters[0]);
+                    for (int i = 0; i < playerStatus.Count; i++)
+                        playerStatus[i].WaitAction = (playerStatus[i].ID == (uint)parameters[0]) ? parameters[1].ToString() : "";
                     break;
                 case MessageType.LogChange:
                     log.text = Dialog.Instance.Log;
@@ -358,7 +357,7 @@ namespace AGrail
             var chatItem = go.GetComponent<ChatItem>();
             var chat = Dialog.Instance.Chat.Last();
             chatItem.RoleID = chat.RoleID;
-            chatItem.Msg = BattleData.Instance.GetPlayerInfo(chat.ID).nickname + ": " + chat.msg;
+            chatItem.Msg = (chat.RoleID == null) ? BattleData.Instance.GetPlayerInfo(chat.ID).nickname + ": " + chat.msg : chat.msg;
             if (chat.ID != BattleData.Instance.PlayerID)
                 chatItem.IsMainPlayer = false;
 

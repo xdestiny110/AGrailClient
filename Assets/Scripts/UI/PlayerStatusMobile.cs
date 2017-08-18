@@ -32,6 +32,8 @@ namespace AGrail
         [SerializeField]
         private Text chat;
         [SerializeField]
+        private Text waitAction;
+        [SerializeField]
         private Transform handArea;
         [SerializeField]
         private Transform healArea;
@@ -330,8 +332,20 @@ namespace AGrail
                 if (chatCoro != null)
                     StopCoroutine(chatCoro);
                 chat.text = value;
-                chat.gameObject.SetActive(true);
+                chat.transform.parent.gameObject.SetActive(true);
                 chatCoro = StartCoroutine(chatDisappear());
+            }
+        }
+
+        public string WaitAction
+        {
+            set
+            {
+                waitAction.text = value;
+                if (string.IsNullOrEmpty(waitAction.text))
+                    waitAction.transform.parent.gameObject.SetActive(false);
+                else
+                    waitAction.transform.parent.gameObject.SetActive(true);
             }
         }
 
@@ -400,7 +414,7 @@ namespace AGrail
         private IEnumerator chatDisappear()
         {
             yield return new WaitForSeconds(3);
-            chat.gameObject.SetActive(false);
+            chat.transform.parent.gameObject.SetActive(false);
             chatCoro = null;
         }
     }
