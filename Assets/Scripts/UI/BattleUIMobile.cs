@@ -125,10 +125,6 @@ namespace AGrail
                     MessageSystem<MessageType>.Notify(MessageType.PlayerKneltChange, i, playerInfo.is_knelt);
                     MessageSystem<MessageType>.Notify(MessageType.PlayerBasicAndExCardChange, i, playerInfo.basic_cards, playerInfo.ex_cards);
                 }
-                if(BattleData.Instance.CurrentPlayerID == 9)
-                    MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, (uint)playerIdxOrder[0]);
-                else
-                    MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, BattleData.Instance.CurrentPlayerID);
             }
 
             base.Awake();
@@ -241,6 +237,7 @@ namespace AGrail
                 case MessageType.PlayerActionChange:
                     //for (int i = 0; i < playerStatus.Count; i++)
                     //    playerStatus[i].Turn = (playerStatus[i].ID == (uint)parameters[0]);
+                    MessageSystem<MessageType>.Notify(MessageType.SendHint, parameters[0]);
                     break;
                 case MessageType.LogChange:
                     log.text = Dialog.Instance.Log;
@@ -366,6 +363,7 @@ namespace AGrail
                 chatItem.IsMainPlayer = false;
 
             //生成气泡文字
+            playerStatus[BattleData.Instance.PlayerIdxOrder.IndexOf((int)chat.ID)].Chat = chat.msg;
         }
 
         private Tweener logTweener = null;

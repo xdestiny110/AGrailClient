@@ -26,17 +26,6 @@ namespace AGrail
         public PlayerAgent Agent { get; private set; }
         public network.SinglePlayerInfo MainPlayer { get; private set; }
 
-        private uint currentPlayerID = 9;
-        public uint CurrentPlayerID
-        {
-            set
-            {
-                currentPlayerID = value;
-                MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, currentPlayerID);
-            }
-            get { return currentPlayerID; }
-        }
-
         public BattleData() : base()
         {
             MessageSystem<MessageType>.Regist(MessageType.TURNBEGIN, this);
@@ -100,7 +89,6 @@ namespace AGrail
             RoomID = null;
             PlayerID = null;
             IsStarted = false;
-            CurrentPlayerID = 9;
         }
 
         public network.SinglePlayerInfo GetPlayerInfo(uint playerID)
@@ -118,7 +106,7 @@ namespace AGrail
             set
             {
                 if (value.room_idSpecified && !RoomID.HasValue)
-                {                    
+                {
                     RoomID = value.room_id;
                     //MessageSystem<MessageType>.Notify(MessageType.EnterRoom);
                 }
@@ -127,7 +115,7 @@ namespace AGrail
                     PlayerID = value.player_id;
                 }
                 Pile = value.pileSpecified ? value.pile : Pile;
-                Discard = value.discardSpecified ? value.discard : Discard;                
+                Discard = value.discardSpecified ? value.discard : Discard;
                 if (value.blue_moraleSpecified)
                 {
                     Morale[(int)Team.Blue] = value.blue_morale;
@@ -159,7 +147,7 @@ namespace AGrail
                     Crystal[(int)Team.Red] = value.red_crystal;
                 }
                 if (value.blue_grailSpecified)
-                {                    
+                {
                     MessageSystem<MessageType>.Notify(MessageType.GrailChange, Team.Blue, value.blue_grail - Grail[(int)Team.Blue]);
                     Grail[(int)Team.Blue] = value.blue_grail;
                 }
@@ -348,8 +336,7 @@ namespace AGrail
                             break;
                         case (uint)network.BasicRespondType.RESPOND_REPLY_ATTACK:
                             r = RoleFactory.Create(GetPlayerInfo(v.args[2]).role_id);
-                            Dialog.Instance.Log += "等待" + r.RoleName + "应战响应" + Environment.NewLine;
-                            CurrentPlayerID = v.args[2];
+                            MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, "等待" + r.RoleName + "应战响应" + Environment.NewLine);
                             if (v.args[2] != MainPlayer.id)
                             {
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
@@ -360,8 +347,7 @@ namespace AGrail
                             break;
                         case (uint)network.BasicRespondType.RESPOND_DISCARD:
                             r = RoleFactory.Create(GetPlayerInfo(v.dst_ids[0]).role_id);
-                            Dialog.Instance.Log += "等待" + r.RoleName + "弃牌响应" + Environment.NewLine;
-                            CurrentPlayerID = v.dst_ids[0];
+                            MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, "等待" + r.RoleName + "弃牌响应" + Environment.NewLine);
                             if (v.dst_ids[0] != MainPlayer.id)
                             {
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
@@ -372,8 +358,7 @@ namespace AGrail
                             break;
                         case (uint)network.BasicRespondType.RESPOND_DISCARD_COVER:
                             r = RoleFactory.Create(GetPlayerInfo(v.dst_ids[0]).role_id);
-                            Dialog.Instance.Log += "等待" + r.RoleName + "弃盖牌响应" + Environment.NewLine;
-                            CurrentPlayerID = v.dst_ids[0];
+                            MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, "等待" + r.RoleName + "弃盖牌响应" + Environment.NewLine);
                             if (v.dst_ids[0] != MainPlayer.id)
                             {
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
@@ -384,8 +369,7 @@ namespace AGrail
                             break;
                         case (uint)network.BasicRespondType.RESPOND_HEAL:
                             r = RoleFactory.Create(GetPlayerInfo(v.args[0]).role_id);
-                            Dialog.Instance.Log += "等待" + r.RoleName + "治疗响应" + Environment.NewLine;
-                            CurrentPlayerID = v.args[0];
+                            MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, "等待" + r.RoleName + "治疗响应" + Environment.NewLine);
                             if (v.args[0] != MainPlayer.id)
                             {
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
@@ -396,8 +380,7 @@ namespace AGrail
                             break;
                         case (uint)network.BasicRespondType.RESPOND_WEAKEN:
                             r = RoleFactory.Create(GetPlayerInfo(v.args[0]).role_id);
-                            Dialog.Instance.Log += "等待" + r.RoleName + "虚弱响应" + Environment.NewLine;
-                            CurrentPlayerID = v.args[0];
+                            MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, "等待" + r.RoleName + "虚弱响应" + Environment.NewLine);
                             if (v.args[0] != MainPlayer.id)
                             {
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
@@ -408,8 +391,7 @@ namespace AGrail
                             break;
                         case (uint)network.BasicRespondType.RESPOND_BULLET:
                             r = RoleFactory.Create(GetPlayerInfo(v.args[0]).role_id);
-                            Dialog.Instance.Log += "等待" + r.RoleName + "魔弹响应" + Environment.NewLine;
-                            CurrentPlayerID = v.args[0];
+                            MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, "等待" + r.RoleName + "魔弹响应" + Environment.NewLine);
                             if (v.args[0] != MainPlayer.id)
                             {
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
@@ -420,8 +402,7 @@ namespace AGrail
                             break;
                         case (uint)network.BasicRespondType.RESPOND_ADDITIONAL_ACTION:
                             r = RoleFactory.Create(GetPlayerInfo(v.src_id).role_id);
-                            Dialog.Instance.Log += "等待" + r.RoleName + "额外行动响应" + Environment.NewLine;
-                            CurrentPlayerID = v.src_id;
+                            MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, "等待" + r.RoleName + "额外行动响应" + Environment.NewLine);
                             if (v.src_id != MainPlayer.id)
                             {
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
@@ -431,7 +412,6 @@ namespace AGrail
                             Agent.AgentState = (int)PlayerAgentState.AdditionAction;
                             break;
                         case (uint)network.BasicActionType.ACTION_ANY:
-                            CurrentPlayerID = v.src_id;
                             if (v.src_id != MainPlayer.id)
                             {
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
@@ -442,7 +422,6 @@ namespace AGrail
                                 (int)PlayerAgentState.CanAttack | (int)PlayerAgentState.CanMagic | (int)PlayerAgentState.CanSpecial;
                             break;
                         case (uint)network.BasicActionType.ACTION_ATTACK_MAGIC:
-                            CurrentPlayerID = v.src_id;
                             if (v.src_id != MainPlayer.id)
                             {
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
@@ -452,7 +431,6 @@ namespace AGrail
                             Agent.AgentState = (int)PlayerAgentState.CanMagic | (int)PlayerAgentState.CanAttack;
                             break;
                         case (uint)network.BasicActionType.ACTION_ATTACK:
-                            CurrentPlayerID = v.src_id;
                             if (v.src_id != MainPlayer.id)
                             {
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
@@ -462,7 +440,6 @@ namespace AGrail
                             Agent.AgentState = (int)PlayerAgentState.CanAttack;
                             break;
                         case (uint)network.BasicActionType.ACTION_MAGIC:
-                            CurrentPlayerID = v.src_id;
                             if (v.src_id != MainPlayer.id)
                             {
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
@@ -473,25 +450,25 @@ namespace AGrail
                             break;
                         case (uint)network.BasicActionType.ACTION_NONE:
                             //无法行动
-                            CurrentPlayerID = v.src_id;
+                            r = RoleFactory.Create(GetPlayerInfo(v.src_id).role_id);
+                            MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, "等待" + r.RoleName + "响应无法行动");
                             if (v.src_id != MainPlayer.id)
                             {
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
                                 continue;
                             }
-                            //Agent.Cmd = v;                            
+                            //Agent.Cmd = v;
                             Agent.AgentState = (int)PlayerAgentState.CanResign;
                             break;
                         default:
                             //技能响应
                             r = RoleFactory.Create(GetPlayerInfo(v.src_id).role_id);
                             if (r.Skills.ContainsKey(v.respond_id))
-                                Dialog.Instance.Log += "等待" + r.RoleName + "响应技能" + r.Skills[v.respond_id].SkillName + Environment.NewLine;
+                                MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, "等待" + r.RoleName + "响应技能" + r.Skills[v.respond_id].SkillName + Environment.NewLine);
                             else if (Skill.GetSkill(v.respond_id) != null)
-                                Dialog.Instance.Log += "等待" + r.RoleName + "响应技能" + Skill.GetSkill(v.respond_id).SkillName + Environment.NewLine;
+                                MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, "等待" + r.RoleName + "响应技能" + Skill.GetSkill(v.respond_id).SkillName + Environment.NewLine);
                             else
-                                Dialog.Instance.Log += "等待" + r.RoleName + "响应技能" + v.respond_id.ToString() + Environment.NewLine;
-                            CurrentPlayerID = v.src_id;
+                                MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, "等待" + r.RoleName + "响应技能" + v.respond_id.ToString() + Environment.NewLine);
                             if (v.src_id != MainPlayer.id)
                             {
                                 Agent.AgentState = (int)PlayerAgentState.Idle;

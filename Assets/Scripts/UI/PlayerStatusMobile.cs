@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using Framework.AssetBundle;
 using Framework.UI;
 using DG.Tweening;
-using UnityEngine.EventSystems;
+using System.Collections;
 
 namespace AGrail
 {
@@ -30,6 +30,8 @@ namespace AGrail
         [SerializeField]
         private Text playerName;
         [SerializeField]
+        private Text chat;
+        [SerializeField]
         private Transform handArea;
         [SerializeField]
         private Transform healArea;
@@ -37,8 +39,8 @@ namespace AGrail
         private Transform energyArea;
         [SerializeField]
         private Transform basicAndExCardArea;
-        
-        public Transform AnimationPos;        
+
+        public Transform AnimationPos;
         private RoleBase role;
         private Text token0, token1, token2;
         private Button btnPlayer;
@@ -320,6 +322,19 @@ namespace AGrail
             }
         }
 
+        private Coroutine chatCoro = null;
+        public string Chat
+        {
+            set
+            {
+                if (chatCoro != null)
+                    StopCoroutine(chatCoro);
+                chat.text = value;
+                chat.gameObject.SetActive(true);
+                chatCoro = StartCoroutine(chatDisappear());
+            }
+        }
+
         void Awake()
         {
             btnPlayer = GetComponent<Button>();
@@ -380,6 +395,13 @@ namespace AGrail
             go.transform.localPosition = Vector3.zero;
             go.transform.localRotation = Quaternion.identity;
             go.transform.localScale = Vector3.one;
+        }
+
+        private IEnumerator chatDisappear()
+        {
+            yield return new WaitForSeconds(3);
+            chat.gameObject.SetActive(false);
+            chatCoro = null;
         }
     }
 }
