@@ -319,6 +319,7 @@ namespace AGrail
                         ((network.BasicActionType)value.commands[i].respond_id).ToString() : ((network.BasicRespondType)value.commands[i].respond_id).ToString()));
                 if (MainPlayer == null)
                     return;
+                MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange);
                 foreach (var v in value.commands)
                 {
                     RoleBase r = null;
@@ -397,7 +398,7 @@ namespace AGrail
                         case (uint)network.BasicRespondType.RESPOND_ADDITIONAL_ACTION:                            
                             if (v.src_id != MainPlayer.id)
                             {
-                                MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, v.src_id, "等待额外行动响应");
+                                MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, v.src_id, "等待响应额外行动");
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
                                 continue;
                             }
@@ -462,9 +463,9 @@ namespace AGrail
                             {
                                 r = RoleFactory.Create(GetPlayerInfo(v.src_id).role_id);
                                 if (r.Skills.ContainsKey(v.respond_id))
-                                    MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, v.src_id, "等待响应技能" + r.Skills[v.respond_id].SkillName);
+                                    MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, v.src_id, "等待响应" + r.Skills[v.respond_id].SkillName);
                                 else if (Skill.GetSkill(v.respond_id) != null)
-                                    MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, v.src_id, "等待响应技能" + Skill.GetSkill(v.respond_id).SkillName);
+                                    MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, v.src_id, "等待响应" + Skill.GetSkill(v.respond_id).SkillName);
                                 else
                                     MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, v.src_id, "等待响应技能" + v.respond_id.ToString());
                                 Agent.AgentState = (int)PlayerAgentState.Idle;

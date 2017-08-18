@@ -173,8 +173,10 @@ namespace AGrail
                     grailChange((Team)parameters[0], (uint)parameters[1]);
                     break;
                 case MessageType.SendHint:
+                    if (IsInvoking("hideHint"))
+                        CancelInvoke("hideHint");
                     if (parameters.Length != 1)
-                        hint.transform.parent.gameObject.SetActive(false);
+                        Invoke("hideHint", 3.0f);
                     else
                     {
                         hint.transform.parent.gameObject.SetActive(true);
@@ -232,11 +234,17 @@ namespace AGrail
                             else
                                 playerStatus[i].Turn = false;
                         }
+                        MessageSystem<MessageType>.Notify(MessageType.SendHint);
                     }
                     break;
                 case MessageType.PlayerActionChange:
                     for (int i = 0; i < playerStatus.Count; i++)
-                        playerStatus[i].WaitAction = (playerStatus[i].ID == (uint)parameters[0]) ? parameters[1].ToString() : "";
+                    {
+                        if (parameters.Length > 0)
+                            playerStatus[i].WaitAction = (playerStatus[i].ID == (uint)parameters[0]) ? parameters[1].ToString() : "";
+                        else
+                            playerStatus[i].WaitAction = "";
+                    }
                     break;
                 case MessageType.LogChange:
                     log.text = Dialog.Instance.Log;
@@ -410,6 +418,11 @@ namespace AGrail
             if (!string.IsNullOrEmpty(inptChat.text))
                 Dialog.Instance.SendTalk(inptChat.text);
             inptChat.text = string.Empty;
+        }
+
+        private void hideHint()
+        {
+            hint.transform.parent.gameObject.SetActive(false);
         }
     }
 }

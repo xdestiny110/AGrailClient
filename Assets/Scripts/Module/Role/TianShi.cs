@@ -167,7 +167,7 @@ namespace AGrail
             switch (state)
             {
                 case 701:
-                    if(BattleData.Instance.Agent.SelectCards.Count == 1 && BattleData.Instance.Agent.SelectPlayers.Count == 1)
+                    if (BattleData.Instance.Agent.SelectCards.Count == 1 && BattleData.Instance.Agent.SelectPlayers.Count == 1)
                     {
                         sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
                             BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state,
@@ -178,7 +178,7 @@ namespace AGrail
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                         string.Format("{0}: 请选择目标玩家以及卡牌", Skills[state].SkillName));
                     return;
-                case 702:                                        
+                case 702:
                     OKAction = () =>
                     {
                         sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
@@ -186,7 +186,7 @@ namespace AGrail
                             BattleData.Instance.Agent.SelectArgs);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };                    
+                    CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                         string.Format("{0}: 请选择目标玩家以及卡牌", Skills[state].SkillName));
                     return;
@@ -232,7 +232,7 @@ namespace AGrail
                     return;
                 case 704:
                     if (msg == UIStateMsg.ClickPlayer)
-                    {                        
+                    {
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectPlayers);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                         return;
@@ -290,11 +290,12 @@ namespace AGrail
                             string.Format("{0}: 请选择目标玩家", Skills[state].SkillName));
                     return;
                 case 706:
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                     if (msg == UIStateMsg.ClickArgs)
                     {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, BattleData.Instance.Agent.SelectArgs);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
                     };
                     CancelAction = () =>
                     {
@@ -302,20 +303,19 @@ namespace AGrail
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0, 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                     selectList = new List<List<uint>>();
                     explainList = new List<string>();
                     for (uint i = 0; i <= Math.Min(BattleData.Instance.MainPlayer.gem, BattleData.Instance.Agent.Cmd.args[0]); i++)
+                    {
+                        for (uint j = 0; j <= Math.Min(BattleData.Instance.MainPlayer.crystal, BattleData.Instance.Agent.Cmd.args[0] - i); j++)
                         {
-                            for (uint j = 0; j <= Math.Min(BattleData.Instance.MainPlayer.crystal, BattleData.Instance.Agent.Cmd.args[0] - i); j++)
-                            {
-                                selectList.Add(new List<uint>() { i, j });
-                                explainList.Add(i+"个宝石"+","+j+"个水晶");
-                            }
+                            selectList.Add(new List<uint>() { i, j });
+                            explainList.Add(i + "个宝石" + "," + j + "个水晶");
                         }
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, explainList);
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                            string.Format("{0}: 请选择要消耗的能量", Skills[state].SkillName));
+                    }
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, explainList);
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                        string.Format("{0}: 请选择要消耗的能量", Skills[state].SkillName));
                     return;
             }
             base.UIStateChange(state, msg, paras);
