@@ -287,7 +287,7 @@ namespace AGrail
                 for (int i = 0; i < value.Key; i++)
                 {
                     var go = Instantiate(prefab);
-                    if (value.Key > value.Value)
+                    if (i >= value.Value)
                         go.GetComponent<Image>().sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "handcardfull");
                     else
                         go.GetComponent<Image>().sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "handcard");
@@ -413,7 +413,7 @@ namespace AGrail
 
         private IEnumerator chatDisappear()
         {
-            yield return new WaitForSeconds(3);
+            yield return new WaitForSeconds(5);
             chat.transform.parent.gameObject.SetActive(false);
             chatCoro = null;
         }
