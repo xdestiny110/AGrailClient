@@ -371,6 +371,9 @@ namespace AGrail
             MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint);
             switch (state)
             {
+		case (uint)StateEnum.Idle:
+			MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseNewArgsUI);
+			break;
                 case (uint)StateEnum.Attack:
                     //攻击
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
