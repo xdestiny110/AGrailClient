@@ -12,14 +12,14 @@ namespace AGrail
         [SerializeField]
         private Text skillDescription;
 
-        public Skill Skill
+        public Mation Mation
         {
             set
             {
                 skillDescription.alignment = TextAnchor.MiddleLeft;
-                skillDescription.text = value.Description;
+                skillDescription.text = value.MationDesc;
                 skillDescription.text = skillDescription.text.Replace("\\n", "\n");
-                skillName.text = value.SkillName;
+                skillName.text = value.MationName;
             }
         }
     }
