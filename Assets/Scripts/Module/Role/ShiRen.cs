@@ -70,13 +70,13 @@ namespace AGrail
 
 		public override bool CanSelect(uint uiState, SinglePlayerInfo player)
 		{
-			bool bool1, bool2;
+			//bool bool1, bool2;
 			//bool1 = (player.team != BattleData.Instance.MainPlayer.team);
 			//bool2 = (BattleData.Instance.PlayerID != player.id);
 			switch (uiState)
 			{
 				case (uint)SkillID.CHEN_LUN_XIE_ZOU_QU:
-					return player.team != BattleData.Instance.MainPlayer.team && BattleData.Instance.PlayerID != player.id;
+					return player.team != BattleData.Instance.MainPlayer.team && BattleData.Instance.PlayerID != player.id && BattleData.Instance.Agent.SelectCards.Count == 2;
 					//return true;
 				case (uint)SkillID.BU_XIE_HE_XIAN:
 					return true;
@@ -96,7 +96,7 @@ namespace AGrail
 			case 11:
 			case (uint)SkillID.BU_XIE_HE_XIAN:
 				if (skill.SkillID == (uint)SkillID.BU_XIE_HE_XIAN)
-					return (BattleData.Instance.MainPlayer.yellow_token > 0);
+					return (BattleData.Instance.MainPlayer.yellow_token > 1);
 				break;
 			}
 			return base.CanSelect(uiState, skill);
@@ -130,12 +130,6 @@ namespace AGrail
 		{
 			switch (uiState)
 			{
-				case (uint)SkillID.BU_XIE_HE_XIAN:
-					return playerIDs.Count == 1;
-				case (uint)SkillID.XI_WANG_FU_GE_QU:
-					return playerIDs.Count == 1 && BattleData.Instance.MainPlayer.gem > 0;
-				case (uint)SkillID.CHEN_LUN_XIE_ZOU_QU:
-					return cardIDs.Count == 2 && playerIDs.Count == 1;
 				case (uint)SkillID.BAO_FENG_QIAN_ZOU_QU:
 					return true;
 				default:
@@ -165,12 +159,13 @@ namespace AGrail
 			List<string>explainList = new List<string>();
 			switch (state) {
 				case (uint)SkillID.CHEN_LUN_XIE_ZOU_QU:
-					OKAction = () => {
+                    if ((msg == UIStateMsg.ClickPlayer)){
 						sendReponseMsg (state, BattleData.Instance.MainPlayer.id,
 							BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, new List<uint>() { 1 });
 						BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
 						//MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
 					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                        return;
 					};
 					CancelAction = () => {
 						sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
@@ -180,50 +175,56 @@ namespace AGrail
 						string.Format ("{0}: 请选择目标对手及两张同系卡牌", Skills [state].SkillName));
 					return;
 			case (uint)SkillID.BU_XIE_HE_XIAN:
-				if ((msg == UIStateMsg.ClickArgs) && (BattleData.Instance.Agent.SelectPlayers.Count == 1))
-				{
-					uint watch1 = BattleData.Instance.Agent.SelectArgs [0];
-					sendActionMsg (BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
-						BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state, new List<uint> () {
-						BattleData.Instance.Agent.SelectArgs [0] % 5,
-						BattleData.Instance.Agent.SelectArgs [0] / 5 + 1
-					});
-					BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
-					//MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseArgsUI);
-					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
-				};
-				CancelAction = () => {
-					//MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseArgsUI);
-					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
-					BattleData.Instance.Agent.FSM.BackState (UIStateMsg.Init);
-				};
-				selectList.Clear ();
-				explainList.Clear ();
-				for (uint i = BattleData.Instance.MainPlayer.yellow_token; i >= 2; i--) {
-					selectList.Add (new List<uint> (){ i });
-					explainList.Add(string.Format("与目标各摸{0:D1}张牌",i - 1));
-				}
+                    if (msg == UIStateMsg.ClickArgs)
+                    {
+                        uint watch1 = BattleData.Instance.Agent.SelectArgs[0];
+                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
+                            BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state, new List<uint>() {
+                        BattleData.Instance.Agent.SelectArgs [0] % 5,
+                        BattleData.Instance.Agent.SelectArgs [0] / 5 + 1
+                        });
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        //MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseArgsUI);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                        return;
+                    };
+                    CancelAction = () => {
+                        //MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseArgsUI);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                        BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
+                    };
+                    selectList.Clear();
+                    explainList.Clear();
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1)
+                    {
+                        for (uint i = BattleData.Instance.MainPlayer.yellow_token; i >= 2; i--)
+                        {
+                            selectList.Add(new List<uint>() { i });
+                            explainList.Add(string.Format("与目标各摸{0:D1}张牌", i - 1));
+                        }
+                        for (uint i = BattleData.Instance.MainPlayer.yellow_token; i >= 2; i--)
+                        {
+                            selectList.Add(new List<uint>() { i + 5 });
+                            explainList.Add(string.Format("与目标各弃{0:D1}张牌", i));
+                        }
+                    }
+                    //selectList = new List<List<uint>>() { new List<uint>() { 2 }, new List<uint>() { 3 },
+                    //	new List<uint>() { 4 },  new List<uint>() { 6 }, new List<uint>() { 7 }, new List<uint>() { 8 }};
+                    //var mList = new List<string>() { "与目标摸1","与目标摸2","与目标摸3","与目标弃2","与目标弃3","与目标弃4",};
 
-				for (uint i = BattleData.Instance.MainPlayer.yellow_token; i >= 2; i--) {
-					selectList.Add (new List<uint> (){ i + 5 });
-					explainList.Add(string.Format("与目标各弃{0:D1}张牌",i));
-				}
-
-				//selectList = new List<List<uint>>() { new List<uint>() { 2 }, new List<uint>() { 3 },
-				//	new List<uint>() { 4 },  new List<uint>() { 6 }, new List<uint>() { 7 }, new List<uint>() { 8 }};
-				//var mList = new List<string>() { "与目标摸1","与目标摸2","与目标摸3","与目标弃2","与目标弃3","与目标弃4",};
-
-				MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, explainList);
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, explainList);
 				MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
 					string.Format("{0}: 选择不谐和弦的效果", Skills[state].SkillName));
 				return;
 			case (uint)SkillID.XI_WANG_FU_GE_QU:
-				OKAction = () =>
-				{
+                    if (msg == UIStateMsg.ClickPlayer)
+                    {
 					sendReponseMsg(state, BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectPlayers, null, new List<uint>() { 1 });
 						//sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 1 });
 					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
 					BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
 				};
 				CancelAction = () =>
 				{

@@ -122,13 +122,13 @@ namespace AGrail
         {
             switch (uiState)
             {
-                case 2701:
-                    return true;
                 case 2703:
+                    return cardIDs.Count > 1 && (!(cardIDs.Count > 1 &&
+                        BattleData.Instance.MainPlayer.is_knelt && BattleData.Instance.MainPlayer.yellow_token > 1));
                 case 2704:
-                    return cardIDs.Count > 1 ;
+                    return cardIDs.Count > 1 && (!(cardIDs.Count > 1 &&
+                        BattleData.Instance.MainPlayer.is_knelt && BattleData.Instance.MainPlayer.blue_token > 1));
                 case 2705:
-                case 27051:
                     return true;
                 case 2706:
                     return playerIDs.Count ==1;
@@ -165,7 +165,6 @@ namespace AGrail
                         if (BattleData.Instance.Agent.SelectArgs[0] == 2)
                         {
                             sendReponseMsg(2701, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 1 });
-                            BattleData.Instance.Agent.FSM.ChangeState<StateSkill>(UIStateMsg.Init, true);
                         }
                         else
                         {
@@ -213,7 +212,15 @@ namespace AGrail
                         BattleData.Instance.Agent.Cmd.respond_id = 2701;
                         BattleData.Instance.Agent.FSM.ChangeState<StateSkill>(UIStateMsg.Init, true);
                     };
-                    if(BattleData.Instance.Agent.SelectArgs.Count == 0 && 
+                    if (msg == UIStateMsg.ClickArgs)
+                    { 
+                        sendReponseMsg(2701, BattleData.Instance.MainPlayer.id, null, BattleData.Instance.Agent.SelectCards,
+                            new List<uint>() { 2, BattleData.Instance.Agent.SelectArgs[0] });
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
+                    }
+
+                    if (BattleData.Instance.Agent.SelectCards.Count > 1 &&
                         BattleData.Instance.MainPlayer.is_knelt && (BattleData.Instance.MainPlayer.blue_token > 1))
                     {
                         selectList.Clear();
@@ -221,7 +228,7 @@ namespace AGrail
                         for (uint i = BattleData.Instance.MainPlayer.blue_token; i > 0; i--)
                         {
                             selectList.Add(new List<uint>() { i - 1 });
-                            mList.Add("个魔纹");
+                            mList.Add( i-1 +"个魔纹");
                         }
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
@@ -249,15 +256,22 @@ namespace AGrail
                         sendReponseMsg(2703, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    if (BattleData.Instance.Agent.SelectArgs.Count == 0 && 
-                        BattleData.Instance.MainPlayer.is_knelt && (BattleData.Instance.MainPlayer.yellow_token > 1))
+                    if (msg == UIStateMsg.ClickArgs)
+                    {
+                        sendReponseMsg(2703, BattleData.Instance.MainPlayer.id, null, BattleData.Instance.Agent.SelectCards,
+                            new List<uint>() { 1, BattleData.Instance.Agent.SelectArgs[0] });
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
+                    }
+                    if (BattleData.Instance.Agent.SelectCards.Count >1 && 
+                        BattleData.Instance.MainPlayer.is_knelt && BattleData.Instance.MainPlayer.yellow_token > 1)
                     {
                         selectList.Clear();
                         mList.Clear();
                         for (uint i = BattleData.Instance.MainPlayer.yellow_token; i > 0; i--)
                         {
                             selectList.Add(new List<uint>() { i - 1 });
-                            mList.Add("个战纹");
+                            mList.Add( i-1 + "个战纹");
                         }
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
@@ -294,7 +308,7 @@ namespace AGrail
                     for (uint i = 0; i < 4; i++)
                     {
                         selectList.Add(new List<uint>() { i });
-                        mList.Add("个战纹");
+                        mList.Add(i+"个战纹");
                     }
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,

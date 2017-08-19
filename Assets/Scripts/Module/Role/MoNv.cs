@@ -190,8 +190,6 @@ namespace AGrail
                     return playerIDs.Count == 1;
 				case (uint)SkillID.MO_NENG_FAN_ZHUAN:
 					return playerIDs.Count == 1 && cardIDs.Count > 1;
-				case (uint)SkillID.MO_NV_ZHI_NU:
-					return true;
 				default:
 					return base.CheckOK(uiState, cardIDs, playerIDs, skillID);
 

@@ -100,9 +100,7 @@ namespace AGrail
         {
             switch (uiState)
             {
-                case (uint)SkillID.秩序之印:
                 case (uint)SkillID.英灵召唤:
-                case (uint)SkillID.军神威光:
                     return true;
             }
             return base.CheckOK(uiState, cardIDs, playerIDs, skillID);

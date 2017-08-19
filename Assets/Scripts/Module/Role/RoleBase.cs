@@ -148,13 +148,13 @@ namespace AGrail
                 //case 7:
                 //return true;
                 case 1602:
-                    return true;                    
-  
+                    return true;
 
-				case 3105:	//激昂狂想曲-代价
-				case 3106:	//胜利交响诗-代价
-				case 31061:	//胜利交响诗-效果
-					return true;                
+
+                //case 3105:	//激昂狂想曲-代价
+               //case 3106:	//胜利交响诗-代价
+                // case 31061:	//胜利交响诗-效果
+                   // return true;                
 				//case 31052:	//激昂狂想曲-效果
 			
 
@@ -176,9 +176,9 @@ namespace AGrail
                 case 14:
                 case 1602:
 				case 3105:	//激昂狂想曲-代价
-				case 31052:	//激昂狂想曲-效果
+				//case 31052:	//激昂狂想曲-效果
 				case 3106:	//胜利交响诗-代价
-				case 31061:	//胜利交响诗-效果
+				//case 31061:	//胜利交响诗-效果
                     return true;
                 case 5:
                     if (BattleData.Instance.Agent.Cmd.args[0] == 801 || BattleData.Instance.Agent.Cmd.args[0] == 805 ||
@@ -688,6 +688,7 @@ namespace AGrail
 					BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
 					//MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseArgsUI);
 					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                        return;
 
 				}
 				;
@@ -722,31 +723,38 @@ namespace AGrail
 				MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
 				MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, string.Format("选择发动激昂狂想曲的条件"));
 					return;
-				case 31052:	//激昂狂想曲-效果
-						if (msg == UIStateMsg.ClickArgs)
-						{
-					if (((BattleData.Instance.Agent.SelectArgs [0] == 1) && (BattleData.Instance.Agent.SelectPlayers.Count == 2)) || (BattleData.Instance.Agent.SelectArgs [0] == 2)) {
-						sendReponseMsg (state, BattleData.Instance.MainPlayer.id,
-							BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, BattleData.Instance.Agent.SelectArgs);
-						BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
-						//MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseArgsUI);
-						MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
-					}
+                case 31052: //激昂狂想曲-效果
+                    if (msg == UIStateMsg.ClickArgs)
+                    {
+                        if (((BattleData.Instance.Agent.SelectArgs[0] == 1) && (BattleData.Instance.Agent.SelectPlayers.Count == 2)) || (BattleData.Instance.Agent.SelectArgs[0] == 2))
+                        {
+                            sendReponseMsg(state, BattleData.Instance.MainPlayer.id,
+                                BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, BattleData.Instance.Agent.SelectArgs);
+                            BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                            //MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseArgsUI);
+                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                            return;
+                        }
 
 
-						};
-						CancelAction = () => 
-						{
-							//MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
-					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
-							BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
-						};
-						selectList = new List<List<uint>>() { new List<uint>() { 1 }, new List<uint>() { 2 }};
-						mList = new List<string>() { "对两名目标对手造成1点法术伤害","弃2张牌"};
-				MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
-				MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-												string.Format("选择发动激昂狂想曲的效果"));
-						return;
+                    };
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 2)
+                    {
+                        selectList = new List<List<uint>>() { new List<uint>() { 1 }, new List<uint>() { 2 } };
+                        mList = new List<string>() { "对这两名对手各造成1点伤害", "弃2张牌" };
+                    }
+                    else
+                    {
+                        selectList = new List<List<uint>>() { new List<uint>() { 3 }, new List<uint>() { 2 } };
+                        mList = new List<string>() { "若要造成伤害，请先选择两位对手", "弃2张牌" };
+                    }
+
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                                                    string.Format("选择发动激昂狂想曲的效果"));
+                    return;
 					case 3106:	//胜利交响诗-代价
 						if (msg == UIStateMsg.ClickArgs)
 						{
@@ -754,7 +762,8 @@ namespace AGrail
 								BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, BattleData.Instance.Agent.SelectArgs);
 							BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
 					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
-							//MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                        //MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                        return;
 						};
 						CancelAction = () => {
 							//MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
@@ -779,15 +788,10 @@ namespace AGrail
 						new List<uint> () { BattleData.Instance.Agent.SelectArgs [0] / 3 + 1, BattleData.Instance.Agent.SelectArgs [0] });
 					BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
 					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
-					//MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseArgsUI);
+                        //MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseArgsUI);
+                        return;
 				}
 				;
-				CancelAction = () => {
-					//MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseArgsUI);
-					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
-					BattleData.Instance.Agent.FSM.BackState (UIStateMsg.Init);
-				};
-
 				selectList = new List<List<uint>> ();
 				mList = new List<string> ();
 				uint Gem = BattleData.Instance.Gem [BattleData.Instance.MainPlayer.team];

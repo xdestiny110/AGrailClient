@@ -131,7 +131,6 @@ namespace AGrail
             switch (uiState)
             {
                 case (uint)SkillID.腥红圣约:
-                case (uint)SkillID.血腥祷言:
                 case (uint)SkillID.杀戮盛宴:
                 case (uint)SkillID.戒骄戒躁:
                     return true;

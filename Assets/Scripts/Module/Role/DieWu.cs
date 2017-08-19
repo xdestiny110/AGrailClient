@@ -93,7 +93,7 @@ namespace AGrail
             switch (uiState)
             {
                 case (uint)SkillID.凋零:
-                    return true;
+                    return BattleData.Instance.Agent.Cmd.args[0] == 2;
                 case (uint)SkillID.倒逆之蝶:
                     return additionalState == 24081;
             }
@@ -165,9 +165,7 @@ namespace AGrail
                 case (uint)SkillID.凋零:
                     return BattleData.Instance.Agent.Cmd.args[0] == 2 && playerIDs.Count == 1;
                 case (uint)SkillID.倒逆之蝶:
-                    return (additionalState == 0 && cardIDs.Count == Math.Min(BattleData.Instance.MainPlayer.hand_count, 2)) || 
-                        (additionalState == 24081 && playerIDs.Count == 1) ||
-                        (additionalState == 24082 && cardIDs.Count == 2) || additionalState == 24083;
+                    return (additionalState == 24082 && cardIDs.Count == 2);
             }
             return base.CheckOK(uiState, cardIDs, playerIDs, skillID);
         }
@@ -268,7 +266,7 @@ namespace AGrail
                         string.Format("是否发动{0}", Skills[state].SkillName));
                     return;
                 case (uint)SkillID.凋零:
-                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1 )
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.Cmd.args[0] == 2)
                     {
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectPlayers, null, new List<uint>() { 1 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
@@ -320,27 +318,29 @@ namespace AGrail
                     if (additionalState == 0 && msg == UIStateMsg.ClickSkill)                    
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                             string.Format("{0}: 弃两张牌", Skills[state].SkillName));                    
-                    else if (additionalState == 0 && BattleData.Instance.Agent.SelectCards.Count == MaxSelectCard(state))
-                    {
-                        selectList.Add(new List<uint>() { 1 });
-                        mList.Add("对目标角色造成1点法术伤害");
-                        selectList.Add(new List<uint>() { 2 });
-                        mList.Add("移除2个【茧】,移除1个【蛹】");
-                        selectList.Add(new List<uint>() { 3 });
-                        mList.Add("对自己造成4点法术伤害,移除1个【蛹】");
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                            string.Format("{0}: 选择要发动的技能", Skills[state].SkillName));
-                    }
                     else if (additionalState == 0 && msg == UIStateMsg.ClickArgs)
                     {
                         additionalState = BattleData.Instance.Agent.SelectArgs[0] + (uint)SkillID.倒逆之蝶 * 10;
                         selectCards.Clear();
                         selectCards.AddRange(BattleData.Instance.Agent.SelectCards);
                         BattleData.Instance.Agent.RemoveAllSelectCard();
-                    }                        
-
-                    if(additionalState == 24081)
+                    }
+                    else if (additionalState == 0 && BattleData.Instance.Agent.SelectCards.Count == MaxSelectCard(state))
+                    {
+                        selectList.Add(new List<uint>() { 1 });
+                        mList.Add("对目标角色造成1点法术伤害");
+                        if(BattleData.Instance.MainPlayer.yellow_token > 0)
+                        { 
+                        selectList.Add(new List<uint>() { 2 });
+                        mList.Add("移除2个【茧】,移除1个【蛹】");
+                        selectList.Add(new List<uint>() { 3 });
+                        mList.Add("对自己造成4点法术伤害,移除1个【蛹】");
+                        }
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                            string.Format("{0}: 选择要发动的技能", Skills[state].SkillName));
+                    }
+                    if (additionalState == 24081)
                     {
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                             string.Format("{0}: 选择一个目标角色", Skills[state].SkillName));

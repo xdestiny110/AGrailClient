@@ -200,7 +200,7 @@ namespace AGrail
                     };
                     additionalState = 0;
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("点击要伤害的目标玩家", Skills[state].SkillName));
+                        string.Format("幻影星辰:点击要伤害的目标玩家", Skills[state].SkillName));
                     return;
                 case (uint)SkillID.暗之解放:
                     OKAction = () =>
