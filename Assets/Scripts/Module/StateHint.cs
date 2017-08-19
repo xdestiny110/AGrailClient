@@ -21,5 +21,10 @@ namespace AGrail
             return hint[state.ToString()][additional.ToString()];
         }
 
+        public static string GetHint(uint state, int additional = 0)
+        {
+            return hint[state.ToString()][additional.ToString()];
+        }
+
     }
 }

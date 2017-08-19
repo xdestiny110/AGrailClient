@@ -138,19 +138,6 @@ namespace AGrail
                     if (cardIDs.Count == 1 && playerIDs.Count == 1)
                         return true;
                     break;
-                case 3:
-                    if (cardIDs.Count == 1)
-                    {
-                        if (playerIDs.Count == 0 && Card.GetCard(cardIDs[0]).Element == Card.CardElement.light)
-                            return true;
-                        if (playerIDs.Count == 1 && Card.GetCard(cardIDs[0]).Element != Card.CardElement.light)
-                            return true;
-                    }
-                    break;
-                case 4:
-                    if (cardIDs.Count == 1)
-                        return true;
-                    break;
                 case 5:
                 case 8:
                     if (cardIDs.Count == BattleData.Instance.Agent.Cmd.args[1])
@@ -366,14 +353,13 @@ namespace AGrail
 			List<string> mList;
             List<List<uint>> selectList;
             List<string> explainList;
-            uint tGem, tCrystal ;
-            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint);
+            uint tGem, tCrystal ;            
             switch (state)
             {
                 case (uint)StateEnum.Attack:
                     //攻击
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        "请选择目标");
+                        StateHint.GetHint(StateEnum.Attack));
                     if (BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == 1)
                     {
                         Attack(BattleData.Instance.Agent.SelectCards[0], BattleData.Instance.Agent.SelectPlayers[0]);
@@ -383,7 +369,7 @@ namespace AGrail
                 case (uint)StateEnum.Magic:
                     //魔法
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        "请选择目标");
+                         StateHint.GetHint(StateEnum.Magic));
                     if (BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == 1)
                     {
                         Magic(BattleData.Instance.Agent.SelectCards[0], BattleData.Instance.Agent.SelectPlayers[0]);
@@ -392,42 +378,50 @@ namespace AGrail
                     break;
                 case (uint)StateEnum.Attacked:
                     //应战
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        "选择卡牌与目标;或者点击取消");
-                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1)
+                    if(BattleData.Instance.Agent.SelectCards.Count == 1)
                     {
-                        AttackedReply(Card.GetCard(BattleData.Instance.Agent.SelectCards[0]),
-                            BattleData.Instance.Agent.SelectPlayers[0]);
-                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                    }
-                    else
-                    {
-                        OKAction = () =>
+                        if(Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Element == Card.CardElement.light)
                         {
                             AttackedReply(Card.GetCard(BattleData.Instance.Agent.SelectCards[0]));
-                            BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                        };
-                        CancelAction = () =>
+                            return;
+                        }
+                        else
                         {
-                            AttackedReply();
-                            BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                        };
-                    }               
+                            if(BattleData.Instance.Agent.SelectPlayers.Count == 1)
+                            {
+                                AttackedReply(Card.GetCard(BattleData.Instance.Agent.SelectCards[0]),
+                                    BattleData.Instance.Agent.SelectPlayers[0]);
+                                return;
+                            }
+                            else
+                                MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                                    StateHint.GetHint(StateEnum.Attacked, 1));
+                        }
+                    }
+                    else
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                            StateHint.GetHint(StateEnum.Attacked));
+                    CancelAction = () =>
+                    {
+                        AttackedReply();
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                    };
                     break;
                 case (uint)StateEnum.Modaned:
                     //魔弹响应
-                    OKAction = () =>
+                    if(BattleData.Instance.Agent.SelectCards.Count == 1)
                     {
                         MoDaned(Card.GetCard(BattleData.Instance.Agent.SelectCards[0]));
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                    };
+                        return;
+                    }
                     CancelAction = () =>
                     {
                         MoDaned();
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        "选择卡牌并点击确定;或者点击取消");
+                        StateHint.GetHint(StateEnum.Modaned));
                     break;
                 case (uint)StateEnum.Drop:
                     //弃牌
@@ -443,7 +437,7 @@ namespace AGrail
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        "选择要舍弃的牌");
+                        string.Format(StateHint.GetHint(StateEnum.Drop), BattleData.Instance.Agent.Cmd.args[1]));
                     break;
                 case (uint)StateEnum.Weaken:
                     //虚弱
@@ -458,7 +452,7 @@ namespace AGrail
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        "摸牌则点击确认;跳过回合则点击取消");
+                        StateHint.GetHint(StateEnum.Weaken));
                     break;
                 case (uint)StateEnum.Heal:
                     //治疗
@@ -485,12 +479,15 @@ namespace AGrail
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        "选择要舍弃的盖牌");
+                        string.Format(StateHint.GetHint(StateEnum.DropCover), BattleData.Instance.Agent.Cmd.args[1]));
                     break;
                 case 10:
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                        StateHint.GetHint(StateEnum.Any));
+                    break;
                 case 11:
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        "请选择行动");
+                        StateHint.GetHint(StateEnum.AttackAndMagic));
                     break;
                 case 12:
                     //购买
@@ -655,7 +652,7 @@ namespace AGrail
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        "请选择额外行动");
+                        StateHint.GetHint(StateEnum.AdditionalAction));
                     break;
                 case 1602:
                     //响应威力赐福
