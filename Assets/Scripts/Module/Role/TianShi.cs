@@ -309,8 +309,11 @@ namespace AGrail
                     {
                         for (uint j = 0; j <= Math.Min(BattleData.Instance.MainPlayer.crystal, BattleData.Instance.Agent.Cmd.args[0] - i); j++)
                         {
-                            selectList.Add(new List<uint>() { i, j });
-                            explainList.Add(i + "个宝石" + "," + j + "个水晶");
+                            if (i + j != 0)
+                            {
+                                selectList.Add(new List<uint>() { i, j });
+                                explainList.Add(i + "个宝石" + "," + j + "个水晶");
+                            }
                         }
                     }
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, explainList);

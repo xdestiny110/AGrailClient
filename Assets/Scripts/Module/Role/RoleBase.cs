@@ -156,9 +156,9 @@ namespace AGrail
                     if (cardIDs.Count == BattleData.Instance.Agent.Cmd.args[1])
                         return true;
                     break;
-                case 6:
+                //case 6:
                 //case 7:
-                    return true;
+                //return true;
                 case 1602:
                     return true;                    
   
@@ -181,7 +181,7 @@ namespace AGrail
             {
                 case 3:
                 case 4:
-                case 6:
+                //case 6:
                 case 7:                
                 case 12:
                 case 13:
@@ -447,18 +447,21 @@ namespace AGrail
                     break;
                 case (uint)StateEnum.Weaken:
                     //虚弱
-                    OKAction = () =>
+                    if (msg == UIStateMsg.ClickArgs)
                     {
-                        Weaken(new List<uint>() { 1 });
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                        Weaken(BattleData.Instance.Agent.SelectArgs);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
                     };
-                    CancelAction = () =>
-                    {
-                        Weaken(new List<uint>() { 0 });
-                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                    };
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                    selectList = new List<List<uint>>();
+                    explainList = new List<string>();
+                    selectList.Add(new List<uint>() { 1 }); selectList.Add(new List<uint>() { 0 });
+                    explainList.Add("摸牌并正常行动"); explainList.Add("跳过本回合");
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, explainList);
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        "摸牌则点击确认;跳过回合则点击取消");
+                        "你被虚弱了,请选择");
                     break;
                 case (uint)StateEnum.Heal:
                     //治疗

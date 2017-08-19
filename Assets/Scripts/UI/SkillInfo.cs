@@ -16,6 +16,7 @@ namespace AGrail
         {
             set
             {
+                skillDescription.alignment = TextAnchor.MiddleLeft;
                 skillDescription.text = value.Description;
                 skillDescription.text = skillDescription.text.Replace("\\n", "\n");
                 skillName.text = value.SkillName;

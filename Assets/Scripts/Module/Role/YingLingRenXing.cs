@@ -27,7 +27,7 @@ namespace AGrail
         {
             get
             {
-                return Card.CardProperty.幻;
+                return Card.CardProperty.咏;
             }
         }
 
