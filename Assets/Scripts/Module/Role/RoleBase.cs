@@ -19,6 +19,7 @@ namespace AGrail
         public virtual string Knelt { get { return null; } }
         public virtual bool IsStart { set; get; }
         public Dictionary<uint, Skill> Skills = new Dictionary<uint, Skill>();
+        public Dictionary<uint, Mation> Mations { get { return Mation.GetMation((uint)RoleID); } }
 
         //记录一些特殊状态
         //由于当初没想好导致必须要在Role中维护这个状态...这个要比较小心
@@ -143,9 +144,9 @@ namespace AGrail
                     if (cardIDs.Count == BattleData.Instance.Agent.Cmd.args[1])
                         return true;
                     break;
-                case 6:
+                //case 6:
                 //case 7:
-                    return true;
+                //return true;
                 case 1602:
                     return true;                    
   
@@ -168,7 +169,7 @@ namespace AGrail
             {
                 case 3:
                 case 4:
-                case 6:
+                //case 6:
                 case 7:                
                 case 12:
                 case 13:
@@ -356,6 +357,9 @@ namespace AGrail
             uint tGem, tCrystal ;            
             switch (state)
             {
+		case (uint)StateEnum.Idle:
+			MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.CloseNewArgsUI);
+			break;
                 case (uint)StateEnum.Attack:
                     //攻击
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
@@ -441,16 +445,19 @@ namespace AGrail
                     break;
                 case (uint)StateEnum.Weaken:
                     //虚弱
-                    OKAction = () =>
+                    if (msg == UIStateMsg.ClickArgs)
                     {
-                        Weaken(new List<uint>() { 1 });
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                        Weaken(BattleData.Instance.Agent.SelectArgs);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
                     };
-                    CancelAction = () =>
-                    {
-                        Weaken(new List<uint>() { 0 });
-                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                    };
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                    selectList = new List<List<uint>>();
+                    explainList = new List<string>();
+                    selectList.Add(new List<uint>() { 1 }); selectList.Add(new List<uint>() { 0 });
+                    explainList.Add("摸牌并正常行动"); explainList.Add("跳过本回合");
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, explainList);
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                         StateHint.GetHint(StateEnum.Weaken));
                     break;

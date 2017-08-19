@@ -26,7 +26,7 @@ namespace AGrail
         {
             get
             {
-                return Card.CardProperty.血;
+                return Card.CardProperty.技;
             }
         }
 
