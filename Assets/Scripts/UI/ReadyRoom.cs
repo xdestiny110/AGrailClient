@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using Framework.Message;
 using UnityEngine.UI;
+using DG.Tweening;
 
 namespace AGrail
 {
     public class ReadyRoom : WindowsBase
     {
+        [SerializeField]
+        private Transform root;
         [SerializeField]
         private List<ReadyRoomPlayer> players = new List<ReadyRoomPlayer>();
         [SerializeField]
@@ -44,6 +47,9 @@ namespace AGrail
                 MessageSystem<MessageType>.Notify(MessageType.PlayerNickName, i, BattleData.Instance.PlayerInfos[i].nickname);
                 MessageSystem<MessageType>.Notify(MessageType.PlayerTeamChange, i, BattleData.Instance.PlayerInfos[i].team);
             }
+
+            root.localPosition = new Vector3(1280, 0, 0);
+            root.DOLocalMoveX(0, 1);
 
             base.Awake();
         }

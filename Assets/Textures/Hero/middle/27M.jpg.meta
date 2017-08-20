@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: e3df83dca63422e4599a5c48ca637de9
-timeCreated: 1500997411
+guid: 4c65ed5e3c35ce54f8b9bbe4af27f3d7
+timeCreated: 1503235433
 licenseType: Pro
 TextureImporter:
   fileIDToRecycleName: {}
@@ -86,7 +86,7 @@ TextureImporter:
     serializedVersion: 2
     sprites: []
     outline: []
-  spritePackingTag: 
+  spritePackingTag: hero_m
   userData: 
   assetBundleName: hero_m
   assetBundleVariant: 

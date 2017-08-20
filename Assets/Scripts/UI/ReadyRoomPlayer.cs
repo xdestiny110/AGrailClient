@@ -35,7 +35,7 @@ namespace AGrail
         {
             set
             {
-                teamBG.sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("ready_texture", "Team" + value.ToString());
+                teamBG.sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("lobby_texture", "Team" + value.ToString());
             }
         }
 

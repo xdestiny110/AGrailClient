@@ -1754,6 +1754,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CanvasGroup: {fileID: 0}
   Canvas: {fileID: 0}
+  root: {fileID: 224948241996273726}
   players:
   - {fileID: 114014207784871156}
   - {fileID: 114238579216694826}

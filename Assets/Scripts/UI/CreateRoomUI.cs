@@ -1,14 +1,16 @@
 ﻿using UnityEngine;
 using Framework.UI;
 using UnityEngine.UI;
-using Framework.Network;
 using System.Linq;
 using System;
+using DG.Tweening;
 
 namespace AGrail
 {
     public class CreateRoomUI : WindowsBase
     {
+        [SerializeField]
+        private Transform root;
         [SerializeField]
         private InputField roomTitle;
         [SerializeField]
@@ -32,6 +34,19 @@ namespace AGrail
             {
                 return WindowType.CreateRoomUI;
             }
+        }
+
+        public override void Awake()
+        {
+            root.localPosition = new Vector3(1280, 0, 0);
+            root.DOLocalMoveX(0, 1);
+
+            base.Awake();
+        }
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
         }
 
         public void OnOKClick()
