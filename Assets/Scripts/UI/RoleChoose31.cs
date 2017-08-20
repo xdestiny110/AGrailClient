@@ -36,15 +36,17 @@ namespace AGrail
                 seats.RemoveAt(0);
             }
 
+            var idx = BattleData.Instance.PlayerIdxOrder.IndexOf((int)BattleData.Instance.StartPlayerID);
             for (int i = 0; i < seats.Count; i++)
             {
-                var player = BattleData.Instance.GetPlayerInfo((uint)BattleData.Instance.PlayerIdxOrder[i]);
+
+                var player = BattleData.Instance.GetPlayerInfo((uint)BattleData.Instance.PlayerIdxOrder[(i + idx) % seats.Count]);
                 if (player.id == BattleData.Instance.PlayerID)
                     seats[i].GetComponent<Image>().sprite =
                         AssetBundleManager.Instance.LoadAsset<Sprite>("lobby_texture", "SeatMain");
                 else
                     seats[i].GetComponent<Image>().sprite =
-                        (BattleData.Instance.GetPlayerInfo((uint)BattleData.Instance.PlayerIdxOrder[i]).team == (uint)Team.Blue) ?
+                        (player.team == (uint)Team.Blue) ?
                             AssetBundleManager.Instance.LoadAsset<Sprite>("lobby_texture", "SeatBlue") :
                             AssetBundleManager.Instance.LoadAsset<Sprite>("lobby_texture", "SeatRed");
             }

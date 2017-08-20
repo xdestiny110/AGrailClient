@@ -22,6 +22,7 @@ namespace AGrail
         public uint[] Grail = new uint[2];        
         public List<network.SinglePlayerInfo> PlayerInfos = new List<network.SinglePlayerInfo>();
         public List<int> PlayerIdxOrder = new List<int>();//按照顺序排列玩家ID, 第一个一定是主玩家
+        public uint StartPlayerID = 0;//第一个行动玩家的ID
 
         public PlayerAgent Agent { get; private set; }
         public network.SinglePlayerInfo MainPlayer { get; private set; }
@@ -163,11 +164,11 @@ namespace AGrail
                 if (value.is_startedSpecified)
                 {
                     //游戏开始，可能需要重新定位玩家位置
-                    UnityEngine.Debug.Log("game start");
                     if (!IsStarted && value.is_started)
                     {
                         PlayerIdxOrder.Clear();
                         int t = -1;
+                        StartPlayerID = value.player_infos[0].id;
                         for (int i = 0; i < value.player_infos.Count; i++)
                         {
                             PlayerIdxOrder.Add((int)value.player_infos[i].id);

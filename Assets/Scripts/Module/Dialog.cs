@@ -144,7 +144,7 @@ namespace AGrail
                     break;
                 case MessageType.PlayerLeave:
                     Log += string.Format("<color=#FF0000FF>玩家[{0}]离开房间</color>" + Environment.NewLine, 
-                        BattleData.instance.GetPlayerInfo((uint)parameters[0]).nickname);
+                        BattleData.instance.GetPlayerInfo((uint)(int)parameters[0]).nickname);
                     break;
                 case MessageType.TURNBEGIN:
                     Log += "<color=#00FF00FF>=======================</color>" + Environment.NewLine;
