@@ -58,6 +58,8 @@
         CrystalChange,
         GrailChange,
         SendHint,
+        Win,
+        Lose,
         PlayerLeave,
         PlayerHeroName,
         PlayerRoleChange,
@@ -83,5 +85,6 @@
         AgentUpdate,
         ShowNewArgsUI,
         CloseNewArgsUI,
+        PlayBGM,
     }
 }

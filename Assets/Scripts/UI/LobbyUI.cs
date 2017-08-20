@@ -47,7 +47,7 @@ namespace AGrail
         }
 
         public override void Awake()
-        {
+        {            
             MessageSystem<MessageType>.Regist(MessageType.RoomList, this);
             MessageSystem<MessageType>.Regist(MessageType.EnterRoom, this);
             MessageSystem<MessageType>.Regist(MessageType.ERROR, this);
@@ -57,6 +57,9 @@ namespace AGrail
                 Lobby.Instance.GetRoomList();
             else
                 roomInfos = Lobby.Instance.RoomInfo;
+
+            MessageSystem<MessageType>.Notify(MessageType.PlayBGM);
+
             base.Awake();
         }
 

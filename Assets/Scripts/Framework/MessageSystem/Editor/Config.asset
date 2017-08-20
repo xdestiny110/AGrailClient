@@ -65,6 +65,8 @@ MonoBehaviour:
   - CrystalChange
   - GrailChange
   - SendHint
+  - Win
+  - Lose
   - PlayerLeave
   - PlayerHeroName
   - PlayerRoleChange
@@ -90,3 +92,4 @@ MonoBehaviour:
   - AgentUpdate
   - ShowNewArgsUI
   - CloseNewArgsUI
+  - PlayBGM

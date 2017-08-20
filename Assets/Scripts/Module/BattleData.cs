@@ -120,11 +120,15 @@ namespace AGrail
                 {
                     Morale[(int)Team.Blue] = value.blue_morale;
                     MessageSystem<MessageType>.Notify(MessageType.MoraleChange, Team.Blue, Morale[(int)Team.Blue]);
+                    if(value.blue_morale == 0)
+                        MessageSystem<MessageType>.Notify((MainPlayer.team == (uint)Team.Blue) ? MessageType.Lose : MessageType.Win);
                 }
                 if (value.red_moraleSpecified)
                 {
                     Morale[(int)Team.Red] = value.red_morale;
                     MessageSystem<MessageType>.Notify(MessageType.MoraleChange, Team.Red, Morale[(int)Team.Red]);
+                    if (value.red_morale == 0)
+                        MessageSystem<MessageType>.Notify((MainPlayer.team == (uint)Team.Red) ? MessageType.Lose : MessageType.Win);
                 }
                 if (value.blue_gemSpecified)
                 {
@@ -179,7 +183,7 @@ namespace AGrail
                             PlayerIdxOrder.RemoveRange(0, t);
                         }
                         if (value.player_id == 9)
-                            MainPlayer = new network.SinglePlayerInfo() { id = 9 };                            
+                            MainPlayer = new network.SinglePlayerInfo() { id = 9, team = (uint)Team.Other };                            
                         MessageSystem<MessageType>.Notify(MessageType.GameStart);
                     }
                     //需要再发一次准备

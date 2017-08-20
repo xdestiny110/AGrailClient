@@ -13,7 +13,9 @@ namespace AGrail
         [SerializeField]
         private Transform root;
         [SerializeField]
-        private Slider volSlider;
+        private Slider bgmSlider;
+        [SerializeField]
+        private Slider seSlider;
 
         public override WindowType Type
         {
@@ -25,7 +27,8 @@ namespace AGrail
 
         public override void Awake()
         {
-            volSlider.value = AudioListener.volume;
+            bgmSlider.value = AudioManager.Instance.BGMVolume;
+            seSlider.value = AudioManager.Instance.SEVolume;
 
             base.Awake();
         }
@@ -36,9 +39,14 @@ namespace AGrail
             SceneManager.LoadScene(1);
         }
         
-        public void OnVolChange(float vol)
+        public void OnBGMVolChange(float vol)
         {
-            AudioListener.volume = vol;
+            AudioManager.Instance.BGMVolume = vol;
+        }
+
+        public void OnSEVolChange(float vol)
+        {
+            AudioManager.Instance.SEVolume = vol;
         }
 
         public void OnBackClick()

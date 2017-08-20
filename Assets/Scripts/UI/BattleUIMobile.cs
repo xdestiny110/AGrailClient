@@ -81,6 +81,8 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.CrystalChange, this);
             MessageSystem<MessageType>.Regist(MessageType.GrailChange, this);
             MessageSystem<MessageType>.Regist(MessageType.SendHint, this);
+            MessageSystem<MessageType>.Regist(MessageType.Win, this);
+            MessageSystem<MessageType>.Regist(MessageType.Lose, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerNickName, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerActionChange, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerTeamChange, this);
@@ -98,6 +100,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.ChatChange, this);
 
             //依据数据初始化界面
+            MessageSystem<MessageType>.Notify(MessageType.PlayBGM);
             MessageSystem<MessageType>.Notify(MessageType.MoraleChange, Team.Red, BattleData.Instance.Morale[(int)Team.Red]);
             MessageSystem<MessageType>.Notify(MessageType.MoraleChange, Team.Blue, BattleData.Instance.Morale[(int)Team.Blue]);
             MessageSystem<MessageType>.Notify(MessageType.GemChange, Team.Red, (int)BattleData.Instance.Gem[(int)Team.Red]);
@@ -137,6 +140,8 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.CrystalChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.GrailChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.SendHint, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.Win, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.Lose, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerNickName, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerActionChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerTeamChange, this);
@@ -182,6 +187,10 @@ namespace AGrail
                         hint.transform.parent.gameObject.SetActive(true);
                         hint.text = parameters[0].ToString();
                     }
+                    break;
+                case MessageType.Win:                    
+                    break;
+                case MessageType.Lose:
                     break;
                 case MessageType.PlayerNickName:
                     playerStatus[(int)parameters[0]].NickName = parameters[1].ToString();
