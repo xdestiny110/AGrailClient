@@ -27,6 +27,8 @@ namespace AGrail
         private Transform elementRoot;
         [SerializeField]
         private Image selectBorder;
+        [SerializeField]
+        private Image canSelectBorder;
 
         private bool isEnable;
         public bool IsEnable
@@ -41,6 +43,7 @@ namespace AGrail
                         propertyRoot.GetChild(i).GetComponent<Image>().color = new Color(0.5f, 0.5f, 0.5f, 1);
                     for (int i = 0; i < elementRoot.childCount; i++)
                         elementRoot.GetChild(i).GetComponent<Image>().color = new Color(0.5f, 0.5f, 0.5f, 1);
+                    canSelectBorder.enabled = false;
                 }
                 else
                 {
@@ -49,6 +52,7 @@ namespace AGrail
                         propertyRoot.GetChild(i).GetComponent<Image>().color = Color.white;
                     for (int i = 0; i < elementRoot.childCount; i++)
                         elementRoot.GetChild(i).GetComponent<Image>().color = Color.white;
+                    canSelectBorder.enabled = true;
                 }                    
             }
             get
@@ -99,9 +103,15 @@ namespace AGrail
             {
                 case MessageType.AgentSelectCard:
                     if (BattleData.Instance.Agent.SelectCards.Contains(card.ID))
+                    {
                         selectBorder.enabled = true;
+                        canSelectBorder.enabled = false;
+                    }
                     else
+                    {
                         selectBorder.enabled = false;
+                        canSelectBorder.enabled = IsEnable;
+                    }                        
                     break;
             }
         }

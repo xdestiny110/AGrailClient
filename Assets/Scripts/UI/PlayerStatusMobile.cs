@@ -22,6 +22,8 @@ namespace AGrail
         [SerializeField]
         private Image select;
         [SerializeField]
+        private Image canSelect;
+        [SerializeField]
         private Image hero;
         [SerializeField]
         private Image property;
@@ -54,6 +56,7 @@ namespace AGrail
             set
             {
                 btnPlayer.interactable = value;
+                canSelect.gameObject.SetActive(value);
                 foreach(var v in GetComponentsInChildren<Image>())
                 {
                     var c = v.color;
@@ -331,8 +334,8 @@ namespace AGrail
             {
                 if (chatCoro != null)
                     StopCoroutine(chatCoro);
-                chat.text = value;
                 chat.transform.parent.gameObject.SetActive(true);
+                chat.text = value;
                 chatCoro = StartCoroutine(chatDisappear());
             }
         }
@@ -368,9 +371,15 @@ namespace AGrail
             {
                 case MessageType.AgentSelectPlayer:
                     if (BattleData.Instance.Agent.SelectPlayers.Contains(ID))
+                    {
                         select.gameObject.SetActive(true);
+                        canSelect.gameObject.SetActive(false);
+                    }
                     else
+                    {
                         select.gameObject.SetActive(false);
+                        canSelect.gameObject.SetActive(btnPlayer.interactable);
+                    }                        
                     break;
             }
         }
@@ -386,7 +395,7 @@ namespace AGrail
             else
             {
                 turn.transform.localScale = new Vector3(2, 2, 1);
-                turn.transform.DOScale(new Vector3(1.3f, 1.3f, 1), 1.5f);
+                turn.transform.DOScale(new Vector3(1.2f, 1.2f, 1), 1.5f);
             }
         }
 

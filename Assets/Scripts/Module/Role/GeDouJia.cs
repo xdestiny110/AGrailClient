@@ -158,7 +158,7 @@ namespace AGrail
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("{0}: 请选择目标玩家", Skills[state].SkillName));
+                        string.Format("{0}: 请选择目标对手", Skills[state].SkillName));
                     return;
                 case 2002:
                 case 2005:
@@ -227,7 +227,6 @@ namespace AGrail
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                     if (msg == UIStateMsg.ClickArgs)
                     {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         if (BattleData.Instance.Agent.SelectArgs[0] == 1)
                             BattleData.Instance.Agent.Cmd.respond_id = 2004;
                         else

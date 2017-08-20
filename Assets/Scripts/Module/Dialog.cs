@@ -137,7 +137,7 @@ namespace AGrail
                     var gossip = parameters[0] as network.Gossip;
                     srcPlayer = BattleData.Instance.GetPlayerInfo(gossip.id);
                     if (srcPlayer.role_idSpecified)
-                        Chat.Add(new ChatPerson() { ID = srcPlayer.id, RoleID = srcPlayer.role_id, msg = gossip.txt });
+                        Chat.Add(new ChatPerson() { ID = srcPlayer.id, RoleID = srcPlayer.role_id, msg = gossip.txt.Replace(" ", "\u00a0") });
                     else
                         Chat.Add(new ChatPerson() { ID = srcPlayer.id, msg = gossip.txt });
                     MessageSystem<MessageType>.Notify(MessageType.ChatChange);
