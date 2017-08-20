@@ -45,7 +45,7 @@ namespace AGrail
         private Transform basicAndExCardArea;
 
         public Transform AnimationPos;
-        private RoleBase role;
+        private RoleBase role = RoleFactory.Create(AGrail.RoleID.Blank);
         private Text token0, token1, token2;
         private Button btnPlayer;
 
@@ -409,6 +409,7 @@ namespace AGrail
 
         private void onLongPress()
         {
+            if(role != null)
             GameManager.UIInstance.PushWindow(Framework.UI.WindowType.InfomationUI, Framework.UI.WinMsg.None, -1, Vector3.zero, role);
         }
 

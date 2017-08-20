@@ -629,7 +629,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: SE
+  m_Text: "\u6548\u679C\u97F3"
 --- !u!114 &114479035639417686
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -997,7 +997,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: BGM
+  m_Text: "\u80CC\u666F\u97F3\u4E50"
 --- !u!114 &114879181472925718
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1384,7 +1384,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -135, y: -15}
+  m_AnchoredPosition: {x: -150.8, y: -15}
   m_SizeDelta: {x: 80, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224629754476895048
@@ -1460,8 +1460,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -135, y: 30}
-  m_SizeDelta: {x: 80, y: 30}
+  m_AnchoredPosition: {x: -150.8, y: 30}
+  m_SizeDelta: {x: 120, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224828228033616836
 RectTransform:
