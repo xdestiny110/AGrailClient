@@ -43,9 +43,10 @@ namespace AGrail
             GameManager.TCPInstance.Send(new Protobuf() { Proto = proto, ProtoID = ProtoNameIds.READYFORGAMEREQUEST });
         }
 
-        public void ChooseTeam()
+        public void ChooseTeam(Team team)
         {
-            
+            var proto = new network.JoinTeamRequest() { team = (network.JoinTeamRequest.Team)team };
+            GameManager.TCPInstance.Send(new Protobuf() { Proto = proto, ProtoID = ProtoNameIds.JOINTEAMREQUEST });
         }
 
         public void OnEventTrigger(MessageType eventType, params object[] parameters)

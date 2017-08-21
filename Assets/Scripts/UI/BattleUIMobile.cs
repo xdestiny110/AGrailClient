@@ -6,6 +6,7 @@ using Framework.Message;
 using Framework.AssetBundle;
 using System.Linq;
 using DG.Tweening;
+using UnityEngine.SceneManagement;
 
 namespace AGrail
 {
@@ -432,6 +433,12 @@ namespace AGrail
         private void hideHint()
         {
             hint.transform.parent.gameObject.SetActive(false);
+        }
+
+        public void winAndExit()
+        {
+            Lobby.Instance.LeaveRoom();
+            SceneManager.LoadScene(1);
         }
     }
 }

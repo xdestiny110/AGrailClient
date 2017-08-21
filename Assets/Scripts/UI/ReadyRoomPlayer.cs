@@ -31,11 +31,13 @@ namespace AGrail
             }
         }
 
+        private Team team;
         public Team Team
         {
             set
             {
                 teamBG.sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("lobby_texture", "Team" + value.ToString());
+                team = value;
             }
         }
 
@@ -46,11 +48,16 @@ namespace AGrail
             PlayerName = "";
         }
 
+        private int idx = 0;
         public void OnClick()
         {
-            BattleData.Instance.ChooseTeam();
+            if(idx == 0)
+                BattleData.Instance.ChooseTeam(Team.Blue);
+            else if(idx == 1)
+                BattleData.Instance.ChooseTeam(Team.Red);
+            else
+                BattleData.Instance.ChooseTeam(Team.Other);
+            idx = (idx + 1) % 3;
         }
     }
 }
-
-

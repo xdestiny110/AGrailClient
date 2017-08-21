@@ -1,10 +1,9 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
 using Framework.Message;
-using System;
 using System.Collections.Generic;
 using Framework.AssetBundle;
+using DG.Tweening;
 
 namespace AGrail
 {
@@ -26,6 +25,8 @@ namespace AGrail
         private Button btnSetting;
         [SerializeField]
         private Button btnCovered;
+        [SerializeField]
+        private GameObject winPanel;
 
         private List<PlayerStatusMobile> players;
         private List<SkillUI> skillUIs = new List<SkillUI>();
@@ -50,6 +51,8 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.AgentUIStateChange, this);
             MessageSystem<MessageType>.Regist(MessageType.ShowNewArgsUI, this);
             MessageSystem<MessageType>.Regist(MessageType.CloseNewArgsUI, this);
+            MessageSystem<MessageType>.Regist(MessageType.Lose, this);
+            MessageSystem<MessageType>.Regist(MessageType.Win, this);
 
             MessageSystem<MessageType>.Notify(MessageType.AgentUpdate);
         }
@@ -63,6 +66,8 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.AgentUIStateChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.ShowNewArgsUI, this);
             MessageSystem<MessageType>.UnRegist(MessageType.CloseNewArgsUI, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.Lose, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.Win, this);
         }
 
         public void OnEventTrigger(MessageType eventType, params object[] parameters)
@@ -118,6 +123,24 @@ namespace AGrail
                 case MessageType.CloseNewArgsUI:
                     if (GameManager.UIInstance.PeekWindow() == Framework.UI.WindowType.ArgsUI)
                         GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
+                    break;
+                case MessageType.Win:
+                    winPanel.SetActive(true);
+                    winPanel.transform.GetChild(0).GetComponent<Image>().sprite =
+                        (BattleData.Instance.MainPlayer.team == (uint)Team.Blue) ?
+                        AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "WinBlue") :
+                        AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "WinRed");
+                    winPanel.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                    winPanel.transform.DOScale(1, 1);
+                    break;
+                case MessageType.Lose:
+                    winPanel.SetActive(true);
+                    winPanel.transform.GetChild(0).GetComponent<Image>().sprite =
+                        (BattleData.Instance.MainPlayer.team == (uint)Team.Red) ?
+                        AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "WinBlue") :
+                        AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "WinRed");
+                    winPanel.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                    winPanel.transform.DOScale(1, 1);
                     break;
             }
         }

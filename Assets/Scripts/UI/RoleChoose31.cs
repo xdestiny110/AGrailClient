@@ -56,11 +56,17 @@ namespace AGrail
                 var sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("hero_m", roleID.ToString() + "M");
                 if (sprite != null)
                     heros[i].GetComponent<Image>().sprite = sprite;
+                var heroIdx = i;
                 heros[i].GetComponent<Button>().onClick.AddListener(() =>
                 {
                     RoleChoose.Instance.Choose(roleID);
                     for (int j = 0; j < heros.Count; j++)
-                        heros[j].GetComponent<Button>().interactable = false;
+                    {
+                        if (heroIdx != j)
+                            heros[j].SetActive(false);
+                        else
+                            heros[j].GetComponent<Button>().interactable = false;
+                    }                        
                     info.text = "等待他人选择角色";
                     StartCoroutine(waitOthers());
                 });
