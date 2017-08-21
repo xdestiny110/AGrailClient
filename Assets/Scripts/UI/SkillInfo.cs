@@ -20,7 +20,7 @@ namespace AGrail
             {
                 skillTag.text = value.MationTag;
                 skillTag.text = skillTag.text.Replace("【", "");
-                skillTag.text = skillTag.text.Replace("】", "    ");
+                skillTag.text = skillTag.text.Replace("】", "　");
                 skillDescription.alignment = TextAnchor.MiddleLeft;
                 skillDescription.text = value.MationDesc;
                 skillDescription.text = skillDescription.text.Replace("\\n", "\n");
