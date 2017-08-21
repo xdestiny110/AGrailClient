@@ -39,6 +39,14 @@ namespace AGrail
             }
         }
 
+        public override uint Star
+        {
+            get
+            {
+                return 50;
+            }
+        }
+
         public override bool HasYellow
         {
             get

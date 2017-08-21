@@ -39,6 +39,14 @@ namespace AGrail
             }
         }
 
+        public override uint Star
+        {
+            get
+            {
+                return 30;
+            }
+        }
+
         public TianShi()
         {
             for (uint i = 701; i <= 706; i++)

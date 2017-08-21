@@ -39,6 +39,14 @@ namespace AGrail
             }
         }
 
+        public override uint Star
+        {
+            get
+            {
+                return 35;
+            }
+        }
+
         public override uint MaxHealCount
         {
             get

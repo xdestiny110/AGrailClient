@@ -39,6 +39,14 @@ namespace AGrail
             }
         }
 
+        public override uint Star
+        {
+            get
+            {
+                return 30;
+            }
+        }
+
         public spMoDao()
         {
             for (uint i = 802; i <= 806; i++)

@@ -37,6 +37,14 @@ namespace AGrail
             }
         }
 
+        public override uint Star
+        {
+            get
+            {
+                return 30;
+            }
+        }
+
         public KuangZhan()
         {
             for (uint i = 201; i <= 203; i++)

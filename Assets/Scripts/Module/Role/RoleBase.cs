@@ -20,6 +20,7 @@ namespace AGrail
         public virtual bool IsStart { set; get; }
         public Dictionary<uint, Skill> Skills = new Dictionary<uint, Skill>();
         public Dictionary<uint, Mation> Mations { get { return Mation.GetMation((uint)RoleID); } }
+        public abstract uint Star { get; }
 
         //记录一些特殊状态
         //由于当初没想好导致必须要在Role中维护这个状态...这个要比较小心

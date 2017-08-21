@@ -41,6 +41,14 @@ namespace AGrail
             }
         }
 
+        public override uint Star
+        {
+            get
+            {
+                return 40;
+            }
+        }
+
         public override bool HasCoverd
         {
             get

@@ -38,6 +38,14 @@ namespace AGrail
             }
         }
 
+        public override uint Star
+        {
+            get
+            {
+                return 30;
+            }
+        }
+
         public GongNv()
         {
             for (uint i = 301; i <= 305; i++)

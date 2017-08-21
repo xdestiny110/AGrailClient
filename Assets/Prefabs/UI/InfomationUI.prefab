@@ -178,7 +178,7 @@ GameObject:
   - component: {fileID: 222174210607137164}
   - component: {fileID: 114162479382746624}
   m_Layer: 5
-  m_Name: Start (3)
+  m_Name: Star4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -212,7 +212,7 @@ GameObject:
   - component: {fileID: 222746395550977990}
   - component: {fileID: 114706110007516348}
   m_Layer: 5
-  m_Name: Start (2)
+  m_Name: Star3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -246,7 +246,7 @@ GameObject:
   - component: {fileID: 222873344669636488}
   - component: {fileID: 114890338344035742}
   m_Layer: 5
-  m_Name: Start (4)
+  m_Name: Star5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -350,7 +350,7 @@ GameObject:
   - component: {fileID: 222771889115896824}
   - component: {fileID: 114191630103167448}
   m_Layer: 5
-  m_Name: Start (1)
+  m_Name: Star2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -655,6 +655,8 @@ MonoBehaviour:
   hero: {fileID: 114116616710466120}
   heroProperty: {fileID: 114260853906461098}
   levelRoot: {fileID: 224629275703500530}
+  Star4: {fileID: 114162479382746624}
+  Star5: {fileID: 114890338344035742}
   roleName: {fileID: 114784178707638586}
   heroName: {fileID: 114693358874631978}
   skillRoot: {fileID: 224764502552301856}

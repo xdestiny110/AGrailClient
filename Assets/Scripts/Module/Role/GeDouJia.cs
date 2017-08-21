@@ -50,6 +50,14 @@ namespace AGrail
             }
         }
 
+        public override uint Star
+        {
+            get
+            {
+                return 45;
+            }
+        }
+
         public override string Knelt
         {
             get

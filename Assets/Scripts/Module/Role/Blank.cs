@@ -37,5 +37,13 @@ namespace AGrail
                 return "白板";
             }
         }
+
+        public override uint Star
+        {
+            get
+            {
+                return 30;
+            }
+        }
     }
 }

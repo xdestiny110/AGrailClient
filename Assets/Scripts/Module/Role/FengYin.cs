@@ -41,6 +41,14 @@ namespace AGrail
             }
         }
 
+        public override uint Star
+        {
+            get
+            {
+                return 30;
+            }
+        }
+
         public FengYin()
         {
             for (uint i = 401; i <= 408; i++)

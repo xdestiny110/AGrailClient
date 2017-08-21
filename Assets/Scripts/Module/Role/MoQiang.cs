@@ -30,6 +30,14 @@ namespace AGrail
             }
         }
 
+        public override uint Star
+        {
+            get
+            {
+                return 40;
+            }
+        }
+
         public override Card.CardProperty RoleProperty
         {
             get

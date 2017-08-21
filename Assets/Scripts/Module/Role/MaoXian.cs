@@ -38,6 +38,14 @@ namespace AGrail
             }
         }
 
+        public override uint Star
+        {
+            get
+            {
+                return 35;
+            }
+        }
+
         public MaoXian()
         {
             for (uint i = 1201; i <= 1206; i++)

@@ -52,7 +52,14 @@ namespace AGrail
 				return "詹姆";
 			}
 		}
-
+        
+        public override uint Star
+        {
+            get
+            {
+                return 45;
+            }
+        }
 
 		public override bool CanSelect(uint uiState, Card card, bool isCovered)
 		{

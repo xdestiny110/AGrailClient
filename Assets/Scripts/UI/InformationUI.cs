@@ -17,6 +17,10 @@ namespace AGrail
         [SerializeField]
         private Transform levelRoot;
         [SerializeField]
+        private Image Star4;
+        [SerializeField]
+        private Image Star5;
+        [SerializeField]
         private Text roleName;
         [SerializeField]
         private Text heroName;
@@ -47,6 +51,12 @@ namespace AGrail
                 roleName.text = role.RoleName;
                 heroName.text = role.HeroName;
                 heroProperty.sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", role.RoleProperty.ToString());
+                Star4.gameObject.SetActive(role.Star>30);
+                Star4.sprite = role.Star == 35 ? AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "star_half")
+                                               : AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "star");
+                Star5.gameObject.SetActive(role.Star>40);
+                Star5.sprite = role.Star == 45 ? AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "star_half")
+                                               : AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "star");
                 var sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("hero_l", ((int)role.RoleID).ToString() + "L");
                 if (sprite != null)
                     hero.sprite = sprite;
