@@ -22,12 +22,6 @@ namespace AGrail
             }
         }
 
-        public override void Awake()
-        {
-            Debug.Log("Show loading UI");            
-            base.Awake();
-        }
-
         void Start()
         {
             StartCoroutine(refreshRate());
@@ -41,6 +35,12 @@ namespace AGrail
                 progress.text = "验证远端资源更新: " + val.ToString() + "%";
                 yield return new WaitForSeconds(0.3f);
                 val = AssetBundleManager.Instance.Progress;
+
+                if(AssetBundleManager.Instance.IsError)
+                {
+                    progress.text = AssetBundleManager.Instance.ErrorInfo;
+                    yield break;
+                }
             }
 
             StartCoroutine(WindowFactory.Instance.PreloadAllWindow());

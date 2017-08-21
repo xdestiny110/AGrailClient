@@ -1,7 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
 using System;
@@ -110,7 +108,8 @@ namespace Framework.AssetBundle
             }
         }
 
-        private const string remoteSrv = "http://10.0.2.114:7888/";
+        private const string remoteSrv = "http://101.201.155.94:5061/";
+        private const string version = "20170821";
         private AssetBundleManifest localManifest = null;
         private AssetBundleManifest remoteManifest = null;
         private Dictionary<string, UnityEngine.AssetBundle> bundles = new Dictionary<string, UnityEngine.AssetBundle>();
@@ -142,6 +141,16 @@ namespace Framework.AssetBundle
                     cb(null);
                 yield break;
             }
+
+            //验证版本
+            yield return StartCoroutine(GetVersionInfo());
+            if(IsError)
+            {
+                if (errCb != null)
+                    errCb();
+                yield break;
+            }
+
             localManifest = null;
             remoteManifest = null;
 
@@ -149,7 +158,7 @@ namespace Framework.AssetBundle
             if(!IgnoreBundleServer)
                 yield return StartCoroutine(downloadAssetBundleManifest(false));
 
-            if (isError)
+            if (IsError)
             {
                 if (errCb != null)
                     errCb();
@@ -172,7 +181,7 @@ namespace Framework.AssetBundle
                     }
                     else
                         yield return StartCoroutine(downloadAssetBundle(remoteManifest, v, false));
-                    if (isError)
+                    if (IsError)
                     {
                         if (errCb != null)
                             errCb();
@@ -187,7 +196,7 @@ namespace Framework.AssetBundle
                 foreach (var v in localManifest.GetAllAssetBundles())
                 {
                     yield return StartCoroutine(downloadAssetBundle(localManifest, v, true));
-                    if (isError)
+                    if (IsError)
                     {
                         if (errCb != null)
                             errCb();
@@ -290,7 +299,8 @@ namespace Framework.AssetBundle
 #endif
         }
 
-        private bool isError = false;
+        public bool IsError = false;
+        public string ErrorInfo = null;
         private IEnumerator downloadAssetBundleManifest(bool isLocal)
         {
             if (isLocal)
@@ -301,7 +311,8 @@ namespace Framework.AssetBundle
 #elif UNITY_ANDROID
                 "jar:file://" + Application.dataPath + "!/assets/" + manifestFileName;
 #endif
-                using(var www = new WWW(uri))
+                Debug.LogFormat("read local {0}", uri);
+                using (var www = new WWW(uri))
                 {
                     wwws.Add(www);
                     noCoro = false;
@@ -309,7 +320,9 @@ namespace Framework.AssetBundle
                     if (!string.IsNullOrEmpty(www.error))
                     {
                         Debug.LogErrorFormat("Can not get manifest! Uri = {0}. Error = {1}", uri, www.error);
-                        isError = true;
+                        IsError = true;
+                        ErrorInfo = "本地文档损坏";
+
                     }
                     else
                         localManifest = www.assetBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
@@ -319,6 +332,7 @@ namespace Framework.AssetBundle
             else
             {
                 var uri = remoteSrv + manifestFileName + "/" + manifestFileName;
+                Debug.LogFormat("download {0}", uri);
                 using(var req = UnityWebRequest.GetAssetBundle(uri))
                 {
                     reqs.Add(req);
@@ -327,7 +341,8 @@ namespace Framework.AssetBundle
                     if (req.isError)
                     {
                         Debug.LogErrorFormat("Can not get manifest! Uri = {0}.", uri);
-                        isError = true;
+                        IsError = true;
+                        ErrorInfo = "无法连接服务器";
                     }
                     else
                         remoteManifest = DownloadHandlerAssetBundle.GetContent(req).LoadAsset<AssetBundleManifest>("AssetBundleManifest");
@@ -354,7 +369,8 @@ namespace Framework.AssetBundle
                     if (!string.IsNullOrEmpty(www.error))
                     {
                         Debug.LogErrorFormat("Download bundle {0} from {1} failed.", bundleName, uri);
-                        isError = true;
+                        IsError = true;
+                        ErrorInfo = "本地文档损坏";
                     }
                     else
                     {
@@ -375,7 +391,8 @@ namespace Framework.AssetBundle
                     if (req.isError)
                     {
                         Debug.LogErrorFormat("Download bundle {0} from {1} failed.", bundleName, uri);
-                        isError = true;
+                        IsError = true;
+                        ErrorInfo = "更新文件失败";
                     }
                     else
                     {
@@ -384,6 +401,27 @@ namespace Framework.AssetBundle
                     }
                     reqs.Remove(req);
                 }
+            }
+        }
+
+        private IEnumerator GetVersionInfo()
+        {
+            var www = new WWW(remoteSrv + "version.txt");
+            yield return www;
+            if (!string.IsNullOrEmpty(www.error))
+            {
+                IsError = true;
+                ErrorInfo = www.error;
+                Debug.LogErrorFormat("WWW error occur. Error = {0}", www.error);
+                yield break;
+            }
+
+            if (www.text != version)
+            {
+                IsError = true;
+                ErrorInfo = "需要更新版本";
+                Debug.LogErrorFormat("Need update.");
+                yield break;
             }
         }
     }
