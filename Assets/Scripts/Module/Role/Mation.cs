@@ -34,7 +34,7 @@ namespace AGrail
                 var Name = t[1];
                 var Tag = t[2];
                 var Desc = "";
-                for (uint i = 2; i < t.Length; i++)
+                for (uint i = 3; i < t.Length; i++)
                     if(!string.IsNullOrEmpty(t[i]))
                     Desc += t[i] + "\n";
 
