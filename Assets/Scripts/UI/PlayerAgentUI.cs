@@ -38,6 +38,10 @@ namespace AGrail
             players = GetComponent<BattleUIMobile>().PlayerStatus;
             btnSetting.onClick.AddListener(onBtnSettingClick);
             btnSpecial.onClick.AddListener(onBtnSpecialClick);
+            btnOK.onClick.AddListener(onBtnOKClick);
+            btnCancel.onClick.AddListener(onBtnCancelClick);
+            btnResign.onClick.AddListener(onBtnResignClick);
+            btnCovered.onClick.AddListener(OnCoveredClick);
 
             MessageSystem<MessageType>.Regist(MessageType.AgentUpdate, this);
             MessageSystem<MessageType>.Regist(MessageType.AgentHandChange, this);
@@ -46,6 +50,8 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.AgentUIStateChange, this);
             MessageSystem<MessageType>.Regist(MessageType.ShowNewArgsUI, this);
             MessageSystem<MessageType>.Regist(MessageType.CloseNewArgsUI, this);
+
+            MessageSystem<MessageType>.Notify(MessageType.AgentUpdate);
         }
 
         void OnDestroy()
@@ -67,15 +73,6 @@ namespace AGrail
                     onUIStateChange();
                     break;
                 case MessageType.AgentUpdate:
-                    btnOK.gameObject.SetActive(false);
-                    btnOK.onClick.RemoveAllListeners();
-                    btnOK.onClick.AddListener(onBtnOKClick);
-                    btnCancel.onClick.RemoveAllListeners();
-                    btnCancel.onClick.AddListener(onBtnCancelClick);
-                    btnResign.onClick.RemoveAllListeners();
-                    btnResign.onClick.AddListener(onBtnResignClick);
-                    btnCovered.onClick.RemoveAllListeners();
-                    btnCovered.onClick.AddListener(OnCoveredClick);
                     //初始化技能键
                     var skillPrefab = AssetBundleManager.Instance.LoadAsset("battle", "Skill");
                     foreach (var v in BattleData.Instance.Agent.PlayerRole.Skills.Values)
@@ -88,10 +85,6 @@ namespace AGrail
                         skillUIs.Add(go.GetComponent<SkillUI>());
                         skillUIs[skillUIs.Count - 1].Skill = v;
                     }
-                    btnSpecial.gameObject.SetActive(BattleData.Instance.Agent.PlayerRole.CheckBuy(BattleData.Instance.Agent.FSM.Current.StateNumber) ||
-                        BattleData.Instance.Agent.PlayerRole.CheckExtract(BattleData.Instance.Agent.FSM.Current.StateNumber) ||
-                        BattleData.Instance.Agent.PlayerRole.CheckSynthetize(BattleData.Instance.Agent.FSM.Current.StateNumber));
-                    btnCovered.gameObject.SetActive(BattleData.Instance.Agent.PlayerRole.HasCoverd);
                     break;
                 case MessageType.AgentHandChange:
                     if (parameters.Length == 1)

@@ -192,6 +192,7 @@ namespace AGrail
                     var proto = new network.ReadyForGameRequest() { type = network.ReadyForGameRequest.Type.SEAT_READY };
                     GameManager.TCPInstance.Send(new Protobuf() { Proto = proto, ProtoID = ProtoNameIds.READYFORGAMEREQUEST });
                     IsStarted = value.is_started;
+                    MessageSystem<MessageType>.Notify(MessageType.GameStart);
                 }
                 foreach (var v in value.player_infos)
                 {
