@@ -32,11 +32,11 @@ namespace AGrail
             var val = AssetBundleManager.Instance.Progress;
             while (val < 100)
             {
-                progress.text = "验证远端资源更新: " + val.ToString() + "%";
                 yield return new WaitForSeconds(0.3f);
                 val = AssetBundleManager.Instance.Progress;
+                progress.text = "验证远端资源更新: " + val.ToString("f1") + "%";
 
-                if(AssetBundleManager.Instance.IsError)
+                if (AssetBundleManager.Instance.IsError)
                 {
                     progress.text = AssetBundleManager.Instance.ErrorInfo;
                     yield break;
@@ -53,7 +53,7 @@ namespace AGrail
                     progress.text += ".";
                 idx = (idx + 1) % 3;
                 yield return new WaitForSeconds(0.5f);
-            }           
+            }
             yield return new WaitForSeconds(1);
             SceneManager.LoadScene(1);
         }

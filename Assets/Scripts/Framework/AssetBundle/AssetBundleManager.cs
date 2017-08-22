@@ -102,11 +102,12 @@ namespace Framework.AssetBundle
             {
                 if (wwws.Count > 0)
                 {
+                    progress = 0;
                     foreach (var v in wwws)
                         progress += v.progress;
                     progress /= wwws.Count;
                 }
-                return progress;
+                return progress * 100;
             }
         }
         private const string remoteSrv = "http://101.201.155.94:5061/";
@@ -230,7 +231,7 @@ namespace Framework.AssetBundle
                 }
             }
 
-            progress = 100.0f;
+            progress = 1.001f;
             coros.Clear();
             wwws.Clear();
         }
@@ -378,21 +379,19 @@ namespace Framework.AssetBundle
         private IEnumerator saveAssetBundle(string bundlePath, string bundleName)
         {
             Debug.LogFormat("Save asset bundle {0} from {1}", bundleName, bundlePath);
-            using (var www = new WWW(bundlePath))
+            var www = new WWW(bundlePath);
+            wwws.Add(www);
+            yield return www;
+            if (!string.IsNullOrEmpty(www.error))
             {
-                wwws.Add(www);
-                yield return www;
-                if (!string.IsNullOrEmpty(www.error))
-                {
-                    IsError = true;
-                    ErrorInfo = www.error;
-                    Debug.LogErrorFormat("WWW error occur. Error = {0}", www.error);
-                    yield break;
-                }
-                using(FileStream fs = new FileStream(Path.Combine(Application.persistentDataPath, bundleName), FileMode.Create, FileAccess.Write))
-                {
-                    fs.Write(www.bytes, 0, www.bytes.Length);
-                }
+                IsError = true;
+                ErrorInfo = www.error;
+                Debug.LogErrorFormat("WWW error occur. Error = {0}", www.error);
+                yield break;
+            }
+            using (FileStream fs = new FileStream(Path.Combine(Application.persistentDataPath, bundleName), FileMode.Create, FileAccess.Write))
+            {
+                fs.Write(www.bytes, 0, www.bytes.Length);
             }
         }
 
