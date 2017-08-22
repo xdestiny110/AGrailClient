@@ -171,7 +171,7 @@ namespace AGrail
                 bgm.loop = false;
                 bgm.Play();
             }
-            else
+            else if(scene.buildIndex == 1)
             {
                 lastIdx = -1;
                 var clip = AssetBundleManager.Instance.LoadAsset<AudioClip>("audio", "lobby");

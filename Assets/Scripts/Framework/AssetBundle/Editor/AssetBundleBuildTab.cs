@@ -1,9 +1,10 @@
 using UnityEditor;
-using UnityEditor.IMGUI.Controls;
 using System.Collections.Generic;
 using System.IO;
 
 using UnityEngine.AssetBundles.AssetBundleDataSource;
+using System.Text;
+using Newtonsoft.Json;
 
 namespace UnityEngine.AssetBundles
 {
@@ -322,9 +323,12 @@ namespace UnityEngine.AssetBundles
             AssetBundleModel.Model.DataSource.BuildAssetBundles (buildInfo);
 
             AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+            generateCheckFile();
 
             if(m_CopyToStreaming.state)
                 DirectoryCopy(m_OutputPath, m_streamingPath);
+
+            AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
         }
 
         private static void DirectoryCopy(string sourceDirName, string destDirName)
@@ -345,7 +349,6 @@ namespace UnityEngine.AssetBundles
                 string temppath = Path.Combine(destDirName, file.Name);
                 file.CopyTo(temppath, false);
             }
-
 
             DirectoryInfo[] dirs = dir.GetDirectories();
             foreach (DirectoryInfo subdir in dirs)
@@ -412,6 +415,45 @@ namespace UnityEngine.AssetBundles
             WiiU = 36,
             tvOS = 37,
             Switch = 38
+        }
+
+        private void generateCheckFile()
+        {
+            //生成用于增量更新的json文件
+            var dir = new DirectoryInfo(m_OutputPath);
+            var files = dir.GetFiles();
+            List<Framework.AssetBundle.CheckFile> ret = new List<Framework.AssetBundle.CheckFile>();
+            foreach(var v in files)
+                if(!v.Name.EndsWith("manifest"))
+                    ret.Add(new Framework.AssetBundle.CheckFile() { name = v.Name, hash = computeMD5(v.FullName) });
+            var json = JsonConvert.SerializeObject(ret, Formatting.Indented);
+            using (FileStream fs = new FileStream(Path.Combine(m_OutputPath, "CheckFile"), FileMode.Create, FileAccess.Write))
+            {
+                var bytes = Encoding.UTF8.GetBytes(json);
+                fs.Write(bytes, 0, bytes.Length);
+            }
+        }
+
+        private string computeMD5(string fileName)
+        {
+            string hashMD5 = string.Empty;
+            if (File.Exists(fileName))
+            {
+                using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+                {
+                    System.Security.Cryptography.MD5 calculator = System.Security.Cryptography.MD5.Create();
+                    byte[] buffer = calculator.ComputeHash(fs);
+                    calculator.Clear();
+
+                    StringBuilder stringBuilder = new StringBuilder();
+                    for (int i = 0; i < buffer.Length; i++)
+                    {
+                        stringBuilder.Append(buffer[i].ToString("x2"));
+                    }
+                    hashMD5 = stringBuilder.ToString();
+                }
+            }
+            return hashMD5;
         }
     }
 }
