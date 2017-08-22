@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using System;
+using System.IO;
+using System.Linq;
+using Newtonsoft.Json;
 
 namespace Framework.AssetBundle
 {
@@ -70,7 +73,7 @@ namespace Framework.AssetBundle
 #endif
         }
 
-        private string manifestFileName
+        private string activePlatform
         {
             get
             {
@@ -89,6 +92,9 @@ namespace Framework.AssetBundle
 #endif
             }
         }
+
+        public bool IsError = false;
+        public string ErrorInfo = null;
 
         private bool noCoro = true;
         public float Progress
@@ -143,20 +149,26 @@ namespace Framework.AssetBundle
             }
 
             //验证版本
-            yield return StartCoroutine(GetVersionInfo());
-            if(IsError)
+            if (!IgnoreBundleServer)
             {
-                if (errCb != null)
-                    errCb();
-                yield break;
+                yield return StartCoroutine(GetVersionInfo());
+                if (IsError)
+                {
+                    if (errCb != null)
+                        errCb();
+                    yield break;
+                }
             }
 
-            localManifest = null;
-            remoteManifest = null;
-
-            yield return StartCoroutine(downloadAssetBundleManifest(true));
-            if(!IgnoreBundleServer)
-                yield return StartCoroutine(downloadAssetBundleManifest(false));
+            //读取远端与本地check file
+            List<CheckFile> localCheckFile = new List<CheckFile>();
+            List<CheckFile> remoteCheckFile = new List<CheckFile>();
+            if (File.Exists(Path.Combine(Application.persistentDataPath, "CheckFile")))
+                yield return StartCoroutine(readCheckFile("file:///" + Path.Combine(Application.persistentDataPath, "CheckFile"), localCheckFile));
+            else
+                yield return StartCoroutine(readCheckFile(Path.Combine(StreamingAssetsPath, "CheckFile"), localCheckFile));
+            if (!IgnoreBundleServer)
+                yield return StartCoroutine(readCheckFile(remoteSrv + activePlatform + "/CheckFile", remoteCheckFile));
 
             if (IsError)
             {
@@ -165,52 +177,52 @@ namespace Framework.AssetBundle
                 yield break;
             }
 
-            //两个Manifest进行比较
-            //若有不同则针对不同进行下载
-            //这里相当于直接加载及解压了所有AssetBundles
-            if(remoteManifest != null)
+            //比较check file
+            List<CheckFile> finalCheckFile = new List<CheckFile>();
+            if (remoteCheckFile != null)
             {
-                foreach (var v in remoteManifest.GetAllAssetBundles())
+                for (int i = 0; i < remoteCheckFile.Count; i++)
                 {
-                    if(localManifest != null)
-                    {
-                        if(localManifest.GetAssetBundleHash(v) != remoteManifest.GetAssetBundleHash(v))
-                            yield return StartCoroutine(downloadAssetBundle(remoteManifest, v, false));
-                        else
-                            yield return StartCoroutine(downloadAssetBundle(localManifest, v, true));
-                    }
+                    if (localCheckFile.Contains(remoteCheckFile[i]))
+                        finalCheckFile.Add(new CheckFile()
+                        { name = remoteCheckFile[i].name, hash = remoteCheckFile[i].hash, location = CheckFile.Location.Local });
                     else
-                        yield return StartCoroutine(downloadAssetBundle(remoteManifest, v, false));
-                    if (IsError)
-                    {
-                        if (errCb != null)
-                            errCb();
-                        yield break;
-                    }
+                        finalCheckFile.Add(new CheckFile()
+                        { name = remoteCheckFile[i].name, hash = remoteCheckFile[i].hash, location = CheckFile.Location.Remote });
                 }
-                if(cb != null)
-                    cb(remoteManifest);
-            }
-            else if(localManifest != null)
-            {
-                foreach (var v in localManifest.GetAllAssetBundles())
+                //删除本地冗余的资源
+                foreach(var v in localCheckFile)
                 {
-                    yield return StartCoroutine(downloadAssetBundle(localManifest, v, true));
-                    if (IsError)
-                    {
-                        if (errCb != null)
-                            errCb();
-                        yield break;
-                    }
+                    if (!finalCheckFile.Contains(v) && v.location == CheckFile.Location.Persistent)
+                        File.Delete(Path.Combine(Application.persistentDataPath, v.name));
                 }
-                if (cb != null)
-                    cb(localManifest);
             }
             else
+                finalCheckFile = localCheckFile;
+
+            //读取所需要的东西
+            foreach (var v in finalCheckFile)
             {
-                if (errCb != null)
-                    errCb();
-                Debug.LogError("localMainifest is null!");
+                switch (v.location)
+                {
+                    case CheckFile.Location.Local:
+                        yield return StartCoroutine(downloadAssetBundle(Path.Combine(StreamingAssetsPath, v.name), v.name));
+                        break;
+                    case CheckFile.Location.Persistent:
+                        yield return StartCoroutine(downloadAssetBundle(Path.Combine(Application.persistentDataPath, v.name), v.name));
+                        break;
+                    case CheckFile.Location.Remote:
+                        yield return StartCoroutine(downloadAssetBundle(remoteSrv + activePlatform + "/" + v.name, v.name));
+                        break;
+                }
+            }
+            //更新本地checkfile
+            finalCheckFile.ForEach(cf => { cf.location = (cf.location == CheckFile.Location.Remote) ? CheckFile.Location.Persistent : cf.location; });
+            using (FileStream fs = new FileStream(Path.Combine(Application.persistentDataPath, "CheckFile"), FileMode.Create, FileAccess.Write))
+            {
+                var json = JsonConvert.SerializeObject(finalCheckFile, Formatting.Indented);
+                var bytes = System.Text.Encoding.UTF8.GetBytes(json);
+                fs.Write(bytes, 0, bytes.Length);
             }
         }
 
@@ -299,111 +311,6 @@ namespace Framework.AssetBundle
 #endif
         }
 
-        public bool IsError = false;
-        public string ErrorInfo = null;
-        private IEnumerator downloadAssetBundleManifest(bool isLocal)
-        {
-            if (isLocal)
-            {
-                var uri =
-#if UNITY_EDITOR || UNITY_STANDALONE
-                 "file://" + Application.streamingAssetsPath + "/" + manifestFileName;
-#elif UNITY_ANDROID
-                "jar:file://" + Application.dataPath + "!/assets/" + manifestFileName;
-#endif
-                Debug.LogFormat("read local {0}", uri);
-                using (var www = new WWW(uri))
-                {
-                    wwws.Add(www);
-                    noCoro = false;
-                    yield return www;
-                    if (!string.IsNullOrEmpty(www.error))
-                    {
-                        Debug.LogErrorFormat("Can not get manifest! Uri = {0}. Error = {1}", uri, www.error);
-                        IsError = true;
-                        ErrorInfo = "本地文档损坏";
-
-                    }
-                    else
-                        localManifest = www.assetBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
-                    wwws.Remove(www);
-                }
-            }
-            else
-            {
-                var uri = remoteSrv + manifestFileName + "/" + manifestFileName;
-                Debug.LogFormat("download {0}", uri);
-                using(var req = UnityWebRequest.GetAssetBundle(uri))
-                {
-                    reqs.Add(req);
-                    noCoro = false;
-                    yield return req.Send();
-                    if (req.isError)
-                    {
-                        Debug.LogErrorFormat("Can not get manifest! Uri = {0}.", uri);
-                        IsError = true;
-                        ErrorInfo = "无法连接服务器";
-                    }
-                    else
-                        remoteManifest = DownloadHandlerAssetBundle.GetContent(req).LoadAsset<AssetBundleManifest>("AssetBundleManifest");
-                    reqs.Remove(req);
-                }
-            }
-        }
-
-        private IEnumerator downloadAssetBundle(AssetBundleManifest manifest, string bundleName, bool isLocal)
-        {
-            if (isLocal)
-            {
-                var uri =
-#if UNITY_EDITOR || UNITY_STANDALONE
-                 "file://" + Application.streamingAssetsPath + "/" + bundleName;
-#elif UNITY_ANDROID
-                "jar:file://" + Application.dataPath + "!/assets/" + bundleName;
-#endif
-                using (var www = WWW.LoadFromCacheOrDownload(uri, manifest.GetAssetBundleHash(bundleName)))
-                {
-                    wwws.Add(www);
-                    noCoro = false;
-                    yield return www;
-                    if (!string.IsNullOrEmpty(www.error))
-                    {
-                        Debug.LogErrorFormat("Download bundle {0} from {1} failed.", bundleName, uri);
-                        IsError = true;
-                        ErrorInfo = "本地文档损坏";
-                    }
-                    else
-                    {
-                        Debug.LogFormat("Download bundle {0} from {1} succeed.", bundleName, uri);
-                        bundles.Add(bundleName, www.assetBundle);
-                    }
-                    wwws.Remove(www);
-                }
-            }
-            else
-            {
-                var uri = remoteSrv + "/" + manifestFileName + "/" + bundleName;
-                using (var req = UnityWebRequest.GetAssetBundle(uri, manifest.GetAssetBundleHash(bundleName), 0))
-                {
-                    reqs.Add(req);
-                    noCoro = false;
-                    yield return req.Send();
-                    if (req.isError)
-                    {
-                        Debug.LogErrorFormat("Download bundle {0} from {1} failed.", bundleName, uri);
-                        IsError = true;
-                        ErrorInfo = "更新文件失败";
-                    }
-                    else
-                    {
-                        Debug.LogFormat("Download bundle {0} from {1} succeed.", bundleName, uri);
-                        bundles.Add(bundleName, DownloadHandlerAssetBundle.GetContent(req));
-                    }
-                    reqs.Remove(req);
-                }
-            }
-        }
-
         private IEnumerator GetVersionInfo()
         {
             var www = new WWW(remoteSrv + "version.txt");
@@ -422,6 +329,53 @@ namespace Framework.AssetBundle
                 ErrorInfo = "需要更新版本";
                 Debug.LogErrorFormat("Need update.");
                 yield break;
+            }
+        }
+
+        private IEnumerator readCheckFile(string filePath, List<CheckFile> checkFile)
+        {
+            Debug.LogFormat("Download check file from {0}", filePath);
+            using (var www = new WWW(filePath))
+            {
+                yield return www;
+                if (!string.IsNullOrEmpty(www.error))
+                {
+                    IsError = true;
+                    ErrorInfo = www.error;
+                    Debug.LogErrorFormat("WWW error occur. Error = {0}", www.error);
+                    yield break;
+                }
+                checkFile.AddRange(JsonConvert.DeserializeObject<List<CheckFile>>(www.text));
+            }
+        }
+
+        private IEnumerator downloadAssetBundle(string bundlePath, string bundleName)
+        {
+            Debug.LogFormat("Download asset bundle {0} from {1}", bundleName, bundlePath);
+            using (var www = new WWW(bundlePath))
+            {
+                yield return www;
+                if (!string.IsNullOrEmpty(www.error))
+                {
+                    IsError = true;
+                    ErrorInfo = www.error;
+                    Debug.LogErrorFormat("WWW error occur. Error = {0}", www.error);
+                    yield break;
+                }
+                bundles[bundleName] = www.assetBundle;
+            }
+        }
+
+        private string StreamingAssetsPath
+        {
+            get
+            {
+                return
+#if UNITY_EDITOR || UNITY_STANDALONE
+                 "file://" + Application.streamingAssetsPath + "/";
+#elif UNITY_ANDROID
+                "jar:file://" + Application.dataPath + "!/assets/";
+#endif
             }
         }
     }
