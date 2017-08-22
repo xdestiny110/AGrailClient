@@ -95,32 +95,24 @@ namespace Framework.AssetBundle
 
         public bool IsError = false;
         public string ErrorInfo = null;
-
-        private bool noCoro = true;
+        private float progress = 0;
         public float Progress
         {
             get
             {
-                float val = 0;
-                foreach(var www in wwws)
-                    val += www.progress;
-                foreach (var req in reqs)
-                    val += req.downloadProgress;
-                var cnt = wwws.Count + reqs.Count;
-                val /= (cnt == 0) ? 1 : cnt;
-                if (cnt == 0 && !noCoro)
-                    val = 100;
-                return val;
+                if (wwws.Count > 0)
+                {
+                    foreach (var v in wwws)
+                        progress += v.progress;
+                    progress /= wwws.Count;
+                }
+                return progress;
             }
         }
-
         private const string remoteSrv = "http://101.201.155.94:5061/";
         private const string version = "20170821";
-        private AssetBundleManifest localManifest = null;
-        private AssetBundleManifest remoteManifest = null;
         private Dictionary<string, UnityEngine.AssetBundle> bundles = new Dictionary<string, UnityEngine.AssetBundle>();
         private List<WWW> wwws = new List<WWW>();
-        private List<UnityWebRequest> reqs = new List<UnityWebRequest>();
 
         void init()
         {
@@ -142,7 +134,6 @@ namespace Framework.AssetBundle
         {
             if (SimulationMode)
             {
-                noCoro = false;
                 if (cb != null)
                     cb(null);
                 yield break;
@@ -164,7 +155,7 @@ namespace Framework.AssetBundle
             List<CheckFile> localCheckFile = new List<CheckFile>();
             List<CheckFile> remoteCheckFile = new List<CheckFile>();
             if (File.Exists(Path.Combine(Application.persistentDataPath, "CheckFile")))
-                yield return StartCoroutine(readCheckFile("file:///" + Path.Combine(Application.persistentDataPath, "CheckFile"), localCheckFile));
+                yield return StartCoroutine(readCheckFile(Path.Combine(PersistentDataPath, "CheckFile"), localCheckFile));
             else
                 yield return StartCoroutine(readCheckFile(Path.Combine(StreamingAssetsPath, "CheckFile"), localCheckFile));
             if (!IgnoreBundleServer)
@@ -200,7 +191,34 @@ namespace Framework.AssetBundle
             else
                 finalCheckFile = localCheckFile;
 
-            //读取所需要的东西
+            //下载新资源
+            var coros = new List<Coroutine>();
+            foreach (var v in finalCheckFile)
+            {
+                switch (v.location)
+                {
+                    case CheckFile.Location.Remote:
+                        coros.Add(StartCoroutine(saveAssetBundle(remoteSrv + activePlatform + "/" + v.name, v.name)));
+                        break;
+                }
+            }
+            foreach (var v in coros)
+                yield return v;
+
+            progress = 100.0f;
+            coros.Clear();
+            wwws.Clear();
+
+            //更新本地checkfile
+            finalCheckFile.ForEach(cf => { cf.location = (cf.location == CheckFile.Location.Remote) ? CheckFile.Location.Persistent : cf.location; });
+            using (FileStream fs = new FileStream(Path.Combine(Application.persistentDataPath, "CheckFile"), FileMode.Create, FileAccess.Write))
+            {
+                var json = JsonConvert.SerializeObject(finalCheckFile, Formatting.Indented);
+                var bytes = System.Text.Encoding.UTF8.GetBytes(json);
+                fs.Write(bytes, 0, bytes.Length);
+            }
+
+            //读取所有bundle
             foreach (var v in finalCheckFile)
             {
                 switch (v.location)
@@ -209,20 +227,9 @@ namespace Framework.AssetBundle
                         yield return StartCoroutine(downloadAssetBundle(Path.Combine(StreamingAssetsPath, v.name), v.name));
                         break;
                     case CheckFile.Location.Persistent:
-                        yield return StartCoroutine(downloadAssetBundle(Path.Combine(Application.persistentDataPath, v.name), v.name));
-                        break;
-                    case CheckFile.Location.Remote:
-                        yield return StartCoroutine(downloadAssetBundle(remoteSrv + activePlatform + "/" + v.name, v.name));
+                        yield return StartCoroutine(downloadAssetBundle(Path.Combine(PersistentDataPath, v.name), v.name));
                         break;
                 }
-            }
-            //更新本地checkfile
-            finalCheckFile.ForEach(cf => { cf.location = (cf.location == CheckFile.Location.Remote) ? CheckFile.Location.Persistent : cf.location; });
-            using (FileStream fs = new FileStream(Path.Combine(Application.persistentDataPath, "CheckFile"), FileMode.Create, FileAccess.Write))
-            {
-                var json = JsonConvert.SerializeObject(finalCheckFile, Formatting.Indented);
-                var bytes = System.Text.Encoding.UTF8.GetBytes(json);
-                fs.Write(bytes, 0, bytes.Length);
             }
         }
 
@@ -366,6 +373,27 @@ namespace Framework.AssetBundle
             }
         }
 
+        private IEnumerator saveAssetBundle(string bundlePath, string bundleName)
+        {
+            Debug.LogFormat("Save asset bundle {0} from {1}", bundleName, bundlePath);
+            using (var www = new WWW(bundlePath))
+            {
+                wwws.Add(www);
+                yield return www;
+                if (!string.IsNullOrEmpty(www.error))
+                {
+                    IsError = true;
+                    ErrorInfo = www.error;
+                    Debug.LogErrorFormat("WWW error occur. Error = {0}", www.error);
+                    yield break;
+                }
+                using(FileStream fs = new FileStream(PersistentDataPath + bundleName, FileMode.Create, FileAccess.Write))
+                {
+                    fs.Write(www.bytes, 0, www.bytes.Length);
+                }
+            }
+        }
+
         private string StreamingAssetsPath
         {
             get
@@ -375,6 +403,19 @@ namespace Framework.AssetBundle
                  "file://" + Application.streamingAssetsPath + "/";
 #elif UNITY_ANDROID
                 "jar:file://" + Application.dataPath + "!/assets/";
+#endif
+            }
+        }
+
+        private string PersistentDataPath
+        {
+            get
+            {
+                return
+#if UNITY_EDITOR || UNITY_STANDALONE
+                    "file:///" + Application.streamingAssetsPath + "/";
+#elif UNITY_ANDROID
+                    Application.streamingAssetsPath + "/";
 #endif
             }
         }
