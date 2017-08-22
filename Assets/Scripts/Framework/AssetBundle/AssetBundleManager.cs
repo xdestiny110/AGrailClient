@@ -136,6 +136,7 @@ namespace Framework.AssetBundle
             {
                 if (cb != null)
                     cb(null);
+                progress = 100;
                 yield break;
             }
 
@@ -170,7 +171,7 @@ namespace Framework.AssetBundle
 
             //比较check file
             List<CheckFile> finalCheckFile = new List<CheckFile>();
-            if (remoteCheckFile != null)
+            if (remoteCheckFile.Count > 0)
             {
                 for (int i = 0; i < remoteCheckFile.Count; i++)
                 {
@@ -206,10 +207,6 @@ namespace Framework.AssetBundle
             foreach (var v in coros)
                 yield return v;
 
-            progress = 100.0f;
-            coros.Clear();
-            wwws.Clear();
-
             //更新本地checkfile
             finalCheckFile.ForEach(cf => { cf.location = (cf.location == CheckFile.Location.Remote) ? CheckFile.Location.Persistent : cf.location; });
             using (FileStream fs = new FileStream(Path.Combine(Application.persistentDataPath, "CheckFile"), FileMode.Create, FileAccess.Write))
@@ -232,6 +229,10 @@ namespace Framework.AssetBundle
                         break;
                 }
             }
+
+            progress = 100.0f;
+            coros.Clear();
+            wwws.Clear();
         }
 
         public T LoadAsset<T>(string assetBundleName, string assetName) where T : UnityEngine.Object
