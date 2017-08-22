@@ -174,9 +174,10 @@ namespace Framework.AssetBundle
             {
                 for (int i = 0; i < remoteCheckFile.Count; i++)
                 {
-                    if (localCheckFile.Contains(remoteCheckFile[i]))
+                    var idx = localCheckFile.IndexOf(remoteCheckFile[i]);
+                    if (idx >= 0)
                         finalCheckFile.Add(new CheckFile()
-                        { name = remoteCheckFile[i].name, hash = remoteCheckFile[i].hash, location = CheckFile.Location.Local });
+                        { name = localCheckFile[idx].name, hash = localCheckFile[idx].hash, location = localCheckFile[idx].location });
                     else
                         finalCheckFile.Add(new CheckFile()
                         { name = remoteCheckFile[i].name, hash = remoteCheckFile[i].hash, location = CheckFile.Location.Remote });
@@ -387,7 +388,7 @@ namespace Framework.AssetBundle
                     Debug.LogErrorFormat("WWW error occur. Error = {0}", www.error);
                     yield break;
                 }
-                using(FileStream fs = new FileStream(PersistentDataPath + bundleName, FileMode.Create, FileAccess.Write))
+                using(FileStream fs = new FileStream(Path.Combine(Application.persistentDataPath, bundleName), FileMode.Create, FileAccess.Write))
                 {
                     fs.Write(www.bytes, 0, www.bytes.Length);
                 }
@@ -413,9 +414,9 @@ namespace Framework.AssetBundle
             {
                 return
 #if UNITY_EDITOR || UNITY_STANDALONE
-                    "file:///" + Application.streamingAssetsPath + "/";
+                    "file:///" + Application.persistentDataPath + "/";
 #elif UNITY_ANDROID
-                    Application.streamingAssetsPath + "/";
+                    Application.persistentDataPath + "/";
 #endif
             }
         }
