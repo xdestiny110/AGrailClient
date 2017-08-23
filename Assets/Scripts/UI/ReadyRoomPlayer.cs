@@ -47,17 +47,5 @@ namespace AGrail
             IsReady = false;
             PlayerName = "";
         }
-
-        private int idx = 0;
-        public void OnClick()
-        {
-            if(idx == 0)
-                BattleData.Instance.ChooseTeam(Team.Blue);
-            else if(idx == 1)
-                BattleData.Instance.ChooseTeam(Team.Red);
-            else
-                BattleData.Instance.ChooseTeam(Team.Other);
-            idx = (idx + 1) % 3;
-        }
     }
 }

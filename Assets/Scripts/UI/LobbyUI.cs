@@ -79,7 +79,7 @@ namespace AGrail
             root.DOLocalMoveX(-Screen.width, 1.0f).OnComplete(() => { gameObject.SetActive(false); base.OnHide(); });            
         }
 
-        public override void OnShow()
+        public override void OnResume()
         {
             MessageSystem<MessageType>.Regist(MessageType.RoomList, this);
             MessageSystem<MessageType>.Regist(MessageType.EnterRoom, this);

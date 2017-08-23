@@ -15,6 +15,14 @@ namespace AGrail
         private List<ReadyRoomPlayer> players = new List<ReadyRoomPlayer>();
         [SerializeField]
         private Text roomTitle;
+        [SerializeField]
+        private GameObject chooseTeamPanel;
+        [SerializeField]
+        private Button btnChooseRedTeam;
+        [SerializeField]
+        private Button btnChooseBlueTeam;
+        [SerializeField]
+        private Button btnChooseRandomTeam;
 
         public override WindowType Type
         {
@@ -51,6 +59,9 @@ namespace AGrail
             root.localPosition = new Vector3(1280, 0, 0);
             root.DOLocalMoveX(0, 1);
 
+            btnChooseRedTeam.onClick.AddListener(delegate { chooseTeam(Team.Red); });
+            btnChooseBlueTeam.onClick.AddListener(delegate { chooseTeam(Team.Blue); });
+            btnChooseRandomTeam.onClick.AddListener(delegate { chooseTeam(Team.Other); });
             base.Awake();
         }
 
@@ -109,6 +120,17 @@ namespace AGrail
             Lobby.Instance.LeaveRoom();
             Lobby.Instance.GetRoomList();
             GameManager.UIInstance.PopWindow(WinMsg.Show);
+        }
+
+        public void OnBtnChooseTeamClick()
+        {
+            chooseTeamPanel.SetActive(true);
+        }
+
+        private void chooseTeam(Team team)
+        {
+            BattleData.Instance.ChooseTeam(team);
+            chooseTeamPanel.SetActive(false);
         }
     }
 }

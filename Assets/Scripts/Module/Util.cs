@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace AGrail
 {
+    [System.Serializable]
     public enum Team
     {
         Blue = 0,
