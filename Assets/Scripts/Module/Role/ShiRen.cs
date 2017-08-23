@@ -10,7 +10,7 @@ namespace AGrail
 		{
 			get
 			{
-				return RoleID.SiLing;
+				return RoleID.ShiRen;
 			}
 		}
 
