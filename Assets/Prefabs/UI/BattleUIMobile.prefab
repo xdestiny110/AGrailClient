@@ -8734,7 +8734,7 @@ MonoBehaviour:
   m_ChildAlignment: 4
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 126, y: 190}
+  m_CellSize: {x: 115, y: 190}
   m_Spacing: {x: 0, y: 0}
   m_Constraint: 2
   m_ConstraintCount: 1
@@ -11212,7 +11212,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 896.4998, y: -174.5}
+  m_AnchoredPosition: {x: 896.4999, y: -174.5}
   m_SizeDelta: {x: 250, y: 250}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224309285851517110
@@ -11618,8 +11618,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 95}
-  m_SizeDelta: {x: 756, y: 190}
+  m_AnchoredPosition: {x: 35.5, y: 95}
+  m_SizeDelta: {x: 691, y: 190}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224482337484977934
 RectTransform:

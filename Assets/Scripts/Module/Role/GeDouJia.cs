@@ -77,7 +77,7 @@ namespace AGrail
             switch (uiState)
             {
                 case 2006:
-                    return true;
+                    return BattleData.Instance.MainPlayer.hand_count > 3;
             }
             return base.CanSelect(uiState, card, isCovered);
         }
@@ -116,14 +116,6 @@ namespace AGrail
         {
             switch (uiState)
             {
-                case 2002:
-                case 2004:
-                case 2005:                
-                case XULICANGYAN:
-                case BAISHIDOUSHEN:
-                    return true;
-                case 2003:
-                    return playerIDs.Count == 1;
                 case 2006:
                     return cardIDs.Count == Math.Max(0, (int)BattleData.Instance.MainPlayer.hand_count - 3);
             }
