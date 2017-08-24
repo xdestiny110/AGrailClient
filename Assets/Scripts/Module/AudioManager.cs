@@ -28,7 +28,7 @@ namespace AGrail
             get
             {
                 if (!PlayerPrefs.HasKey("BGM"))
-                    PlayerPrefs.SetFloat("BGM", 1.0f);
+                    PlayerPrefs.SetFloat("BGM", 0.5f);
                 return PlayerPrefs.GetFloat("BGM");
             }
         }
@@ -45,7 +45,7 @@ namespace AGrail
             get
             {
                 if (!PlayerPrefs.HasKey("SE"))
-                    PlayerPrefs.SetFloat("SE", 1.0f);
+                    PlayerPrefs.SetFloat("SE", 0.5f);
                 return PlayerPrefs.GetFloat("SE");
             }
         }

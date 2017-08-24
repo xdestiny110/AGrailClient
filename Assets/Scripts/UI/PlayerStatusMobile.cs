@@ -48,6 +48,7 @@ namespace AGrail
         private RoleBase role = RoleFactory.Create(AGrail.RoleID.Blank);
         private Text token0, token1, token2;
         private Button btnPlayer;
+        private Animation hurted;
 
         public uint ID { get; set; }
 
@@ -357,6 +358,7 @@ namespace AGrail
             btnPlayer = GetComponent<Button>();
             btnPlayer.onClick.AddListener(onClick);
             GetComponent<LongPress>().OnLongPress.AddListener(onLongPress);
+            hurted = GetComponent<Animation>();
             MessageSystem<MessageType>.Regist(MessageType.AgentSelectPlayer, this);
         }
 
@@ -397,6 +399,13 @@ namespace AGrail
                 turn.transform.localScale = new Vector3(2, 2, 1);
                 turn.transform.DOScale(new Vector3(1.2f, 1.2f, 1), 1.5f);
             }
+        }
+
+        public void Hurted()
+        {
+            Debug.Log("hurted animation");
+            if (!hurted.isPlaying)
+                hurted.Play();
         }
 
         private void onClick()

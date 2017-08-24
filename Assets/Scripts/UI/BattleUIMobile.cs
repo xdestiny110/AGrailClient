@@ -94,6 +94,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.PlayerKneltChange, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerEnergeChange, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerBasicAndExCardChange, this);
+            MessageSystem<MessageType>.Regist(MessageType.HURTMSG, this);
             MessageSystem<MessageType>.Regist(MessageType.CARDMSG, this);
             MessageSystem<MessageType>.Regist(MessageType.SKILLMSG, this);
             MessageSystem<MessageType>.Regist(MessageType.TURNBEGIN, this);
@@ -153,6 +154,7 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerKneltChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerEnergeChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerBasicAndExCardChange, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.HURTMSG, this);
             MessageSystem<MessageType>.UnRegist(MessageType.CARDMSG, this);
             MessageSystem<MessageType>.UnRegist(MessageType.SKILLMSG, this);
             MessageSystem<MessageType>.UnRegist(MessageType.TURNBEGIN, this);
@@ -223,6 +225,11 @@ namespace AGrail
                     break;
                 case MessageType.PlayerHealChange:
                     playerStatus[(int)parameters[0]].HealCount = (uint)parameters[1];
+                    break;
+                case MessageType.HURTMSG:
+                    var hurtMsg = parameters[0] as network.HurtMsg;
+                    if (hurtMsg.dst_idSpecified)
+                        playerStatus[BattleData.Instance.PlayerIdxOrder.IndexOf((int)hurtMsg.dst_id)].Hurted();
                     break;
                 case MessageType.CARDMSG:
                     var cardMsg = parameters[0] as network.CardMsg;
