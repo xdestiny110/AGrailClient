@@ -199,8 +199,7 @@ namespace AGrail
                         return;
                     };
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("{0}: 请选择目标玩家以及独有技卡牌", Skills[state].SkillName));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case 407:
                     if (BattleData.Instance.Agent.SelectPlayers.Count == 1 )
@@ -212,8 +211,7 @@ namespace AGrail
                         return;
                     };
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("{0}: 请选择目标玩家", Skills[state].SkillName));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case 408:
                     if (msg == UIStateMsg.ClickArgs)
@@ -249,13 +247,11 @@ namespace AGrail
                                 explainList.Add(name);
                             }
                             MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, explainList);
-                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                                "封印破碎: 请选择要移除的基础效果");
+                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state,1));
                         }
                     }
                     if (BattleData.Instance.Agent.SelectPlayers.Count <= 0)
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                            "封印破碎: 请选择目标玩家");
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
             }
             base.UIStateChange(state, msg, paras);

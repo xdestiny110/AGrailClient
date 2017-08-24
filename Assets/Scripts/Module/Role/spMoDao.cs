@@ -238,15 +238,13 @@ namespace AGrail
             {
                 case 803:
                 case 805:
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("{0}: 请选择目标玩家以及卡牌", Skills[state].SkillName));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     break;
                 case 804:
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("{0}: 请选择目标玩家", Skills[state].SkillName));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     break;
                 case 806:
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, "法力护盾: 请选择舍弃的法术牌");
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
             }
 

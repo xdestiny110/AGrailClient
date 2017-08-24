@@ -203,8 +203,7 @@ namespace AGrail
                         return;
                     }
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("{0}: 请选择目标玩家以及独有技卡牌", Skills[state].SkillName));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case 602:
                     OKAction = () =>
@@ -215,8 +214,7 @@ namespace AGrail
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("{0}: 请选择目标玩家以及独有技卡牌", Skills[state].SkillName));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case 603:
                     if(BattleData.Instance.Agent.SelectPlayers.Count == 1)
@@ -225,8 +223,7 @@ namespace AGrail
                         BattleData.Instance.Agent.SelectPlayers, null, new List<uint>() { 1 });
                         return;
                     }
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        "冰霜祷言: 请选择目标玩家为其增加一点治疗");
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case 604:
                     OKAction = () =>
@@ -240,7 +237,7 @@ namespace AGrail
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, "是否发动怜悯");
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case 605:
                     if(BattleData.Instance.Agent.SelectPlayers.Count == 1)
@@ -282,14 +279,11 @@ namespace AGrail
                     }
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
                     if(additionalState == 0)
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                            "请分配第一点治疗");
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     else if(additionalState == 6051)                    
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                            "请分配第二点治疗");
-                    else if(additionalState == 6052)
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, 
-                            "请分配第三点治疗");
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state,1));
+                    else if (additionalState == 6052)
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state,2));
                     return;
             }
             base.UIStateChange(state, msg, paras);

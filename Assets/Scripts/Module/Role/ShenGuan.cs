@@ -206,8 +206,7 @@ namespace AGrail
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("是否发动{0}", Skills[state].SkillName));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case (uint)SKILLID.神圣祈福:
                     if (BattleData.Instance.Agent.SelectCards.Count == 2)
@@ -221,8 +220,7 @@ namespace AGrail
                     {
                         BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
                     };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("{0}: 选择两张法术", Skills[state].SkillName));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case (uint)SKILLID.水之神力:
                     if (BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == 1)
@@ -233,8 +231,7 @@ namespace AGrail
                         return;
                     };
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("{0}: 选择一张水系牌以及目标队友", Skills[state].SkillName));                    
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case (uint)SKILLID.水之神力给牌:
                     if (BattleData.Instance.Agent.SelectCards.Count == 1)
@@ -254,6 +251,7 @@ namespace AGrail
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectPlayers, 
                             null, BattleData.Instance.Agent.SelectArgs);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
                     }
                     CancelAction = () => 
                     {
@@ -271,12 +269,10 @@ namespace AGrail
                             explainList.Add(i + "个治疗");
                         }
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, explainList);
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                            string.Format("{0}: 选择想要给予的治疗数量", Skills[state].SkillName));
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     }
                     else                    
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                            string.Format("{0}: 选择想要给予的队友", Skills[state].SkillName));                    
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state,1));
                     return;
                 case (uint)SKILLID.神圣领域:
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
@@ -305,9 +301,16 @@ namespace AGrail
                     if (BattleData.Instance.Agent.SelectArgs.Count == 1)
                     {
                         if (BattleData.Instance.Agent.SelectArgs[0] == 1)
+                        {
                             additionalState = 15061;
+                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state,1));
+                        }
+
                         else
+                        {
                             additionalState = 15062;
+                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state,2));
+                        }
                     }
                     else
                     {
@@ -321,8 +324,7 @@ namespace AGrail
                         selectList.Add(new List<uint>() { 2 });
                         mList.Add("你+2[治疗],目标队友+1[治疗]");
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                            string.Format("{0}: 选择手牌以及技能效果", Skills[state].SkillName));
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     }                  
                     return;
             }

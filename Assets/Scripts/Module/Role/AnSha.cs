@@ -113,7 +113,7 @@ namespace AGrail
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    MessageSystem<MessageType>.Notify(MessageType.SendHint, "水影: 请选择舍弃的水系牌");
+                    MessageSystem<MessageType>.Notify(MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case 503:
                     OKAction = () =>
@@ -127,7 +127,7 @@ namespace AGrail
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    MessageSystem<MessageType>.Notify(MessageType.SendHint, "是否发动潜行");
+                    MessageSystem<MessageType>.Notify(MessageType.SendHint, StateHint.GetHint(state));
                     return;
             }
             base.UIStateChange(state, msg, paras);

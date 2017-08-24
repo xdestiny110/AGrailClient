@@ -205,12 +205,11 @@ namespace AGrail
                             mList.Add(i + "点伤害");
                         }
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                            string.Format("{0}: 请选择要造成的伤害", Skills[state].SkillName));
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     }
+
                     else
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("{0}: 请选择目标玩家", Skills[state].SkillName));
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state, 1));
                     return;
                 case (uint)SkillID.同生共死:
                     if (BattleData.Instance.Agent.SelectPlayers.Count == 1)
@@ -222,30 +221,30 @@ namespace AGrail
                         return;
                     };
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("{0}: 选择目标", Skills[state].SkillName));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case (uint)SkillID.血之哀伤:
                     OKAction = () =>
                     {
                         IsStart = true;
-                        if (BattleData.Instance.Agent.SelectPlayers.Count == 0)
-                        {
-                            additionalState = 0;
-                            sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 2 });
-                        }                            
-                        else
-                            sendReponseMsg(state, BattleData.Instance.MainPlayer.id,
-                                BattleData.Instance.Agent.SelectPlayers, null, new List<uint>() { 1 });
+                        additionalState = 0;
+                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 2 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1)
+                    {
+                        IsStart = true;
+                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id,
+                            BattleData.Instance.Agent.SelectPlayers, null, new List<uint>() { 1 });
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
+                    }
                     CancelAction = () =>
                     {
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("{0}: 请选择转移目标。不选择视为收回", Skills[state].SkillName));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case (uint)SkillID.逆流:
                     if(BattleData.Instance.Agent.SelectCards.Count == 2)
@@ -256,8 +255,7 @@ namespace AGrail
                         return;
                     };
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("{0}: 弃2张牌", Skills[state].SkillName));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case (uint)SkillID.血之诅咒:
                     if (BattleData.Instance.Agent.SelectPlayers.Count == 1)
@@ -268,8 +266,7 @@ namespace AGrail
                         return;
                     };
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("{0}: 选择目标玩家", Skills[state].SkillName));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case (uint)SkillID.血之诅咒弃牌:
                     if(BattleData.Instance.Agent.SelectCards.Count == MaxSelectCard(state))
@@ -279,8 +276,7 @@ namespace AGrail
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                         return;
                     }
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("{0}: 选择要舍弃的手牌", Skills[state].SkillName));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
             }
             base.UIStateChange(state, msg, paras);

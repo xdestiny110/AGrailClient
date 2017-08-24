@@ -137,10 +137,15 @@ namespace AGrail
                         return;
                     }
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                       string.Format("{0}:摸2张牌,你+1治疗并+1水晶", Skills[state].SkillName));
                     return;
                 case (uint)SkillID.英灵召唤:
+                    if(BattleData.Instance.Agent.SelectCards.Count == 1)
+                    {
+                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, BattleData.Instance.Agent.SelectCards,
+                        new List<uint>() { 1, (BattleData.Instance.Agent.SelectCards.Count > 0) ? (uint)1 : 0 });
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
+                    }
                     OKAction = () =>
                     {
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, BattleData.Instance.Agent.SelectCards,
@@ -152,8 +157,7 @@ namespace AGrail
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0, 0 });
                         BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
                     };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("是否发动{0}", Skills[state].SkillName));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case (uint)SkillID.军神威光:
                     //偷个懒，去掉选择能量的步骤
@@ -181,11 +185,10 @@ namespace AGrail
                         BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team] > 1)
                     {
                         selectList.Add(new List<uint>() { 2 });
-                        mList.Add("去除战绩区两星石,无视上限+2治疗");
+                        mList.Add("移除我方战绩区2星石,无视上限+2治疗");
                     }
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("{0}:选一项技能发动", Skills[state].SkillName));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
             }
             base.UIStateChange(state, msg, paras);

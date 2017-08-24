@@ -93,7 +93,7 @@ namespace AGrail
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    MessageSystem<MessageType>.Notify(MessageType.SendHint, string.Format("是否发动{0}", Skills[state].SkillName));
+                    MessageSystem<MessageType>.Notify(MessageType.SendHint, StateHint.GetHint(state));
                     return;
             }
             base.UIStateChange(state, msg, paras);

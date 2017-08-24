@@ -183,8 +183,7 @@ namespace AGrail
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("是否发动{0}", Skills[state].SkillName));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case (uint)SkillID.血腥祷言:
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
@@ -199,7 +198,7 @@ namespace AGrail
                         }                            
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, explainList);
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                            string.Format("{0}: 选择给予{1}的治疗数", Skills[state].SkillName, allies[0].nickname));
+                            string.Format( StateHint.GetHint(state),allies[0].nickname ) );
                     }
                     else if (additionalState == 0 && BattleData.Instance.Agent.SelectArgs.Count == 1)
                     {
@@ -225,8 +224,8 @@ namespace AGrail
                                 explainList.Add(i + "个治疗");
                             }
                             MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, explainList);
-                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                                string.Format("{0}: 选择给予{1}的治疗数", Skills[state].SkillName, allies[1].nickname));
+                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, 
+                                string.Format(StateHint.GetHint(state,1), allies[1].nickname));
                         }
                     }
                     else if(additionalState == 28031 && BattleData.Instance.Agent.SelectArgs.Count == 1)
@@ -268,8 +267,7 @@ namespace AGrail
                         return;
                     }
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("{0}: 选择两张法术牌及一个目标玩家", Skills[state].SkillName));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
             }
             base.UIStateChange(state, msg, paras);

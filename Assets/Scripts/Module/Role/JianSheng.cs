@@ -68,16 +68,13 @@ namespace AGrail
 
         public override bool CanSelect(uint uiState, Card card, bool isCovered)
         {
-            if (additionalState == 103)
+            if (additionalState == 103 && uiState==1)
                 return card.Element == Card.CardElement.wind;            
             return base.CanSelect(uiState, card, isCovered);
         }
 
         public override bool CheckOK(uint uiState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
         {
-            if (additionalState == 103 &&
-                cardIDs.Count == 1 && playerIDs.Count == 1)
-                return true;
             switch (uiState)
             {
                 case 102:
@@ -94,13 +91,6 @@ namespace AGrail
                     return true;
             }
             return base.CheckCancel(uiState, cardIDs, playerIDs, skillID);
-        }
-
-        public override bool CheckResign(uint uiState)
-        {
-            if (additionalState == 103)
-                return true;
-            return base.CheckResign(uiState);
         }
 
         public override void AdditionAction()
@@ -135,7 +125,7 @@ namespace AGrail
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    MessageSystem<MessageType>.Notify(MessageType.SendHint, string.Format("是否发动{0}", Skills[state].SkillName));
+                    MessageSystem<MessageType>.Notify(MessageType.SendHint, StateHint.GetHint(state));
                     return;
             }
             base.UIStateChange(state, msg, paras);

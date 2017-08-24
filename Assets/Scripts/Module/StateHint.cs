@@ -23,8 +23,7 @@ namespace AGrail
 
         public static string GetHint(uint state, int additional = 0)
         {
-            return hint[state.ToString()][additional.ToString()];
+            return hint[Skill.GetSkill(state).SkillName][additional.ToString()];
         }
-
     }
 }

@@ -127,8 +127,9 @@ namespace AGrail
             {
                 case 1801:
                 case 1802:
-                case 1804:
                     return 2;
+                case 1804:
+                    return ( (BattleData.Instance.Agent.Cmd.args[0] == 1) ? (uint)2 : (uint)1 );
             }
             return base.MaxSelectPlayer(uiState);
         }
@@ -187,8 +188,7 @@ namespace AGrail
                                 null, null, new List<uint>() { 0 });
                             BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                         };
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                            string.Format("{0}: 请选择卡牌", Skills[1803].SkillName));
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(1803));
                         return;
                     }
                     break;
@@ -210,8 +210,7 @@ namespace AGrail
                             BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                             MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentHandChange, false);
                         };
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                            string.Format("{0}: 请选择妖力", Skills[1804].SkillName));
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(1804));
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentHandChange, true);
                         return;
                     }
@@ -232,8 +231,7 @@ namespace AGrail
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSelectPlayer);
                     }                        
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("{0}: 请选择目标玩家以及卡牌", Skills[state].SkillName));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case 1804:
                     OKAction = () =>
@@ -242,8 +240,10 @@ namespace AGrail
                             null, new List<uint>() { (BattleData.Instance.Agent.SelectPlayers.Count == 1) ? (uint)0 : 1 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("{0}: 选择一个目标。若想展示火系妖力，则选择两个目标。", Skills[state].SkillName));
+                    if(BattleData.Instance.Agent.Cmd.args[0] == 1)
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state,1));
+                    else
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state,2));
                     return;
                 case 1805:
                     OKAction = () =>
@@ -256,8 +256,7 @@ namespace AGrail
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("是否发动{0}", Skills[state].SkillName));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
             }
             base.UIStateChange(state, msg, paras);

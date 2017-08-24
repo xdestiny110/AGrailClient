@@ -279,22 +279,25 @@ namespace AGrail
                     }                        
                     break;
                 case 2:
-                    if (BattleData.Instance.Agent.SelectCards.Count == 1 && 
-                        Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Name == Card.CardName.魔弹)
+                    if (BattleData.Instance.Agent.SelectCards.Count == 1)
                     {
-                        foreach(var v in BattleData.Instance.PlayerIdxOrder)
+                        if (Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Name == Card.CardName.魔弹)
                         {
-                            var info = BattleData.Instance.GetPlayerInfo((uint)v);
-                            if (info.team != BattleData.Instance.MainPlayer.team)
+                            foreach (var v in BattleData.Instance.PlayerIdxOrder)
                             {
-                                if(info.id == player.id)
-                                    return true;
-                                break;
-                            }                            
+                                var info = BattleData.Instance.GetPlayerInfo((uint)v);
+                                if (info.team != BattleData.Instance.MainPlayer.team)
+                                {
+                                    if (info.id == player.id)
+                                        return true;
+                                    break;
+                                }
+                            }
+                            return false;
                         }
-                        return false;
+                        return true;
                     }
-                    return true;
+                    return false;
                 case 3:
                     if (BattleData.Instance.Agent.SelectCards.Count == 1 && Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Element != Card.CardElement.light)
                         return player.team != BattleData.Instance.MainPlayer.team && player.id != BattleData.Instance.Agent.Cmd.args[3];                    
@@ -465,8 +468,8 @@ namespace AGrail
                 case (uint)StateEnum.Heal:
                     //治疗
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        "选择用于抵御伤害治疗数量");
-                    if(msg == UIStateMsg.ClickArgs)
+                        string.Format(StateHint.GetHint(StateEnum.Heal), BattleData.Instance.Agent.Cmd.args[1]));
+                    if (msg == UIStateMsg.ClickArgs)
                     {
                         Heal(BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectArgs);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
@@ -675,7 +678,7 @@ namespace AGrail
                         BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
                     };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("是否发动{0}", Skill.GetSkill(state).SkillName));
+                        StateHint.GetHint(state,1));
                     break;
 			case 3105:	//激昂狂想曲-代价
 				if (msg == UIStateMsg.ClickArgs) {
@@ -722,7 +725,7 @@ namespace AGrail
 				}
 										
 				MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
-				MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, string.Format("选择发动激昂狂想曲的条件"));
+				MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
 					return;
                 case 31052: //激昂狂想曲-效果
                     if (msg == UIStateMsg.ClickArgs)
@@ -753,8 +756,7 @@ namespace AGrail
                     }
 
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                                                    string.Format("选择发动激昂狂想曲的效果"));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state,1));
                     return;
 					case 3106:	//胜利交响诗-代价
 						if (msg == UIStateMsg.ClickArgs)
@@ -780,9 +782,8 @@ namespace AGrail
 					mList.Add ("将永恒乐章转移给吟游诗人");
 				}
 				MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
-				MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-												string.Format("选择发动胜利交响诗的条件"));
-						return;
+				MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
+                    return;
 			case 31061:	//胜利交响诗-效果
 				if (msg == UIStateMsg.ClickArgs) {
 					sendReponseMsg (state, BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, 
@@ -817,10 +818,9 @@ namespace AGrail
 				mList.Add ("+1【治疗】,我方战绩区+1【宝石】");
 
 				MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
-				MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-												string.Format("选择发动胜利交响诗的效果"));
+				MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state),1);
 
-				return;	
+                    return;	
 			}
             if(BattleData.Instance.Agent.AgentState.Check(PlayerAgentState.CanResign))
                 ResignAction = () =>

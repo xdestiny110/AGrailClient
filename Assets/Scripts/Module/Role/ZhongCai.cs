@@ -120,9 +120,7 @@ namespace AGrail
             {
                 case 1401:
                 case 1402:                
-                    return true;
-                case 1403:
-                    return playerIDs.Count == 1;                    
+                    return true;                
             }
             return base.CheckOK(uiState, cardIDs, playerIDs, skillID);
         }
@@ -193,8 +191,7 @@ namespace AGrail
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("是否发动{0}", Skills[state].SkillName));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case 1403:
                     if (BattleData.Instance.Agent.SelectPlayers.Count == 1 )
@@ -205,8 +202,7 @@ namespace AGrail
                         return;
                     };
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("{0}: 请选择目标角色", Skills[state].SkillName));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case 1405:
                     if (msg == UIStateMsg.ClickArgs)
@@ -226,8 +222,7 @@ namespace AGrail
                     var selectList = new List<List<uint>>() { new List<uint>() { 0 }, new List<uint>() { 1 } };
                     var mList = new List<string>() { "弃掉你的所有手牌", "将手牌补到上限，【战绩区】+1【宝石】" };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("{0}: 请选择一个效果进行发动", Skills[state].SkillName));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
             }
             base.UIStateChange(state, msg, paras);

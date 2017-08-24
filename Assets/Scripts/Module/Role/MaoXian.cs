@@ -270,13 +270,11 @@ namespace AGrail
                                 }
                             }
                             MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, explainList);
-                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                                string.Format("{0}: 请选择要提炼的能量", Skills[1202].SkillName));
+                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(1202));
                         }
                     }
                     if (BattleData.Instance.Agent.SelectPlayers.Count <= 0)
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                            string.Format("{0}: 请选择能量要给予的对象", Skills[1202].SkillName));
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(1202,1));
                     return;
                 case 1201:
                     CancelAction = () => 
@@ -296,10 +294,12 @@ namespace AGrail
                             explainList.Add("暗");
                         }
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, explainList);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     }
                     else
                     {
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state,1));
                         if (BattleData.Instance.Agent.SelectArgs[0] == 39)
                             qizhaSelectCard = 3;
                         else
@@ -321,8 +321,7 @@ namespace AGrail
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("是否发动{0}", Skills[state].SkillName));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
             }
             base.UIStateChange(state, msg, paras);
