@@ -295,6 +295,25 @@ namespace AGrail
                             }
                             return false;
                         }
+                        else if (Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Name == Card.CardName.圣盾)
+                        {
+                            foreach (var v in player.basic_cards)
+                            {
+                                if (Card.GetCard(v).Name.ToString() == "圣盾")
+                                    return false;
+                            }
+                            return true;
+                        }
+                        else if (Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Name == Card.CardName.虚弱)
+                        {
+                            foreach (var v in player.basic_cards)
+                            {
+                                if (Card.GetCard(v).Name.ToString() == "虚弱")
+                                    return false;
+                            }
+                            return true;
+                        }
+                        else
                         return true;
                     }
                     return false;
@@ -756,7 +775,7 @@ namespace AGrail
                     }
 
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state,1));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(3105,1));
                     return;
 					case 3106:	//胜利交响诗-代价
 						if (msg == UIStateMsg.ClickArgs)
@@ -818,7 +837,7 @@ namespace AGrail
 				mList.Add ("+1【治疗】,我方战绩区+1【宝石】");
 
 				MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
-				MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state),1);
+				MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(3106,1));
 
                     return;	
 			}

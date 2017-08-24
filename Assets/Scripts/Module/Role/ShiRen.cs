@@ -65,8 +65,6 @@ namespace AGrail
         {
             switch (uiState)
             {
-                case (uint)SkillID.BU_XIE_HE_XIAN:
-                    return true;
                 case (uint)SkillID.CHEN_LUN_XIE_ZOU_QU:
                     return BattleData.Instance.Agent.SelectCards.Count == 0 ||
                             card.Element == Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Element;

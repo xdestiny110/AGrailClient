@@ -78,6 +78,12 @@ namespace AGrail
                 case 403:
                 case 404:
                 case 405:
+                    foreach (var v in player.basic_cards)
+                    {
+                        var c = Card.GetCard(v);
+                        if (c.HasSkill(uiState))
+                            return false;
+                    }
                     return (BattleData.Instance.Agent.SelectCards.Count == 1 && player.team != BattleData.Instance.MainPlayer.team);
                 case 407:
                     return player.team != BattleData.Instance.MainPlayer.team;

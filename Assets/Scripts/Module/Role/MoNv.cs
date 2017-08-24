@@ -116,9 +116,10 @@ namespace AGrail
 				case (uint)SkillID.TIAN_HUO_DUAN_KONG:
                     return BattleData.Instance.Agent.SelectCards.Count == MaxSelectCard(uiState);
                 case (uint)SkillID.TONG_KU_LIAN_JIE:
-				case (uint)SkillID.MO_NENG_FAN_ZHUAN:
 					return player.team != BattleData.Instance.MainPlayer.team;
-			}
+                case (uint)SkillID.MO_NENG_FAN_ZHUAN:
+                    return player.team != BattleData.Instance.MainPlayer.team && BattleData.Instance.Agent.SelectCards.Count > 1;
+            }
 			return base.CanSelect(uiState, player);
 		}
 
@@ -133,7 +134,7 @@ namespace AGrail
 				case (uint)SkillID.TONG_KU_LIAN_JIE:
 				case (uint)SkillID.YONG_SHENG_YIN_SHI_JI:
 					if (skill.SkillID == (uint)SkillID.CANG_YAN_FA_DIAN)
-                        return Util.HasCard(Card.CardElement.fire, BattleData.Instance.MainPlayer.hands);
+                        return Util.HasCard(Card.CardElement.fire, BattleData.Instance.MainPlayer.hands) || (BattleData.Instance.MainPlayer.is_knelt);
                     if (skill.SkillID == (uint)SkillID.TIAN_HUO_DUAN_KONG)
 						return ( (BattleData.Instance.MainPlayer.yellow_token > 0 && Util.HasCard(Card.CardElement.fire, BattleData.Instance.MainPlayer.hands,2)) || (BattleData.Instance.MainPlayer.is_knelt) );
 					if (skill.SkillID == (uint)SkillID.TONG_KU_LIAN_JIE) 
@@ -184,26 +185,6 @@ namespace AGrail
 			}
 		}
 
-		public override bool CheckOK(uint uiState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
-		{
-			switch (uiState)
-			{
-				case (uint)SkillID.CANG_YAN_FA_DIAN:
-					return cardIDs.Count == 1 && playerIDs.Count == 1;
-				case (uint)SkillID.TIAN_HUO_DUAN_KONG:
-					return cardIDs.Count == 2 && playerIDs.Count == 1;
-				case (uint)SkillID.TI_SHEN_WAN_OU:
-                    return cardIDs.Count == 1 && playerIDs.Count == 1;
-				case (uint)SkillID.TONG_KU_LIAN_JIE:
-                    return playerIDs.Count == 1;
-				case (uint)SkillID.MO_NENG_FAN_ZHUAN:
-					return playerIDs.Count == 1 && cardIDs.Count > 1;
-				default:
-					return base.CheckOK(uiState, cardIDs, playerIDs, skillID);
-
-			}
-		}
-
 		public override bool CheckCancel(uint uiState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
 		{
 			switch (uiState)
@@ -226,7 +207,7 @@ namespace AGrail
 			{
 			case 1:	//躺斩
 				if (BattleData.Instance.MainPlayer.is_knelt) {
-					MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
+					MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.SendHint, StateHint.GetHint(StateEnum.Attack));
                         if (BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == 1) {
 						sendActionMsg (BasicActionType.ACTION_ATTACK_SKILL, BattleData.Instance.MainPlayer.id,
 							BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, (uint)SkillID.MO_NV_ZHI_NU_ATTACK);
@@ -285,10 +266,13 @@ namespace AGrail
 					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
 				case (uint)SkillID.MO_NENG_FAN_ZHUAN:
-					OKAction = () => {
+
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1)
+                    {
 						sendReponseMsg (state, BattleData.Instance.MainPlayer.id,
 							BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, new List<uint> () { 1 });
 						BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
+                        return;
 					};
 					CancelAction = () => {
 						sendReponseMsg (state, BattleData.Instance.MainPlayer.id, null, null, new List<uint> () { 0 });

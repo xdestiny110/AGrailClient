@@ -91,6 +91,13 @@ namespace AGrail
                 case 1601:
                 case 1602:
                 case 1604:
+                    if (uiState == 1601 || uiState == 1602)
+                    foreach (var v in player.basic_cards)
+                    {
+                        var c = Card.GetCard(v);
+                        if (c.HasSkill(uiState))
+                            return false;
+                    }
                     return BattleData.Instance.Agent.SelectCards.Count == MaxSelectCard(uiState) &&
                         player.team == BattleData.Instance.MainPlayer.team && 
                         player.id != BattleData.Instance.PlayerID;                
