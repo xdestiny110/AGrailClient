@@ -416,7 +416,7 @@ namespace Framework.AssetBundle
 #if UNITY_EDITOR || UNITY_STANDALONE
                     "file:///" + Application.persistentDataPath + "/";
 #elif UNITY_ANDROID
-                    Application.persistentDataPath + "/";
+                    "jar:file://" + Application.persistentDataPath + "/";
 #endif
             }
         }
