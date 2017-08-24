@@ -56,8 +56,7 @@ namespace Framework.AssetBundle
             get
 #if !UNITY_EDITOR
             {
-                //服务器没完成的情况下暂时先忽略
-                return true;
+                return false;
             }
 #else
             {
@@ -416,7 +415,7 @@ namespace Framework.AssetBundle
 #if UNITY_EDITOR || UNITY_STANDALONE
                     "file:///" + Application.persistentDataPath + "/";
 #elif UNITY_ANDROID
-                    "jar:file://" + Application.persistentDataPath + "/";
+                    "file://" + Application.persistentDataPath + "/";
 #endif
             }
         }
