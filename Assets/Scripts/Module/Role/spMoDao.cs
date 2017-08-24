@@ -77,9 +77,63 @@ namespace AGrail
         {
             switch (uiState)
             {
-                case 803:
-                case 804:
+                case 2:
+                    if (BattleData.Instance.Agent.SelectCards.Count == 1 && Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Name == Card.CardName.魔弹)
+                    {
+                        for (int i = BattleData.Instance.PlayerIdxOrder.Count - 1; i >= 0; i--)
+                        {
+                            var target = BattleData.Instance.GetPlayerInfo((uint)BattleData.Instance.PlayerIdxOrder[i]);
+                            if (target.team != BattleData.Instance.MainPlayer.team)
+                            {
+                                if (target.id == player.id)
+                                    return true;
+                                break;
+                            }
+                        }
+                        for (int i = 0; i < BattleData.Instance.PlayerIdxOrder.Count; i++)
+                        {
+                            var target = BattleData.Instance.GetPlayerInfo((uint)BattleData.Instance.PlayerIdxOrder[i]);
+                            if (target.team != BattleData.Instance.MainPlayer.team)
+                            {
+                                if (target.id == player.id)
+                                    return true;
+                                break;
+                            }
+                        }
+                        return false;
+                    }
+                    else
+                        break;
+
                 case 805:
+                    return BattleData.Instance.Agent.SelectCards.Count == 1 && player.team != BattleData.Instance.MainPlayer.team;
+
+                case 803:
+                    if (BattleData.Instance.Agent.SelectCards.Count == 1)
+                    {
+                        for (int i = BattleData.Instance.PlayerIdxOrder.Count - 1; i >= 0; i--)
+                        {
+                            var target = BattleData.Instance.GetPlayerInfo((uint)BattleData.Instance.PlayerIdxOrder[i]);
+                            if (target.team != BattleData.Instance.MainPlayer.team)
+                            {
+                                if (target.id == player.id)
+                                    return true;
+                                break;
+                            }
+                        }
+                        for (int i = 0; i < BattleData.Instance.PlayerIdxOrder.Count; i++)
+                        {
+                            var target = BattleData.Instance.GetPlayerInfo((uint)BattleData.Instance.PlayerIdxOrder[i]);
+                            if (target.team != BattleData.Instance.MainPlayer.team)
+                            {
+                                if (target.id == player.id)
+                                    return true;
+                                break;
+                            }
+                        }
+                    }
+                    return false;
+                case 804:
                     return player.team != BattleData.Instance.MainPlayer.team;
             }
             return base.CanSelect(uiState, player);
@@ -91,13 +145,17 @@ namespace AGrail
             {
                 case 10:
                 case 11:
+                case 801:
                 case 803:
                 case 804:
-                case 805:
-                    if (skill.SkillID == 803 || skill.SkillID == 805)
-                        return true;
-                    if (skill.SkillID == 804 && BattleData.Instance.MainPlayer.gem > 0)
-                        return true;
+                    if (skill.SkillID == 805)
+                        return Util.HasCard(Card.CardType.magic, BattleData.Instance.MainPlayer.hands);
+
+                    if (skill.SkillID == 803)
+                        return (Util.HasCard(Card.CardElement.fire, BattleData.Instance.MainPlayer.hands) || Util.HasCard(Card.CardElement.earth, BattleData.Instance.MainPlayer.hands));
+
+                    if (skill.SkillID == 804)
+                        return BattleData.Instance.MainPlayer.gem > 0;
                     return false;
             }
             return base.CanSelect(uiState, skill);
@@ -130,68 +188,6 @@ namespace AGrail
             }
             return base.MaxSelectPlayer(uiState);
         }
-
-        public override bool CheckOK(uint uiState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
-        {
-            switch (uiState)
-            {
-                case 2:
-                    if (cardIDs.Count == 1 && playerIDs.Count == 1 && Card.GetCard(cardIDs[0]).Name == Card.CardName.魔弹)
-                    {
-                        for (int i = BattleData.Instance.PlayerIdxOrder.Count - 1; i >= 0; i--)
-                        {
-                            var player = BattleData.Instance.GetPlayerInfo((uint)BattleData.Instance.PlayerIdxOrder[i]);
-                            if (player.team != BattleData.Instance.MainPlayer.team)
-                            {
-                                if (player.id == playerIDs[0])
-                                    return true;
-                                break;
-                            }
-                        }
-                    }
-                    break;
-
-                case 803:
-                    if (cardIDs.Count == 1 && playerIDs.Count == 1)
-                    {
-                        for (int i = BattleData.Instance.PlayerIdxOrder.Count - 1; i >= 0; i--)
-                        {
-                            var player = BattleData.Instance.GetPlayerInfo((uint)BattleData.Instance.PlayerIdxOrder[i]);
-                            if (player.team != BattleData.Instance.MainPlayer.team)
-                            {
-                                if (player.id == playerIDs[0])
-                                    return true;
-                                break;
-                            }
-                        }
-                        for (int i = 0; i < BattleData.Instance.PlayerIdxOrder.Count; i++)
-                        {
-                            var player = BattleData.Instance.GetPlayerInfo((uint)BattleData.Instance.PlayerIdxOrder[i]);
-                            if (player.team != BattleData.Instance.MainPlayer.team)
-                            {
-                                if (player.id == playerIDs[0])
-                                    return true;
-                                break;
-                            }
-                        }
-                    }
-                    return false;
-                case 804:
-                    if (playerIDs.Count == 2)
-                        return true;
-                    return false;
-                case 805:
-                    if (cardIDs.Count == 1 && playerIDs.Count == 1)
-                        return true;
-                    return false;
-                case 806:
-                    if (cardIDs.Count > 0)
-                        return true;
-                    return false;
-            }
-            return base.CheckOK(uiState, cardIDs, playerIDs, skillID);
-        }
-
         public override bool CheckCancel(uint uiState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
         {
             switch (uiState)
@@ -209,18 +205,6 @@ namespace AGrail
         {
             switch (state)
             {
-                case 803:
-                case 804:
-                case 805:
-                    OKAction = () =>
-                    {
-                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
-                            BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state,
-                            BattleData.Instance.Agent.SelectArgs);
-                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                    };
-                    CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
-                    break;
                 case 806:
                     OKAction = () =>
                     {
@@ -232,24 +216,44 @@ namespace AGrail
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    break;
-            }
-            switch (state)
-            {
-                case 803:
+                    return;
                 case 805:
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 2 && BattleData.Instance.Agent.SelectCards.Count == 1)
+                    {
+                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
+                            BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state,
+                            BattleData.Instance.Agent.SelectArgs);
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
+                    };
+                    CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
-                    break;
+                    return;
                 case 804:
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 2)
+                    {
+                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
+                            BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state,
+                            BattleData.Instance.Agent.SelectArgs);
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
+                    };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
-                    break;
-                case 806:
+                    CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
+                    return;
+                case 803:
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == 1)
+                    {
+                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
+                            BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state,
+                            BattleData.Instance.Agent.SelectArgs);
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                    };
+                    CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
             }
-
             base.UIStateChange(state, msg, paras);
         }
-
     }
 }

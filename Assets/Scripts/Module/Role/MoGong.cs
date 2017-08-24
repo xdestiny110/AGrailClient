@@ -63,6 +63,7 @@ namespace AGrail
                 {
                     additionalState = 0;
                     chongNengCnt = 0;
+                    lastHit = -1;
                     isChongNengUsed = false;
                 }
                 base.IsStart = value;
@@ -114,6 +115,10 @@ namespace AGrail
                     return true;
                 case (uint)SkillID.雷光散射:
                     return BattleData.Instance.Agent.SelectCards.Count > 1 && player.team != BattleData.Instance.MainPlayer.team;
+                case 1:
+                    if (additionalState == 26031 && player.id == lastHit)
+                        return false;
+                    break;
             }
             return base.CanSelect(uiState, player);
         }
@@ -222,6 +227,7 @@ namespace AGrail
                 case 1:
                     if (BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == 1)
                     {
+                        lastHit =(int)BattleData.Instance.Agent.SelectPlayers[0];
                         if (additionalState == 26031)
                         {
                             sendActionMsg(BasicActionType.ACTION_ATTACK_SKILL, BattleData.Instance.MainPlayer.id,
@@ -235,6 +241,12 @@ namespace AGrail
                     }
                     if (additionalState == 26031)
                     {
+                        ResignAction = () =>
+                        {
+                            sendActionMsg(BasicActionType.ACTION_NONE, BattleData.Instance.MainPlayer.id, null, null, null, null);
+                            BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentHandChange, false);
+                        };
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentHandChange, true);
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(2603));
                     }
@@ -404,6 +416,7 @@ namespace AGrail
         }
 
         private bool isChongNengUsed = false;
+        private int lastHit = -1;
         private uint chongNengCnt = 0;
         private enum SkillID
         {
