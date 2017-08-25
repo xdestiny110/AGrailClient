@@ -25,5 +25,10 @@ namespace AGrail
         {
             return hint[Skill.GetSkill(state).SkillName][additional.ToString()];
         }
+
+        public static string GetHint(string keyname, int additional = 0)
+        {
+            return hint[keyname][additional.ToString()];
+        }
     }
 }

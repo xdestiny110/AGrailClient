@@ -62,7 +62,7 @@ namespace AGrail
                 if (!value)
                 {
                     additionalState = 0;
-                    chongNengCnt = 0;
+                    chongNengCnt = 1;
                     lastHit = -1;
                     isChongNengUsed = false;
                 }
@@ -417,7 +417,7 @@ namespace AGrail
 
         private bool isChongNengUsed = false;
         private int lastHit = -1;
-        private uint chongNengCnt = 0;
+        private uint chongNengCnt = 1;
         private enum SkillID
         {
             魔贯冲击 = 2601,

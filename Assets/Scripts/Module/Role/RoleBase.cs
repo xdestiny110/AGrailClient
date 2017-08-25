@@ -23,10 +23,29 @@ namespace AGrail
         public abstract uint Star { get; }
         public bool attackable = false;
         //断线重连应对机制
+        public bool NoSelection = false;
 
         //记录一些特殊状态
         //由于当初没想好导致必须要在Role中维护这个状态...这个要比较小心
         protected uint additionalState { get; set; }
+
+        public virtual bool CheckunActional(uint uiState)
+        {
+            if (CheckBuy(uiState)) return false;
+            NoSelection = false;
+            if (uiState == 11 || uiState == 10)
+            {
+                foreach (var v in BattleData.Instance.MainPlayer.hands)
+                    if( BattleData.Instance.Agent.PlayerRole.CanSelect(BattleData.Instance.Agent.FSM.Current.StateNumber, Card.GetCard(v), false))
+                        return false;
+                foreach (var v in BattleData.Instance.Agent.PlayerRole.Skills.Values)
+                    if (BattleData.Instance.Agent.PlayerRole.CanSelect(BattleData.Instance.Agent.FSM.Current.StateNumber, v))
+                        return false;
+                NoSelection = true;
+                return true;
+            }
+            return false;
+        }
 
         public virtual void Attack(uint card, uint dstID)
         {
@@ -195,6 +214,7 @@ namespace AGrail
 
         public virtual bool CheckResign(uint uiState)
         {
+            if ( CheckunActional(uiState) ) return true;
             switch (uiState)
             {
                 case 15:                
@@ -850,12 +870,25 @@ namespace AGrail
 
                     return;	
 			}
-            if(BattleData.Instance.Agent.AgentState.Check(PlayerAgentState.CanResign))
+            if (BattleData.Instance.Agent.AgentState.Check(PlayerAgentState.CanResign))
                 ResignAction = () =>
                 {
                     sendActionMsg(BasicActionType.ACTION_NONE, BattleData.Instance.MainPlayer.id, null, null, null, null);
                     BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                 };
+            else if(CheckunActional(state))
+            {
+                if(CheckSynthetize(state))
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint("UnActional",1));
+                else
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint("UnActional"));
+                ResignAction = () =>
+                    {
+                        NoSelection = false;
+                        sendActionMsg(BasicActionType.ACTION_UNACTIONAL, BattleData.Instance.MainPlayer.id, null, null, null, null);
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                    };
+            }
         }
 
         protected void sendActionMsg(BasicActionType actionType, uint srcID, List<uint> dstID = null, List<uint> cardIDs = null, uint? actionID = null, List<uint> args = null)
