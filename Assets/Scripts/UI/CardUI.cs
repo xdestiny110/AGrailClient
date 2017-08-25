@@ -156,7 +156,8 @@ namespace AGrail
 
         private void disappear()
         {
-            DOTween.To(() => image.color, x => image.color = x, new Color(1, 1, 1, 0), 0.5f).SetOptions(true);
+            DOTween.To(() => image.color, x => image.color = x, new Color(1, 1, 1, 0), 0.6f).SetOptions(true)
+                .OnComplete(()=> { Destroy(this.gameObject); });
             DOTween.To(() => txtSkill1.color, x => txtSkill1.color = x, new Color(1, 1, 1, 0), 0.5f).SetOptions(true);
             DOTween.To(() => txtSkill2.color, x => txtSkill2.color = x, new Color(1, 1, 1, 0), 0.5f).SetOptions(true);
             var images = gameObject.GetComponentsInChildren<Image>();
