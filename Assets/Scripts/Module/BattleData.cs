@@ -55,7 +55,10 @@ namespace AGrail
             {
                 case MessageType.TURNBEGIN:
                     if (MainPlayer != null && MainPlayer.id != 9)
+                    {
                         Agent.PlayerRole.IsStart = false;
+                        Agent.PlayerRole.attackable = true;
+                    }
                     break;
                 case MessageType.GAMEINFO:
                     gameInfo = parameters[0] as network.GameInfo;

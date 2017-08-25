@@ -21,6 +21,8 @@ namespace AGrail
         public Dictionary<uint, Skill> Skills = new Dictionary<uint, Skill>();
         public Dictionary<uint, Mation> Mations { get { return Mation.GetMation((uint)RoleID); } }
         public abstract uint Star { get; }
+        public bool attackable = false;
+        //断线重连应对机制
 
         //记录一些特殊状态
         //由于当初没想好导致必须要在Role中维护这个状态...这个要比较小心
@@ -124,6 +126,7 @@ namespace AGrail
 
         public virtual void AdditionAction()
         {
+            attackable = true;
             sendReponseMsg((uint)BasicRespondType.RESPOND_ADDITIONAL_ACTION, 
                 BattleData.Instance.MainPlayer.id, null, null, BattleData.Instance.Agent.SelectArgs);
         }
@@ -385,6 +388,12 @@ namespace AGrail
 			break;
                 case (uint)StateEnum.Attack:
                     //攻击
+                    if (!attackable)
+                    {
+                        sendActionMsg(BasicActionType.ACTION_NONE, BattleData.Instance.MainPlayer.id, null, null, null, null);
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        break;
+                    }
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                         StateHint.GetHint(StateEnum.Attack));
                     if (BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == 1)
