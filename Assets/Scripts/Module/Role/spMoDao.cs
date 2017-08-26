@@ -145,7 +145,7 @@ namespace AGrail
             {
                 case 10:
                 case 11:
-                case 801:
+                case 805:
                 case 803:
                 case 804:
                     if (skill.SkillID == 805)
