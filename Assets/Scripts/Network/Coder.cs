@@ -17,8 +17,8 @@ namespace AGrail
         }
 
         public bool Decode(byte[] data, out List<Protobuf> protobufs)
-        {            
-            protobufs = new List<Protobuf>();           
+        {
+            protobufs = new List<Protobuf>();
             try
             {
                 // 将新接收的数据写入stream尾
@@ -26,12 +26,12 @@ namespace AGrail
                 stream.Write(data, 0, data.Length);
                 stream.Position = 0;
                 // 4个字节协议长度
-                var sumLen = br.ReadInt32();                
+                var sumLen = br.ReadInt32();
                 while(sumLen + 4 <= stream.Length)
                 {
                     // 2个字节协议号
-                    stream.Position = 6;                    
-                    var protoID = br.ReadInt16();                    
+                    stream.Position = 6;
+                    var protoID = br.ReadInt16();
                     // 协议反序列化
                     MemoryStream protoStream = new MemoryStream();
                     protoStream.Write(stream.ToArray(), 8, sumLen - 4);
@@ -64,13 +64,13 @@ namespace AGrail
                         stream = new MemoryStream();
                         br = new BinaryReader(stream);
                         break;
-                    }                        
+                    }
                 }
             }
             catch (Exception ex)
             {
                 UnityEngine.Debug.LogError("Decode protobuf fail!");
-                UnityEngine.Debug.LogException(ex);                
+                UnityEngine.Debug.LogException(ex);
                 return false;
             }
             return true;

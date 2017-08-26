@@ -1,6 +1,3 @@
-using UnityEngine;
-using System.Collections;
-using System;
 using System.Collections.Generic;
 using Framework.Message;
 using network;
@@ -33,11 +30,42 @@ namespace AGrail
             }
         }
 
+        public override string HeroName
+        {
+            get
+            {
+                return "美狄亚";
+            }
+        }
+
+        public override uint Star
+        {
+            get
+            {
+                return 35;
+            }
+        }
+
         public override string Knelt
         {
             get
             {
                 return "AnYing";
+            }
+        }
+
+        public override bool IsStart
+        {
+            get
+            {
+                return base.IsStart;
+            }
+
+            set
+            {
+                if (!value)
+                    additionalState = 0;
+                base.IsStart = value;
             }
         }
 
@@ -51,6 +79,10 @@ namespace AGrail
         {
             switch (uiState)
             {
+                case 3:
+                    if (BattleData.Instance.NowPlayerID == BattleData.Instance.MainPlayer.id && card.Element == Card.CardElement.light)
+                        return false;
+                    break;
                 case 905:
                     return card.Type == Card.CardType.magic;
                 case 10:
@@ -59,9 +91,8 @@ namespace AGrail
                     if (additionalState == 901 &&
                         (card.Element != Card.CardElement.fire || card.Type != Card.CardType.attack))
                         return false;
-                    return card.Type != Card.CardType.magic;
+                    return card.Type != Card.CardType.magic;      
             }
-
             return base.CanSelect(uiState, card, isCovered);
         }
 
@@ -70,7 +101,7 @@ namespace AGrail
             switch (uiState)
             {
                 case 905:
-                    return true;
+                    return BattleData.Instance.Agent.SelectCards.Count == 2;
             }
             return base.CanSelect(uiState, player);
         }
@@ -82,7 +113,9 @@ namespace AGrail
                 case 905:
                 case 10:
                 case 11:
-                    return skill.SkillID == 905 && BattleData.Instance.MainPlayer.is_knelt;
+                    if (skill.SkillID == 905 && BattleData.Instance.MainPlayer.is_knelt && Util.HasCard(Card.CardType.magic, BattleData.Instance.MainPlayer.hands, 2))
+                        return true;
+                    return false;
             }
             return base.CanSelect(uiState, skill);
         }
@@ -154,7 +187,7 @@ namespace AGrail
         public override void UIStateChange(uint state, UIStateMsg msg, params object[] paras)
         {
             switch (state)
-            {                   
+            {
                 case 902:
                 case 906:
                     OKAction = () =>
@@ -162,39 +195,30 @@ namespace AGrail
                         if (state == 901) additionalState = 901;
                         if (state == 902) IsStart = true;
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 1 });
-                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);                        
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     CancelAction = () =>
                     {
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, 
-                        string.Format("是否发动{0}", Skills[state].SkillName));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case 905:
-                    OKAction = () =>
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == 2)
                     {
                         sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
                     };
                     CancelAction = () =>
                     {
                         BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
                     };
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
             }
             base.UIStateChange(state, msg, paras);
-            if (additionalState == 901)
-            {
-                //这代码真傻...应该做成list的
-                //但懒得改了
-                var t1 = OKAction;
-                var t2 = ResignAction;
-                OKAction = () => { t1(); additionalState = 0; };
-                ResignAction = () => { t2(); additionalState = 0; };
-            }
         }
-
     }
 }

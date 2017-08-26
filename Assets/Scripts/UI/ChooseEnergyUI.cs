@@ -11,17 +11,17 @@ namespace AGrail
         [SerializeField]
         private Transform root;
         [SerializeField]
-        private Button btnOK;
+        private Button btn2Crystal;
         [SerializeField]
-        private Text lblTitle;
+        private Button btn1Crystal;
         [SerializeField]
-        private Text lblGemNum;
+        private Button btn1Crystal1Gem;
         [SerializeField]
-        private Text lblCrystalNum;
-
-        private uint gemNum = 0;
-        private uint crystalNum = 0;
-        private Func<uint, uint, bool> check = null;
+        private Button btn1Gem;
+        [SerializeField]
+        private Button btn2Gem;
+        [SerializeField]
+        private Button btnBack;
 
         public override WindowType Type
         {
@@ -37,64 +37,51 @@ namespace AGrail
             {
                 return base.Parameters;
             }
+
             set
             {
                 base.Parameters = value;
-                btnOK.onClick.RemoveAllListeners();
-                btnOK.onClick.AddListener(()=> 
-                {
-                    ((Action<uint, uint>)value[0])(gemNum, crystalNum);
-                    GameManager.UIInstance.PopWindow(WinMsg.Resume);
-                });
-                check = (Func<uint, uint, bool>)value[1];
-                lblTitle.text = value[2].ToString();
             }
         }
 
         public override void Awake()
         {
-            btnOK.interactable = false;
+            btn1Crystal.GetComponent<Image>().alphaHitTestMinimumThreshold = 0.8f;
+            btn2Crystal.GetComponent<Image>().alphaHitTestMinimumThreshold = 0.8f;
+            btn1Crystal1Gem.GetComponent<Image>().alphaHitTestMinimumThreshold = 0.8f;
+            btn1Gem.GetComponent<Image>().alphaHitTestMinimumThreshold = 0.8f;
+            btn2Gem.GetComponent<Image>().alphaHitTestMinimumThreshold = 0.8f;
+
+            btnBack.onClick.AddListener(onBtnBackClick);
+            btn1Gem.onClick.AddListener(delegate { onBtnEnergyClick(0); } );
+            btn2Gem.onClick.AddListener(delegate { onBtnEnergyClick(1); });
+            btn1Crystal1Gem.onClick.AddListener(delegate { onBtnEnergyClick(2); });
+            btn1Crystal.onClick.AddListener(delegate { onBtnEnergyClick(3); });
+            btn2Crystal.onClick.AddListener(delegate { onBtnEnergyClick(4); });
+
             base.Awake();
         }
 
-        public void OnGemPlusClick()
+        private void onBtnBackClick()
         {
-            if(gemNum < 5)
-            {
-                gemNum++;
-                lblGemNum.text = gemNum.ToString();
-            }
-            btnOK.interactable = check(gemNum, crystalNum);
+            GameManager.UIInstance.PopWindow(WinMsg.Resume);
         }
 
-        public void OnGemMinusClick()
+        private void onBtnEnergyClick(int idx)
         {
-            if (gemNum > 0)
+            switch (idx)
             {
-                gemNum--;
-                lblGemNum.text = gemNum.ToString();
+                case 0:
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
             }
-            btnOK.interactable = check(gemNum, crystalNum);
-        }
-
-        public void OnCrystalPlusClick()
-        {
-            if (crystalNum < 5)
-            {
-                crystalNum++;
-                lblCrystalNum.text = crystalNum.ToString();
-            }
-            btnOK.interactable = check(gemNum, crystalNum);
-        }
-
-        public void OnCrystalMinusClick()
-        {
-            if (crystalNum >0)
-            {
-                crystalNum--;
-                lblCrystalNum.text = crystalNum.ToString();
-            }
-            btnOK.interactable = check(gemNum, crystalNum);
         }
     }
 }

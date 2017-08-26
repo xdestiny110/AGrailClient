@@ -5,6 +5,7 @@ using UnityEngine.EventSystems;
 using Framework.Message;
 using System;
 using DG.Tweening;
+using Framework.AssetBundle;
 
 namespace AGrail
 {
@@ -19,13 +20,15 @@ namespace AGrail
         [SerializeField]
         private Text txtSkill2;
         [SerializeField]
-        private RawImage image;
+        private Image image;
         [SerializeField]
         private Transform propertyRoot;
         [SerializeField]
         private Transform elementRoot;
         [SerializeField]
         private Image selectBorder;
+        [SerializeField]
+        private Image canSelectBorder;
 
         private bool isEnable;
         public bool IsEnable
@@ -40,6 +43,7 @@ namespace AGrail
                         propertyRoot.GetChild(i).GetComponent<Image>().color = new Color(0.5f, 0.5f, 0.5f, 1);
                     for (int i = 0; i < elementRoot.childCount; i++)
                         elementRoot.GetChild(i).GetComponent<Image>().color = new Color(0.5f, 0.5f, 0.5f, 1);
+                    canSelectBorder.enabled = false;
                 }
                 else
                 {
@@ -48,7 +52,8 @@ namespace AGrail
                         propertyRoot.GetChild(i).GetComponent<Image>().color = Color.white;
                     for (int i = 0; i < elementRoot.childCount; i++)
                         elementRoot.GetChild(i).GetComponent<Image>().color = Color.white;
-                }                    
+                    canSelectBorder.enabled = true;
+                }
             }
             get
             {
@@ -62,10 +67,10 @@ namespace AGrail
             set
             {
                 card = value;
-                image.texture = Resources.Load<Texture2D>(card.AssetPath);
+                image.sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("card", card.AssetPath);
                 for (int i = 0; i < propertyRoot.childCount; i++)
                     propertyRoot.GetChild(i).gameObject.SetActive(false);
-                if (card.Property != Card.CardProperty.无)                
+                if (card.Property != Card.CardProperty.无)
                     propertyRoot.Find(card.Property.ToString()).gameObject.SetActive(true);
                 for (int i = 0; i < elementRoot.childCount; i++)
                     elementRoot.GetChild(i).gameObject.SetActive(false);
@@ -98,9 +103,15 @@ namespace AGrail
             {
                 case MessageType.AgentSelectCard:
                     if (BattleData.Instance.Agent.SelectCards.Contains(card.ID))
+                    {
                         selectBorder.enabled = true;
+                        canSelectBorder.enabled = false;
+                    }
                     else
+                    {
                         selectBorder.enabled = false;
+                        canSelectBorder.enabled = IsEnable;
+                    }
                     break;
             }
         }
@@ -113,24 +124,19 @@ namespace AGrail
                     BattleData.Instance.Agent.AddSelectCard(card.ID);
                 else
                     BattleData.Instance.Agent.RemoveSelectCard(card.ID);
-            }    
+            }
         }
 
-        private bool disappear = false;
+        private bool isDisappear = false;
         public void Disappear()
         {
-            disappear = true;            
-            DOTween.To(() => image.color, x => image.color = x, new Color(1, 1, 1, 0), 20).SetOptions(true);
-            DOTween.To(() => txtSkill1.color, x => txtSkill1.color = x, new Color(1, 1, 1, 0), 20).SetOptions(true);
-            DOTween.To(() => txtSkill2.color, x => txtSkill2.color = x, new Color(1, 1, 1, 0), 20).SetOptions(true);
-            var images = gameObject.GetComponentsInChildren<Image>();
-            foreach(var v in images)
-                DOTween.To(() => v.color, x => v.color = x, new Color(1, 1, 1, 0), 20).SetOptions(true);
+            isDisappear = true;
+            Invoke("disappear", 3);
         }
 
         public void OnPointerEnter(BaseEventData eventData)
         {
-            if (disappear) return;
+            if (isDisappear) return;
             var pos = canvas.transform.localPosition;
             pos.y += 10;
             canvas.transform.localPosition = pos;
@@ -140,12 +146,23 @@ namespace AGrail
 
         public void OnPointerExit(BaseEventData eventData)
         {
-            if (disappear) return;
+            if (isDisappear) return;
             var pos = canvas.transform.localPosition;
             pos.y = 0;
             canvas.transform.localPosition = pos;
             canvas.overrideSorting = false;
             canvas.sortingOrder = 0;
+        }
+
+        private void disappear()
+        {
+            DOTween.To(() => image.color, x => image.color = x, new Color(1, 1, 1, 0), 0.6f).SetOptions(true)
+                .OnComplete(()=> { Destroy(this.gameObject); });
+            DOTween.To(() => txtSkill1.color, x => txtSkill1.color = x, new Color(1, 1, 1, 0), 0.5f).SetOptions(true);
+            DOTween.To(() => txtSkill2.color, x => txtSkill2.color = x, new Color(1, 1, 1, 0), 0.5f).SetOptions(true);
+            var images = gameObject.GetComponentsInChildren<Image>();
+            foreach (var v in images)
+                DOTween.To(() => v.color, x => v.color = x, new Color(1, 1, 1, 0), 0.5f).SetOptions(true);
         }
     }
 }

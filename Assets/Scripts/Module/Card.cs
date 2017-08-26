@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using Framework.AssetBundle;
 
 namespace AGrail
 {
@@ -20,7 +21,7 @@ namespace AGrail
         private static Dictionary<uint, Card> cardDict = new Dictionary<uint, Card>();
         static Card()
         {
-            var txt = (Resources.Load<TextAsset>("cardDB")).text;
+            var txt = AssetBundleManager.Instance.LoadAsset<TextAsset>("battle", "cardDB").text;
             var strs = txt.Split('\n');
             foreach (var v in strs)
             {
@@ -38,10 +39,10 @@ namespace AGrail
                     Description = t[6],
                     SkillNum = int.Parse(t[7])
                 };
-                for(int i = 0; i < c.SkillNum; i++)                
+                for(int i = 0; i < c.SkillNum; i++)
                     c.SkillNames.Add(t[8 + i]);
                 cardDict.Add(c.ID, c);
-            }                
+            }
         }
 
         public static Card GetCard(uint cardID)
@@ -52,10 +53,10 @@ namespace AGrail
             {
                 Debug.LogErrorFormat("Can not find card id {0}", cardID);
                 return null;
-            }                
+            }
         }
 
-        private Card() { }        
+        private Card() { }
 
         public bool HasSkill(string skillName)
         {

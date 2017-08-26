@@ -8,9 +8,9 @@ namespace AGrail
     {
         private LoginState state = LoginState.Prepare;
 
-        public string UserName { get; private set; }        
+        public string UserName { get; private set; }
         public bool IsVIP { get; private set; }
-        
+
         public LoginState State
         {
             get { return state; }
@@ -22,7 +22,7 @@ namespace AGrail
         }
 
         public UserData() : base()
-        {            
+        {
             MessageSystem<MessageType>.Regist(MessageType.LOGINRESPONSE, this);
             if (GameManager.TCPInstance.Connected)
                 State = LoginState.Ready;
@@ -35,7 +35,7 @@ namespace AGrail
 
         public void Login(string userName, string password)
         {
-            var request = new network.LoginRequest() { asGuest = false, user_id = userName, user_password = password, version = GameManager.Version };            
+            var request = new network.LoginRequest() { asGuest = false, user_id = userName, user_password = password, version = GameManager.Version };
             GameManager.TCPInstance.Send(new Protobuf() { Proto = request, ProtoID = ProtoNameIds.LOGINREQUEST });
         }
 
@@ -52,7 +52,7 @@ namespace AGrail
                     {
                         case 0:
                             IsVIP = false;
-                            State = LoginState.Success;                            
+                            State = LoginState.Success;
                             break;
                         case 4:
                             IsVIP = true;
@@ -67,10 +67,10 @@ namespace AGrail
                         case 3:
                             State = LoginState.Update;
                             break;
-                    }                    
+                    }
                     break;
             }
-        }       
+        }
     }
 
     public enum LoginState

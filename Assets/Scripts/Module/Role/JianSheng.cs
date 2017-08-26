@@ -29,6 +29,37 @@ namespace AGrail
             }
         }
 
+        public override string HeroName
+        {
+            get
+            {
+                return "维斯特姆";
+            }
+        }
+
+        public override uint Star
+        {
+            get
+            {
+                return 30;
+            }
+        }
+
+        public override bool IsStart
+        {
+            get
+            {
+                return base.IsStart;
+            }
+
+            set
+            {
+                if(!value)
+                    additionalState = 0;
+                base.IsStart = value;
+            }
+        }
+
         public JianSheng()
         {
             for (uint i = 101; i <= 105; i++)
@@ -37,17 +68,13 @@ namespace AGrail
 
         public override bool CanSelect(uint uiState, Card card, bool isCovered)
         {
-            if (additionalState == 103 &&
-                (card.Element != Card.CardElement.wind || card.Type != Card.CardType.attack))
-                return false;
+            if (additionalState == 103 && uiState==1)
+                return card.Element == Card.CardElement.wind;
             return base.CanSelect(uiState, card, isCovered);
         }
 
         public override bool CheckOK(uint uiState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
         {
-            if (additionalState == 103 &&
-                cardIDs.Count == 1 && playerIDs.Count == 1)
-                return true;
             switch (uiState)
             {
                 case 102:
@@ -66,19 +93,12 @@ namespace AGrail
             return base.CheckCancel(uiState, cardIDs, playerIDs, skillID);
         }
 
-        public override bool CheckResign(uint uiState)
-        {
-            if (additionalState == 103)
-                return true;
-            return base.CheckResign(uiState);
-        }
-
         public override void AdditionAction()
         {
             if (BattleData.Instance.Agent.SelectArgs.Count == 1)
             {
                 switch(BattleData.Instance.Agent.SelectArgs[0])
-                {                    
+                {
                     case 103:
                         additionalState = 103;
                         break;
@@ -91,7 +111,7 @@ namespace AGrail
         }
 
         public override void UIStateChange(uint state, UIStateMsg msg, params object[] paras)
-        {            
+        {
             switch (state)
             {
                 case 102:
@@ -105,19 +125,10 @@ namespace AGrail
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    MessageSystem<MessageType>.Notify(MessageType.SendHint, string.Format("是否发动{0}", Skills[state].SkillName));
+                    MessageSystem<MessageType>.Notify(MessageType.SendHint, StateHint.GetHint(state));
                     return;
             }
             base.UIStateChange(state, msg, paras);
-            if (additionalState == 103)
-            {
-                //这代码真傻...应该做成list的
-                //但懒得改了
-                var t1 = OKAction;
-                var t2 = ResignAction;
-                OKAction = () => { t1(); additionalState = 0; };
-                ResignAction = () => { t2(); additionalState = 0; };
-            }
         }
     }
 }

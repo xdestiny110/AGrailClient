@@ -2,7 +2,7 @@
 {
     public enum PlayerAgentState
     {
-        Idle = 0x0,        
+        Idle = 0x0,
         Attacked = 0x2,
         MoDaned = 0x4,
         Weaken = 0x8,
@@ -30,6 +30,6 @@
             return false;
         }
     }
-    
+
 }
 

@@ -26,7 +26,23 @@ namespace AGrail
         {
             get
             {
-                return Card.CardProperty.血;
+                return Card.CardProperty.技;
+            }
+        }
+
+        public override string HeroName
+        {
+            get
+            {
+                return "白板";
+            }
+        }
+
+        public override uint Star
+        {
+            get
+            {
+                return 30;
             }
         }
     }

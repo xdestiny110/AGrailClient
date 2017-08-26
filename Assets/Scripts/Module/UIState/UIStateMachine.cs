@@ -8,7 +8,7 @@ namespace AGrail
     {
         public UIStateMachine(string name) : base(name)
         {
-            
+
         }
 
         protected override bool cleanHistroy(Type t)
@@ -21,7 +21,7 @@ namespace AGrail
         public override void BackState(UIStateMsg msg, params object[] paras)
         {
             if (History.Count > 0)
-            {                
+            {
                 var t = History.Pop();
                 if (t == typeof(StateIdle))
                 {
@@ -33,8 +33,8 @@ namespace AGrail
                     BattleData.Instance.Agent.SelectArgs.Clear();
                     MessageSystem<MessageType>.Notify(MessageType.AgentSelectPlayer);
                     MessageSystem<MessageType>.Notify(MessageType.AgentSelectCard);
-                    MessageSystem<MessageType>.Notify(MessageType.AgentSelectSkill);                    
-                }                    
+                    MessageSystem<MessageType>.Notify(MessageType.AgentSelectSkill);
+                }
                 else
                     ChangeState(t, false, msg, paras);
             }

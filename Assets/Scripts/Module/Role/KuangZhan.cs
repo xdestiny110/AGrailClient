@@ -29,6 +29,22 @@ namespace AGrail
             }
         }
 
+        public override string HeroName
+        {
+            get
+            {
+                return "阿基特";
+            }
+        }
+
+        public override uint Star
+        {
+            get
+            {
+                return 30;
+            }
+        }
+
         public KuangZhan()
         {
             for (uint i = 201; i <= 203; i++)
@@ -77,7 +93,7 @@ namespace AGrail
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    MessageSystem<MessageType>.Notify(MessageType.SendHint, string.Format("是否发动{0}", Skills[state].SkillName));
+                    MessageSystem<MessageType>.Notify(MessageType.SendHint, StateHint.GetHint(state));
                     return;
             }
             base.UIStateChange(state, msg, paras);

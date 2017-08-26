@@ -18,7 +18,7 @@ namespace AGrail
         [SerializeField]
         private Text turn;
         [SerializeField]
-        private Text[] morales = new Text[2];        
+        private Text[] morales = new Text[2];
         [SerializeField]
         private Transform[] energy = new Transform[2];
         [SerializeField]
@@ -37,7 +37,7 @@ namespace AGrail
         private GameObject cardPrefab;
         [SerializeField]
         private GameObject arrowPrefab;
-        
+
         public Dictionary<int, PlayerStatusQT> PlayersStatus = new Dictionary<int, PlayerStatusQT>();
         private int offset = 0;
 
@@ -45,7 +45,8 @@ namespace AGrail
         {
             get
             {
-                return WindowType.BattleQT;
+                throw new System.Exception();
+                //return WindowType.BattleQT;
             }
         }
 
@@ -61,7 +62,7 @@ namespace AGrail
             }
             //测试基本上都是先生成UI才会收到GameInfo事件
             //但不确定是否有可能反过来
-            //最好是能够在Awake中先依据BattleData的数据初始化一遍            
+            //最好是能够在Awake中先依据BattleData的数据初始化一遍
             Dialog.Instance.Reset();
             PlayersStatus.Clear();
 
@@ -139,7 +140,7 @@ namespace AGrail
                                 GameManager.UIInstance.PushWindow(WindowType.RoleChooseAny, WinMsg.Pause);
                             else
                                 GameManager.UIInstance.PushWindow(WindowType.RoleChoose31, WinMsg.Pause);
-                            break;                        
+                            break;
                         default:
                             Debug.LogError("不支持的选将模式");
                             break;
@@ -164,7 +165,7 @@ namespace AGrail
                     {
                         txtHint.transform.parent.gameObject.SetActive(true);
                         txtHint.text = parameters[0].ToString();
-                    }                    
+                    }
                     break;
                 case MessageType.PlayerNickName:
                     checkPlayer((int)parameters[0]);
@@ -193,7 +194,7 @@ namespace AGrail
                     var idx = (int)parameters[0];
                     PlayersStatus[(int)parameters[0]].YellowToken = (uint)parameters[1];
                     PlayersStatus[(int)parameters[0]].BlueToken = (uint)parameters[2];
-                    PlayersStatus[(int)parameters[0]].Covered = (uint)parameters[3];                    
+                    PlayersStatus[(int)parameters[0]].Covered = (uint)parameters[3];
                     break;
                 case MessageType.PlayerKneltChange:
                     PlayersStatus[(int)parameters[0]].Knelt = (bool)parameters[1];
@@ -241,9 +242,9 @@ namespace AGrail
         private void onESCClick()
         {
             if (Input.GetKeyDown(KeyCode.Escape) && CanvasGroup.interactable)
-            {                
-                if (GameManager.UIInstance.PeekWindow() == WindowType.BattleQT)
-                    Lobby.Instance.LeaveRoom();
+            {
+                //if (GameManager.UIInstance.PeekWindow() == WindowType.BattleQT)
+                    //Lobby.Instance.LeaveRoom();
                 GameManager.UIInstance.PopWindow(WinMsg.Show);
             }
         }
@@ -310,7 +311,7 @@ namespace AGrail
             if (!PlayersStatus.ContainsKey(playerIdx))
             {
                 var go = Instantiate(playerStatusPrefab);
-                if((BattleData.Instance.PlayerID == 9 && BattleData.Instance.PlayerInfos[playerIdx].id == 0) || 
+                if((BattleData.Instance.PlayerID == 9 && BattleData.Instance.PlayerInfos[playerIdx].id == 0) ||
                     BattleData.Instance.PlayerID == BattleData.Instance.PlayerInfos[playerIdx].id)
                 {
                     //如果是主视角玩家
@@ -332,7 +333,7 @@ namespace AGrail
                 go.transform.localPosition = Vector3.zero;
                 go.transform.localRotation = Quaternion.identity;
                 go.transform.localScale = Vector3.one;
-                
+
                 status.PlayerID = id;
                 PlayersStatus.Add(playerIdx, status);
                 status.AddBtnPlayerCallback(id);
@@ -384,7 +385,7 @@ namespace AGrail
                 Debug.LogErrorFormat("srcIdx = {0}, dstIdx = {1}", srcIdx, dstIdx);
                 Debug.LogErrorFormat("srcID = {0}, dstID = {1}", src_id, dst_id);
                 return;
-            }                            
+            }
 
             var arrow = Instantiate(arrowPrefab);
             arrow.transform.SetParent(battleRoot);

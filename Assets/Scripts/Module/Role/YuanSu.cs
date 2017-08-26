@@ -30,6 +30,22 @@ namespace AGrail
             }
         }
 
+        public override string HeroName
+        {
+            get
+            {
+                return "索尔斯";
+            }
+        }
+
+        public override uint Star
+        {
+            get
+            {
+                return 35;
+            }
+        }
+
         public override bool HasYellow
         {
             get
@@ -48,18 +64,43 @@ namespace AGrail
         {
             if (additionalState != 0)
                 return false;
-            switch (uiState)
+            bool check = false;
+            if (uiState>=1101 && uiState<=1105)
             {
-                case 1101:
-                    return card.Element == Card.CardElement.wind && (card.HasSkill(uiState) || BattleData.Instance.Agent.SelectCards.Count > 0);
-                case 1102:
-                    return card.Element == Card.CardElement.water && (card.HasSkill(uiState) || BattleData.Instance.Agent.SelectCards.Count > 0);
-                case 1103:
-                    return card.Element == Card.CardElement.fire && (card.HasSkill(uiState) || BattleData.Instance.Agent.SelectCards.Count > 0);
-                case 1104:
-                    return card.Element == Card.CardElement.earth && (card.HasSkill(uiState) || BattleData.Instance.Agent.SelectCards.Count > 0);
-                case 1105:
-                    return card.Element == Card.CardElement.thunder && (card.HasSkill(uiState) || BattleData.Instance.Agent.SelectCards.Count > 0);                    
+
+                switch (BattleData.Instance.Agent.SelectCards.Count)
+                {
+                    case 0:
+                        if (card.HasSkill(uiState)) check = true;
+                        break;
+                    case 1:
+                        check = true;
+                        break;
+                    case 2:
+                        if (BattleData.Instance.Agent.SelectCards.Contains(card.ID))
+                        {
+                        if (!card.HasSkill(uiState)) check = true;
+                        else if (Util.HasCard(uiState, BattleData.Instance.Agent.SelectCards, 2))check = true;
+                        }
+                        break;
+                    default:break;
+                }
+            }
+            if (check) {
+
+                switch (uiState)
+                {
+                    case 1101:
+                        return card.Element == Card.CardElement.wind;
+                    case 1102:
+                        return card.Element == Card.CardElement.water;
+                    case 1103:
+                        return card.Element == Card.CardElement.fire;
+                    case 1104:
+                        return card.Element == Card.CardElement.earth;
+                    case 1105:
+                        return card.Element == Card.CardElement.thunder;
+                }
             }
             return base.CanSelect(uiState, card, isCovered);
         }
@@ -73,6 +114,7 @@ namespace AGrail
                 case 1103:
                 case 1104:
                 case 1105:
+                    return BattleData.Instance.Agent.SelectCards.Count >= 1;
                 case 1106:
                 case 1107:
                     return true;
@@ -99,7 +141,7 @@ namespace AGrail
                     if (skill.SkillID == 1107 && BattleData.Instance.MainPlayer.gem > 0)
                         return true;
                     if (skill.SkillID >= 1101 && skill.SkillID <= 1105)
-                        return true;
+                        return Util.HasCard(skill.SkillID, BattleData.Instance.MainPlayer.hands);
                     return false;
             }
             return base.CanSelect(uiState, skill);
@@ -114,7 +156,7 @@ namespace AGrail
                 case 1103:
                 case 1104:
                 case 1105:
-                    return BattleData.Instance.MainPlayer.max_hand;
+                    return 2;
             }
             return base.MaxSelectCard(uiState);
         }
@@ -160,7 +202,7 @@ namespace AGrail
                 case 1102:
                 case 1103:
                 case 1104:
-                case 1105:                    
+                case 1105:
                 case 1106:
                 case 1107:
                     return true;
@@ -179,27 +221,26 @@ namespace AGrail
                 case 1103:
                 case 1104:
                 case 1105:
-                    OKAction = () =>
+                    if(BattleData.Instance.Agent.SelectCards.Count >= 1 && BattleData.Instance.Agent.SelectPlayers.Count == 1)
                     {
                         sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
                             BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("{0}: 请选择目标玩家以及独有技卡牌", Skills[state].SkillName));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case 1106:
                 case 1107:
-                    OKAction = () =>
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1)
                     {
                         sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
                             BattleData.Instance.Agent.SelectPlayers, null, state);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
                     };
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                       string.Format("{0}: 请选择目标玩家", Skills[state].SkillName));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case 1108:
                     OKAction = () =>
@@ -235,11 +276,9 @@ namespace AGrail
                     };
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
                     if (additionalState == 11021)
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                            string.Format("{0}: 选择给予治疗的对象", Skills[state].SkillName));                    
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state,1));
                     else
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                            string.Format("{0}: 选择伤害的对象", Skills[state].SkillName));                    
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
             }
             base.UIStateChange(state, msg, paras);

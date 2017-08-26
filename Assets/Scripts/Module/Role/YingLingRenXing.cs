@@ -27,7 +27,23 @@ namespace AGrail
         {
             get
             {
-                return Card.CardProperty.幻;
+                return Card.CardProperty.咏;
+            }
+        }
+
+        public override string HeroName
+        {
+            get
+            {
+                return "零";
+            }
+        }
+
+        public override uint Star
+        {
+            get
+            {
+                return 40;
             }
         }
 
@@ -114,13 +130,13 @@ namespace AGrail
         {
             switch (uiState)
             {
-                case 2701:
-                    return true;
                 case 2703:
+                    return cardIDs.Count > 1 && (!(cardIDs.Count > 1 &&
+                        BattleData.Instance.MainPlayer.is_knelt && BattleData.Instance.MainPlayer.yellow_token > 1));
                 case 2704:
-                    return cardIDs.Count > 1 ;
+                    return cardIDs.Count > 1 && (!(cardIDs.Count > 1 &&
+                        BattleData.Instance.MainPlayer.is_knelt && BattleData.Instance.MainPlayer.blue_token > 1));
                 case 2705:
-                case 27051:
                     return true;
                 case 2706:
                     return playerIDs.Count ==1;
@@ -150,47 +166,44 @@ namespace AGrail
             var mList = new List<string>();
             switch (state)
             {
-                
                 case 2701:
-                    OKAction = () =>
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                    if(msg == UIStateMsg.ClickArgs)
                     {
                         if (BattleData.Instance.Agent.SelectArgs[0] == 2)
                         {
                             sendReponseMsg(2701, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 1 });
-                            BattleData.Instance.Agent.FSM.ChangeState<StateSkill>(UIStateMsg.Init, true);
                         }
                         else
                         {
                             BattleData.Instance.Agent.Cmd.respond_id = 2704;
                             BattleData.Instance.Agent.FSM.ChangeState<StateSkill>(UIStateMsg.Init, true);
                         }
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
-                        
-                    };
+                        return;
+                    }
                     CancelAction = () =>
                     {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         sendReponseMsg(2071, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
                     selectList.Clear();
                     mList.Clear();
                     if (BattleData.Instance.MainPlayer.blue_token > 0 )
-                    { 
+                    {
                         selectList.Add(new List<uint>() { 1 });
-                        mList.Add(" 魔纹融合");
+                        mList.Add("魔纹融合");
                     }
                     if (BattleData.Instance.MainPlayer.yellow_token > 0)
                     {
                         selectList.Add(new List<uint>() { 2 });
-                        mList.Add(" 怒火压制");
+                        mList.Add("怒火压制");
                     }
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "选择技能", selectList, mList);
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, string.Format("请选择发动技能"));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
-
                 case 2704:
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                     OKAction = () =>
                     {
                         if (BattleData.Instance.MainPlayer.is_knelt && (BattleData.Instance.MainPlayer.blue_token > 1))
@@ -198,41 +211,43 @@ namespace AGrail
                                 new List<uint>() { 2, BattleData.Instance.Agent.SelectArgs[0] });
                         else
                             sendReponseMsg(2701, BattleData.Instance.MainPlayer.id, null, BattleData.Instance.Agent.SelectCards,
-                            new List<uint>() { 2, 0 });
+                                new List<uint>() { 2, 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
                     };
                     CancelAction = () =>
                     {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         BattleData.Instance.Agent.Cmd.respond_id = 2701;
                         BattleData.Instance.Agent.FSM.ChangeState<StateSkill>(UIStateMsg.Init, true);
                     };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
-                    selectList.Clear();
-                    mList.Clear();
-                    if (BattleData.Instance.MainPlayer.is_knelt && (BattleData.Instance.MainPlayer.blue_token > 1))
+                    if (msg == UIStateMsg.ClickArgs)
                     {
+                        sendReponseMsg(2701, BattleData.Instance.MainPlayer.id, null, BattleData.Instance.Agent.SelectCards,
+                            new List<uint>() { 2, BattleData.Instance.Agent.SelectArgs[0] });
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
+                    }
+
+                    if (BattleData.Instance.Agent.SelectCards.Count > 1 &&
+                        BattleData.Instance.MainPlayer.is_knelt && (BattleData.Instance.MainPlayer.blue_token > 1))
+                    {
+                        selectList.Clear();
+                        mList.Clear();
                         for (uint i = BattleData.Instance.MainPlayer.blue_token; i > 0; i--)
                         {
-                            selectList.Add(new List<uint>() { i-1 });
-                            mList.Add("个魔纹");
+                            selectList.Add(new List<uint>() { i - 1 });
+                            mList.Add( i-1 +"个魔纹");
                         }
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "额外魔纹", selectList, mList);
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("{0}: 请选择额外翻转的魔纹数量以及异系卡牌", Skills[state].SkillName));
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state,1));
                     }
                     else
-                    {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                            string.Format("{0}: 请选择异系卡牌", Skills[state].SkillName));
-                    }
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
-
                 case 2703:
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                     OKAction = () =>
                     {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
                         if (BattleData.Instance.MainPlayer.is_knelt && (BattleData.Instance.MainPlayer.yellow_token > 1))
                         sendReponseMsg(2703, BattleData.Instance.MainPlayer.id,null, BattleData.Instance.Agent.SelectCards,
                             new List<uint>() { 1, BattleData.Instance.Agent.SelectArgs[0] } );
@@ -243,30 +258,33 @@ namespace AGrail
                     };
                     CancelAction = () =>
                     {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         sendReponseMsg(2703, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
-                    selectList.Clear();
-                    mList.Clear();
-                    if (BattleData.Instance.MainPlayer.is_knelt && (BattleData.Instance.MainPlayer.yellow_token>1))
+                    if (msg == UIStateMsg.ClickArgs)
                     {
-                        for (uint i = BattleData.Instance.MainPlayer.yellow_token; i >0 ; i--)
+                        sendReponseMsg(2703, BattleData.Instance.MainPlayer.id, null, BattleData.Instance.Agent.SelectCards,
+                            new List<uint>() { 1, BattleData.Instance.Agent.SelectArgs[0] });
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
+                    }
+                    if (BattleData.Instance.Agent.SelectCards.Count >1 &&
+                        BattleData.Instance.MainPlayer.is_knelt && BattleData.Instance.MainPlayer.yellow_token > 1)
+                    {
+                        selectList.Clear();
+                        mList.Clear();
+                        for (uint i = BattleData.Instance.MainPlayer.yellow_token; i > 0; i--)
                         {
-                            selectList.Add(new List<uint>() { i-1 });
-                            mList.Add("个战纹");
+                            selectList.Add(new List<uint>() { i - 1 });
+                            mList.Add( i-1 + "个战纹");
                         }
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "额外战纹", selectList, mList);
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("{0}: 请选择额外翻转的战纹数量以及同系卡牌", Skills[state].SkillName));
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state,1));
                     }
-                    else { 
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("{0}: 请选择同系卡牌", Skills[state].SkillName));
-                    }
+                    else
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
-
                 case 2705:
                     OKAction = () =>
                     {
@@ -279,42 +297,41 @@ namespace AGrail
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, "是否发动符文改造");
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case 27051:
-                    OKAction = () =>
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                    if (msg == UIStateMsg.ClickArgs)
                     {
                         sendReponseMsg(27051, BattleData.Instance.MainPlayer.id,null,null, new List<uint>() { 1, BattleData.Instance.Agent.SelectArgs[0] });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
-                    };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                        return;
+                    }
                     selectList.Clear();
                     mList.Clear();
                     for (uint i = 0; i < 4; i++)
                     {
                         selectList.Add(new List<uint>() { i });
-                        mList.Add("个战纹");
+                        mList.Add(i+"战"+ (3-i) +"魔");
                     }
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "战纹数量", selectList, mList);
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("请选择调整后的战纹数量"));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,StateHint.GetHint(state));
                     return;
                 case 2706:
-                    OKAction = () =>
+                    if(BattleData.Instance.Agent.SelectPlayers.Count == 1)
                     {
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id,
                             BattleData.Instance.Agent.SelectPlayers, null, new List<uint>() { 1 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                    };
+                        return;
+                    }
                     CancelAction = () =>
                     {
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id,
                             BattleData.Instance.Agent.SelectPlayers, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("{0}: 请选择目标玩家或点取消", Skills[state].SkillName));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
 
             }

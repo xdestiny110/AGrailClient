@@ -31,6 +31,22 @@ namespace AGrail
             }
         }
 
+        public override string HeroName
+        {
+            get
+            {
+                return "莉莉丝";
+            }
+        }
+
+        public override uint Star
+        {
+            get
+            {
+                return 40;
+            }
+        }
+
         public override bool HasYellow
         {
             get
@@ -72,8 +88,6 @@ namespace AGrail
 						return true;
 					else
 						return false;
-
-					
 				case (uint)SkillID.CANG_YAN_FA_DIAN:
 					return (realElement == Card.CardElement.fire);
 				case (uint)SkillID.TIAN_HUO_DUAN_KONG:
@@ -95,14 +109,17 @@ namespace AGrail
 			switch (uiState)
 			{
 				case (uint)SkillID.TI_SHEN_WAN_OU:
-					return player.team == BattleData.Instance.MainPlayer.team && BattleData.Instance.PlayerID != player.id;
+					return BattleData.Instance.Agent.SelectCards.Count == 1 &&
+                        player.team == BattleData.Instance.MainPlayer.team &&
+                        BattleData.Instance.PlayerID != player.id;
 				case (uint)SkillID.CANG_YAN_FA_DIAN:
 				case (uint)SkillID.TIAN_HUO_DUAN_KONG:
-                    return true;
+                    return BattleData.Instance.Agent.SelectCards.Count == MaxSelectCard(uiState);
                 case (uint)SkillID.TONG_KU_LIAN_JIE:
-				case (uint)SkillID.MO_NENG_FAN_ZHUAN:
 					return player.team != BattleData.Instance.MainPlayer.team;
-			}
+                case (uint)SkillID.MO_NENG_FAN_ZHUAN:
+                    return player.team != BattleData.Instance.MainPlayer.team && BattleData.Instance.Agent.SelectCards.Count > 1;
+            }
 			return base.CanSelect(uiState, player);
 		}
 
@@ -116,17 +133,13 @@ namespace AGrail
 				case (uint)SkillID.TIAN_HUO_DUAN_KONG:
 				case (uint)SkillID.TONG_KU_LIAN_JIE:
 				case (uint)SkillID.YONG_SHENG_YIN_SHI_JI:
-
-
-
-					if (skill.SkillID == (uint)SkillID.CANG_YAN_FA_DIAN) 
-						return true;
-					if (skill.SkillID == (uint)SkillID.TIAN_HUO_DUAN_KONG)
-						return (BattleData.Instance.MainPlayer.yellow_token > 0) || (BattleData.Instance.MainPlayer.is_knelt);
-					if (skill.SkillID == (uint)SkillID.TONG_KU_LIAN_JIE) 
+					if (skill.SkillID == (uint)SkillID.CANG_YAN_FA_DIAN)
+                        return Util.HasCard(Card.CardElement.fire, BattleData.Instance.MainPlayer.hands) || (BattleData.Instance.MainPlayer.is_knelt);
+                    if (skill.SkillID == (uint)SkillID.TIAN_HUO_DUAN_KONG)
+						return ( (BattleData.Instance.MainPlayer.yellow_token > 0 && Util.HasCard(Card.CardElement.fire, BattleData.Instance.MainPlayer.hands,2)) || (BattleData.Instance.MainPlayer.is_knelt) );
+					if (skill.SkillID == (uint)SkillID.TONG_KU_LIAN_JIE)
 						return (BattleData.Instance.MainPlayer.crystal + BattleData.Instance.MainPlayer.gem > 0);
 					return false;
-
 				case (uint)SkillID.TI_SHEN_WAN_OU:
 				case (uint)SkillID.MO_NENG_FAN_ZHUAN:
 					return false;
@@ -172,26 +185,6 @@ namespace AGrail
 			}
 		}
 
-		public override bool CheckOK(uint uiState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
-		{
-			switch (uiState)
-			{
-				case (uint)SkillID.CANG_YAN_FA_DIAN:
-					return cardIDs.Count == 1 && playerIDs.Count == 1;
-				case (uint)SkillID.TIAN_HUO_DUAN_KONG:
-					return cardIDs.Count == 2 && playerIDs.Count == 1;
-				case (uint)SkillID.TI_SHEN_WAN_OU:
-				case (uint)SkillID.TONG_KU_LIAN_JIE:
-				case (uint)SkillID.MO_NENG_FAN_ZHUAN:
-					return playerIDs.Count == 1;
-				case (uint)SkillID.MO_NV_ZHI_NU:
-					return true;
-				default:
-					return base.CheckOK(uiState, cardIDs, playerIDs, skillID);
-
-			}
-		}
-
 		public override bool CheckCancel(uint uiState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
 		{
 			switch (uiState)
@@ -210,104 +203,104 @@ namespace AGrail
 		public override void UIStateChange(uint state, UIStateMsg msg, params object[] paras)
 		{
 			List<List<uint>> selectList = new List<List<uint>>();
-			switch (state) 
+			switch (state)
 			{
-				case 1:	//躺斩
-					if (BattleData.Instance.MainPlayer.is_knelt)
-					OKAction = () =>
-					{
-						sendActionMsg(BasicActionType.ACTION_ATTACK_SKILL, BattleData.Instance.MainPlayer.id,
+			case 1:	//躺斩
+				if (BattleData.Instance.MainPlayer.is_knelt) {
+					MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.SendHint, StateHint.GetHint(StateEnum.Attack));
+                        if (BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == 1) {
+						sendActionMsg (BasicActionType.ACTION_ATTACK_SKILL, BattleData.Instance.MainPlayer.id,
 							BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, (uint)SkillID.MO_NV_ZHI_NU_ATTACK);
-						BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-					};
-					else base.UIStateChange (state, msg, paras);
+						BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
+					}
+				}
+				else base.UIStateChange (state, msg, paras);
 					return;
 				case (uint)SkillID.CANG_YAN_FA_DIAN:
-					OKAction = () =>
-					{
-						sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == 1)
+                    {
+                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
 							BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state);
 						BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-					};
-
+                        return;
+                    };
 					CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
-
-					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-						string.Format("{0}: 请选择目标玩家以及火系卡牌", Skills[state].SkillName));
-					return;
+					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
+                    return;
 				
 				case (uint)SkillID.TIAN_HUO_DUAN_KONG:
-					OKAction = () =>
-					{
-						sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == 2)
+                    {
+                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
 							BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state);
 						BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-					};
-
+                        return;
+                    };
 					CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
-
-					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-						string.Format("{0}: 请选择目标玩家以及火系卡牌", Skills[state].SkillName));
-					return;
+					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
+                    return;
 
 				case (uint)SkillID.TI_SHEN_WAN_OU:
-					OKAction = () => {
-						sendReponseMsg (state, BattleData.Instance.MainPlayer.id,
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == 1)
+                    {
+                        sendReponseMsg (state, BattleData.Instance.MainPlayer.id,
 							BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, new List<uint>() { 1 });
 						BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
-					};
+                        return;
+                    };
 					CancelAction = () => {
 						sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
 						BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
 					};
-					MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.SendHint,
-						string.Format ("{0}: 请选择目标队友以及一张法术牌", Skills [state].SkillName));
-					return;
+					MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
+                    return;
 				case (uint)SkillID.TONG_KU_LIAN_JIE:
-					OKAction = () => {
-						sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1)
+                    {
+                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
 							BattleData.Instance.Agent.SelectPlayers, null, state, new List<uint>() { 1 });
 						BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
+						return;
 					};
 					CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
-					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-						string.Format("{0}: 请选择目标对手", Skills[state].SkillName));
-					return;
+					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
+                    return;
 				case (uint)SkillID.MO_NENG_FAN_ZHUAN:
-					OKAction = () => {
+
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1)
+                    {
 						sendReponseMsg (state, BattleData.Instance.MainPlayer.id,
 							BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, new List<uint> () { 1 });
 						BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
+                        return;
 					};
 					CancelAction = () => {
 						sendReponseMsg (state, BattleData.Instance.MainPlayer.id, null, null, new List<uint> () { 0 });
 						BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
 					};
-					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-						string.Format ("{0}: 请选择目标对手", Skills[state].SkillName));
-					return;
+					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
+                    return;
 				case (uint)SkillID.MO_NV_ZHI_NU:
-					OKAction = () => {
-                        IsStart = true;
-						MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                    //MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                    if (msg == UIStateMsg.ClickArgs) {
+                        IsStart = true;						
 						sendReponseMsg (state, BattleData.Instance.MainPlayer.id,
 							null, null, new List<uint> () { 1, BattleData.Instance.Agent.SelectArgs[0] });
+						MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
 						BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
+						return;
 					};
 					CancelAction = () => {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         sendReponseMsg (state, BattleData.Instance.MainPlayer.id, null, null, new List<uint> () { 0 });
 						BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
 					};
-					
-					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
 					selectList = new List<List<uint>>() { new List<uint>() { 0 }, new List<uint>() { 1 },
 						new List<uint>() { 2 }};
-					var mList = new List<string>() { "","",""};
-					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "选择要摸取的手牌数量", selectList, mList);
-					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-						string.Format("{0}: 是否发动魔女之怒", Skills[state].SkillName));
-					return;
+					var mList = new List<string>() { "0张手牌","1张手牌","2张手牌"};
+					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
+					MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
+                    return;
 				default:
 					base.UIStateChange (state, msg, paras);
 					return;

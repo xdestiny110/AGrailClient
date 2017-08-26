@@ -12,13 +12,13 @@ namespace AGrail
         [SerializeField]
         private Transform root;
         [SerializeField]
-        private GameObject btnStart;        
+        private GameObject btnStart;
         [SerializeField]
         private GameObject loginInput;
         [SerializeField]
         private InputField inptUserName;
         [SerializeField]
-        private InputField inptPassword;        
+        private InputField inptPassword;
         [SerializeField]
         private Text txtStatus;
         [SerializeField]
@@ -26,7 +26,9 @@ namespace AGrail
         [SerializeField]
         private Button btnSwitchAccount;
         [SerializeField]
-        private Transform titleImg;        
+        private Transform titleImg;
+        [SerializeField]
+        private Text txtVersion;
 
         public override WindowType Type
         {
@@ -38,6 +40,7 @@ namespace AGrail
 
         public override void Awake()
         {
+            txtVersion.text = "Ver." + Application.version;
             state = UserData.Instance.State;
             MessageSystem<MessageType>.Regist(MessageType.LoginState, this);
             btnSwitchAccount.onClick.AddListener(() =>
@@ -56,18 +59,7 @@ namespace AGrail
 
         public override void OnHide()
         {
-            var go = new GameObject();
-            go.transform.localPosition = Vector3.zero;
-            go.name = "GameTitle";
-            var canvas = go.AddComponent<Canvas>();
-            canvas.sortingOrder = 99;
-            canvas.renderMode = RenderMode.ScreenSpaceCamera;
-            canvas.worldCamera = Camera.main;
-            titleImg.SetParent(go.transform);
-            titleImg.transform.DOLocalMoveY(Screen.height / 800.0f * 315, 1);
-            titleImg.transform.DOScaleX(Screen.width / 1280.0f * 0.75f, 1);
-            titleImg.transform.DOScaleY(Screen.height / 800.0f * 0.75f, 1);
-            root.transform.DOLocalMoveX(Screen.width, 1.0f).OnComplete(() => { base.OnHide(); gameObject.SetActive(false); });
+            root.transform.DOLocalMoveX(-1280, 1.0f);
         }
 
         public override void OnEventTrigger(MessageType eventType, params object[] parameters)

@@ -14,7 +14,7 @@ namespace AGrail
             bg = GetComponent<Image>().material;
             InvokeRepeating("loopMove", 0, 0.01f);
         }
-        
+
         private float offsetX = 0.0f;
         private void loopMove()
         {

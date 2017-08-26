@@ -250,7 +250,7 @@ namespace AGrail
                     go.transform.localPosition = Vector3.zero;
                     go.transform.localRotation = Quaternion.identity;
                     go.transform.localScale = Vector3.one;
-                    go.transform.Find("gem").gameObject.SetActive(true);                    
+                    go.transform.Find("gem").gameObject.SetActive(true);
                 }
                 for (int i = 0; i < value.Value; i++)
                 {
@@ -270,7 +270,7 @@ namespace AGrail
             {
                 MessageSystem<MessageType>.Notify(MessageType.LogChange);
                 for (int i = 0; i < handCard.childCount; i++)
-                    Destroy(handCard.GetChild(i).gameObject);                
+                    Destroy(handCard.GetChild(i).gameObject);
                 for (int i = 0; i < Mathf.Min(value.Key, value.Value); i++)
                 {
                     var go = Instantiate(handCardPrefab);
@@ -279,7 +279,7 @@ namespace AGrail
                     go.transform.localRotation = Quaternion.identity;
                     go.transform.localScale = Vector3.one;
                     go.transform.Find("HandCard").gameObject.SetActive(true);
-                }                
+                }
                 for (int i = 0; i < (int)value.Value - (int)value.Key; i++)
                 {
                     var go = Instantiate(handCardPrefab);
@@ -288,7 +288,7 @@ namespace AGrail
                     go.transform.localRotation = Quaternion.identity;
                     go.transform.localScale = Vector3.one;
                     go.transform.Find("Empty").gameObject.SetActive(true);
-                }                
+                }
                 for (int i = 0; i < (int)value.Key - (int)value.Value; i++)
                 {
                     var go = Instantiate(handCardPrefab);
@@ -320,7 +320,7 @@ namespace AGrail
                 }
             }
         }
-        
+
         public bool IsEnable
         {
             get { return btnPlayer.interactable; }
@@ -359,7 +359,7 @@ namespace AGrail
                 if (!selectBorder.enabled)
                     BattleData.Instance.Agent.AddSelectPlayer(id);
                 else
-                    BattleData.Instance.Agent.RemoveSelectPlayer(id);              
+                    BattleData.Instance.Agent.RemoveSelectPlayer(id);
             });
             btnPlayer.interactable = false;
             selectBorder.enabled = false;

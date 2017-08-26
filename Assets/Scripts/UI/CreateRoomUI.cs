@@ -1,14 +1,16 @@
 ﻿using UnityEngine;
 using Framework.UI;
 using UnityEngine.UI;
-using Framework.Network;
 using System.Linq;
 using System;
+using DG.Tweening;
 
 namespace AGrail
 {
     public class CreateRoomUI : WindowsBase
     {
+        [SerializeField]
+        private Transform root;
         [SerializeField]
         private InputField roomTitle;
         [SerializeField]
@@ -34,8 +36,21 @@ namespace AGrail
             }
         }
 
+        public override void Awake()
+        {
+            root.localPosition = new Vector3(1280, 0, 0);
+            root.DOLocalMoveX(0, 1);
+
+            base.Awake();
+        }
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+        }
+
         public void OnOKClick()
-        {            
+        {
             var proto = new network.CreateRoomRequest()
             {
                 allow_guest = true,
@@ -50,8 +65,8 @@ namespace AGrail
                 sp_mo_dao = spMoDaoExtension.isOn,
             };
             Lobby.Instance.CreateRoom(proto);
-            GameManager.UIInstance.PopWindow(WinMsg.Pause);
-            GameManager.UIInstance.PushWindow(WindowType.BattleQT, WinMsg.Hide);
+            GameManager.UIInstance.PopWindow(WinMsg.None);
+            GameManager.UIInstance.PushWindow(WindowType.ReadyRoom, WinMsg.None);
         }
 
         public void OnCancelClick()

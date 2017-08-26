@@ -2,13 +2,14 @@
 using System.Collections;
 using UnityEngine.UI;
 using Framework.Message;
+using Framework.AssetBundle;
 
 namespace AGrail
 {
     public class SkillUI : MonoBehaviour, IMessageListener<MessageType>
     {
         [SerializeField]
-        private RawImage skillIcon;
+        private Image skillIcon;
         [SerializeField]
         private Image selectBorder;
         [SerializeField]
@@ -23,22 +24,10 @@ namespace AGrail
             {
                 skill = value;
                 skillName.text = skill.SkillName;
-                switch (skill.SkillType)
-                {
-                    case SkillType.启动:
-                        skillIcon.texture = Resources.Load<Texture2D>("Icons/qidong");
-                        break;
-                    case SkillType.被动:
-                        skillIcon.texture = Resources.Load<Texture2D>("Icons/beidong");
-                        break;
-                    case SkillType.响应:
-                        skillIcon.texture = Resources.Load<Texture2D>("Icons/xiangying");
-                        break;
-                    case SkillType.法术:
-                        skillIcon.texture = Resources.Load<Texture2D>("Icons/fashu");
-                        break;
-                }
-                IsEnable = false;                
+                var sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("skill_texture", skill.SkillName);
+                if (sprite != null)
+                    skillIcon.sprite = sprite;
+                IsEnable = false;
             }
             get { return skill; }
         }
@@ -47,12 +36,14 @@ namespace AGrail
         {
             set
             {
-                btn.interactable = value;
+                gameObject.SetActive(value);
             }
         }
 
         void Awake()
         {
+            btn.onClick.AddListener(onBtnClick);
+
             MessageSystem<MessageType>.Regist(MessageType.AgentSelectSkill, this);
         }
 
@@ -74,12 +65,12 @@ namespace AGrail
             }
         }
 
-        public void OnBtnClick()
+        private void onBtnClick()
         {
-            if (!selectBorder.enabled)            
-                BattleData.Instance.Agent.ChangeSelectSkill(skill.SkillID);                            
-            else            
-                BattleData.Instance.Agent.ChangeSelectSkill(null);                            
+            if (!selectBorder.enabled)
+                BattleData.Instance.Agent.ChangeSelectSkill(skill.SkillID);
+            else
+                BattleData.Instance.Agent.ChangeSelectSkill(null);
         }
     }
 }

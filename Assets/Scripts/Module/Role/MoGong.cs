@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using network;
 using UnityEngine;
 using Framework.Message;
+using System;
 
 namespace AGrail
 {
@@ -25,6 +26,14 @@ namespace AGrail
             }
         }
 
+        public override uint Star
+        {
+            get
+            {
+                return 40;
+            }
+        }
+
         public override Card.CardProperty RoleProperty
         {
             get
@@ -40,7 +49,7 @@ namespace AGrail
                 return true;
             }
         }
-        
+
         public override bool IsStart
         {
             get
@@ -53,10 +62,19 @@ namespace AGrail
                 if (!value)
                 {
                     additionalState = 0;
-                    chongNengCnt = 0;
+                    chongNengCnt = 1;
+                    lastHit = -1;
                     isChongNengUsed = false;
                 }
                 base.IsStart = value;
+            }
+        }
+
+        public override string HeroName
+        {
+            get
+            {
+                return "泰罗莎";
             }
         }
 
@@ -71,11 +89,12 @@ namespace AGrail
             switch (uiState)
             {
                 case (uint)SkillID.魔贯冲击:
-                case (uint)SkillID.魔贯冲击命中:
+                case (uint)SkillID.魔贯冲击追加:
                     return card.Element == Card.CardElement.fire && isCovered;
                 case (uint)SkillID.雷光散射:
-                    return card.Element == Card.CardElement.thunder && isCovered;               
+                    return card.Element == Card.CardElement.thunder && isCovered;
                 case (uint)SkillID.充能:
+                    return !isCovered && BattleData.Instance.Agent.SelectArgs.Count > 0;
                 case (uint)SkillID.充能盖牌:
                 case (uint)SkillID.魔眼盖牌:
                     return !isCovered;
@@ -95,7 +114,11 @@ namespace AGrail
                 case (uint)SkillID.魔眼:
                     return true;
                 case (uint)SkillID.雷光散射:
-                    return player.team != BattleData.Instance.MainPlayer.team;
+                    return BattleData.Instance.Agent.SelectCards.Count > 1 && player.team != BattleData.Instance.MainPlayer.team;
+                case 1:
+                    if (additionalState == 26031 && player.id == lastHit)
+                        return false;
+                    break;
             }
             return base.CanSelect(uiState, player);
         }
@@ -108,7 +131,7 @@ namespace AGrail
                 case 11:
                 case (uint)SkillID.雷光散射:
                     if (skill.SkillID == (uint)SkillID.雷光散射 && !isChongNengUsed)
-                        return true;
+                        return Util.HasCard(Card.CardElement.thunder, BattleData.Instance.MainPlayer.covereds);
                     return false;
             }
             return base.CanSelect(uiState, skill);
@@ -121,7 +144,7 @@ namespace AGrail
                 case (uint)SkillID.雷光散射:
                     return BattleData.Instance.MainPlayer.covered_count;
                 case (uint)SkillID.魔贯冲击:
-                case (uint)SkillID.魔贯冲击命中:
+                case (uint)SkillID.魔贯冲击追加:
                 case (uint)SkillID.魔眼盖牌:
                     return 1;
                 case (uint)SkillID.充能:
@@ -141,7 +164,7 @@ namespace AGrail
                     return 1;
             }
             return base.MaxSelectPlayer(uiState);
-        }        
+        }
 
         public override void AdditionAction()
         {
@@ -161,20 +184,20 @@ namespace AGrail
         {
             switch (uiState)
             {
-                case (uint)SkillID.充能:
-                    return BattleData.Instance.MainPlayer.hand_count - BattleData.Instance.Agent.SelectCards.Count <= 4;
                 case (uint)SkillID.魔眼:
                     return true;
                 case (uint)SkillID.魔眼盖牌:
                 case (uint)SkillID.魔贯冲击:
-                case (uint)SkillID.魔贯冲击命中:
+                case (uint)SkillID.魔贯冲击追加:
                     return cardIDs.Count == 1;
                 case (uint)SkillID.充能盖牌:
-                    return cardIDs.Count <= chongNengCnt;
-                case (uint)SkillID.充能魔眼:
-                    return true;
+                    return cardIDs.Count > 0 && cardIDs.Count <= chongNengCnt;
+                //case (uint)SkillID.充能魔眼:
+                    //return true;
                 case (uint)SkillID.雷光散射:
                     return cardIDs.Count == 1 || (cardIDs.Count > 1 && playerIDs.Count == 1);
+                    //case (uint)SkillID.充能:
+                    //return (BattleData.Instance.MainPlayer.hand_count < 4 || BattleData.Instance.MainPlayer.hand_count - cardIDs.Count == 4);
             }
             return base.CheckOK(uiState, cardIDs, playerIDs, skillID);
         }
@@ -184,13 +207,12 @@ namespace AGrail
             switch (uiState)
             {
                 case (uint)SkillID.充能:
-                case (uint)SkillID.充能盖牌:
                 case (uint)SkillID.魔眼:
-                case (uint)SkillID.魔眼盖牌:
                 case (uint)SkillID.充能魔眼:
                 case (uint)SkillID.雷光散射:
                 case (uint)SkillID.魔贯冲击:
-                case (uint)SkillID.魔贯冲击命中:
+                case (uint)SkillID.魔贯冲击追加:
+                case (uint)SkillID.多重射击:
                     return true;
             }
             return base.CheckCancel(uiState, cardIDs, playerIDs, skillID);
@@ -202,130 +224,157 @@ namespace AGrail
             var mList = new List<string>();
             switch (state)
             {
-                case 1:                    
-                    OKAction = () =>
+                case 1:
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == 1)
                     {
+                        lastHit =(int)BattleData.Instance.Agent.SelectPlayers[0];
                         if (additionalState == 26031)
                         {
                             sendActionMsg(BasicActionType.ACTION_ATTACK_SKILL, BattleData.Instance.MainPlayer.id,
                                 BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, (uint)SkillID.多重射击);
                             MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentHandChange, false);
-                        }                            
+                        }
                         else
                             Attack(BattleData.Instance.Agent.SelectCards[0], BattleData.Instance.Agent.SelectPlayers[0]);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                    };
-                    if(additionalState == 26031)
+                        return;
+                    }
+                    if (additionalState == 26031)
+                    {
+                        ResignAction = () =>
+                        {
+                            sendActionMsg(BasicActionType.ACTION_NONE, BattleData.Instance.MainPlayer.id, null, null, null, null);
+                            BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentHandChange, false);
+                        };
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentHandChange, true);
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        "请选择目标");
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(2603));
+                    }
                     return;
                 case (uint)SkillID.充能:
-                    OKAction = () =>
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                    if(BattleData.Instance.Agent.SelectArgs.Count == 0)
+                    {
+
+                        if (BattleData.Instance.MainPlayer.hand_count > 4)
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
+                        else
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state,1));
+                        selectList.Clear();
+                        mList.Clear();
+                        for (uint i = 1; i < 5; i++)
+                        {
+                            selectList.Add(new List<uint>() { i });
+                            mList.Add("摸" + i.ToString() + "张牌");
+                        }
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
+                    }
+                    else if ((BattleData.Instance.MainPlayer.hand_count < 4 || BattleData.Instance.MainPlayer.hand_count - BattleData.Instance.Agent.SelectCards.Count == 4))
                     {
                         IsStart = true;
                         isChongNengUsed = true;
                         chongNengCnt = BattleData.Instance.Agent.SelectArgs[0];
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null,
-                            BattleData.Instance.Agent.SelectCards, new List<uint>() { 1, (uint)BattleData.Instance.Agent.SelectCards.Count, BattleData.Instance.Agent.SelectArgs[0] });
+                            BattleData.Instance.Agent.SelectCards, new List<uint>() {
+                            1,
+                            (uint)BattleData.Instance.Agent.SelectCards.Count,
+                            BattleData.Instance.Agent.SelectArgs [0]
+                        });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                    };
+                        return;
+                    }
+                    else if (msg == UIStateMsg.ClickArgs)
+                    {
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state,2));
+                    }
+
                     CancelAction = () =>
                     {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    if(msg != UIStateMsg.ClickCard)
-                    {
-                        selectList.Clear();
-                        mList.Clear();
-                        for (uint i = 0; i < 5; i++)
-                        {
-                            selectList.Add(new List<uint>() { i });
-                            mList.Add("");
-                        }
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "选择摸牌数", selectList, mList);
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                            string.Format("{0}: 弃到4张牌并选择摸牌数", Skills[state].SkillName));
-                    }
                     return;
                 case (uint)SkillID.充能盖牌:
-                    OKAction = () => 
+                    OKAction = () =>
                     {
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null,
                             BattleData.Instance.Agent.SelectCards, new List<uint>() { 1 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    CancelAction = () =>
-                    {
-                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
-                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                    };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("充能: 请选择要作为充能的盖牌"));
+                        string.Format(StateHint.GetHint(state),chongNengCnt));
                     return;
                 case (uint)SkillID.魔眼:
-                    OKAction = () =>
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1)
                     {
                         IsStart = true;
-                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectPlayers, 
-                            null, new List<uint>() { 1, (uint)BattleData.Instance.Agent.SelectPlayers.Count });
+                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectPlayers,
+                            null, new List<uint>() { 1, 1 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                    };
+                        return;
+                    }
+                    else
+                    {
+                        OKAction = () =>
+                        {
+                            IsStart = true;
+                            sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 1, 0 });
+                            BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        };
+                    }
                     CancelAction = () =>
                     {
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("{0}: 选择玩家弃牌；不选择视为摸3张", Skills[state].SkillName));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case (uint)SkillID.魔眼盖牌:
-                    OKAction = () =>
+                    if (BattleData.Instance.Agent.SelectCards.Count == 1)
                     {
-                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, 
+                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null,
                             BattleData.Instance.Agent.SelectCards, new List<uint>() { 1 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                    };
-                    CancelAction = () =>
+                        return;
+                    }
+                    if(BattleData.Instance.MainPlayer.hand_count == 0)
                     {
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        return;
                     };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("魔眼: 选择1张手牌作为能量"));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case (uint)SkillID.充能魔眼:
-                    OKAction = () =>
+                    if (msg == UIStateMsg.ClickArgs)
                     {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, BattleData.Instance.Agent.SelectArgs);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                    };
+                        return;
+                    }
                     CancelAction = () =>
                     {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseArgsUI);
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                     selectList.Clear();
                     mList.Clear();
-                    if(BattleData.Instance.MainPlayer.crystal + BattleData.Instance.MainPlayer.gem > 0)
+                    if (BattleData.Instance.MainPlayer.crystal + BattleData.Instance.MainPlayer.gem > 0)
                     {
                         selectList.Add(new List<uint>() { 1 });
-                        mList.Add(" 充能");
+                        mList.Add("充能");
                     }
-                    if(BattleData.Instance.MainPlayer.gem > 0)
+                    if (BattleData.Instance.MainPlayer.gem > 0)
                     {
                         selectList.Add(new List<uint>() { 2 });
-                        mList.Add(" 魔眼");
+                        mList.Add("魔眼");
                     }
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowArgsUI, "选择以下一项发动", selectList, mList);
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("选择要发动的技能"));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case (uint)SkillID.雷光散射:
                     OKAction = () =>
@@ -335,23 +384,24 @@ namespace AGrail
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentHandChange, false);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    CancelAction = () => {
+                    CancelAction = () =>
+                    {
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentHandChange, false);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentHandChange, true);
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("{0}: 选择雷系充能。大于1张时再选择一名敌方玩家", Skills[state].SkillName));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case (uint)SkillID.魔贯冲击:
-                case (uint)SkillID.魔贯冲击命中:
-                    OKAction = () =>
+                case (uint)SkillID.魔贯冲击追加:
+                    if (BattleData.Instance.Agent.SelectCards.Count == 1)
                     {
-                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, 
+                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null,
                             BattleData.Instance.Agent.SelectCards, new List<uint>() { 1 });
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentHandChange, false);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                    };
+                        return;
+                    }
                     CancelAction = () =>
                     {
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
@@ -359,15 +409,15 @@ namespace AGrail
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentHandChange, true);
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format("魔贯冲击: 选择火系充能"));
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
             }
             base.UIStateChange(state, msg, paras);
         }
-     
+
         private bool isChongNengUsed = false;
-        private uint chongNengCnt = 0;
+        private int lastHit = -1;
+        private uint chongNengCnt = 1;
         private enum SkillID
         {
             魔贯冲击 = 2601,
@@ -376,7 +426,7 @@ namespace AGrail
             充能,
             魔眼,
             充能魔眼,
-            魔贯冲击命中 = 26011,
+            魔贯冲击追加 = 26011,
             充能盖牌 = 26041,
             魔眼盖牌 = 26051,
         }

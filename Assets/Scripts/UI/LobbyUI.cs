@@ -5,9 +5,10 @@ using DG.Tweening;
 using System;
 using System.Collections.Generic;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 namespace AGrail
-{   
+{
     public class LobbyUI : WindowsBase
     {
         [SerializeField]
@@ -26,7 +27,7 @@ namespace AGrail
             set
             {
                 if(coroHandle != null)
-                {                    
+                {
                     StopCoroutine(coroHandle);
                     coroHandle = null;
                 }
@@ -51,18 +52,14 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.EnterRoom, this);
             MessageSystem<MessageType>.Regist(MessageType.ERROR, this);
             root.localPosition = new Vector3(Screen.width, 0, 0);
-            root.DOLocalMoveX(0, 1.0f).OnComplete(
-                () =>
-                {
-                    var go = GameObject.Find("GameTitle");
-                    (title.transform as RectTransform).sizeDelta = (go.transform.GetChild(0) as RectTransform).sizeDelta;
-                    Destroy(go);
-                    title.SetActive(true);
-                });
+            root.DOLocalMoveX(0, 1.0f);
             if(Lobby.Instance.RoomInfo == null)
                 Lobby.Instance.GetRoomList();
             else
                 roomInfos = Lobby.Instance.RoomInfo;
+
+            MessageSystem<MessageType>.Notify(MessageType.PlayBGM);
+
             base.Awake();
         }
 
@@ -79,10 +76,10 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.RoomList, this);
             MessageSystem<MessageType>.UnRegist(MessageType.EnterRoom, this);
             MessageSystem<MessageType>.UnRegist(MessageType.ERROR, this);
-            root.DOLocalMoveX(-Screen.width, 1.0f).OnComplete(() => { gameObject.SetActive(false); base.OnHide(); });            
+            root.DOLocalMoveX(-Screen.width, 1.0f).OnComplete(() => { gameObject.SetActive(false); base.OnHide(); });
         }
 
-        public override void OnShow()
+        public override void OnResume()
         {
             MessageSystem<MessageType>.Regist(MessageType.RoomList, this);
             MessageSystem<MessageType>.Regist(MessageType.EnterRoom, this);
@@ -105,13 +102,15 @@ namespace AGrail
                     roomInfos = Lobby.Instance.RoomInfo;
                     break;
                 case MessageType.EnterRoom:
-                    //GameManager.UIInstance.PushWindow(WindowType.Battle, WinMsg.Hide);
-                    GameManager.UIInstance.PushWindow(WindowType.BattleQT, WinMsg.Hide);
+                    if (Lobby.Instance.SelectRoom.playing)
+                        SceneManager.LoadScene(2);
+                    else
+                        GameManager.UIInstance.PushWindow(WindowType.ReadyRoom, WinMsg.Hide);
                     break;
                 case MessageType.ERROR:
                     var errorProto = parameters[0] as network.Error;
                     if (errorProto.id == 31)
-                        GameManager.UIInstance.PushWindow(Framework.UI.WindowType.InputBox, Framework.UI.WinMsg.Pause, Vector3.zero,
+                        GameManager.UIInstance.PushWindow(Framework.UI.WindowType.InputBox, Framework.UI.WinMsg.Pause, -1, Vector3.zero,
                             new Action<string>((str) => { GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.Resume); }),
                             new Action<string>((str) => { GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.Resume); }),
                     "瞎蒙果然是不行的~");
@@ -141,15 +140,15 @@ namespace AGrail
                 go.transform.localPosition = roomItemPrefab.transform.localPosition;
                 go.transform.localRotation = roomItemPrefab.transform.localRotation;
                 go.transform.localScale = roomItemPrefab.transform.localScale;
-                var script = go.GetComponent<RoomItem>();                
+                var script = go.GetComponent<RoomItem>();
                 script.RoomInfo = v;
                 //怒了，一帧只允许创建一个
                 //在没有统一管理的资源池与协程池前先这么凑合着
                 //以后搞成Bundle异步加载应该会好些
                 yield return null;
             }
-            for(int i = 0; i < content.childCount; i++)            
-                content.GetChild(i).gameObject.SetActive(true);            
+            for(int i = 0; i < content.childCount; i++)
+                content.GetChild(i).gameObject.SetActive(true);
             loadingIcon.SetActive(false);
         }
 

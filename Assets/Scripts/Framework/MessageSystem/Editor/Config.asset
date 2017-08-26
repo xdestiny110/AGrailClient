@@ -65,6 +65,8 @@ MonoBehaviour:
   - CrystalChange
   - GrailChange
   - SendHint
+  - Win
+  - Lose
   - PlayerLeave
   - PlayerHeroName
   - PlayerRoleChange
@@ -77,13 +79,17 @@ MonoBehaviour:
   - PlayerNickName
   - PlayerIsReady
   - PlayerBasicAndExCardChange
+  - PlayerActionChange
   - LogChange
+  - ChatChange
   - AgentSelectCard
   - AgentSelectPlayer
   - AgentSelectSkill
+  - AgentSelectArgs
   - AgentStateChange
   - AgentUIStateChange
   - AgentHandChange
   - AgentUpdate
-  - ShowArgsUI
-  - CloseArgsUI
+  - ShowNewArgsUI
+  - CloseNewArgsUI
+  - PlayBGM

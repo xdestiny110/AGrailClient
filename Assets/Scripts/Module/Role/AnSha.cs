@@ -29,6 +29,22 @@ namespace AGrail
             }
         }
 
+        public override string HeroName
+        {
+            get
+            {
+                return "无念";
+            }
+        }
+
+        public override uint Star
+        {
+            get
+            {
+                return 30;
+            }
+        }
+
         public override string Knelt
         {
             get
@@ -46,7 +62,7 @@ namespace AGrail
         public override bool CanSelect(uint uiState, Card card, bool isCovered)
         {
             if (uiState == 502 && card.Element == Card.CardElement.water)
-                return true;                
+                return true;
             return base.CanSelect(uiState, card, isCovered);
         }
 
@@ -87,17 +103,17 @@ namespace AGrail
             switch (state)
             {
                 case 502:
-                    OKAction = () => 
+                    OKAction = () =>
                     {
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, BattleData.Instance.Agent.SelectCards);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    CancelAction = () => 
+                    CancelAction = () =>
                     {
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    MessageSystem<MessageType>.Notify(MessageType.SendHint, "水影: 请选择舍弃的水系牌");
+                    MessageSystem<MessageType>.Notify(MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case 503:
                     OKAction = () =>
@@ -111,7 +127,7 @@ namespace AGrail
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    MessageSystem<MessageType>.Notify(MessageType.SendHint, "是否发动潜行");
+                    MessageSystem<MessageType>.Notify(MessageType.SendHint, StateHint.GetHint(state));
                     return;
             }
             base.UIStateChange(state, msg, paras);

@@ -9,6 +9,8 @@ namespace AGrail
         [SerializeField]
         private InputField inpt;
 
+
+
         public void OnDialogInputSubmit(string str)
         {
             if(inpt.text != string.Empty)
