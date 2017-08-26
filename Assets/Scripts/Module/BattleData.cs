@@ -55,7 +55,7 @@ namespace AGrail
             switch (eventType)
             {
                 case MessageType.TURNBEGIN:
-                    turnBegin = parameters[0] as network.GameInfo;
+                    turnBegin = parameters[0] as network.TurnBegin;
                     break;
                 case MessageType.GAMEINFO:
                     gameInfo = parameters[0] as network.GameInfo;
@@ -103,11 +103,11 @@ namespace AGrail
             return player;
         }
 
-        private network.GameInfo turnBegin
+        private network.TurnBegin turnBegin
         {
             set
             {
-                NowPlayerID = (uint)value.player_id;
+                NowPlayerID = (uint)value.id;
                 if (NowPlayerID == MainPlayer.id)
                     //if (MainPlayer != null && MainPlayer.id != 9 )
                 {
