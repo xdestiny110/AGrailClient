@@ -322,7 +322,8 @@ namespace AGrail
                         {
                             foreach (var v in player.basic_cards)
                             {
-                                if (Card.GetCard(v).Name.ToString() == "圣盾")
+                                Card c = Card.GetCard(v);
+                                if (c.Name.ToString() == "圣盾" ||c.HasSkill(701))
                                     return false;
                             }
                             return true;
