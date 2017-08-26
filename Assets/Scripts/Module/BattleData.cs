@@ -23,6 +23,7 @@ namespace AGrail
         public List<network.SinglePlayerInfo> PlayerInfos = new List<network.SinglePlayerInfo>();
         public List<int> PlayerIdxOrder = new List<int>();//按照顺序排列玩家ID, 第一个一定是主玩家
         public uint StartPlayerID = 0;//第一个行动玩家的ID
+        public uint NowPlayerID = 0;//当前回合行动玩家的ID
 
         public PlayerAgent Agent { get; private set; }
         public network.SinglePlayerInfo MainPlayer { get; private set; }
@@ -54,11 +55,7 @@ namespace AGrail
             switch (eventType)
             {
                 case MessageType.TURNBEGIN:
-                    if (MainPlayer != null && MainPlayer.id != 9)
-                    {
-                        Agent.PlayerRole.IsStart = false;
-                        Agent.PlayerRole.attackable = true;
-                    }
+                    turnBegin = parameters[0] as network.GameInfo;
                     break;
                 case MessageType.GAMEINFO:
                     gameInfo = parameters[0] as network.GameInfo;
@@ -104,6 +101,20 @@ namespace AGrail
                   return u != null && u.id == playerID;
                });
             return player;
+        }
+
+        private network.GameInfo turnBegin
+        {
+            set
+            {
+                NowPlayerID = (uint)value.player_id;
+                if (NowPlayerID == MainPlayer.id)
+                    //if (MainPlayer != null && MainPlayer.id != 9 )
+                {
+                    Agent.PlayerRole.IsStart = false;
+                    Agent.PlayerRole.attackable = true;
+                }
+            }
         }
 
         private network.GameInfo gameInfo

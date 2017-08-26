@@ -79,6 +79,10 @@ namespace AGrail
         {
             switch (uiState)
             {
+                case 3:
+                    if (BattleData.Instance.NowPlayerID == BattleData.Instance.MainPlayer.id && card.Element == Card.CardElement.light)
+                        return false;
+                    break;
                 case 905:
                     return card.Type == Card.CardType.magic;
                 case 10:
@@ -87,9 +91,8 @@ namespace AGrail
                     if (additionalState == 901 &&
                         (card.Element != Card.CardElement.fire || card.Type != Card.CardType.attack))
                         return false;
-                    return card.Type != Card.CardType.magic;
+                    return card.Type != Card.CardType.magic;      
             }
-
             return base.CanSelect(uiState, card, isCovered);
         }
 
