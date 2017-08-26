@@ -106,7 +106,12 @@ namespace AGrail
                     if (skill.SkillID == (uint)SkillID.血之悲鸣 && BattleData.Instance.MainPlayer.is_knelt)
                         return Util.HasCard(2301, BattleData.Instance.MainPlayer.hands);
                     if (skill.SkillID == (uint)SkillID.同生共死)
-                        return additionalState == 0;                    
+                    { 
+                        foreach (var v in BattleData.Instance.PlayerInfos)
+                            if (v.ex_cards.Contains(1003))
+                                return false;
+                        return true;
+                    }
                     return false;
             }
             return base.CanSelect(uiState, skill);
@@ -214,7 +219,6 @@ namespace AGrail
                 case (uint)SkillID.同生共死:
                     if (BattleData.Instance.Agent.SelectPlayers.Count == 1)
                     {
-                        additionalState = 1;
                         sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
                             BattleData.Instance.Agent.SelectPlayers, null, state, null);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
@@ -227,7 +231,6 @@ namespace AGrail
                     OKAction = () =>
                     {
                         IsStart = true;
-                        additionalState = 0;
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 2 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };

@@ -123,6 +123,8 @@ namespace AGrail
                 Discard = value.discardSpecified ? value.discard : Discard;
                 if (value.blue_moraleSpecified)
                 {
+                    if (Morale[(int)Team.Blue] != value.blue_morale)
+                        Dialog.instance.Log += "蓝方士气由" + Morale[(int)Team.Blue] + (Morale[(int)Team.Blue] > value.blue_morale ? "下降至" : "上升至") + value.blue_morale + "\n";
                     Morale[(int)Team.Blue] = value.blue_morale;
                     MessageSystem<MessageType>.Notify(MessageType.MoraleChange, Team.Blue, Morale[(int)Team.Blue]);
                     if(value.blue_morale == 0)
@@ -130,6 +132,8 @@ namespace AGrail
                 }
                 if (value.red_moraleSpecified)
                 {
+                    if (Morale[(int)Team.Red] != value.red_morale)
+                        Dialog.instance.Log += "红方士气由" + Morale[(int)Team.Red] + (Morale[(int)Team.Red] > value.red_morale ? "下降至" : "上升至") + value.red_morale + "\n";
                     Morale[(int)Team.Red] = value.red_morale;
                     MessageSystem<MessageType>.Notify(MessageType.MoraleChange, Team.Red, Morale[(int)Team.Red]);
                     if (value.red_morale == 0)
@@ -270,6 +274,7 @@ namespace AGrail
                     }
                     if (v.heal_countSpecified)
                     {
+                        Dialog.instance.Log += RoleFactory.Create(player.role_id).RoleName + (player.heal_count > v.heal_count ? "失去了" : "获得了") + Math.Abs((int)player.heal_count - (int)v.heal_count) + "点治疗" + "\n";
                         player.heal_count = v.heal_count;
                         MessageSystem<MessageType>.Notify(MessageType.PlayerHealChange, idx, player.heal_count);
                     }

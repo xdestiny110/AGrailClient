@@ -408,7 +408,7 @@ namespace AGrail
 			break;
                 case (uint)StateEnum.Attack:
                     //攻击
-                    if (!attackable)
+                    if (!attackable && BattleData.Instance.Agent.AgentState.Check(PlayerAgentState.CanResign))
                     {
                         sendActionMsg(BasicActionType.ACTION_NONE, BattleData.Instance.MainPlayer.id, null, null, null, null);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
@@ -878,7 +878,7 @@ namespace AGrail
                 };
             else if(CheckunActional(state))
             {
-                if(CheckSynthetize(state))
+                if(CheckExtract(state))
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint("UnActional",1));
                 else
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint("UnActional"));

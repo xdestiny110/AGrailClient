@@ -69,7 +69,7 @@ namespace AGrail
                     dstPlayer = BattleData.Instance.GetPlayerInfo(hitMsg.dst_id);
                     r1 = RoleFactory.Create(srcPlayer.role_id);
                     r2 = RoleFactory.Create(dstPlayer.role_id);                    
-                    str.Append(string.Format("{0}攻击了{1}" + Environment.NewLine, r1.RoleName, r2.RoleName));
+                    str.Append(string.Format("{0}命中了{1}" + Environment.NewLine, r1.RoleName, r2.RoleName));
                     Log += str.ToString();
                     MessageSystem<MessageType>.Notify(MessageType.SendHint, str.ToString());
                     break;
@@ -104,7 +104,7 @@ namespace AGrail
                     foreach (var v in cardMsg.card_ids)
                     {
                         var c = Card.GetCard(v);
-                        str.Append(c.Name + ",");
+                        str.Append(c.Name + "-" + c.Property.ToString() +"　");
                     }
                     str.Append(Environment.NewLine);
                     Log += str.ToString();
