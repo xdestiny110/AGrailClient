@@ -184,7 +184,7 @@ namespace AGrail
         public override void UIStateChange(uint state, UIStateMsg msg, params object[] paras)
         {
             switch (state)
-            {                   
+            {
                 case 902:
                 case 906:
                     OKAction = () =>
@@ -192,7 +192,7 @@ namespace AGrail
                         if (state == 901) additionalState = 901;
                         if (state == 902) IsStart = true;
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 1 });
-                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);                        
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     CancelAction = () =>
                     {

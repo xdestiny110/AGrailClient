@@ -39,10 +39,10 @@ namespace AGrail
                     Description = t[6],
                     SkillNum = int.Parse(t[7])
                 };
-                for(int i = 0; i < c.SkillNum; i++)                
+                for(int i = 0; i < c.SkillNum; i++)
                     c.SkillNames.Add(t[8 + i]);
                 cardDict.Add(c.ID, c);
-            }                
+            }
         }
 
         public static Card GetCard(uint cardID)
@@ -53,10 +53,10 @@ namespace AGrail
             {
                 Debug.LogErrorFormat("Can not find card id {0}", cardID);
                 return null;
-            }                
+            }
         }
 
-        private Card() { }        
+        private Card() { }
 
         public bool HasSkill(string skillName)
         {

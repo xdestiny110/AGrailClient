@@ -72,7 +72,7 @@ namespace AGrail
                 case (uint)SKILLID.水之神力给牌:
                     return true;
                 case (uint)SKILLID.神圣领域:
-                    return additionalState == 15061 || additionalState == 15062;                    
+                    return additionalState == 15061 || additionalState == 15062;
             }
             return base.CanSelect(uiState, card, isCovered);
         }
@@ -83,11 +83,11 @@ namespace AGrail
             {
                 case (uint)SKILLID.水之神力:
                     return BattleData.Instance.Agent.SelectCards.Count == 1 &&
-                        player.team == BattleData.Instance.MainPlayer.team && 
+                        player.team == BattleData.Instance.MainPlayer.team &&
                         BattleData.Instance.PlayerID != player.id;
                 case (uint)SKILLID.神圣契约:
                     return BattleData.Instance.Agent.SelectArgs.Count == 1 &&
-                        player.team == BattleData.Instance.MainPlayer.team && 
+                        player.team == BattleData.Instance.MainPlayer.team &&
                         BattleData.Instance.PlayerID != player.id;
                 case (uint)SKILLID.神圣领域:
                     if(additionalState == 15061)
@@ -124,7 +124,7 @@ namespace AGrail
         {
             switch (uiState)
             {
-                case (uint)SKILLID.神圣祈福:                
+                case (uint)SKILLID.神圣祈福:
                     return 2;
                 case (uint)SKILLID.水之神力:
                 case (uint)SKILLID.水之神力给牌:
@@ -139,8 +139,8 @@ namespace AGrail
         {
             switch (uiState)
             {
-                case (uint)SKILLID.水之神力:                    
-                    return 1;                
+                case (uint)SKILLID.水之神力:
+                    return 1;
                 case (uint)SKILLID.神圣契约:
                     return 1;
                 case (uint)SKILLID.神圣领域:
@@ -211,7 +211,7 @@ namespace AGrail
                 case (uint)SKILLID.神圣祈福:
                     if (BattleData.Instance.Agent.SelectCards.Count == 2)
                     {
-                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id, null, 
+                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id, null,
                             BattleData.Instance.Agent.SelectCards, state);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                         return;
@@ -225,7 +225,7 @@ namespace AGrail
                 case (uint)SKILLID.水之神力:
                     if (BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == 1)
                     {
-                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id, 
+                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
                             BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                         return;
@@ -248,12 +248,12 @@ namespace AGrail
                     {
                         IsStart = true;
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
-                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectPlayers, 
+                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectPlayers,
                             null, BattleData.Instance.Agent.SelectArgs);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                         return;
                     }
-                    CancelAction = () => 
+                    CancelAction = () =>
                     {
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
@@ -271,12 +271,12 @@ namespace AGrail
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, explainList);
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     }
-                    else                    
+                    else
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state,1));
                     return;
                 case (uint)SKILLID.神圣领域:
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
-                    if (BattleData.Instance.Agent.SelectCards.Count == Math.Min(BattleData.Instance.MainPlayer.hand_count, 2) && 
+                    if (BattleData.Instance.Agent.SelectCards.Count == Math.Min(BattleData.Instance.MainPlayer.hand_count, 2) &&
                         BattleData.Instance.Agent.SelectPlayers.Count == 1)
                     {
                         if(additionalState == 15061)
@@ -293,11 +293,11 @@ namespace AGrail
                         }
                         return;
                     };
-                    CancelAction = () => 
+                    CancelAction = () =>
                     {
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
-                    };                    
+                    };
                     if (BattleData.Instance.Agent.SelectArgs.Count == 1)
                     {
                         if (BattleData.Instance.Agent.SelectArgs[0] == 1)
@@ -325,7 +325,7 @@ namespace AGrail
                         mList.Add("你+2[治疗],目标队友+1[治疗]");
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
-                    }                  
+                    }
                     return;
             }
             base.UIStateChange(state, msg, paras);

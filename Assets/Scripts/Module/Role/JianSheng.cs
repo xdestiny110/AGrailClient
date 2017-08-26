@@ -69,7 +69,7 @@ namespace AGrail
         public override bool CanSelect(uint uiState, Card card, bool isCovered)
         {
             if (additionalState == 103 && uiState==1)
-                return card.Element == Card.CardElement.wind;            
+                return card.Element == Card.CardElement.wind;
             return base.CanSelect(uiState, card, isCovered);
         }
 
@@ -98,7 +98,7 @@ namespace AGrail
             if (BattleData.Instance.Agent.SelectArgs.Count == 1)
             {
                 switch(BattleData.Instance.Agent.SelectArgs[0])
-                {                    
+                {
                     case 103:
                         additionalState = 103;
                         break;
@@ -111,7 +111,7 @@ namespace AGrail
         }
 
         public override void UIStateChange(uint state, UIStateMsg msg, params object[] paras)
-        {            
+        {
             switch (state)
             {
                 case 102:

@@ -78,7 +78,7 @@ namespace AGrail
             switch (uiState)
             {
                 case 1002:
-                    return BattleData.Instance.Agent.SelectCards.Count == 1 && 
+                    return BattleData.Instance.Agent.SelectCards.Count == 1 &&
                         player.id != BattleData.Instance.PlayerID && player.heal_count > 0;
             }
             return base.CanSelect(uiState, player);
@@ -142,8 +142,8 @@ namespace AGrail
         {
             switch (uiState)
             {
-                case 1001:                    
-                case 1002:                    
+                case 1001:
+                case 1002:
                 case 1003:
                 case 1004:
                 case 1005:
@@ -164,7 +164,7 @@ namespace AGrail
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                         return;
                     };
-                    CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };                    
+                    CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case 1002:
@@ -188,15 +188,15 @@ namespace AGrail
                     return;
                 case 1004:
                     OKAction = () =>
-                    {                        
+                    {
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 1 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     CancelAction = () =>
-                    {                        
+                    {
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                    };                                        
+                    };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case 1005:
@@ -217,7 +217,7 @@ namespace AGrail
                     var selectList = new List<List<uint>>();
                     var explainList = new List<string>();
                     for (uint i = Math.Min(4, BattleData.Instance.MainPlayer.heal_count); i >= 1; i--)
-                    { 
+                    {
                         selectList.Add(new List<uint>() { i });
                         explainList.Add(i + "个治疗");
                     }

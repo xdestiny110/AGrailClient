@@ -57,7 +57,7 @@ namespace AGrail
             btn2Gem.onClick.AddListener(delegate { onBtnEnergyClick(1); });
             btn1Crystal1Gem.onClick.AddListener(delegate { onBtnEnergyClick(2); });
             btn1Crystal.onClick.AddListener(delegate { onBtnEnergyClick(3); });
-            btn2Crystal.onClick.AddListener(delegate { onBtnEnergyClick(4); });            
+            btn2Crystal.onClick.AddListener(delegate { onBtnEnergyClick(4); });
 
             base.Awake();
         }

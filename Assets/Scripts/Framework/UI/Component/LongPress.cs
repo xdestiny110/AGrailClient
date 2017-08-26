@@ -34,7 +34,7 @@ namespace Framework.UI
                 {
                     interceptBtn.enabled = false;
                     interceptBtn.enabled = true;
-                }                    
+                }
             }
         }
 

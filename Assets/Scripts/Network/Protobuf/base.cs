@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 // Option: missing-value detection (*Specified/ShouldSerialize*/Reset*) enabled
-    
+
 // Generated from: base.proto
 // Note: requires additional types generated from: action_respond.proto
 namespace network
@@ -17,7 +17,7 @@ namespace network
   public partial class RegisterRequest : global::ProtoBuf.IExtensible
   {
     public RegisterRequest() {}
-    
+
 
     private string _user_id;
     [global::ProtoBuf.ProtoMember(1, IsRequired = false, Name=@"user_id", DataFormat = global::ProtoBuf.DataFormat.Default)]
@@ -35,7 +35,7 @@ namespace network
     }
     private bool ShouldSerializeuser_id() { return user_idSpecified; }
     private void Resetuser_id() { user_idSpecified = false; }
-    
+
 
     private string _user_password;
     [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"user_password", DataFormat = global::ProtoBuf.DataFormat.Default)]
@@ -53,7 +53,7 @@ namespace network
     }
     private bool ShouldSerializeuser_password() { return user_passwordSpecified; }
     private void Resetuser_password() { user_passwordSpecified = false; }
-    
+
 
     private string _nickname;
     [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"nickname", DataFormat = global::ProtoBuf.DataFormat.Default)]
@@ -71,7 +71,7 @@ namespace network
     }
     private bool ShouldSerializenickname() { return nicknameSpecified; }
     private void Resetnickname() { nicknameSpecified = false; }
-    
+
 
     private string _mobile;
     [global::ProtoBuf.ProtoMember(4, IsRequired = false, Name=@"mobile", DataFormat = global::ProtoBuf.DataFormat.Default)]
@@ -89,7 +89,7 @@ namespace network
     }
     private bool ShouldSerializemobile() { return mobileSpecified; }
     private void Resetmobile() { mobileSpecified = false; }
-    
+
 
     private string _email;
     [global::ProtoBuf.ProtoMember(5, IsRequired = false, Name=@"email", DataFormat = global::ProtoBuf.DataFormat.Default)]
@@ -107,17 +107,17 @@ namespace network
     }
     private bool ShouldSerializeemail() { return emailSpecified; }
     private void Resetemail() { emailSpecified = false; }
-    
+
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
-  
+
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"RegisterResponse")]
   public partial class RegisterResponse : global::ProtoBuf.IExtensible
   {
     public RegisterResponse() {}
-    
+
 
     private uint? _state;
     [global::ProtoBuf.ProtoMember(1, IsRequired = false, Name=@"state", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -135,17 +135,17 @@ namespace network
     }
     private bool ShouldSerializestate() { return stateSpecified; }
     private void Resetstate() { stateSpecified = false; }
-    
+
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
-  
+
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"LoginRequest")]
   public partial class LoginRequest : global::ProtoBuf.IExtensible
   {
     public LoginRequest() {}
-    
+
     private bool _asGuest;
     [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"asGuest", DataFormat = global::ProtoBuf.DataFormat.Default)]
     public bool asGuest
@@ -170,7 +170,7 @@ namespace network
     }
     private bool ShouldSerializeuser_id() { return user_idSpecified; }
     private void Resetuser_id() { user_idSpecified = false; }
-    
+
 
     private string _user_password;
     [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"user_password", DataFormat = global::ProtoBuf.DataFormat.Default)]
@@ -188,7 +188,7 @@ namespace network
     }
     private bool ShouldSerializeuser_password() { return user_passwordSpecified; }
     private void Resetuser_password() { user_passwordSpecified = false; }
-    
+
 
     private int? _version;
     [global::ProtoBuf.ProtoMember(4, IsRequired = false, Name=@"version", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -206,17 +206,17 @@ namespace network
     }
     private bool ShouldSerializeversion() { return versionSpecified; }
     private void Resetversion() { versionSpecified = false; }
-    
+
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
-  
+
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"LoginResponse")]
   public partial class LoginResponse : global::ProtoBuf.IExtensible
   {
     public LoginResponse() {}
-    
+
     private int _state;
     [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"state", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
     public int state
@@ -241,44 +241,44 @@ namespace network
     }
     private bool ShouldSerializenickname() { return nicknameSpecified; }
     private void Resetnickname() { nicknameSpecified = false; }
-    
+
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
-  
+
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"LogoutRequest")]
   public partial class LogoutRequest : global::ProtoBuf.IExtensible
   {
     public LogoutRequest() {}
-    
+
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
-  
+
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"LogoutResponse")]
   public partial class LogoutResponse : global::ProtoBuf.IExtensible
   {
     public LogoutResponse() {}
-    
+
     private readonly global::System.Collections.Generic.List<uint> _args = new global::System.Collections.Generic.List<uint>();
     [global::ProtoBuf.ProtoMember(1, Name=@"args", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
     public global::System.Collections.Generic.List<uint> args
     {
       get { return _args; }
     }
-  
+
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
-  
+
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"RoomListRequest")]
   public partial class RoomListRequest : global::ProtoBuf.IExtensible
   {
     public RoomListRequest() {}
-    
+
     private network.ROLE_STRATEGY _role_strategy;
     [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"role_strategy", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
     public network.ROLE_STRATEGY role_strategy
@@ -290,24 +290,24 @@ namespace network
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
-  
+
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"RoomListResponse")]
   public partial class RoomListResponse : global::ProtoBuf.IExtensible
   {
     public RoomListResponse() {}
-    
+
     private readonly global::System.Collections.Generic.List<network.RoomListResponse.RoomInfo> _rooms = new global::System.Collections.Generic.List<network.RoomListResponse.RoomInfo>();
     [global::ProtoBuf.ProtoMember(1, Name=@"rooms", DataFormat = global::ProtoBuf.DataFormat.Default)]
     public global::System.Collections.Generic.List<network.RoomListResponse.RoomInfo> rooms
     {
       get { return _rooms; }
     }
-  
+
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"RoomInfo")]
   public partial class RoomInfo : global::ProtoBuf.IExtensible
   {
     public RoomInfo() {}
-    
+
 
     private int? _room_id;
     [global::ProtoBuf.ProtoMember(1, IsRequired = false, Name=@"room_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -325,7 +325,7 @@ namespace network
     }
     private bool ShouldSerializeroom_id() { return room_idSpecified; }
     private void Resetroom_id() { room_idSpecified = false; }
-    
+
 
     private string _room_name;
     [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"room_name", DataFormat = global::ProtoBuf.DataFormat.Default)]
@@ -343,7 +343,7 @@ namespace network
     }
     private bool ShouldSerializeroom_name() { return room_nameSpecified; }
     private void Resetroom_name() { room_nameSpecified = false; }
-    
+
 
     private int? _max_player;
     [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"max_player", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -361,7 +361,7 @@ namespace network
     }
     private bool ShouldSerializemax_player() { return max_playerSpecified; }
     private void Resetmax_player() { max_playerSpecified = false; }
-    
+
 
     private int? _now_player;
     [global::ProtoBuf.ProtoMember(4, IsRequired = false, Name=@"now_player", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -379,7 +379,7 @@ namespace network
     }
     private bool ShouldSerializenow_player() { return now_playerSpecified; }
     private void Resetnow_player() { now_playerSpecified = false; }
-    
+
 
     private network.ROLE_STRATEGY? _role_strategy;
     [global::ProtoBuf.ProtoMember(5, IsRequired = false, Name=@"role_strategy", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -397,7 +397,7 @@ namespace network
     }
     private bool ShouldSerializerole_strategy() { return role_strategySpecified; }
     private void Resetrole_strategy() { role_strategySpecified = false; }
-    
+
 
     private int? _seat_mode;
     [global::ProtoBuf.ProtoMember(6, IsRequired = false, Name=@"seat_mode", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -415,7 +415,7 @@ namespace network
     }
     private bool ShouldSerializeseat_mode() { return seat_modeSpecified; }
     private void Resetseat_mode() { seat_modeSpecified = false; }
-    
+
 
     private int? _role_range;
     [global::ProtoBuf.ProtoMember(7, IsRequired = false, Name=@"role_range", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -433,7 +433,7 @@ namespace network
     }
     private bool ShouldSerializerole_range() { return role_rangeSpecified; }
     private void Resetrole_range() { role_rangeSpecified = false; }
-    
+
 
     private bool? _allow_guest;
     [global::ProtoBuf.ProtoMember(8, IsRequired = false, Name=@"allow_guest", DataFormat = global::ProtoBuf.DataFormat.Default)]
@@ -451,7 +451,7 @@ namespace network
     }
     private bool ShouldSerializeallow_guest() { return allow_guestSpecified; }
     private void Resetallow_guest() { allow_guestSpecified = false; }
-    
+
 
     private bool? _has_password;
     [global::ProtoBuf.ProtoMember(9, IsRequired = false, Name=@"has_password", DataFormat = global::ProtoBuf.DataFormat.Default)]
@@ -469,7 +469,7 @@ namespace network
     }
     private bool ShouldSerializehas_password() { return has_passwordSpecified; }
     private void Resethas_password() { has_passwordSpecified = false; }
-    
+
 
     private bool? _first_extension;
     [global::ProtoBuf.ProtoMember(10, IsRequired = false, Name=@"first_extension", DataFormat = global::ProtoBuf.DataFormat.Default)]
@@ -487,7 +487,7 @@ namespace network
     }
     private bool ShouldSerializefirst_extension() { return first_extensionSpecified; }
     private void Resetfirst_extension() { first_extensionSpecified = false; }
-    
+
 
     private bool? _second_extension;
     [global::ProtoBuf.ProtoMember(11, IsRequired = false, Name=@"second_extension", DataFormat = global::ProtoBuf.DataFormat.Default)]
@@ -505,7 +505,7 @@ namespace network
     }
     private bool ShouldSerializesecond_extension() { return second_extensionSpecified; }
     private void Resetsecond_extension() { second_extensionSpecified = false; }
-    
+
 
     private bool? _sp_mo_dao;
     [global::ProtoBuf.ProtoMember(12, IsRequired = false, Name=@"sp_mo_dao", DataFormat = global::ProtoBuf.DataFormat.Default)]
@@ -523,7 +523,7 @@ namespace network
     }
     private bool ShouldSerializesp_mo_dao() { return sp_mo_daoSpecified; }
     private void Resetsp_mo_dao() { sp_mo_daoSpecified = false; }
-    
+
 
     private bool? _playing;
     [global::ProtoBuf.ProtoMember(13, IsRequired = false, Name=@"playing", DataFormat = global::ProtoBuf.DataFormat.Default)]
@@ -541,7 +541,7 @@ namespace network
     }
     private bool ShouldSerializeplaying() { return playingSpecified; }
     private void Resetplaying() { playingSpecified = false; }
-    
+
 
     private bool? _silence;
     [global::ProtoBuf.ProtoMember(14, IsRequired = false, Name=@"silence", DataFormat = global::ProtoBuf.DataFormat.Default)]
@@ -559,22 +559,22 @@ namespace network
     }
     private bool ShouldSerializesilence() { return silenceSpecified; }
     private void Resetsilence() { silenceSpecified = false; }
-    
+
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
-  
+
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
-  
+
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"CreateRoomRequest")]
   public partial class CreateRoomRequest : global::ProtoBuf.IExtensible
   {
     public CreateRoomRequest() {}
-    
+
 
     private string _room_name;
     [global::ProtoBuf.ProtoMember(1, IsRequired = false, Name=@"room_name", DataFormat = global::ProtoBuf.DataFormat.Default)]
@@ -592,7 +592,7 @@ namespace network
     }
     private bool ShouldSerializeroom_name() { return room_nameSpecified; }
     private void Resetroom_name() { room_nameSpecified = false; }
-    
+
 
     private int? _max_player;
     [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"max_player", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -610,7 +610,7 @@ namespace network
     }
     private bool ShouldSerializemax_player() { return max_playerSpecified; }
     private void Resetmax_player() { max_playerSpecified = false; }
-    
+
 
     private network.ROLE_STRATEGY? _role_strategy;
     [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"role_strategy", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -628,7 +628,7 @@ namespace network
     }
     private bool ShouldSerializerole_strategy() { return role_strategySpecified; }
     private void Resetrole_strategy() { role_strategySpecified = false; }
-    
+
 
     private bool? _first_extension;
     [global::ProtoBuf.ProtoMember(4, IsRequired = false, Name=@"first_extension", DataFormat = global::ProtoBuf.DataFormat.Default)]
@@ -646,7 +646,7 @@ namespace network
     }
     private bool ShouldSerializefirst_extension() { return first_extensionSpecified; }
     private void Resetfirst_extension() { first_extensionSpecified = false; }
-    
+
 
     private bool? _second_extension;
     [global::ProtoBuf.ProtoMember(5, IsRequired = false, Name=@"second_extension", DataFormat = global::ProtoBuf.DataFormat.Default)]
@@ -664,7 +664,7 @@ namespace network
     }
     private bool ShouldSerializesecond_extension() { return second_extensionSpecified; }
     private void Resetsecond_extension() { second_extensionSpecified = false; }
-    
+
 
     private bool? _sp_mo_dao;
     [global::ProtoBuf.ProtoMember(6, IsRequired = false, Name=@"sp_mo_dao", DataFormat = global::ProtoBuf.DataFormat.Default)]
@@ -682,7 +682,7 @@ namespace network
     }
     private bool ShouldSerializesp_mo_dao() { return sp_mo_daoSpecified; }
     private void Resetsp_mo_dao() { sp_mo_daoSpecified = false; }
-    
+
 
     private int? _seat_mode;
     [global::ProtoBuf.ProtoMember(7, IsRequired = false, Name=@"seat_mode", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -700,7 +700,7 @@ namespace network
     }
     private bool ShouldSerializeseat_mode() { return seat_modeSpecified; }
     private void Resetseat_mode() { seat_modeSpecified = false; }
-    
+
 
     private bool? _allow_guest;
     [global::ProtoBuf.ProtoMember(8, IsRequired = false, Name=@"allow_guest", DataFormat = global::ProtoBuf.DataFormat.Default)]
@@ -718,7 +718,7 @@ namespace network
     }
     private bool ShouldSerializeallow_guest() { return allow_guestSpecified; }
     private void Resetallow_guest() { allow_guestSpecified = false; }
-    
+
 
     private string _password;
     [global::ProtoBuf.ProtoMember(9, IsRequired = false, Name=@"password", DataFormat = global::ProtoBuf.DataFormat.Default)]
@@ -736,7 +736,7 @@ namespace network
     }
     private bool ShouldSerializepassword() { return passwordSpecified; }
     private void Resetpassword() { passwordSpecified = false; }
-    
+
 
     private bool? _silence;
     [global::ProtoBuf.ProtoMember(10, IsRequired = false, Name=@"silence", DataFormat = global::ProtoBuf.DataFormat.Default)]
@@ -754,17 +754,17 @@ namespace network
     }
     private bool ShouldSerializesilence() { return silenceSpecified; }
     private void Resetsilence() { silenceSpecified = false; }
-    
+
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
-  
+
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"EnterRoomRequest")]
   public partial class EnterRoomRequest : global::ProtoBuf.IExtensible
   {
     public EnterRoomRequest() {}
-    
+
     private int _room_id;
     [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"room_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
     public int room_id
@@ -789,27 +789,27 @@ namespace network
     }
     private bool ShouldSerializepassword() { return passwordSpecified; }
     private void Resetpassword() { passwordSpecified = false; }
-    
+
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
-  
+
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"LeaveRoomRequest")]
   public partial class LeaveRoomRequest : global::ProtoBuf.IExtensible
   {
     public LeaveRoomRequest() {}
-    
+
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
-  
+
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"JoinTeamRequest")]
   public partial class JoinTeamRequest : global::ProtoBuf.IExtensible
   {
     public JoinTeamRequest() {}
-    
+
     private network.JoinTeamRequest.Team _team;
     [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"team", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
     public network.JoinTeamRequest.Team team
@@ -820,37 +820,37 @@ namespace network
     [global::ProtoBuf.ProtoContract(Name=@"Team")]
     public enum Team
     {
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"TEAM_A", Value=1)]
       TEAM_A = 1,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"TEAM_B", Value=0)]
       TEAM_B = 0,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"TEAM_RANDOM", Value=2)]
       TEAM_RANDOM = 2
     }
-  
+
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
-  
+
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"BecomeLeaderRequest")]
   public partial class BecomeLeaderRequest : global::ProtoBuf.IExtensible
   {
     public BecomeLeaderRequest() {}
-    
+
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
-  
+
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"BecomeLeaderResponse")]
   public partial class BecomeLeaderResponse : global::ProtoBuf.IExtensible
   {
     public BecomeLeaderResponse() {}
-    
+
 
     private bool? _yes;
     [global::ProtoBuf.ProtoMember(1, IsRequired = false, Name=@"yes", DataFormat = global::ProtoBuf.DataFormat.Default)]
@@ -868,17 +868,17 @@ namespace network
     }
     private bool ShouldSerializeyes() { return yesSpecified; }
     private void Resetyes() { yesSpecified = false; }
-    
+
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
-  
+
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"ReadyForGameRequest")]
   public partial class ReadyForGameRequest : global::ProtoBuf.IExtensible
   {
     public ReadyForGameRequest() {}
-    
+
     private network.ReadyForGameRequest.Type _type;
     [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"type", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
     public network.ReadyForGameRequest.Type type
@@ -889,27 +889,27 @@ namespace network
     [global::ProtoBuf.ProtoContract(Name=@"Type")]
     public enum Type
     {
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"START_READY", Value=1)]
       START_READY = 1,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"CANCEL_START_REDAY", Value=2)]
       CANCEL_START_REDAY = 2,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"SEAT_READY", Value=3)]
       SEAT_READY = 3
     }
-  
+
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
-  
+
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"SinglePlayerInfo")]
   public partial class SinglePlayerInfo : global::ProtoBuf.IExtensible
   {
     public SinglePlayerInfo() {}
-    
+
 
     private uint? _id;
     [global::ProtoBuf.ProtoMember(1, IsRequired = false, Name=@"id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -927,7 +927,7 @@ namespace network
     }
     private bool ShouldSerializeid() { return idSpecified; }
     private void Resetid() { idSpecified = false; }
-    
+
 
     private uint? _team;
     [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"team", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -945,7 +945,7 @@ namespace network
     }
     private bool ShouldSerializeteam() { return teamSpecified; }
     private void Resetteam() { teamSpecified = false; }
-    
+
 
     private uint? _role_id;
     [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"role_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -963,7 +963,7 @@ namespace network
     }
     private bool ShouldSerializerole_id() { return role_idSpecified; }
     private void Resetrole_id() { role_idSpecified = false; }
-    
+
 
     private uint? _hand_count;
     [global::ProtoBuf.ProtoMember(4, IsRequired = false, Name=@"hand_count", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -981,7 +981,7 @@ namespace network
     }
     private bool ShouldSerializehand_count() { return hand_countSpecified; }
     private void Resethand_count() { hand_countSpecified = false; }
-    
+
 
     private uint? _heal_count;
     [global::ProtoBuf.ProtoMember(5, IsRequired = false, Name=@"heal_count", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -999,7 +999,7 @@ namespace network
     }
     private bool ShouldSerializeheal_count() { return heal_countSpecified; }
     private void Resetheal_count() { heal_countSpecified = false; }
-    
+
     private readonly global::System.Collections.Generic.List<uint> _ex_cards = new global::System.Collections.Generic.List<uint>();
     [global::ProtoBuf.ProtoMember(6, Name=@"ex_cards", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
     public global::System.Collections.Generic.List<uint> ex_cards
@@ -1007,7 +1007,7 @@ namespace network
             set { _ex_cards.Clear(); foreach (var v in value) _ex_cards.Add(v); }
             get { return _ex_cards; }
     }
-  
+
     private readonly global::System.Collections.Generic.List<uint> _basic_cards = new global::System.Collections.Generic.List<uint>();
     [global::ProtoBuf.ProtoMember(7, Name=@"basic_cards", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
     public global::System.Collections.Generic.List<uint> basic_cards
@@ -1015,7 +1015,7 @@ namespace network
             set { _basic_cards.Clear(); foreach (var v in value) _basic_cards.Add(v); }
       get { return _basic_cards; }
     }
-  
+
 
     private uint? _gem;
     [global::ProtoBuf.ProtoMember(8, IsRequired = false, Name=@"gem", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -1033,7 +1033,7 @@ namespace network
     }
     private bool ShouldSerializegem() { return gemSpecified; }
     private void Resetgem() { gemSpecified = false; }
-    
+
 
     private uint? _crystal;
     [global::ProtoBuf.ProtoMember(9, IsRequired = false, Name=@"crystal", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -1051,7 +1051,7 @@ namespace network
     }
     private bool ShouldSerializecrystal() { return crystalSpecified; }
     private void Resetcrystal() { crystalSpecified = false; }
-    
+
 
     private uint? _yellow_token;
     [global::ProtoBuf.ProtoMember(10, IsRequired = false, Name=@"yellow_token", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -1069,7 +1069,7 @@ namespace network
     }
     private bool ShouldSerializeyellow_token() { return yellow_tokenSpecified; }
     private void Resetyellow_token() { yellow_tokenSpecified = false; }
-    
+
 
     private uint? _blue_token;
     [global::ProtoBuf.ProtoMember(11, IsRequired = false, Name=@"blue_token", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -1087,7 +1087,7 @@ namespace network
     }
     private bool ShouldSerializeblue_token() { return blue_tokenSpecified; }
     private void Resetblue_token() { blue_tokenSpecified = false; }
-    
+
 
     private uint? _covered_count;
     [global::ProtoBuf.ProtoMember(12, IsRequired = false, Name=@"covered_count", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -1105,7 +1105,7 @@ namespace network
     }
     private bool ShouldSerializecovered_count() { return covered_countSpecified; }
     private void Resetcovered_count() { covered_countSpecified = false; }
-    
+
 
     private bool? _is_knelt;
     [global::ProtoBuf.ProtoMember(13, IsRequired = false, Name=@"is_knelt", DataFormat = global::ProtoBuf.DataFormat.Default)]
@@ -1123,21 +1123,21 @@ namespace network
     }
     private bool ShouldSerializeis_knelt() { return is_kneltSpecified; }
     private void Resetis_knelt() { is_kneltSpecified = false; }
-    
+
     private readonly global::System.Collections.Generic.List<uint> _hands = new global::System.Collections.Generic.List<uint>();
     [global::ProtoBuf.ProtoMember(14, Name=@"hands", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
     public global::System.Collections.Generic.List<uint> hands
     {
       get { return _hands; }
     }
-  
+
     private readonly global::System.Collections.Generic.List<uint> _covereds = new global::System.Collections.Generic.List<uint>();
     [global::ProtoBuf.ProtoMember(15, Name=@"covereds", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
     public global::System.Collections.Generic.List<uint> covereds
     {
       get { return _covereds; }
     }
-  
+
 
     private uint? _max_hand;
     [global::ProtoBuf.ProtoMember(16, IsRequired = false, Name=@"max_hand", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -1155,7 +1155,7 @@ namespace network
     }
     private bool ShouldSerializemax_hand() { return max_handSpecified; }
     private void Resetmax_hand() { max_handSpecified = false; }
-    
+
 
     private string _nickname;
     [global::ProtoBuf.ProtoMember(17, IsRequired = false, Name=@"nickname", DataFormat = global::ProtoBuf.DataFormat.Default)]
@@ -1173,7 +1173,7 @@ namespace network
     }
     private bool ShouldSerializenickname() { return nicknameSpecified; }
     private void Resetnickname() { nicknameSpecified = false; }
-    
+
 
     private bool? _ready;
     [global::ProtoBuf.ProtoMember(18, IsRequired = false, Name=@"ready", DataFormat = global::ProtoBuf.DataFormat.Default)]
@@ -1191,14 +1191,14 @@ namespace network
     }
     private bool ShouldSerializeready() { return readySpecified; }
     private void Resetready() { readySpecified = false; }
-    
+
     private readonly global::System.Collections.Generic.List<string> _delete_field = new global::System.Collections.Generic.List<string>();
     [global::ProtoBuf.ProtoMember(19, Name=@"delete_field", DataFormat = global::ProtoBuf.DataFormat.Default)]
     public global::System.Collections.Generic.List<string> delete_field
     {
       get { return _delete_field; }
     }
-  
+
 
     private uint? _leader;
     [global::ProtoBuf.ProtoMember(20, IsRequired = false, Name=@"leader", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -1216,17 +1216,17 @@ namespace network
     }
     private bool ShouldSerializeleader() { return leaderSpecified; }
     private void Resetleader() { leaderSpecified = false; }
-    
+
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
-  
+
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"GameInfo")]
   public partial class GameInfo : global::ProtoBuf.IExtensible
   {
     public GameInfo() {}
-    
+
 
     private int? _room_id;
     [global::ProtoBuf.ProtoMember(1, IsRequired = false, Name=@"room_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -1244,7 +1244,7 @@ namespace network
     }
     private bool ShouldSerializeroom_id() { return room_idSpecified; }
     private void Resetroom_id() { room_idSpecified = false; }
-    
+
 
     private int? _player_id;
     [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"player_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -1262,7 +1262,7 @@ namespace network
     }
     private bool ShouldSerializeplayer_id() { return player_idSpecified; }
     private void Resetplayer_id() { player_idSpecified = false; }
-    
+
 
     private uint? _red_morale;
     [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"red_morale", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -1280,7 +1280,7 @@ namespace network
     }
     private bool ShouldSerializered_morale() { return red_moraleSpecified; }
     private void Resetred_morale() { red_moraleSpecified = false; }
-    
+
 
     private uint? _blue_morale;
     [global::ProtoBuf.ProtoMember(4, IsRequired = false, Name=@"blue_morale", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -1298,7 +1298,7 @@ namespace network
     }
     private bool ShouldSerializeblue_morale() { return blue_moraleSpecified; }
     private void Resetblue_morale() { blue_moraleSpecified = false; }
-    
+
 
     private uint? _red_gem;
     [global::ProtoBuf.ProtoMember(5, IsRequired = false, Name=@"red_gem", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -1316,7 +1316,7 @@ namespace network
     }
     private bool ShouldSerializered_gem() { return red_gemSpecified; }
     private void Resetred_gem() { red_gemSpecified = false; }
-    
+
 
     private uint? _blue_gem;
     [global::ProtoBuf.ProtoMember(6, IsRequired = false, Name=@"blue_gem", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -1334,7 +1334,7 @@ namespace network
     }
     private bool ShouldSerializeblue_gem() { return blue_gemSpecified; }
     private void Resetblue_gem() { blue_gemSpecified = false; }
-    
+
 
     private uint? _red_crystal;
     [global::ProtoBuf.ProtoMember(7, IsRequired = false, Name=@"red_crystal", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -1352,7 +1352,7 @@ namespace network
     }
     private bool ShouldSerializered_crystal() { return red_crystalSpecified; }
     private void Resetred_crystal() { red_crystalSpecified = false; }
-    
+
 
     private uint? _blue_crystal;
     [global::ProtoBuf.ProtoMember(8, IsRequired = false, Name=@"blue_crystal", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -1370,7 +1370,7 @@ namespace network
     }
     private bool ShouldSerializeblue_crystal() { return blue_crystalSpecified; }
     private void Resetblue_crystal() { blue_crystalSpecified = false; }
-    
+
 
     private uint? _red_grail;
     [global::ProtoBuf.ProtoMember(9, IsRequired = false, Name=@"red_grail", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -1388,7 +1388,7 @@ namespace network
     }
     private bool ShouldSerializered_grail() { return red_grailSpecified; }
     private void Resetred_grail() { red_grailSpecified = false; }
-    
+
 
     private uint? _blue_grail;
     [global::ProtoBuf.ProtoMember(10, IsRequired = false, Name=@"blue_grail", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -1406,7 +1406,7 @@ namespace network
     }
     private bool ShouldSerializeblue_grail() { return blue_grailSpecified; }
     private void Resetblue_grail() { blue_grailSpecified = false; }
-    
+
 
     private uint? _pile;
     [global::ProtoBuf.ProtoMember(11, IsRequired = false, Name=@"pile", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -1424,7 +1424,7 @@ namespace network
     }
     private bool ShouldSerializepile() { return pileSpecified; }
     private void Resetpile() { pileSpecified = false; }
-    
+
 
     private uint? _discard;
     [global::ProtoBuf.ProtoMember(12, IsRequired = false, Name=@"discard", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -1442,7 +1442,7 @@ namespace network
     }
     private bool ShouldSerializediscard() { return discardSpecified; }
     private void Resetdiscard() { discardSpecified = false; }
-    
+
 
     private bool? _is_started;
     [global::ProtoBuf.ProtoMember(13, IsRequired = false, Name=@"is_started", DataFormat = global::ProtoBuf.DataFormat.Default)]
@@ -1460,24 +1460,24 @@ namespace network
     }
     private bool ShouldSerializeis_started() { return is_startedSpecified; }
     private void Resetis_started() { is_startedSpecified = false; }
-    
+
     private readonly global::System.Collections.Generic.List<network.SinglePlayerInfo> _player_infos = new global::System.Collections.Generic.List<network.SinglePlayerInfo>();
     [global::ProtoBuf.ProtoMember(14, Name=@"player_infos", DataFormat = global::ProtoBuf.DataFormat.Default)]
     public global::System.Collections.Generic.List<network.SinglePlayerInfo> player_infos
     {
       get { return _player_infos; }
     }
-  
+
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
-  
+
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"Talk")]
   public partial class Talk : global::ProtoBuf.IExtensible
   {
     public Talk() {}
-    
+
 
     private string _txt;
     [global::ProtoBuf.ProtoMember(1, IsRequired = false, Name=@"txt", DataFormat = global::ProtoBuf.DataFormat.Default)]
@@ -1495,17 +1495,17 @@ namespace network
     }
     private bool ShouldSerializetxt() { return txtSpecified; }
     private void Resettxt() { txtSpecified = false; }
-    
+
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
-  
+
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"Error")]
   public partial class Error : global::ProtoBuf.IExtensible
   {
     public Error() {}
-    
+
     private int _id;
     [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
     public int id
@@ -1526,17 +1526,17 @@ namespace network
     {
       get { return _args; }
     }
-  
+
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
-  
+
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"Gossip")]
   public partial class Gossip : global::ProtoBuf.IExtensible
   {
     public Gossip() {}
-    
+
 
     private network.GossipType? _type;
     [global::ProtoBuf.ProtoMember(1, IsRequired = false, Name=@"type", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -1554,7 +1554,7 @@ namespace network
     }
     private bool ShouldSerializetype() { return typeSpecified; }
     private void Resettype() { typeSpecified = false; }
-    
+
 
     private string _txt;
     [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"txt", DataFormat = global::ProtoBuf.DataFormat.Default)]
@@ -1572,7 +1572,7 @@ namespace network
     }
     private bool ShouldSerializetxt() { return txtSpecified; }
     private void Resettxt() { txtSpecified = false; }
-    
+
 
     private uint? _id;
     [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -1590,104 +1590,104 @@ namespace network
     }
     private bool ShouldSerializeid() { return idSpecified; }
     private void Resetid() { idSpecified = false; }
-    
+
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
-  
+
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"HeartBeat")]
   public partial class HeartBeat : global::ProtoBuf.IExtensible
   {
     public HeartBeat() {}
-    
+
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
-  
+
     [global::ProtoBuf.ProtoContract(Name=@"MessageType")]
     public enum MessageType
     {
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"MSG_REGISTER_REQ", Value=1)]
       MSG_REGISTER_REQ = 1,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"MSG_REGISTER_REP", Value=2)]
       MSG_REGISTER_REP = 2,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"MSG_LOGIN_REQ", Value=3)]
       MSG_LOGIN_REQ = 3,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"MSG_LOGIN_REP", Value=4)]
       MSG_LOGIN_REP = 4,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"MSG_LOGOUT_REQ", Value=5)]
       MSG_LOGOUT_REQ = 5,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"MSG_LOGOUT_REP", Value=6)]
       MSG_LOGOUT_REP = 6,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"MSG_ROOMLIST_REQ", Value=7)]
       MSG_ROOMLIST_REQ = 7,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"MSG_ROOMLIST_REP", Value=8)]
       MSG_ROOMLIST_REP = 8,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"MSG_CREATE_ROOM_REQ", Value=9)]
       MSG_CREATE_ROOM_REQ = 9,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"MSG_ENTER_ROOM_REQ", Value=10)]
       MSG_ENTER_ROOM_REQ = 10,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"MSG_ENTER_ROOM_REP", Value=11)]
       MSG_ENTER_ROOM_REP = 11,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"MSG_LEAVE_ROOM_REQ", Value=12)]
       MSG_LEAVE_ROOM_REQ = 12,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"MSG_JOIN_TEAM_REQ", Value=13)]
       MSG_JOIN_TEAM_REQ = 13,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"MSG_READY_GAME_REQ", Value=14)]
       MSG_READY_GAME_REQ = 14,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"MSG_SINGLE_PLAYER", Value=15)]
       MSG_SINGLE_PLAYER = 15,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"MSG_GAME", Value=16)]
       MSG_GAME = 16,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"MSG_TALK", Value=17)]
       MSG_TALK = 17,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"MSG_GOSSIP", Value=18)]
       MSG_GOSSIP = 18,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"MSG_ERROR", Value=19)]
       MSG_ERROR = 19,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"MSG_HEARTBEAT", Value=20)]
       MSG_HEARTBEAT = 20,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"MSG_BECOME_LEADER_REQ", Value=21)]
       MSG_BECOME_LEADER_REQ = 21,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"MSG_BECOME_LEADER_REP", Value=22)]
       MSG_BECOME_LEADER_REP = 22
     }
-  
+
     [global::ProtoBuf.ProtoContract(Name=@"GossipType")]
     public enum GossipType
     {
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"GOSSIP_TALK", Value=1)]
       GOSSIP_TALK = 1,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"GOSSIP_NOTICE", Value=2)]
       GOSSIP_NOTICE = 2
     }
-  
+
 }
 // Generated from: action_respond.proto
 namespace network
@@ -1696,7 +1696,7 @@ namespace network
   public partial class RoleRequest : global::ProtoBuf.IExtensible
   {
     public RoleRequest() {}
-    
+
     private uint _id;
     [global::ProtoBuf.ProtoMember(1, IsRequired = true, Name=@"id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
     public uint id
@@ -1721,21 +1721,21 @@ namespace network
     }
     private bool ShouldSerializestrategy() { return strategySpecified; }
     private void Resetstrategy() { strategySpecified = false; }
-    
+
     private readonly global::System.Collections.Generic.List<uint> _role_ids = new global::System.Collections.Generic.List<uint>();
     [global::ProtoBuf.ProtoMember(3, Name=@"role_ids", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
     public global::System.Collections.Generic.List<uint> role_ids
     {
       get { return _role_ids; }
     }
-  
+
     private readonly global::System.Collections.Generic.List<int> _args = new global::System.Collections.Generic.List<int>();
     [global::ProtoBuf.ProtoMember(4, Name=@"args", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
     public global::System.Collections.Generic.List<int> args
     {
       get { return _args; }
     }
-  
+
 
     private uint? _opration;
     [global::ProtoBuf.ProtoMember(5, IsRequired = false, Name=@"opration", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -1753,17 +1753,17 @@ namespace network
     }
     private bool ShouldSerializeopration() { return oprationSpecified; }
     private void Resetopration() { oprationSpecified = false; }
-    
+
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
-  
+
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"PickBan")]
   public partial class PickBan : global::ProtoBuf.IExtensible
   {
     public PickBan() {}
-    
+
 
     private uint? _strategy;
     [global::ProtoBuf.ProtoMember(1, IsRequired = false, Name=@"strategy", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -1781,7 +1781,7 @@ namespace network
     }
     private bool ShouldSerializestrategy() { return strategySpecified; }
     private void Resetstrategy() { strategySpecified = false; }
-    
+
 
     private bool? _is_pick;
     [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"is_pick", DataFormat = global::ProtoBuf.DataFormat.Default)]
@@ -1799,24 +1799,24 @@ namespace network
     }
     private bool ShouldSerializeis_pick() { return is_pickSpecified; }
     private void Resetis_pick() { is_pickSpecified = false; }
-    
+
     private readonly global::System.Collections.Generic.List<uint> _role_ids = new global::System.Collections.Generic.List<uint>();
     [global::ProtoBuf.ProtoMember(3, Name=@"role_ids", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
     public global::System.Collections.Generic.List<uint> role_ids
     {
       get { return _role_ids; }
     }
-  
+
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
-  
+
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"TurnBegin")]
   public partial class TurnBegin : global::ProtoBuf.IExtensible
   {
     public TurnBegin() {}
-    
+
 
     private uint? _id;
     [global::ProtoBuf.ProtoMember(1, IsRequired = false, Name=@"id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -1834,7 +1834,7 @@ namespace network
     }
     private bool ShouldSerializeid() { return idSpecified; }
     private void Resetid() { idSpecified = false; }
-    
+
 
     private uint? _round;
     [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"round", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -1852,17 +1852,17 @@ namespace network
     }
     private bool ShouldSerializeround() { return roundSpecified; }
     private void Resetround() { roundSpecified = false; }
-    
+
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
-  
+
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"Action")]
   public partial class Action : global::ProtoBuf.IExtensible
   {
     public Action() {}
-    
+
 
     private uint? _action_type;
     [global::ProtoBuf.ProtoMember(1, IsRequired = false, Name=@"action_type", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -1880,7 +1880,7 @@ namespace network
     }
     private bool ShouldSerializeaction_type() { return action_typeSpecified; }
     private void Resetaction_type() { action_typeSpecified = false; }
-    
+
 
     private uint? _action_id;
     [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"action_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -1898,7 +1898,7 @@ namespace network
     }
     private bool ShouldSerializeaction_id() { return action_idSpecified; }
     private void Resetaction_id() { action_idSpecified = false; }
-    
+
 
     private uint? _src_id;
     [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"src_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -1916,38 +1916,38 @@ namespace network
     }
     private bool ShouldSerializesrc_id() { return src_idSpecified; }
     private void Resetsrc_id() { src_idSpecified = false; }
-    
+
     private readonly global::System.Collections.Generic.List<uint> _dst_ids = new global::System.Collections.Generic.List<uint>();
     [global::ProtoBuf.ProtoMember(4, Name=@"dst_ids", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
     public global::System.Collections.Generic.List<uint> dst_ids
     {
       get { return _dst_ids; }
     }
-  
+
     private readonly global::System.Collections.Generic.List<uint> _card_ids = new global::System.Collections.Generic.List<uint>();
     [global::ProtoBuf.ProtoMember(5, Name=@"card_ids", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
     public global::System.Collections.Generic.List<uint> card_ids
     {
       get { return _card_ids; }
     }
-  
+
     private readonly global::System.Collections.Generic.List<uint> _args = new global::System.Collections.Generic.List<uint>();
     [global::ProtoBuf.ProtoMember(6, Name=@"args", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
     public global::System.Collections.Generic.List<uint> args
     {
       get { return _args; }
     }
-  
+
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
-  
+
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"Respond")]
   public partial class Respond : global::ProtoBuf.IExtensible
   {
     public Respond() {}
-    
+
 
     private uint? _respond_id;
     [global::ProtoBuf.ProtoMember(1, IsRequired = false, Name=@"respond_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -1965,7 +1965,7 @@ namespace network
     }
     private bool ShouldSerializerespond_id() { return respond_idSpecified; }
     private void Resetrespond_id() { respond_idSpecified = false; }
-    
+
 
     private uint? _src_id;
     [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"src_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -1983,38 +1983,38 @@ namespace network
     }
     private bool ShouldSerializesrc_id() { return src_idSpecified; }
     private void Resetsrc_id() { src_idSpecified = false; }
-    
+
     private readonly global::System.Collections.Generic.List<uint> _dst_ids = new global::System.Collections.Generic.List<uint>();
     [global::ProtoBuf.ProtoMember(3, Name=@"dst_ids", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
     public global::System.Collections.Generic.List<uint> dst_ids
     {
       get { return _dst_ids; }
     }
-  
+
     private readonly global::System.Collections.Generic.List<uint> _card_ids = new global::System.Collections.Generic.List<uint>();
     [global::ProtoBuf.ProtoMember(4, Name=@"card_ids", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
     public global::System.Collections.Generic.List<uint> card_ids
     {
       get { return _card_ids; }
     }
-  
+
     private readonly global::System.Collections.Generic.List<uint> _args = new global::System.Collections.Generic.List<uint>();
     [global::ProtoBuf.ProtoMember(5, Name=@"args", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
     public global::System.Collections.Generic.List<uint> args
     {
       get { return _args; }
     }
-  
+
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
-  
+
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"Command")]
   public partial class Command : global::ProtoBuf.IExtensible
   {
     public Command() {}
-    
+
 
     private uint? _respond_id;
     [global::ProtoBuf.ProtoMember(1, IsRequired = false, Name=@"respond_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -2032,7 +2032,7 @@ namespace network
     }
     private bool ShouldSerializerespond_id() { return respond_idSpecified; }
     private void Resetrespond_id() { respond_idSpecified = false; }
-    
+
 
     private uint? _src_id;
     [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"src_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -2050,38 +2050,38 @@ namespace network
     }
     private bool ShouldSerializesrc_id() { return src_idSpecified; }
     private void Resetsrc_id() { src_idSpecified = false; }
-    
+
     private readonly global::System.Collections.Generic.List<uint> _dst_ids = new global::System.Collections.Generic.List<uint>();
     [global::ProtoBuf.ProtoMember(3, Name=@"dst_ids", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
     public global::System.Collections.Generic.List<uint> dst_ids
     {
       get { return _dst_ids; }
     }
-  
+
     private readonly global::System.Collections.Generic.List<uint> _card_ids = new global::System.Collections.Generic.List<uint>();
     [global::ProtoBuf.ProtoMember(4, Name=@"card_ids", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
     public global::System.Collections.Generic.List<uint> card_ids
     {
       get { return _card_ids; }
     }
-  
+
     private readonly global::System.Collections.Generic.List<uint> _args = new global::System.Collections.Generic.List<uint>();
     [global::ProtoBuf.ProtoMember(5, Name=@"args", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
     public global::System.Collections.Generic.List<uint> args
     {
       get { return _args; }
     }
-  
+
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
-  
+
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"CommandRequest")]
   public partial class CommandRequest : global::ProtoBuf.IExtensible
   {
     public CommandRequest() {}
-    
+
 
     private network.CmdType? _cmd_type;
     [global::ProtoBuf.ProtoMember(1, IsRequired = false, Name=@"cmd_type", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -2099,24 +2099,24 @@ namespace network
     }
     private bool ShouldSerializecmd_type() { return cmd_typeSpecified; }
     private void Resetcmd_type() { cmd_typeSpecified = false; }
-    
+
     private readonly global::System.Collections.Generic.List<network.Command> _commands = new global::System.Collections.Generic.List<network.Command>();
     [global::ProtoBuf.ProtoMember(2, Name=@"commands", DataFormat = global::ProtoBuf.DataFormat.Default)]
     public global::System.Collections.Generic.List<network.Command> commands
     {
       get { return _commands; }
     }
-  
+
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
-  
+
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"ErrorInput")]
   public partial class ErrorInput : global::ProtoBuf.IExtensible
   {
     public ErrorInput() {}
-    
+
 
     private network.CmdType? _error_type;
     [global::ProtoBuf.ProtoMember(1, IsRequired = false, Name=@"error_type", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -2134,24 +2134,24 @@ namespace network
     }
     private bool ShouldSerializeerror_type() { return error_typeSpecified; }
     private void Reseterror_type() { error_typeSpecified = false; }
-    
+
     private readonly global::System.Collections.Generic.List<network.Command> _commands = new global::System.Collections.Generic.List<network.Command>();
     [global::ProtoBuf.ProtoMember(2, Name=@"commands", DataFormat = global::ProtoBuf.DataFormat.Default)]
     public global::System.Collections.Generic.List<network.Command> commands
     {
       get { return _commands; }
     }
-  
+
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
-  
+
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"HitMsg")]
   public partial class HitMsg : global::ProtoBuf.IExtensible
   {
     public HitMsg() {}
-    
+
 
     private uint? _cmd_id;
     [global::ProtoBuf.ProtoMember(1, IsRequired = false, Name=@"cmd_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -2169,7 +2169,7 @@ namespace network
     }
     private bool ShouldSerializecmd_id() { return cmd_idSpecified; }
     private void Resetcmd_id() { cmd_idSpecified = false; }
-    
+
 
     private uint? _hit;
     [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"hit", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -2187,7 +2187,7 @@ namespace network
     }
     private bool ShouldSerializehit() { return hitSpecified; }
     private void Resethit() { hitSpecified = false; }
-    
+
 
     private uint? _src_id;
     [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"src_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -2205,7 +2205,7 @@ namespace network
     }
     private bool ShouldSerializesrc_id() { return src_idSpecified; }
     private void Resetsrc_id() { src_idSpecified = false; }
-    
+
 
     private uint? _dst_id;
     [global::ProtoBuf.ProtoMember(4, IsRequired = false, Name=@"dst_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -2223,17 +2223,17 @@ namespace network
     }
     private bool ShouldSerializedst_id() { return dst_idSpecified; }
     private void Resetdst_id() { dst_idSpecified = false; }
-    
+
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
-  
+
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"CardMsg")]
   public partial class CardMsg : global::ProtoBuf.IExtensible
   {
     public CardMsg() {}
-    
+
 
     private uint? _type;
     [global::ProtoBuf.ProtoMember(1, IsRequired = false, Name=@"type", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -2251,7 +2251,7 @@ namespace network
     }
     private bool ShouldSerializetype() { return typeSpecified; }
     private void Resettype() { typeSpecified = false; }
-    
+
 
     private uint? _src_id;
     [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"src_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -2269,7 +2269,7 @@ namespace network
     }
     private bool ShouldSerializesrc_id() { return src_idSpecified; }
     private void Resetsrc_id() { src_idSpecified = false; }
-    
+
 
     private uint? _dst_id;
     [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"dst_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -2287,14 +2287,14 @@ namespace network
     }
     private bool ShouldSerializedst_id() { return dst_idSpecified; }
     private void Resetdst_id() { dst_idSpecified = false; }
-    
+
     private readonly global::System.Collections.Generic.List<uint> _card_ids = new global::System.Collections.Generic.List<uint>();
     [global::ProtoBuf.ProtoMember(4, Name=@"card_ids", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
     public global::System.Collections.Generic.List<uint> card_ids
     {
       get { return _card_ids; }
     }
-  
+
 
     private bool? _is_real;
     [global::ProtoBuf.ProtoMember(5, IsRequired = false, Name=@"is_real", DataFormat = global::ProtoBuf.DataFormat.Default)]
@@ -2312,17 +2312,17 @@ namespace network
     }
     private bool ShouldSerializeis_real() { return is_realSpecified; }
     private void Resetis_real() { is_realSpecified = false; }
-    
+
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
-  
+
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"HurtMsg")]
   public partial class HurtMsg : global::ProtoBuf.IExtensible
   {
     public HurtMsg() {}
-    
+
 
     private uint? _src_id;
     [global::ProtoBuf.ProtoMember(1, IsRequired = false, Name=@"src_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -2340,7 +2340,7 @@ namespace network
     }
     private bool ShouldSerializesrc_id() { return src_idSpecified; }
     private void Resetsrc_id() { src_idSpecified = false; }
-    
+
 
     private uint? _dst_id;
     [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"dst_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -2358,7 +2358,7 @@ namespace network
     }
     private bool ShouldSerializedst_id() { return dst_idSpecified; }
     private void Resetdst_id() { dst_idSpecified = false; }
-    
+
 
     private uint? _hurt;
     [global::ProtoBuf.ProtoMember(3, IsRequired = false, Name=@"hurt", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -2376,7 +2376,7 @@ namespace network
     }
     private bool ShouldSerializehurt() { return hurtSpecified; }
     private void Resethurt() { hurtSpecified = false; }
-    
+
 
     private uint? _cause;
     [global::ProtoBuf.ProtoMember(4, IsRequired = false, Name=@"cause", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -2394,7 +2394,7 @@ namespace network
     }
     private bool ShouldSerializecause() { return causeSpecified; }
     private void Resetcause() { causeSpecified = false; }
-    
+
 
     private uint? _type;
     [global::ProtoBuf.ProtoMember(5, IsRequired = false, Name=@"type", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -2412,17 +2412,17 @@ namespace network
     }
     private bool ShouldSerializetype() { return typeSpecified; }
     private void Resettype() { typeSpecified = false; }
-    
+
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
-  
+
   [global::System.Serializable, global::ProtoBuf.ProtoContract(Name=@"SkillMsg")]
   public partial class SkillMsg : global::ProtoBuf.IExtensible
   {
     public SkillMsg() {}
-    
+
 
     private uint? _skill_id;
     [global::ProtoBuf.ProtoMember(1, IsRequired = false, Name=@"skill_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -2440,7 +2440,7 @@ namespace network
     }
     private bool ShouldSerializeskill_id() { return skill_idSpecified; }
     private void Resetskill_id() { skill_idSpecified = false; }
-    
+
 
     private uint? _src_id;
     [global::ProtoBuf.ProtoMember(2, IsRequired = false, Name=@"src_id", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
@@ -2458,235 +2458,235 @@ namespace network
     }
     private bool ShouldSerializesrc_id() { return src_idSpecified; }
     private void Resetsrc_id() { src_idSpecified = false; }
-    
+
     private readonly global::System.Collections.Generic.List<uint> _dst_ids = new global::System.Collections.Generic.List<uint>();
     [global::ProtoBuf.ProtoMember(3, Name=@"dst_ids", DataFormat = global::ProtoBuf.DataFormat.TwosComplement)]
     public global::System.Collections.Generic.List<uint> dst_ids
     {
       get { return _dst_ids; }
     }
-  
+
     private global::ProtoBuf.IExtension extensionObject;
     global::ProtoBuf.IExtension global::ProtoBuf.IExtensible.GetExtensionObject(bool createIfMissing)
       { return global::ProtoBuf.Extensible.GetExtensionObject(ref extensionObject, createIfMissing); }
   }
-  
+
     [global::ProtoBuf.ProtoContract(Name=@"MessageType2")]
     public enum MessageType2
     {
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"MSG_ROLE_REQ", Value=101)]
       MSG_ROLE_REQ = 101,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"MSG_PICK_BAN", Value=102)]
       MSG_PICK_BAN = 102,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"MSG_ACTION", Value=103)]
       MSG_ACTION = 103,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"MSG_RESPOND", Value=104)]
       MSG_RESPOND = 104,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"MSG_CMD_REQ", Value=106)]
       MSG_CMD_REQ = 106,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"MSG_ERROR_INPUT", Value=107)]
       MSG_ERROR_INPUT = 107,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"MSG_HIT", Value=108)]
       MSG_HIT = 108,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"MSG_TURN_BEGIN", Value=109)]
       MSG_TURN_BEGIN = 109,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"MSG_CARD", Value=110)]
       MSG_CARD = 110,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"MSG_HURT", Value=111)]
       MSG_HURT = 111,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"MSG_SKILL", Value=112)]
       MSG_SKILL = 112
     }
-  
+
     [global::ProtoBuf.ProtoContract(Name=@"PlayerIdConst")]
     public enum PlayerIdConst
     {
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"PLAYER_NONE_ID", Value=100000)]
       PLAYER_NONE_ID = 100000
     }
-  
+
     [global::ProtoBuf.ProtoContract(Name=@"ROLE_STRATEGY")]
     public enum ROLE_STRATEGY
     {
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"ROLE_STRATEGY_RANDOM", Value=1)]
       ROLE_STRATEGY_RANDOM = 1,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"ROLE_STRATEGY_31", Value=2)]
       ROLE_STRATEGY_31 = 2,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"ROLE_STRATEGY_BP", Value=3)]
       ROLE_STRATEGY_BP = 3,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"ROLE_STRATEGY_CM", Value=4)]
       ROLE_STRATEGY_CM = 4,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"ROLE_STRATEGY_ANY", Value=5)]
       ROLE_STRATEGY_ANY = 5,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"ROLE_STRATEGY_ALL", Value=9)]
       ROLE_STRATEGY_ALL = 9
     }
-  
+
     [global::ProtoBuf.ProtoContract(Name=@"SEAT_MODE")]
     public enum SEAT_MODE
     {
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"SEAT_MODE_RANDOM", Value=1)]
       SEAT_MODE_RANDOM = 1,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"SEAT_MODE_2COMBO", Value=2)]
       SEAT_MODE_2COMBO = 2,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"SEAT_MODE_3COMBO", Value=3)]
       SEAT_MODE_3COMBO = 3,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"SEAT_MODE_INTERLACE", Value=4)]
       SEAT_MODE_INTERLACE = 4,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"SEAT_MODE_RBBRRB", Value=5)]
       SEAT_MODE_RBBRRB = 5
     }
-  
+
     [global::ProtoBuf.ProtoContract(Name=@"BP_OPRATION")]
     public enum BP_OPRATION
     {
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"BP_NULL", Value=1)]
       BP_NULL = 1,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"BP_BAN", Value=2)]
       BP_BAN = 2,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"BP_PICK", Value=3)]
       BP_PICK = 3
     }
-  
+
     [global::ProtoBuf.ProtoContract(Name=@"CM_OPRATION")]
     public enum CM_OPRATION
     {
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"CM_NULL", Value=1)]
       CM_NULL = 1,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"CM_RED_BAN", Value=2)]
       CM_RED_BAN = 2,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"CM_RED_IB", Value=3)]
       CM_RED_IB = 3,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"CM_RED_PICK", Value=4)]
       CM_RED_PICK = 4,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"CM_BLUE_BAN", Value=5)]
       CM_BLUE_BAN = 5,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"CM_BLUE_IB", Value=6)]
       CM_BLUE_IB = 6,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"CM_BLUE_PICK", Value=7)]
       CM_BLUE_PICK = 7
     }
-  
+
     [global::ProtoBuf.ProtoContract(Name=@"BasicActionType")]
     public enum BasicActionType
     {
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"ACTION_ATTACK", Value=1)]
       ACTION_ATTACK = 1,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"ACTION_MAGIC", Value=2)]
       ACTION_MAGIC = 2,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"ACTION_SPECIAL", Value=3)]
       ACTION_SPECIAL = 3,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"ACTION_ATTACK_SKILL", Value=4)]
       ACTION_ATTACK_SKILL = 4,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"ACTION_MAGIC_SKILL", Value=5)]
       ACTION_MAGIC_SKILL = 5,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"ACTION_SPECIAL_SKILL", Value=6)]
       ACTION_SPECIAL_SKILL = 6,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"ACTION_ANY", Value=7)]
       ACTION_ANY = 7,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"ACTION_ATTACK_MAGIC", Value=8)]
       ACTION_ATTACK_MAGIC = 8,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"ACTION_UNACTIONAL", Value=9)]
       ACTION_UNACTIONAL = 9,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"ACTION_NONE", Value=100000)]
       ACTION_NONE = 100000
     }
-  
+
     [global::ProtoBuf.ProtoContract(Name=@"BasicRespondType")]
     public enum BasicRespondType
     {
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"RESPOND_REPLY_ATTACK", Value=10)]
       RESPOND_REPLY_ATTACK = 10,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"RESPOND_BULLET", Value=11)]
       RESPOND_BULLET = 11,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"RESPOND_HEAL", Value=12)]
       RESPOND_HEAL = 12,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"RESPOND_DISCARD", Value=13)]
       RESPOND_DISCARD = 13,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"RESPOND_WEAKEN", Value=14)]
       RESPOND_WEAKEN = 14,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"RESPOND_ADDITIONAL_ACTION", Value=15)]
       RESPOND_ADDITIONAL_ACTION = 15,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"RESPOND_DISCARD_COVER", Value=16)]
       RESPOND_DISCARD_COVER = 16,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"RESPOND_ROLE", Value=17)]
       RESPOND_ROLE = 17,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"RESPOND_INSERT_BAN", Value=18)]
       RESPOND_INSERT_BAN = 18
     }
-  
+
     [global::ProtoBuf.ProtoContract(Name=@"CmdType")]
     public enum CmdType
     {
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"CMD_ACTION", Value=1)]
       CMD_ACTION = 1,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"CMD_RESPOND", Value=2)]
       CMD_RESPOND = 2
     }
-  
+
     [global::ProtoBuf.ProtoContract(Name=@"CardMsgType")]
     public enum CardMsgType
     {
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"CM_USE", Value=1)]
       CM_USE = 1,
-            
+
       [global::ProtoBuf.ProtoEnum(Name=@"CM_SHOW", Value=2)]
       CM_SHOW = 2
     }
-  
+
 }

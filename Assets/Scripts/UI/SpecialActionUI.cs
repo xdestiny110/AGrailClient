@@ -55,7 +55,7 @@ namespace AGrail
         }
 
         private void onBtnBackClick()
-        {            
+        {
             GameManager.UIInstance.PopWindow(WinMsg.Resume);
         }
     }

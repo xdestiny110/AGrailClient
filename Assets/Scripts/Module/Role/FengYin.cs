@@ -64,7 +64,7 @@ namespace AGrail
                 case 403:
                 case 404:
                 case 405:
-                    return card.HasSkill(uiState);                
+                    return card.HasSkill(uiState);
             }
             return base.CanSelect(uiState, card, isCovered);
         }
@@ -101,12 +101,12 @@ namespace AGrail
                 case 402:
                 case 403:
                 case 404:
-                case 405:                    
+                case 405:
                 case 407:
                 case 408:
                 case 10:
                 case 11:
-                    if (skill.SkillID >= 401 && skill.SkillID <= 405) 
+                    if (skill.SkillID >= 401 && skill.SkillID <= 405)
                         return  Util.HasCard(skill.SkillID, BattleData.Instance.MainPlayer.hands);
                     else if (skill.SkillID == 407)
                         return BattleData.Instance.MainPlayer.gem + BattleData.Instance.MainPlayer.crystal >= 1;
@@ -115,7 +115,7 @@ namespace AGrail
                         foreach (var v in BattleData.Instance.PlayerInfos)
                             if (v.basic_cards.Count > 0)
                                 return true;
-                    }                        
+                    }
                     break;
             }
             return base.CanSelect(uiState, skill);
@@ -183,7 +183,7 @@ namespace AGrail
                 case 407:
                 case 408:
                     return true;
-            }            
+            }
             return base.CheckCancel(uiState, cardIDs, playerIDs, skillID);
         }
 
@@ -228,21 +228,21 @@ namespace AGrail
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                         return;
                     };
-                    CancelAction = () => 
+                    CancelAction = () =>
                     {
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
-                        BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);                        
+                        BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
                     };
                     if(msg == UIStateMsg.ClickPlayer)
                     {
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         if(BattleData.Instance.Agent.SelectPlayers.Count > 0)
-                        {                            
+                        {
                             var s = BattleData.Instance.GetPlayerInfo(BattleData.Instance.Agent.SelectPlayers[0]);
                             var selectList = new List<List<uint>>();
                             var explainList = new List<string>();
                             foreach (var v in s.basic_cards)
-                            { 
+                            {
                                 selectList.Add(new List<uint>() { v });
                                 var name = Card.GetCard(v).Name.ToString();
                                 if (Card.GetCard(v).Type == Card.CardType.attack)

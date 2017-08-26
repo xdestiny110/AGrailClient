@@ -8,8 +8,8 @@ namespace AGrail
     {
         [SerializeField]
         private InputField inpt;
-        
-        
+
+
 
         public void OnDialogInputSubmit(string str)
         {

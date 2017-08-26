@@ -98,13 +98,13 @@ namespace AGrail
                         {
                             isShowCovered = (bool)parameters[0];
                             onCoveredClick();
-                        }                        
+                        }
                     }
                     else
-                        updateAgentCards();                                        
+                        updateAgentCards();
                     break;
                 case MessageType.AgentStateChange:
-                    //保证在初始状态 
+                    //保证在初始状态
                     //foreach (var v in cardUIs)
                     //        v.IsEnable = false;
                     //foreach (var v in skillUIs)
@@ -153,7 +153,7 @@ namespace AGrail
         }
 
         private void onCoveredClick()
-        {            
+        {
             updateAgentCards();
             //btnCovered.GetComponentInChildren<Text>().text =
             //    isShowCovered ? "显示手牌" : "显示盖牌";
@@ -206,7 +206,7 @@ namespace AGrail
 
         private void onUIStateChange()
         {
-            //UI状态变化，确认哪些能够选择                    
+            //UI状态变化，确认哪些能够选择
             foreach (var v in cardUIs)
             {
                 if (BattleData.Instance.Agent.PlayerRole.CanSelect(BattleData.Instance.Agent.FSM.Current.StateNumber, v.Card, isShowCovered))

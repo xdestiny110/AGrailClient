@@ -165,7 +165,7 @@ namespace AGrail
             var selectList = new List<List<uint>>();
             var mList = new List<string>();
             switch (state)
-            {                
+            {
                 case 2701:
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                     if(msg == UIStateMsg.ClickArgs)
@@ -186,11 +186,11 @@ namespace AGrail
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         sendReponseMsg(2071, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                    };                    
+                    };
                     selectList.Clear();
                     mList.Clear();
                     if (BattleData.Instance.MainPlayer.blue_token > 0 )
-                    { 
+                    {
                         selectList.Add(new List<uint>() { 1 });
                         mList.Add("魔纹融合");
                     }
@@ -212,7 +212,7 @@ namespace AGrail
                         else
                             sendReponseMsg(2701, BattleData.Instance.MainPlayer.id, null, BattleData.Instance.Agent.SelectCards,
                                 new List<uint>() { 2, 0 });
-                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);                        
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     CancelAction = () =>
                     {
@@ -221,7 +221,7 @@ namespace AGrail
                         BattleData.Instance.Agent.FSM.ChangeState<StateSkill>(UIStateMsg.Init, true);
                     };
                     if (msg == UIStateMsg.ClickArgs)
-                    { 
+                    {
                         sendReponseMsg(2701, BattleData.Instance.MainPlayer.id, null, BattleData.Instance.Agent.SelectCards,
                             new List<uint>() { 2, BattleData.Instance.Agent.SelectArgs[0] });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
@@ -247,7 +247,7 @@ namespace AGrail
                 case 2703:
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                     OKAction = () =>
-                    {                        
+                    {
                         if (BattleData.Instance.MainPlayer.is_knelt && (BattleData.Instance.MainPlayer.yellow_token > 1))
                         sendReponseMsg(2703, BattleData.Instance.MainPlayer.id,null, BattleData.Instance.Agent.SelectCards,
                             new List<uint>() { 1, BattleData.Instance.Agent.SelectArgs[0] } );
@@ -269,7 +269,7 @@ namespace AGrail
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                         return;
                     }
-                    if (BattleData.Instance.Agent.SelectCards.Count >1 && 
+                    if (BattleData.Instance.Agent.SelectCards.Count >1 &&
                         BattleData.Instance.MainPlayer.is_knelt && BattleData.Instance.MainPlayer.yellow_token > 1)
                     {
                         selectList.Clear();
@@ -304,7 +304,7 @@ namespace AGrail
                     if (msg == UIStateMsg.ClickArgs)
                     {
                         sendReponseMsg(27051, BattleData.Instance.MainPlayer.id,null,null, new List<uint>() { 1, BattleData.Instance.Agent.SelectArgs[0] });
-                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);                        
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                         return;
                     }
                     selectList.Clear();

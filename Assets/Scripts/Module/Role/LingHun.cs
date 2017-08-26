@@ -89,7 +89,7 @@ namespace AGrail
             switch (uiState)
             {
                 case (uint)SkillID.灵魂震爆:
-                case (uint)SkillID.灵魂赐予:                    
+                case (uint)SkillID.灵魂赐予:
                 case (uint)SkillID.灵魂镜像:
                     return BattleData.Instance.Agent.SelectCards.Count == MaxSelectCard(uiState);
                 case (uint)SkillID.灵魂链接:
@@ -188,7 +188,7 @@ namespace AGrail
                 case (uint)SkillID.灵魂赐予:
                     if (BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == 1)
                     {
-                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id, 
+                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
                             BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                         return;
@@ -213,7 +213,7 @@ namespace AGrail
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case (uint)SkillID.灵魂镜像:
-                    if(BattleData.Instance.Agent.SelectCards.Count == MaxSelectCard(state) && 
+                    if(BattleData.Instance.Agent.SelectCards.Count == MaxSelectCard(state) &&
                         BattleData.Instance.Agent.SelectPlayers.Count == 1)
                     {
                         sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
@@ -224,7 +224,7 @@ namespace AGrail
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
-                case (uint)SkillID.灵魂增幅:                
+                case (uint)SkillID.灵魂增幅:
                     OKAction = () =>
                     {
                         IsStart = true;
@@ -232,16 +232,16 @@ namespace AGrail
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     CancelAction = () =>
-                    {                        
+                    {
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                    };                    
+                    };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case (uint)SkillID.灵魂转换:
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                     if (msg == UIStateMsg.ClickArgs)
-                    {                        
+                    {
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, BattleData.Instance.Agent.SelectArgs);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                         return;
@@ -251,7 +251,7 @@ namespace AGrail
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 2 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                    };                    
+                    };
                     selectList.Clear();
                     mList.Clear();
                     if (BattleData.Instance.MainPlayer.yellow_token > 0)
@@ -271,7 +271,7 @@ namespace AGrail
                     if (BattleData.Instance.Agent.SelectPlayers.Count == 1 )
                     {
                         IsStart = true;
-                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id, 
+                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id,
                             BattleData.Instance.Agent.SelectPlayers, null, new List<uint>() { 1 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
@@ -285,7 +285,7 @@ namespace AGrail
                 case (uint)SkillID.灵魂链接响应:
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                     if (msg == UIStateMsg.ClickArgs)
-                    {                        
+                    {
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, BattleData.Instance.Agent.SelectArgs);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
@@ -294,7 +294,7 @@ namespace AGrail
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                    };                    
+                    };
                     selectList.Clear();
                     mList.Clear();
                     for(uint i = Math.Min(BattleData.Instance.MainPlayer.blue_token, BattleData.Instance.Agent.Cmd.args[0]); i > 0; i--)

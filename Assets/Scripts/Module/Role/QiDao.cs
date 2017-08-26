@@ -99,8 +99,8 @@ namespace AGrail
                             return false;
                     }
                     return BattleData.Instance.Agent.SelectCards.Count == MaxSelectCard(uiState) &&
-                        player.team == BattleData.Instance.MainPlayer.team && 
-                        player.id != BattleData.Instance.PlayerID;                
+                        player.team == BattleData.Instance.MainPlayer.team &&
+                        player.id != BattleData.Instance.PlayerID;
                 case 1605:
                     return true;
             }
@@ -121,7 +121,7 @@ namespace AGrail
                         return Util.HasCard(skill.SkillID, BattleData.Instance.MainPlayer.hands);
                     if (BattleData.Instance.MainPlayer.yellow_token > 0 && skill.SkillID >= 1604 && skill.SkillID <= 1605)
                         return true;
-                    return false;                    
+                    return false;
             }
             return base.CanSelect(uiState, skill);
         }
@@ -200,13 +200,13 @@ namespace AGrail
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case 1603:
-                    OKAction = () => 
+                    OKAction = () =>
                     {
                         IsStart = true;
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 1 });
                         BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
                     };
-                    CancelAction = () => 
+                    CancelAction = () =>
                     {
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);

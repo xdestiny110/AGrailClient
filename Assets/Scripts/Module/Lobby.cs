@@ -38,7 +38,7 @@ namespace AGrail
             //防止多次点击
             MessageSystem<MessageType>.Notify(MessageType.EnterRoom);
         }
-        
+
         public void CreateRoom(network.CreateRoomRequest proto)
         {
             SelectRoom = new network.RoomListResponse.RoomInfo()

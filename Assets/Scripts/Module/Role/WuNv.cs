@@ -70,7 +70,7 @@ namespace AGrail
                     return card.HasSkill(uiState);
                 case (uint)SkillID.逆流:
                 case (uint)SkillID.血之诅咒弃牌:
-                    return true;                    
+                    return true;
             }
             return base.CanSelect(uiState, card, isCovered);
         }
@@ -79,7 +79,7 @@ namespace AGrail
         {
             switch (uiState)
             {
-                case (uint)SkillID.血之悲鸣:                    
+                case (uint)SkillID.血之悲鸣:
                 case (uint)SkillID.同生共死:
                 case (uint)SkillID.血之诅咒:
                     return BattleData.Instance.Agent.SelectCards.Count == MaxSelectCard(uiState);
@@ -106,7 +106,7 @@ namespace AGrail
                     if (skill.SkillID == (uint)SkillID.血之悲鸣 && BattleData.Instance.MainPlayer.is_knelt)
                         return Util.HasCard(2301, BattleData.Instance.MainPlayer.hands);
                     if (skill.SkillID == (uint)SkillID.同生共死)
-                    { 
+                    {
                         foreach (var v in BattleData.Instance.PlayerInfos)
                             if (v.ex_cards.Contains(1003))
                                 return false;
@@ -168,10 +168,10 @@ namespace AGrail
         {
             switch (uiState)
             {
-                case (uint)SkillID.血之悲鸣:                    
-                case (uint)SkillID.同生共死:                    
-                case (uint)SkillID.血之哀伤:                    
-                case (uint)SkillID.逆流:                    
+                case (uint)SkillID.血之悲鸣:
+                case (uint)SkillID.同生共死:
+                case (uint)SkillID.血之哀伤:
+                case (uint)SkillID.逆流:
                 case (uint)SkillID.血之诅咒:
                     return true;
             }
@@ -186,9 +186,9 @@ namespace AGrail
             {
                 case (uint)SkillID.血之悲鸣:
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
-                    if(BattleData.Instance.Agent.SelectArgs.Count == 1 && 
+                    if(BattleData.Instance.Agent.SelectArgs.Count == 1 &&
                         BattleData.Instance.Agent.SelectPlayers.Count == 1)
-                    {                        
+                    {
                         sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
                             BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state,
                             BattleData.Instance.Agent.SelectArgs);

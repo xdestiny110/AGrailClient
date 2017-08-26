@@ -42,7 +42,7 @@ namespace AGrail
                     go.transform.localScale = prefab.transform.localScale;
                     go.GetComponentInChildren<Text>().text = explain[i];
                     var idx = i;
-                    go.GetComponent<Button>().onClick.AddListener(() => 
+                    go.GetComponent<Button>().onClick.AddListener(() =>
                     {
                         BattleData.Instance.Agent.AddSelectArgs(args[idx]);
                     });

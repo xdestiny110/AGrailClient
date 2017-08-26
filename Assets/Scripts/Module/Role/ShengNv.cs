@@ -80,7 +80,7 @@ namespace AGrail
                     return BattleData.Instance.Agent.SelectCards.Count == 1;
                 case 603:
                 case 605:
-                    return true;                    
+                    return true;
             }
             return base.CanSelect(uiState, player);
         }
@@ -93,7 +93,7 @@ namespace AGrail
                 case 602:
                 case 605:
                 case 10:
-                    if((skill.SkillID == 601 && Util.HasCard(601, BattleData.Instance.MainPlayer.hands)) || 
+                    if((skill.SkillID == 601 && Util.HasCard(601, BattleData.Instance.MainPlayer.hands)) ||
                         (skill.SkillID == 602 && Util.HasCard(602, BattleData.Instance.MainPlayer.hands)))
                         return true;
                     if (skill.SkillID == 605 && BattleData.Instance.MainPlayer.gem + BattleData.Instance.MainPlayer.crystal >= 1)
@@ -103,9 +103,9 @@ namespace AGrail
                     if ((skill.SkillID == 601 && Util.HasCard(601, BattleData.Instance.MainPlayer.hands)) ||
                         (skill.SkillID == 602 && Util.HasCard(602, BattleData.Instance.MainPlayer.hands)))
                         return true;
-                    if (skill.SkillID == 605 && additionalState != 6053 && 
+                    if (skill.SkillID == 605 && additionalState != 6053 &&
                         BattleData.Instance.MainPlayer.gem + BattleData.Instance.MainPlayer.crystal >= 1)
-                        return true;                    
+                        return true;
                     return false;
             }
             return base.CanSelect(uiState, skill);
@@ -130,7 +130,7 @@ namespace AGrail
             switch (uiState)
             {
                 case 601:
-                case 602:                
+                case 602:
                     return 1;
             }
             return base.MaxSelectCard(uiState);
@@ -189,7 +189,7 @@ namespace AGrail
         private List<uint> selectPlayers = new List<uint>();
         public override void UIStateChange(uint state, UIStateMsg msg, params object[] paras)
         {
-            if (state != 605 && !(additionalState == 6053 && state != 0))            
+            if (state != 605 && !(additionalState == 6053 && state != 0))
                 additionalState = 0;
 
             switch (state)
@@ -280,7 +280,7 @@ namespace AGrail
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
                     if(additionalState == 0)
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
-                    else if(additionalState == 6051)                    
+                    else if(additionalState == 6051)
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state,1));
                     else if (additionalState == 6052)
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state,2));

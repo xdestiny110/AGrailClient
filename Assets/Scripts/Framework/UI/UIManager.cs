@@ -31,7 +31,7 @@ namespace Framework.UI
                     win.Canvas.sortingOrder = sortLayer;
             }
             winStack.Add(win);
-            winStack.Sort((w1, w2) => 
+            winStack.Sort((w1, w2) =>
             {
                 if (w1.Canvas.sortingOrder < w2.Canvas.sortingOrder)
                     return -1;
@@ -43,8 +43,8 @@ namespace Framework.UI
         }
 
         public IEnumerator PushWindowAsyn(WindowType type, WinMsg msg, Vector3 initPos = default(Vector3), params object[] parameters)
-        {            
-            //先加载等待画面            
+        {
+            //先加载等待画面
             yield return WindowFactory.Instance.CreateWindowsAnyn(type);
             //之后再完善
         }
@@ -87,7 +87,7 @@ namespace Framework.UI
                 winStack.RemoveAt(winStack.Count - 1);
                 if (winStack.Count > 0)
                     dealWinMsg(winStack.Last(), msg);
-            }            
+            }
             else
                 throw new System.Exception("Winstack is empty!");
         }
@@ -107,7 +107,7 @@ namespace Framework.UI
         {
             switch (msg)
             {
-                case WinMsg.Show:                    
+                case WinMsg.Show:
                     topWin.OnShow();
                     topWin.CanvasGroup.interactable = true;
                     topWin.OnResume();

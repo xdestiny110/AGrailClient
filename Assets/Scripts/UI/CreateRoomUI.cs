@@ -50,7 +50,7 @@ namespace AGrail
         }
 
         public void OnOKClick()
-        {            
+        {
             var proto = new network.CreateRoomRequest()
             {
                 allow_guest = true,

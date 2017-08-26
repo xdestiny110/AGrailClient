@@ -62,7 +62,7 @@ namespace AGrail
         public override bool CanSelect(uint uiState, Card card, bool isCovered)
         {
             if (uiState == 502 && card.Element == Card.CardElement.water)
-                return true;                
+                return true;
             return base.CanSelect(uiState, card, isCovered);
         }
 
@@ -103,12 +103,12 @@ namespace AGrail
             switch (state)
             {
                 case 502:
-                    OKAction = () => 
+                    OKAction = () =>
                     {
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, BattleData.Instance.Agent.SelectCards);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
-                    CancelAction = () => 
+                    CancelAction = () =>
                     {
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);

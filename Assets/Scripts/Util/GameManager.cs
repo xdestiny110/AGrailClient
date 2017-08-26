@@ -24,7 +24,7 @@ namespace AGrail
         public static void RemoveUpdateAciont(Action action)
         {
             instance.UpdateActions -= action;
-        }        
+        }
 
         void Awake()
         {
@@ -32,7 +32,7 @@ namespace AGrail
             DontDestroyOnLoad(this);
 
             lh = new Framework.Log.LogHandler();
-            
+
             var config = new ServerConfig();
             var coder = new Coder();
             TCPInstance = new TCP(config, coder);

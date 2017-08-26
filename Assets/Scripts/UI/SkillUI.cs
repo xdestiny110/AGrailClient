@@ -27,7 +27,7 @@ namespace AGrail
                 var sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("skill_texture", skill.SkillName);
                 if (sprite != null)
                     skillIcon.sprite = sprite;
-                IsEnable = false;                
+                IsEnable = false;
             }
             get { return skill; }
         }
@@ -67,10 +67,10 @@ namespace AGrail
 
         private void onBtnClick()
         {
-            if (!selectBorder.enabled)            
-                BattleData.Instance.Agent.ChangeSelectSkill(skill.SkillID);                            
-            else            
-                BattleData.Instance.Agent.ChangeSelectSkill(null);                            
+            if (!selectBorder.enabled)
+                BattleData.Instance.Agent.ChangeSelectSkill(skill.SkillID);
+            else
+                BattleData.Instance.Agent.ChangeSelectSkill(null);
         }
     }
 }

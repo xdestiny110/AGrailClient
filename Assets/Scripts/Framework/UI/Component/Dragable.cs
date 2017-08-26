@@ -93,7 +93,7 @@ namespace Framework.UI
         public void OnDrag(PointerEventData eventData)
         {
             Vector3 mouseWorldPosition;
-            if (RectTransformUtility.ScreenPointToWorldPointInRectangle(transform as RectTransform, eventData.position, 
+            if (RectTransformUtility.ScreenPointToWorldPointInRectangle(transform as RectTransform, eventData.position,
                 eventData.pressEventCamera, out mouseWorldPosition))
             {
                 if (lastMousePos != Vector3.zero)

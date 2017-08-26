@@ -181,7 +181,7 @@ namespace AGrail
                     var mList = new List<string>();
                     selectList.Add(new List<uint>() { 1 });
                     mList.Add("+1治疗");
-                    if(BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team] + 
+                    if(BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team] +
                         BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team] > 1)
                     {
                         selectList.Add(new List<uint>() { 2 });

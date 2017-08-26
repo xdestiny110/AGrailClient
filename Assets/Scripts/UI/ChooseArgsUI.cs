@@ -39,7 +39,7 @@ namespace AGrail
                 if (t == "Skill")
                 {
                     title.text = "选择技能";
-                    for (int i = 0; i < argsCache.Count; i++)                    
+                    for (int i = 0; i < argsCache.Count; i++)
                         args.options.Add(new Dropdown.OptionData() { text = Skill.GetSkill(argsCache[i][0]).SkillName });
                 }
                 else if(t == "Card")
@@ -55,11 +55,11 @@ namespace AGrail
                         args.options.Add(new Dropdown.OptionData()
                         {
                             text = string.Format("{0}个宝石与{1}个水晶", argsCache[i][0], argsCache[i][1])
-                        });                    
+                        });
                 }
                 else if(t == "Heal")
                 {
-                    title.text = "选择治疗数";                    
+                    title.text = "选择治疗数";
                     for (int i = 0; i < argsCache.Count; i++)
                         args.options.Add(new Dropdown.OptionData()
                         {
@@ -75,7 +75,7 @@ namespace AGrail
                         args.options.Add(new Dropdown.OptionData()
                         {
                             text = string.Format("{0}{1}", argsCache[i][0], m[i])
-                        });                    
+                        });
                 }
                 args.RefreshShownValue();
                 BattleData.Instance.Agent.SelectArgs.Clear();

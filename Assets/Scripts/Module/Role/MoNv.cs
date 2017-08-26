@@ -110,7 +110,7 @@ namespace AGrail
 			{
 				case (uint)SkillID.TI_SHEN_WAN_OU:
 					return BattleData.Instance.Agent.SelectCards.Count == 1 &&
-                        player.team == BattleData.Instance.MainPlayer.team && 
+                        player.team == BattleData.Instance.MainPlayer.team &&
                         BattleData.Instance.PlayerID != player.id;
 				case (uint)SkillID.CANG_YAN_FA_DIAN:
 				case (uint)SkillID.TIAN_HUO_DUAN_KONG:
@@ -137,7 +137,7 @@ namespace AGrail
                         return Util.HasCard(Card.CardElement.fire, BattleData.Instance.MainPlayer.hands) || (BattleData.Instance.MainPlayer.is_knelt);
                     if (skill.SkillID == (uint)SkillID.TIAN_HUO_DUAN_KONG)
 						return ( (BattleData.Instance.MainPlayer.yellow_token > 0 && Util.HasCard(Card.CardElement.fire, BattleData.Instance.MainPlayer.hands,2)) || (BattleData.Instance.MainPlayer.is_knelt) );
-					if (skill.SkillID == (uint)SkillID.TONG_KU_LIAN_JIE) 
+					if (skill.SkillID == (uint)SkillID.TONG_KU_LIAN_JIE)
 						return (BattleData.Instance.MainPlayer.crystal + BattleData.Instance.MainPlayer.gem > 0);
 					return false;
 				case (uint)SkillID.TI_SHEN_WAN_OU:
@@ -203,7 +203,7 @@ namespace AGrail
 		public override void UIStateChange(uint state, UIStateMsg msg, params object[] paras)
 		{
 			List<List<uint>> selectList = new List<List<uint>>();
-			switch (state) 
+			switch (state)
 			{
 			case 1:	//躺斩
 				if (BattleData.Instance.MainPlayer.is_knelt) {
@@ -213,7 +213,7 @@ namespace AGrail
 							BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, (uint)SkillID.MO_NV_ZHI_NU_ATTACK);
 						BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
 					}
-				}          
+				}
 				else base.UIStateChange (state, msg, paras);
 					return;
 				case (uint)SkillID.CANG_YAN_FA_DIAN:

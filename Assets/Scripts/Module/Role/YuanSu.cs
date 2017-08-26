@@ -67,7 +67,7 @@ namespace AGrail
             bool check = false;
             if (uiState>=1101 && uiState<=1105)
             {
-                
+
                 switch (BattleData.Instance.Agent.SelectCards.Count)
                 {
                     case 0:
@@ -78,7 +78,7 @@ namespace AGrail
                         break;
                     case 2:
                         if (BattleData.Instance.Agent.SelectCards.Contains(card.ID))
-                        { 
+                        {
                         if (!card.HasSkill(uiState)) check = true;
                         else if (Util.HasCard(uiState, BattleData.Instance.Agent.SelectCards, 2))check = true;
                         }
@@ -202,7 +202,7 @@ namespace AGrail
                 case 1102:
                 case 1103:
                 case 1104:
-                case 1105:                    
+                case 1105:
                 case 1106:
                 case 1107:
                     return true;

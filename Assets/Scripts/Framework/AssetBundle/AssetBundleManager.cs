@@ -236,7 +236,7 @@ namespace Framework.AssetBundle
         }
 
         public T LoadAsset<T>(string assetBundleName, string assetName) where T : UnityEngine.Object
-        {            
+        {
             assetBundleName = assetBundleName.ToLower();
 #if UNITY_EDITOR
             if (SimulationMode)
@@ -306,14 +306,14 @@ namespace Framework.AssetBundle
 
             if (SimulationMode)
                 LoadAsset(assetbundleName, assetName);
-            else if (bundles.ContainsKey(assetbundleName))            
-                return bundles[assetbundleName].LoadAssetAsync<T>(assetName);                            
+            else if (bundles.ContainsKey(assetbundleName))
+                return bundles[assetbundleName].LoadAssetAsync<T>(assetName);
             else
                 Debug.LogErrorFormat("There is no asset with name {0}/{1}", assetbundleName, assetName);
             return null;
 #else
-            if (bundles.ContainsKey(assetbundleName))            
-                return bundles[assetbundleName].LoadAssetAsync<T>(assetName);                            
+            if (bundles.ContainsKey(assetbundleName))
+                return bundles[assetbundleName].LoadAssetAsync<T>(assetName);
             else
                 Debug.LogErrorFormat("There is no asset with name {0}/{1}", assetbundleName, assetName);
             return null;

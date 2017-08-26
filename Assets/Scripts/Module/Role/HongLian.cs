@@ -157,7 +157,7 @@ namespace AGrail
                 case (uint)SkillID.杀戮盛宴:
                 case (uint)SkillID.戒骄戒躁:
                 case (uint)SkillID.腥红十字:
-                    return true;                
+                    return true;
             }
             return base.CheckCancel(uiState, cardIDs, playerIDs, skillID);
         }
@@ -179,7 +179,7 @@ namespace AGrail
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     CancelAction = () =>
-                    {                        
+                    {
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
@@ -195,7 +195,7 @@ namespace AGrail
                         {
                             selectList.Add(new List<uint>() { i });
                             explainList.Add(i + "个治疗");
-                        }                            
+                        }
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, explainList);
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                             string.Format( StateHint.GetHint(state),allies[0].nickname ) );
@@ -224,7 +224,7 @@ namespace AGrail
                                 explainList.Add(i + "个治疗");
                             }
                             MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, explainList);
-                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, 
+                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
                                 string.Format(StateHint.GetHint(state,1), allies[1].nickname));
                         }
                     }
@@ -278,7 +278,7 @@ namespace AGrail
             get
             {
                 return BattleData.Instance.PlayerInfos.Where((s) => { return s.team == BattleData.Instance.MainPlayer.team && s.id != BattleData.Instance.MainPlayer.id; }).ToList();
-            }            
+            }
         }
 
         private enum SkillID

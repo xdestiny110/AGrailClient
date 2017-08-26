@@ -30,7 +30,7 @@ namespace AGrail
                 BattleData.Instance.Agent.SelectCards.Clear();
                 BattleData.Instance.Agent.SelectPlayers.Clear();
                 BattleData.Instance.Agent.SelectSkill = null;
-                BattleData.Instance.Agent.SelectArgs.Clear();                
+                BattleData.Instance.Agent.SelectArgs.Clear();
                 MessageSystem<MessageType>.Notify(MessageType.AgentSelectPlayer);
                 MessageSystem<MessageType>.Notify(MessageType.AgentSelectCard);
                 MessageSystem<MessageType>.Notify(MessageType.AgentSelectSkill);

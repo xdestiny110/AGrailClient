@@ -78,7 +78,7 @@ namespace AGrail
                         return card.Element == Card.CardElement.thunder || card.Type == Card.CardType.magic;
                     else
                         return (Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Element == Card.CardElement.thunder && card.Element == Card.CardElement.thunder) ||
-                        (Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Type == Card.CardType.magic && card.Type == Card.CardType.magic);                    
+                        (Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Type == Card.CardType.magic && card.Type == Card.CardType.magic);
                 case (uint)SkillID.充盈:
                     return card.Type == Card.CardType.magic || card.Element == Card.CardElement.thunder;
             }
@@ -88,9 +88,9 @@ namespace AGrail
         public override bool CanSelect(uint uiState, SinglePlayerInfo player)
         {
             switch (uiState)
-            {                
-                case (uint)SkillID.幻影星辰:                    
-                    return true;                    
+            {
+                case (uint)SkillID.幻影星辰:
+                    return true;
             }
             return base.CanSelect(uiState, player);
         }
@@ -98,7 +98,7 @@ namespace AGrail
         public override bool CanSelect(uint uiState, Skill skill)
         {
             switch (uiState)
-            {                
+            {
                 case (uint)SkillID.充盈:
                 case 10:
                 case 11:
@@ -125,7 +125,7 @@ namespace AGrail
         {
             switch (uiState)
             {
-                case (uint)SkillID.幻影星辰:                    
+                case (uint)SkillID.幻影星辰:
                     return 1;
             }
             return base.MaxSelectPlayer(uiState);
@@ -141,7 +141,7 @@ namespace AGrail
                     return cardIDs.Count > 0;
                 case (uint)SkillID.幻影星辰:
                     return playerIDs.Count == 1;
-                case (uint)SkillID.暗之解放:                
+                case (uint)SkillID.暗之解放:
                     return true;
             }
             return base.CheckOK(uiState, cardIDs, playerIDs, skillID);
@@ -151,9 +151,9 @@ namespace AGrail
         {
             switch (uiState)
             {
-                case (uint)SkillID.充盈:                    
-                case (uint)SkillID.暗之障壁:                    
-                case (uint)SkillID.幻影星辰:                    
+                case (uint)SkillID.充盈:
+                case (uint)SkillID.暗之障壁:
+                case (uint)SkillID.幻影星辰:
                 case (uint)SkillID.暗之解放:
                 case (uint)SkillID.漆黑之枪:
                     return true;
@@ -179,7 +179,7 @@ namespace AGrail
                 case (uint)SkillID.暗之障壁:
                     OKAction = () =>
                     {
-                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, 
+                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null,
                             BattleData.Instance.Agent.SelectCards, new List<uint>() { 1 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
@@ -225,7 +225,7 @@ namespace AGrail
                 case (uint)SkillID.漆黑之枪:
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                     if (msg == UIStateMsg.ClickArgs)
-                    {                        
+                    {
                         var args = new List<uint>() { 1 };
                         args.Add(BattleData.Instance.Agent.SelectArgs[0]);
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, args);
@@ -244,7 +244,7 @@ namespace AGrail
                     {
                         selectList.Add(new List<uint>() { i });
                         mList.Add(i.ToString() + "个能量");
-                    }                        
+                    }
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;

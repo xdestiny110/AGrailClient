@@ -4,7 +4,7 @@ namespace Framework.FSM
 {
     public abstract class StateBase<T>
     {
-        protected StateMachine<T> stateMachine; 
+        protected StateMachine<T> stateMachine;
 
         public StateBase(StateMachine<T> machine)
         {

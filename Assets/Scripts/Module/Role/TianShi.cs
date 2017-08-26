@@ -85,7 +85,7 @@ namespace AGrail
                 case 702:
                     return BattleData.Instance.Agent.SelectCards.Count == 1;
                 case 704:
-                    return true;                    
+                    return true;
             }
             return base.CanSelect(uiState, player);
         }
@@ -102,7 +102,7 @@ namespace AGrail
                     if (skill.SkillID == 701)
                         return Util.HasCard(701, BattleData.Instance.MainPlayer.hands);
                     if (skill.SkillID == 702)
-                        return Util.HasCard(Card.CardElement.water, BattleData.Instance.MainPlayer.hands); 
+                        return Util.HasCard(Card.CardElement.water, BattleData.Instance.MainPlayer.hands);
                     if (skill.SkillID == 703 && Util.HasCard(Card.CardElement.wind, BattleData.Instance.MainPlayer.hands))
                     {
                         foreach (var v in BattleData.Instance.PlayerInfos)
@@ -160,7 +160,7 @@ namespace AGrail
             {
                 case 701:
                 case 702:
-                case 703:                
+                case 703:
                 case 705:
                 case 706:
                     return true;

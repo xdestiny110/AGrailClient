@@ -34,7 +34,7 @@ namespace AGrail
                 {
                     skillID = BattleData.Instance.Agent.Cmd.respond_id;
                     BattleData.Instance.Agent.SelectSkill = skillID;
-                }                    
+                }
                 BattleData.Instance.Agent.SelectCards.Clear();
                 BattleData.Instance.Agent.SelectPlayers.Clear();
                 BattleData.Instance.Agent.SelectArgs.Clear();
@@ -60,7 +60,7 @@ namespace AGrail
                         MessageSystem<MessageType>.Notify(MessageType.AgentSelectPlayer);
                         MessageSystem<MessageType>.Notify(MessageType.AgentSelectCard);
                         MessageSystem<MessageType>.Notify(MessageType.CloseNewArgsUI);
-                    }                        
+                    }
                     else
                         //点了别的技能
                         stateMachine.ChangeState<StateSkill>(msg, false, BattleData.Instance.Agent.SelectSkill, paras);

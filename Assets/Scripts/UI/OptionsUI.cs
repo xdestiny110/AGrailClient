@@ -38,7 +38,7 @@ namespace AGrail
             Lobby.Instance.LeaveRoom();
             SceneManager.LoadScene(1);
         }
-        
+
         public void OnBGMVolChange(float vol)
         {
             AudioManager.Instance.BGMVolume = vol;

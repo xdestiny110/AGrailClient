@@ -68,7 +68,7 @@ namespace AGrail
                     srcPlayer = BattleData.Instance.GetPlayerInfo(hitMsg.src_id);
                     dstPlayer = BattleData.Instance.GetPlayerInfo(hitMsg.dst_id);
                     r1 = RoleFactory.Create(srcPlayer.role_id);
-                    r2 = RoleFactory.Create(dstPlayer.role_id);                    
+                    r2 = RoleFactory.Create(dstPlayer.role_id);
                     str.Append(string.Format("{0}命中了{1}" + Environment.NewLine, r1.RoleName, r2.RoleName));
                     Log += str.ToString();
                     MessageSystem<MessageType>.Notify(MessageType.SendHint, str.ToString());
@@ -100,7 +100,7 @@ namespace AGrail
                         str.Append("对" + r2.RoleName + "使用了");
                     }
                     else
-                        str.Append("展示了"); 
+                        str.Append("展示了");
                     foreach (var v in cardMsg.card_ids)
                     {
                         var c = Card.GetCard(v);
@@ -143,7 +143,7 @@ namespace AGrail
                     MessageSystem<MessageType>.Notify(MessageType.ChatChange);
                     break;
                 case MessageType.PlayerLeave:
-                    Log += string.Format("<color=#FF0000FF>玩家[{0}]离开房间</color>" + Environment.NewLine, 
+                    Log += string.Format("<color=#FF0000FF>玩家[{0}]离开房间</color>" + Environment.NewLine,
                         BattleData.instance.GetPlayerInfo((uint)(int)parameters[0]).nickname);
                     break;
                 case MessageType.TURNBEGIN:

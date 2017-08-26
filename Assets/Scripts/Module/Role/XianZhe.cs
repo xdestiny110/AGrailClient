@@ -64,7 +64,7 @@ namespace AGrail
         {
             switch (uiState)
             {
-                case 1702:                    
+                case 1702:
                 case 1703:
                     return !BattleData.Instance.Agent.SelectCards.Exists(c => { return Card.GetCard(c).Element == card.Element; }) ||
                         BattleData.Instance.Agent.SelectCards.Contains(card.ID);
@@ -108,7 +108,7 @@ namespace AGrail
         public override uint MaxSelectCard(uint uiState)
         {
             switch (uiState)
-            {                
+            {
                 case 1702:
                 case 1703:
                 case 1704:

@@ -58,7 +58,7 @@ namespace AGrail
         }
 
         public override void OnHide()
-        {            
+        {
             root.transform.DOLocalMoveX(-1280, 1.0f);
         }
 

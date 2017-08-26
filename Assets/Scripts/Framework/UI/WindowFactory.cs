@@ -25,7 +25,7 @@ namespace Framework.UI
                     goPool.Add(type, AssetBundleManager.Instance.LoadAsset(WindowPrefabPath, type.ToString()));
                     //TimeScope.Stop(guid);
                 }
-                    
+
                 else
                     goPool.Add(type, Resources.Load<GameObject>(WindowPrefabPath + "/" + type.ToString()));
             }
@@ -41,13 +41,13 @@ namespace Framework.UI
                     var assetbundleReq = AssetBundleManager.Instance.LoadAssetAsynCoro<GameObject>(WindowPrefabPath, type.ToString());
                     yield return assetbundleReq;
                     goPool.Add(type, assetbundleReq.asset as GameObject);
-                }                    
+                }
                 else
                 {
                     var req = Resources.LoadAsync<GameObject>(WindowPrefabPath + "/" + type.ToString());
                     yield return req;
                     goPool.Add(type, req.asset as GameObject);
-                }                    
+                }
             }
         }
 
@@ -67,7 +67,7 @@ namespace Framework.UI
                     var go = GameObject.Instantiate(assetbundleReq.asset);
                     GameObject.Destroy(go);
                 }
-                catch (Exception e) { }                
+                catch (Exception e) { }
             }
             allWindowReady = true;
         }

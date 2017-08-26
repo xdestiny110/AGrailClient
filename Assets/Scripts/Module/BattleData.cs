@@ -7,9 +7,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace AGrail
-{   
+{
     public class BattleData : Singleton<BattleData>, IMessageListener<MessageType>
-    {        
+    {
         public int? RoomID { get; private set; }
         public int? PlayerID { get; private set; }
         public uint Pile { get; private set; }
@@ -19,7 +19,7 @@ namespace AGrail
         public uint[] Morale = new uint[2];
         public uint[] Gem = new uint[2];
         public uint[] Crystal = new uint[2];
-        public uint[] Grail = new uint[2];        
+        public uint[] Grail = new uint[2];
         public List<network.SinglePlayerInfo> PlayerInfos = new List<network.SinglePlayerInfo>();
         public List<int> PlayerIdxOrder = new List<int>();//按照顺序排列玩家ID, 第一个一定是主玩家
         public uint StartPlayerID = 0;//第一个行动玩家的ID
@@ -36,7 +36,7 @@ namespace AGrail
             Reset();
             var inst = RoleChoose.Instance;
         }
-        
+
         public void Ready(bool flag)
         {
             var proto = new network.ReadyForGameRequest() { type = flag ? network.ReadyForGameRequest.Type.START_READY : network.ReadyForGameRequest.Type.CANCEL_START_REDAY };
@@ -196,7 +196,7 @@ namespace AGrail
                             PlayerIdxOrder.RemoveRange(0, t);
                         }
                         if (value.player_id == 9)
-                            MainPlayer = new network.SinglePlayerInfo() { id = 9, team = (uint)Team.Other };                            
+                            MainPlayer = new network.SinglePlayerInfo() { id = 9, team = (uint)Team.Other };
                         MessageSystem<MessageType>.Notify(MessageType.GameStart);
                     }
                     //需要再发一次准备
@@ -268,7 +268,7 @@ namespace AGrail
                                 player.hands.Clear();
                                 foreach (var u in v.hands)
                                     player.hands.Add(u);
-                            }                                
+                            }
                             MessageSystem<MessageType>.Notify(MessageType.AgentHandChange);
                         }
                     }
@@ -354,7 +354,7 @@ namespace AGrail
                             }
                             Agent.AgentState |= (int)PlayerAgentState.CanResign;
                             break;
-                        case (uint)network.BasicRespondType.RESPOND_REPLY_ATTACK:                            
+                        case (uint)network.BasicRespondType.RESPOND_REPLY_ATTACK:
                             if (v.args[2] != MainPlayer.id)
                             {
                                 MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, v.args[2], "等待应战响应");
@@ -364,7 +364,7 @@ namespace AGrail
                             Agent.Cmd = v;
                             Agent.AgentState = (int)PlayerAgentState.Attacked;
                             break;
-                        case (uint)network.BasicRespondType.RESPOND_DISCARD:                            
+                        case (uint)network.BasicRespondType.RESPOND_DISCARD:
                             if (v.dst_ids[0] != MainPlayer.id)
                             {
                                 MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, v.dst_ids[0], "等待弃牌响应");
@@ -404,7 +404,7 @@ namespace AGrail
                             Agent.Cmd = v;
                             Agent.AgentState = (int)PlayerAgentState.Weaken;
                             break;
-                        case (uint)network.BasicRespondType.RESPOND_BULLET:                            
+                        case (uint)network.BasicRespondType.RESPOND_BULLET:
                             if (v.args[0] != MainPlayer.id)
                             {
                                 MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, v.args[0], "等待魔弹响应");
@@ -414,7 +414,7 @@ namespace AGrail
                             Agent.Cmd = v;
                             Agent.AgentState = (int)PlayerAgentState.MoDaned;
                             break;
-                        case (uint)network.BasicRespondType.RESPOND_ADDITIONAL_ACTION:                            
+                        case (uint)network.BasicRespondType.RESPOND_ADDITIONAL_ACTION:
                             if (v.src_id != MainPlayer.id)
                             {
                                 MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, v.src_id, "等待响应额外行动");
@@ -477,7 +477,7 @@ namespace AGrail
                             Agent.AgentState = (int)PlayerAgentState.CanResign;
                             break;
                         default:
-                            //技能响应                            
+                            //技能响应
                             if (v.src_id != MainPlayer.id)
                             {
                                 r = RoleFactory.Create(GetPlayerInfo(v.src_id).role_id);
@@ -496,7 +496,7 @@ namespace AGrail
                     }
                 }
             }
-        }        
+        }
     }
 }
 

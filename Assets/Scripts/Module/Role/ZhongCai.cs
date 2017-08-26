@@ -119,8 +119,8 @@ namespace AGrail
             switch (uiState)
             {
                 case 1401:
-                case 1402:                
-                    return true;                
+                case 1402:
+                    return true;
             }
             return base.CheckOK(uiState, cardIDs, playerIDs, skillID);
         }
@@ -177,7 +177,7 @@ namespace AGrail
         public override void UIStateChange(uint state, UIStateMsg msg, params object[] paras)
         {
             switch (state)
-            {                
+            {
                 case 1401:
                 case 1402:
                     OKAction = () =>

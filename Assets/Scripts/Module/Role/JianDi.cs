@@ -146,14 +146,14 @@ namespace AGrail
             {
                 case 1903:
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
-                    CancelAction = () => 
+                    CancelAction = () =>
                     {
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     if(BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectArgs.Count == 1)
-                    {                        
+                    {
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectPlayers,
                             null, new List<uint>() { 1, BattleData.Instance.Agent.SelectArgs[0] });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
@@ -178,7 +178,7 @@ namespace AGrail
                 case 1906:
                     if(BattleData.Instance.Agent.SelectCards.Count == 1)
                     {
-                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, 
+                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null,
                             BattleData.Instance.Agent.SelectCards, new List<uint>() { 1 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentHandChange, false);
@@ -190,7 +190,7 @@ namespace AGrail
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
-                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentHandChange, true);                    
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentHandChange, true);
                     return;
                 case 1907:
                     OKAction = () =>

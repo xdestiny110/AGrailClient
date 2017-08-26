@@ -19,7 +19,7 @@ namespace Framework.Network
         private int maxReconnectTimes = 3;
 
         private readonly ConcurrentQueue<Action> actions = new ConcurrentQueue<Action>();
-        
+
         public bool Connected { get { return null != socket && socket.Connected; } }
 
         public bool AutoReconnect
@@ -65,8 +65,8 @@ namespace Framework.Network
                     SendBufferSize = serverConfig.SendBufferSize,
                     ReceiveBufferSize = serverConfig.ReceiveBufferSize
                 };
-                socket.BeginConnect(serverConfig.ServerIP, serverConfig.Port, 
-                    (ar) => 
+                socket.BeginConnect(serverConfig.ServerIP, serverConfig.Port,
+                    (ar) =>
                     {
                         try
                         {
@@ -93,11 +93,11 @@ namespace Framework.Network
         }
 
         public void Close()
-        {            
+        {
             if(socket!=null && socket.Connected)
             {
                 socket.Shutdown(SocketShutdown.Both);
-                socket.Close();                
+                socket.Close();
             }
             actions.clear();
             startReconnect = false;
@@ -105,7 +105,7 @@ namespace Framework.Network
         }
 
         public void Send(Protobuf protobuf)
-        {            
+        {
             if(socket == null || !socket.Connected)
             {
                 UnityEngine.Debug.LogError("Socket was not established!");
@@ -146,13 +146,13 @@ namespace Framework.Network
                 actions.Enqueue(onReconnect);
             }
             else
-                actions.Enqueue(onConnectFail);                
+                actions.Enqueue(onConnectFail);
         }
 
         private void beginReceiveCallback(IAsyncResult ar)
         {
             StateObject state = (StateObject)ar.AsyncState;
-            Socket socket = state.workSocket;            
+            Socket socket = state.workSocket;
 
             try
             {
@@ -169,7 +169,7 @@ namespace Framework.Network
                     {
                         foreach (var v in proto)
                             afterReceiveProto(v);
-                    }                        
+                    }
                 }
                 // 继续接收
                 socket.BeginReceive(state.buffer, 0, StateObject.BufferSize, SocketFlags.None, beginReceiveCallback, state);
@@ -196,7 +196,7 @@ namespace Framework.Network
         }
 
         private void onConnectSuccess()
-        {            
+        {
             actions.Enqueue(() => {
                 UnityEngine.Debug.Log("OnConnectSuccess!");
                 Message.MessageSystem<Message.MessageType>.Notify(Message.MessageType.OnConnect, true);
@@ -204,8 +204,8 @@ namespace Framework.Network
         }
 
         private void onConnectFail()
-        {            
-            actions.Enqueue(() => 
+        {
+            actions.Enqueue(() =>
             {
                 UnityEngine.Debug.Log("OnConnectFail!");
                 Message.MessageSystem<Message.MessageType>.Notify(Message.MessageType.OnConnect, false);
@@ -213,8 +213,8 @@ namespace Framework.Network
         }
 
         private void onDisconnect()
-        {            
-            actions.Enqueue(() => 
+        {
+            actions.Enqueue(() =>
             {
                 UnityEngine.Debug.Log("OnDisconnect!");
                 Message.MessageSystem<Message.MessageType>.Notify(Message.MessageType.OnDisconnect);
@@ -222,8 +222,8 @@ namespace Framework.Network
         }
 
         private void onReconnect()
-        {            
-            actions.Enqueue(() => 
+        {
+            actions.Enqueue(() =>
             {
                 UnityEngine.Debug.Log("OnDisconnect!");
                 Message.MessageSystem<Message.MessageType>.Notify(Message.MessageType.OnReconnect);
@@ -236,9 +236,9 @@ namespace Framework.Network
         }
 
         private void afterReceiveProto(Protobuf protobuf)
-        {            
+        {
             var msgType = (Message.MessageType)Enum.Parse(typeof(Message.MessageType), protobuf.ProtoID.ToString());
-            actions.Enqueue(() => 
+            actions.Enqueue(() =>
             {
                 UnityEngine.Debug.LogFormat("Recv protobuf {0}", protobuf.ProtoID);
                 Message.MessageSystem<Message.MessageType>.Notify(msgType, protobuf.Proto);

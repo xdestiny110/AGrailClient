@@ -23,7 +23,7 @@ namespace AGrail
             set
             {
                 PlayerPrefs.SetFloat("BGM", value);
-                bgm.volume = value;                
+                bgm.volume = value;
             }
             get
             {
@@ -52,7 +52,7 @@ namespace AGrail
 
         void Awake()
         {
-            Instance = this;            
+            Instance = this;
             DontDestroyOnLoad(this);
 
             bgm = gameObject.AddComponent<AudioSource>();
@@ -61,7 +61,7 @@ namespace AGrail
 
             MessageSystem<MessageType>.Regist(MessageType.CARDMSG, this);
             MessageSystem<MessageType>.Regist(MessageType.HITMSG, this);
-            MessageSystem<MessageType>.Regist(MessageType.PlayerHealChange, this);            
+            MessageSystem<MessageType>.Regist(MessageType.PlayerHealChange, this);
             MessageSystem<MessageType>.Regist(MessageType.HURTMSG, this);
             MessageSystem<MessageType>.Regist(MessageType.MoraleChange, this);
             MessageSystem<MessageType>.Regist(MessageType.GemChange, this);
@@ -97,11 +97,11 @@ namespace AGrail
                     if (cardMsg.dst_idSpecified)
                     {
                         var card = Card.GetCard(cardMsg.card_ids[0]);
-                        if(card.Type == Card.CardType.attack)                        
+                        if(card.Type == Card.CardType.attack)
                             playSEAudio(AssetBundleManager.Instance.LoadAsset<AudioClip>("audio", "atk-" + card.Element.ToString()));
                         else
                             playSEAudio(AssetBundleManager.Instance.LoadAsset<AudioClip>("audio", "spell-" + card.Name.ToString()));
-                    }                        
+                    }
                     break;
                 case MessageType.PlayerHealChange:
                     playSEAudio(AssetBundleManager.Instance.LoadAsset<AudioClip>("audio", "sys-heal"));
@@ -124,7 +124,7 @@ namespace AGrail
                     break;
                 case MessageType.TURNBEGIN:
                     var tb = parameters[0] as network.TurnBegin;
-                    if (tb.idSpecified)                    
+                    if (tb.idSpecified)
                         playSEAudio(AssetBundleManager.Instance.LoadAsset<AudioClip>("audio", BattleData.Instance.GetPlayerInfo(tb.id).role_id.ToString()));
                     break;
                 case MessageType.PlayBGM:
@@ -159,7 +159,7 @@ namespace AGrail
                     var clip = AssetBundleManager.Instance.LoadAsset<AudioClip>("audio", flag.Value ? "win" : "lose");
                     if (bgm.clip != clip && (bgm.clip == null || bgm.clip.name != clip.name))
                         bgm.clip = clip;
-                }                    
+                }
                 else
                 {
                     var idx = rng.Next(1, 6);

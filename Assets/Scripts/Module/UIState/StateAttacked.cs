@@ -32,7 +32,7 @@ namespace AGrail
             {
                 case UIStateMsg.ClickCard:
                 case UIStateMsg.ClickPlayer:
-                    if(BattleData.Instance.Agent.SelectCards.Count == 1 && 
+                    if(BattleData.Instance.Agent.SelectCards.Count == 1 &&
                         Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Element == Card.CardElement.light)
                     {
                         BattleData.Instance.Agent.SelectPlayers.Clear();

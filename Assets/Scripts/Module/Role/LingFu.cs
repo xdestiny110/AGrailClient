@@ -68,7 +68,7 @@ namespace AGrail
             switch (uiState)
             {
                 case 8:
-                    return isCovered;                    
+                    return isCovered;
                 case 1801:
                     return card.Element == Card.CardElement.wind && !isCovered;
                 case 1802:
@@ -81,11 +81,11 @@ namespace AGrail
         {
             switch (uiState)
             {
-                case 1801:                    
+                case 1801:
                 case 1802:
                     return BattleData.Instance.Agent.SelectCards.Count == 1;
                 case 1804:
-                    return true;                    
+                    return true;
             }
             return base.CanSelect(uiState, player);
         }
@@ -167,8 +167,8 @@ namespace AGrail
                     break;
             }
             return base.CheckCancel(uiState, cardIDs, playerIDs, skillID);
-        }       
-                
+        }
+
         public override void UIStateChange(uint state, UIStateMsg msg, params object[] paras)
         {
             switch (state)
@@ -229,7 +229,7 @@ namespace AGrail
                     {
                         BattleData.Instance.Agent.SelectPlayers.Clear();
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentSelectPlayer);
-                    }                        
+                    }
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;

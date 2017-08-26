@@ -68,7 +68,7 @@ namespace AGrail
                 GameObject.Destroy(playerStatus[2].gameObject);
                 playerStatus.RemoveAt(2);
                 GameObject.Destroy(playerStatus[3].gameObject);
-                playerStatus.RemoveAt(3);                
+                playerStatus.RemoveAt(3);
             }
             Dialog.Instance.Reset();
 
@@ -76,7 +76,7 @@ namespace AGrail
             btnChatExpand.onClick.AddListener(delegate { onBtnChatExpandClick(true); });
             btnSubmit.onClick.AddListener(delegate { onBtnSubmitClick(null); });
             inptChat.onEndEdit.AddListener(onBtnSubmitClick);
-            
+
             MessageSystem<MessageType>.Regist(MessageType.MoraleChange, this);
             MessageSystem<MessageType>.Regist(MessageType.GemChange, this);
             MessageSystem<MessageType>.Regist(MessageType.CrystalChange, this);
@@ -136,7 +136,7 @@ namespace AGrail
         }
 
         public override void OnDestroy()
-        {            
+        {
             MessageSystem<MessageType>.UnRegist(MessageType.MoraleChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.GemChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.CrystalChange, this);
@@ -160,12 +160,12 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.TURNBEGIN, this);
             MessageSystem<MessageType>.UnRegist(MessageType.LogChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.ChatChange, this);
-            
+
             base.OnDestroy();
         }
 
         public override void OnEventTrigger(MessageType eventType, params object[] parameters)
-        {            
+        {
             switch (eventType)
             {
                 case MessageType.MoraleChange:
@@ -191,7 +191,7 @@ namespace AGrail
                         hint.text = parameters[0].ToString();
                     }
                     break;
-                case MessageType.Win:                    
+                case MessageType.Win:
                     break;
                 case MessageType.Lose:
                     break;
@@ -206,7 +206,7 @@ namespace AGrail
                 case MessageType.PlayerRoleChange:
                     playerStatus[(int)parameters[0]].RoleID = (uint)parameters[1];
                     break;
-                case MessageType.PlayerTokenChange:                    
+                case MessageType.PlayerTokenChange:
                     playerStatus[(int)parameters[0]].YellowToken = (uint)parameters[1];
                     playerStatus[(int)parameters[0]].BlueToken = (uint)parameters[2];
                     playerStatus[(int)parameters[0]].Covered = (uint)parameters[3];
@@ -335,7 +335,7 @@ namespace AGrail
         private void showCard(List<uint> card_ids)
         {
             for (int i = 0; i < showCardArea.childCount; i++)
-                Destroy(showCardArea.GetChild(i).gameObject);            
+                Destroy(showCardArea.GetChild(i).gameObject);
             foreach (var v in card_ids)
             {
                 var card = Card.GetCard(v);
@@ -412,7 +412,7 @@ namespace AGrail
 
         private Tweener chatTweener = null;
         private void onBtnChatExpandClick(bool flag)
-        {            
+        {
             if (chatTweener != null && chatTweener.IsPlaying())
                 return;
             btnChatExpand.onClick.RemoveAllListeners();

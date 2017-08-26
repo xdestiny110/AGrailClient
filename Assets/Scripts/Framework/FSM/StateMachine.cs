@@ -8,7 +8,7 @@ namespace Framework.FSM
         public StateBase<T> Current { get; private set; }
         public Stack<Type> History = new Stack<Type>();
 
-        public string MachineName { get; private set; }        
+        public string MachineName { get; private set; }
 
         public StateMachine(string name)
         {
@@ -41,7 +41,7 @@ namespace Framework.FSM
         {
             if(History.Count > 0)
             {
-                var t = History.Pop();                
+                var t = History.Pop();
                 ChangeState(t, false, msg, paras);
             }
         }

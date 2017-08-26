@@ -8,7 +8,7 @@ using System.Collections;
 using UnityEngine.SceneManagement;
 
 namespace AGrail
-{   
+{
     public class LobbyUI : WindowsBase
     {
         [SerializeField]
@@ -27,7 +27,7 @@ namespace AGrail
             set
             {
                 if(coroHandle != null)
-                {                    
+                {
                     StopCoroutine(coroHandle);
                     coroHandle = null;
                 }
@@ -47,7 +47,7 @@ namespace AGrail
         }
 
         public override void Awake()
-        {            
+        {
             MessageSystem<MessageType>.Regist(MessageType.RoomList, this);
             MessageSystem<MessageType>.Regist(MessageType.EnterRoom, this);
             MessageSystem<MessageType>.Regist(MessageType.ERROR, this);
@@ -76,7 +76,7 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.RoomList, this);
             MessageSystem<MessageType>.UnRegist(MessageType.EnterRoom, this);
             MessageSystem<MessageType>.UnRegist(MessageType.ERROR, this);
-            root.DOLocalMoveX(-Screen.width, 1.0f).OnComplete(() => { gameObject.SetActive(false); base.OnHide(); });            
+            root.DOLocalMoveX(-Screen.width, 1.0f).OnComplete(() => { gameObject.SetActive(false); base.OnHide(); });
         }
 
         public override void OnResume()
@@ -140,15 +140,15 @@ namespace AGrail
                 go.transform.localPosition = roomItemPrefab.transform.localPosition;
                 go.transform.localRotation = roomItemPrefab.transform.localRotation;
                 go.transform.localScale = roomItemPrefab.transform.localScale;
-                var script = go.GetComponent<RoomItem>();                
+                var script = go.GetComponent<RoomItem>();
                 script.RoomInfo = v;
                 //怒了，一帧只允许创建一个
                 //在没有统一管理的资源池与协程池前先这么凑合着
                 //以后搞成Bundle异步加载应该会好些
                 yield return null;
             }
-            for(int i = 0; i < content.childCount; i++)            
-                content.GetChild(i).gameObject.SetActive(true);            
+            for(int i = 0; i < content.childCount; i++)
+                content.GetChild(i).gameObject.SetActive(true);
             loadingIcon.SetActive(false);
         }
 

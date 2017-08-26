@@ -48,7 +48,7 @@ namespace AGrail
                 GameObject.Destroy(players[5].gameObject);
                 GameObject.Destroy(players[4].gameObject);
                 players.RemoveRange(4, 2);
-            }                
+            }
             for(int i = 0; i < BattleData.Instance.PlayerInfos.Count; i++)
             {
                 MessageSystem<MessageType>.Notify(MessageType.PlayerIsReady, i, BattleData.Instance.PlayerInfos[i].ready);

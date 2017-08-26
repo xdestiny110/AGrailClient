@@ -183,12 +183,12 @@ namespace AGrail
                     {
                         selectList.Add(new List<uint>() { 1 });
                         mList.Add("蓄力一击");
-                    }                        
+                    }
                     if (state == 2005 || state == XULICANGYAN)
                     {
                         selectList.Add(new List<uint>() { 2 });
                         mList.Add("苍炎之魂");
-                    }                        
+                    }
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
@@ -216,7 +216,7 @@ namespace AGrail
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     CancelAction = () =>
-                    {                        
+                    {
                         sendReponseMsg(BAISHIDOUSHEN, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
@@ -241,7 +241,7 @@ namespace AGrail
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         sendReponseMsg(BAISHIDOUSHEN, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
-                    };                    
+                    };
                     selectList.Clear();
                     mList.Clear();
                     selectList.Add(new List<uint>() { 1 });

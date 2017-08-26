@@ -57,7 +57,7 @@ namespace AGrail
             switch (uiState)
             {
                 case 1201:
-                    return BattleData.Instance.Agent.SelectArgs.Count == 1 && 
+                    return BattleData.Instance.Agent.SelectArgs.Count == 1 &&
                         (BattleData.Instance.Agent.SelectCards.Count == 0 ||
                         card.Element == Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Element);
             }
@@ -69,9 +69,9 @@ namespace AGrail
             switch (uiState)
             {
                 case 1201:
-                    return BattleData.Instance.Agent.SelectCards.Count == qizhaSelectCard && 
+                    return BattleData.Instance.Agent.SelectCards.Count == qizhaSelectCard &&
                         player.team != BattleData.Instance.MainPlayer.team;
-                case 13:                    
+                case 13:
                     var r = RoleFactory.Create(player.role_id);
                     return player.team == BattleData.Instance.MainPlayer.team && r.MaxEnergyCount > player.gem + player.crystal;
             }
@@ -88,10 +88,10 @@ namespace AGrail
                 case 1203:
                 case 1204:
                     if(skill.SkillID == 1204)
-                        return BattleData.Instance.MainPlayer.crystal + BattleData.Instance.MainPlayer.gem > 0 
+                        return BattleData.Instance.MainPlayer.crystal + BattleData.Instance.MainPlayer.gem > 0
                             && additionalState == 0  ;
                     if (skill.SkillID == 1203)
-                        return BattleData.Instance.MainPlayer.crystal + BattleData.Instance.MainPlayer.gem > 0 && additionalState == 0 
+                        return BattleData.Instance.MainPlayer.crystal + BattleData.Instance.MainPlayer.gem > 0 && additionalState == 0
                             && BattleData.Instance.Gem[(int)Util.GetOtherTeam((Team)BattleData.Instance.MainPlayer.team)] > 0;
                     if (skill.SkillID == 1201)
                         return Util.HasCard("same", BattleData.Instance.MainPlayer.hands, 2);
@@ -132,8 +132,8 @@ namespace AGrail
                     if (v.team == BattleData.Instance.MainPlayer.team && r.MaxEnergyCount > v.gem + v.crystal
                         && BattleData.Instance.Gem[v.team] + BattleData.Instance.Crystal[v.team] > 0)
                         return true;
-                }                
-            }                
+                }
+            }
             return false;
         }
 
@@ -152,7 +152,7 @@ namespace AGrail
         {
             switch (uiState)
             {
-                case 1201:                    
+                case 1201:
                 case 1203:
                 case 1204:
                     return true;
@@ -231,7 +231,7 @@ namespace AGrail
                     {
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         if (BattleData.Instance.Agent.SelectPlayers.Count > 0)
-                        {                            
+                        {
                             var s = BattleData.Instance.GetPlayerInfo(BattleData.Instance.Agent.SelectPlayers[0]);
                             var tGem = BattleData.Instance.Gem[BattleData.Instance.MainPlayer.team];
                             var tCrystal = BattleData.Instance.Crystal[BattleData.Instance.MainPlayer.team];
@@ -241,7 +241,7 @@ namespace AGrail
                             if (maxEnergyCnt - s.gem - s.crystal >= 2)
                             {
                                 if (tGem >= 2)
-                                { 
+                                {
                                     selectList.Add(new List<uint>() { 2, 0 });
                                     explainList.Add("2个宝石");
                                 }
@@ -259,7 +259,7 @@ namespace AGrail
                             if (maxEnergyCnt - s.gem - s.crystal >= 1)
                             {
                                 if (tGem >= 1)
-                                { 
+                                {
                                     selectList.Add(new List<uint>() { 1, 0 });
                                     explainList.Add("1个宝石");
                                 }
@@ -277,7 +277,7 @@ namespace AGrail
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(1202,1));
                     return;
                 case 1201:
-                    CancelAction = () => 
+                    CancelAction = () =>
                     {
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
@@ -319,7 +319,7 @@ namespace AGrail
                 case 1204:
                     OKAction = () =>
                     {
-                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id, null, null, state);                            
+                        sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id, null, null, state);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     CancelAction = () => { BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init); };

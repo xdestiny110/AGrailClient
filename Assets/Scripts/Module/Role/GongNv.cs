@@ -57,7 +57,7 @@ namespace AGrail
             switch (uiState)
             {
                 case 302:
-                    return card.HasSkill(302);                    
+                    return card.HasSkill(302);
                 case 305:
                     if (card.Type == Card.CardType.magic)
                         return true;
@@ -72,9 +72,9 @@ namespace AGrail
             {
                 case 302:
                     return BattleData.Instance.Agent.SelectCards.Count == 1;
-                case 303:                    
+                case 303:
                     return true;
-                    
+
             }
             return base.CanSelect(uiState, player);
         }
@@ -97,10 +97,10 @@ namespace AGrail
         }
 
         public override void AdditionAction()
-        {            
+        {
             if(BattleData.Instance.Agent.SelectArgs.Count == 1 && BattleData.Instance.Agent.SelectArgs[0] == 303)
             {
-                sendReponseMsg((uint)BasicRespondType.RESPOND_ADDITIONAL_ACTION, BattleData.Instance.MainPlayer.id, 
+                sendReponseMsg((uint)BasicRespondType.RESPOND_ADDITIONAL_ACTION, BattleData.Instance.MainPlayer.id,
                     null, null, new List<uint>() { 303 });
                 return;
             }
@@ -114,7 +114,7 @@ namespace AGrail
                 case 301:
                     return true;
                 case 305:
-                    return cardIDs.Count == 1;                    
+                    return cardIDs.Count == 1;
                 case 302:
                     if (cardIDs.Count == 1 && playerIDs.Count == 1)
                         return true;
@@ -135,7 +135,7 @@ namespace AGrail
                 case 302:
                 case 303:
                 case 305:
-                    return true;                    
+                    return true;
             }
             return base.CheckCancel(uiState, cardIDs, playerIDs, skillID);
         }

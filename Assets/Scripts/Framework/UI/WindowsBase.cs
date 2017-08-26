@@ -62,7 +62,7 @@ namespace Framework.UI
 
         public virtual void OnEventTrigger(MessageType eventType, params object[] parameters)
         {
-            
+
         }
     }
 }

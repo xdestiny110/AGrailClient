@@ -62,7 +62,7 @@ namespace AGrail
                 {
                     var c = v.color;
                     c.b = c.r = c.g = 1;
-                    if (BattleData.Instance.PlayerID != 9 && 
+                    if (BattleData.Instance.PlayerID != 9 &&
                         (BattleData.Instance.Agent.FSM.Current.StateNumber == (uint)StateEnum.Any ||
                         BattleData.Instance.Agent.FSM.Current.StateNumber == (uint)StateEnum.AttackAndMagic ||
                         BattleData.Instance.Agent.FSM.Current.StateNumber == (uint)StateEnum.Attack ||
@@ -135,7 +135,7 @@ namespace AGrail
                     token2.text = "0";
                 }
             }
-        }       
+        }
 
         public Team Team
         {
@@ -217,7 +217,7 @@ namespace AGrail
                 {
                     var card = Card.GetCard(v);
                     GameObject prefab = AssetBundleManager.Instance.LoadAsset("battle", "Image");
-                    var go = Instantiate(prefab);                    
+                    var go = Instantiate(prefab);
 
                     if (card.Name == Card.CardName.中毒)
                         go.GetComponent<Image>().sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "du");
@@ -381,7 +381,7 @@ namespace AGrail
                     {
                         select.gameObject.SetActive(false);
                         canSelect.gameObject.SetActive(btnPlayer.interactable);
-                    }                        
+                    }
                     break;
             }
         }

@@ -255,7 +255,7 @@ namespace AGrail
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                     if(BattleData.Instance.Agent.SelectArgs.Count == 0)
                     {
-                        
+
                         if (BattleData.Instance.MainPlayer.hand_count > 4)
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                         else

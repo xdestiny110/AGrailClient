@@ -9,10 +9,10 @@ namespace AGrail
     public static class StateHint
     {
         private static Dictionary<string, Dictionary<string, string>> hint;
-        
+
         static StateHint()
         {
-            var txt = AssetBundleManager.Instance.LoadAsset<TextAsset>("battle", "hint").text;            
+            var txt = AssetBundleManager.Instance.LoadAsset<TextAsset>("battle", "hint").text;
             hint = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, string>>>(txt);
         }
 

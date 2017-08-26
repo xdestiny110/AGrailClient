@@ -6,7 +6,7 @@ using UnityEditor;
 #endif
 namespace Framework.UI
 {
-    [RequireComponent(typeof(PolygonCollider2D))]    
+    [RequireComponent(typeof(PolygonCollider2D))]
     public class UIPolygon : Image
     {
         private PolygonCollider2D _polygon = null;

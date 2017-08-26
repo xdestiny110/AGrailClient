@@ -29,7 +29,7 @@ namespace Framework
                 if (inner.Count <= 0)
                     throw new ArgumentOutOfRangeException();
                 return inner.Dequeue();
-            }            
+            }
         }
 
         public void clear()
@@ -58,7 +58,7 @@ namespace Framework
                 inner.Add(item);
             }
         }
-        
+
         public void Remove(T item)
         {
             lock (locker)
@@ -68,13 +68,13 @@ namespace Framework
         }
 
         public T this[int idx]
-        {            
+        {
             get
             {
                 lock (locker)
                 {
                     return inner[idx];
-                }                
+                }
             }
             set
             {

@@ -15,7 +15,7 @@ namespace AGrail
                 return pool[roleName];
             var type = Type.GetType("AGrail." + roleName);
             if(type == null)
-                Debug.LogWarningFormat("Cannot create role! Rolename = {0}", roleName);            
+                Debug.LogWarningFormat("Cannot create role! Rolename = {0}", roleName);
             var r = (type == null) ? new Blank() : Activator.CreateInstance(type) as RoleBase;
             pool.Add(roleName, r);
             return r;

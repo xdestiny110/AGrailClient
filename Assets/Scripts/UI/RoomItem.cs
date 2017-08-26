@@ -43,7 +43,7 @@ namespace AGrail
                     case network.ROLE_STRATEGY.ROLE_STRATEGY_CM:
                         roomMode.text = "CM";
                         GetComponent<Button>().interactable = false;
-                        break;                    
+                        break;
                     case network.ROLE_STRATEGY.ROLE_STRATEGY_RANDOM:
                         roomMode.text = "随机";
                         break;
@@ -62,13 +62,13 @@ namespace AGrail
                 else
                     roomNeedPassword.enabled = false;
             }
-        }        
+        }
 
         public void OnClick()
         {
             if (roomInfo.has_password)
             {
-                GameManager.UIInstance.PushWindow(Framework.UI.WindowType.InputBox, Framework.UI.WinMsg.Pause, -1, Vector3.zero, 
+                GameManager.UIInstance.PushWindow(Framework.UI.WindowType.InputBox, Framework.UI.WinMsg.Pause, -1, Vector3.zero,
                     new Action<string>((str) => { GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.Resume); Lobby.Instance.JoinRoom(roomInfo, str); }),
                     new Action<string>((str) => { GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.Resume); }),
                     "请输入暗号");

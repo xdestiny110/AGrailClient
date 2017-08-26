@@ -89,8 +89,8 @@ namespace AGrail
                 case (uint)SkillID.镜花水月:
                     return isCovered &&
                         (BattleData.Instance.Agent.SelectCards.Count == 0 || Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Element == card.Element);
-                case (uint)SkillID.倒逆之蝶:                    
-                    return (isCovered && additionalState == 24082) || 
+                case (uint)SkillID.倒逆之蝶:
+                    return (isCovered && additionalState == 24082) ||
                         (additionalState == 0 && !isCovered && BattleData.Instance.Agent.SelectCards.Count != MaxSelectCard(uiState));
             }
             return base.CanSelect(uiState, card, isCovered);
@@ -263,7 +263,7 @@ namespace AGrail
                     if(BattleData.Instance.Agent.SelectCards.Count == MaxSelectCard(state))
                     {
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentHandChange, false);
-                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, 
+                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null,
                             BattleData.Instance.Agent.SelectCards, new List<uint>() { 1 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                         return;
@@ -335,7 +335,7 @@ namespace AGrail
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.AgentHandChange, false);
                         BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
                     };
-                    if (additionalState == 0 && msg == UIStateMsg.ClickSkill)                    
+                    if (additionalState == 0 && msg == UIStateMsg.ClickSkill)
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     else if (additionalState == 0 && msg == UIStateMsg.ClickArgs)
                     {

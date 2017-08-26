@@ -27,7 +27,7 @@ namespace AGrail
         public StateIdle(StateMachine<UIStateMsg> machine) : base(machine) { }
 
         public override void Enter(UIStateMsg msg, params object[] paras)
-        {            
+        {
             BattleData.Instance.Agent.SelectCards.Clear();
             BattleData.Instance.Agent.SelectPlayers.Clear();
             BattleData.Instance.Agent.SelectSkill = null;

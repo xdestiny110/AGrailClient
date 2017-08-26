@@ -67,7 +67,7 @@ namespace AGrail
                 case 1303:
                     return card.Element == Card.CardElement.earth;
                 case 1304:
-                    return BattleData.Instance.Agent.SelectArgs.Count == 1 && 
+                    return BattleData.Instance.Agent.SelectArgs.Count == 1 &&
                         (BattleData.Instance.Agent.SelectCards.Count == 0 ||
                         card.Element == Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Element);
             }
@@ -132,7 +132,7 @@ namespace AGrail
             {
                 case 1301:
                 case 1305:
-                    return true;                               
+                    return true;
             }
             return base.CheckOK(uiState, cardIDs, playerIDs, skillID);
         }
@@ -180,13 +180,13 @@ namespace AGrail
                     return;
                 case 1304:
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
-                    CancelAction = () => 
+                    CancelAction = () =>
                     {
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
                     };
                     if(BattleData.Instance.Agent.SelectArgs.Count == 0)
-                    {                        
+                    {
                         var selectList = new List<List<uint>>();
                         var explainList = new List<string>();
                         for (uint i = BattleData.Instance.MainPlayer.heal_count; i >= 2; i--)

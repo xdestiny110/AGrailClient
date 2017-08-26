@@ -66,7 +66,7 @@ namespace AGrail
                             heros[j].SetActive(false);
                         else
                             heros[j].GetComponent<Button>().interactable = false;
-                    }                        
+                    }
                     info.text = "等待他人选择角色";
                     StartCoroutine(waitOthers());
                 });

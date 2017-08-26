@@ -30,7 +30,7 @@ namespace AGrail
                 FSM.ChangeState(calUIState(agentState), true, UIStateMsg.Init);
             }
         }
-        
+
         public RoleBase PlayerRole { get; private set; }
         public network.Command Cmd { get; set; }
 
@@ -47,7 +47,7 @@ namespace AGrail
                 while (SelectPlayers.Count > PlayerRole.MaxSelectPlayer(FSM.Current.StateNumber))
                     SelectPlayers.RemoveAt(0);
             }
-            MessageSystem<MessageType>.Notify(MessageType.AgentSelectPlayer);            
+            MessageSystem<MessageType>.Notify(MessageType.AgentSelectPlayer);
             FSM.HandleMessage(UIStateMsg.ClickPlayer);
         }
 
@@ -81,7 +81,7 @@ namespace AGrail
         public void RemoveSelectCard(uint cardID)
         {
             if (SelectCards.Contains(cardID))
-                SelectCards.Remove(cardID);               
+                SelectCards.Remove(cardID);
             MessageSystem<MessageType>.Notify(MessageType.AgentSelectCard);
             FSM.HandleMessage(UIStateMsg.ClickCard);
         }
@@ -138,7 +138,7 @@ namespace AGrail
                 return typeof(StateActionNone);
             return typeof(StateIdle);
         }
-    }    
+    }
 
 }
 

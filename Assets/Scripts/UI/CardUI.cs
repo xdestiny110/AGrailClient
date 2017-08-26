@@ -53,7 +53,7 @@ namespace AGrail
                     for (int i = 0; i < elementRoot.childCount; i++)
                         elementRoot.GetChild(i).GetComponent<Image>().color = Color.white;
                     canSelectBorder.enabled = true;
-                }                    
+                }
             }
             get
             {
@@ -70,7 +70,7 @@ namespace AGrail
                 image.sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("card", card.AssetPath);
                 for (int i = 0; i < propertyRoot.childCount; i++)
                     propertyRoot.GetChild(i).gameObject.SetActive(false);
-                if (card.Property != Card.CardProperty.无)                
+                if (card.Property != Card.CardProperty.无)
                     propertyRoot.Find(card.Property.ToString()).gameObject.SetActive(true);
                 for (int i = 0; i < elementRoot.childCount; i++)
                     elementRoot.GetChild(i).gameObject.SetActive(false);
@@ -111,7 +111,7 @@ namespace AGrail
                     {
                         selectBorder.enabled = false;
                         canSelectBorder.enabled = IsEnable;
-                    }                        
+                    }
                     break;
             }
         }
@@ -132,7 +132,7 @@ namespace AGrail
         {
             isDisappear = true;
             Invoke("disappear", 3);
-        }        
+        }
 
         public void OnPointerEnter(BaseEventData eventData)
         {

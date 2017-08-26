@@ -65,13 +65,13 @@ namespace Framework.Log
                 default:
                     log(logType, context, format, args);
                     break;
-            }            
+            }
         }
 
         public void Close()
         {
-            Debug.Log("Close log file");            
-            thFlag = false;            
+            Debug.Log("Close log file");
+            thFlag = false;
         }
 
         private void HandleLog(string log, string stackTrace, LogType type)

@@ -39,7 +39,7 @@ namespace Framework
                     foreach (var v in listeners)
                     {
                         v.OnEventTrigger(eventType, parameters);
-                    }                        
+                    }
                 }
             }
         }
