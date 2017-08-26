@@ -12,13 +12,13 @@ namespace AGrail
         [SerializeField]
         private Transform root;
         [SerializeField]
-        private GameObject btnStart;        
+        private GameObject btnStart;
         [SerializeField]
         private GameObject loginInput;
         [SerializeField]
         private InputField inptUserName;
         [SerializeField]
-        private InputField inptPassword;        
+        private InputField inptPassword;
         [SerializeField]
         private Text txtStatus;
         [SerializeField]
@@ -26,7 +26,9 @@ namespace AGrail
         [SerializeField]
         private Button btnSwitchAccount;
         [SerializeField]
-        private Transform titleImg;        
+        private Transform titleImg;
+        [SerializeField]
+        private Text txtVersion;
 
         public override WindowType Type
         {
@@ -38,6 +40,7 @@ namespace AGrail
 
         public override void Awake()
         {
+            txtVersion.text = "Ver." + Application.version;
             state = UserData.Instance.State;
             MessageSystem<MessageType>.Regist(MessageType.LoginState, this);
             btnSwitchAccount.onClick.AddListener(() =>

@@ -158,8 +158,6 @@ namespace AGrail
                 {
                     MessageSystem<MessageType>.Notify(MessageType.CrystalChange, Team.Red, (int)value.red_crystal - (int)Crystal[(int)Team.Red]);
                     Crystal[(int)Team.Red] = value.red_crystal;
-                    if (value.red_crystal == 5)
-                        MessageSystem<MessageType>.Notify((MainPlayer.team == (uint)Team.Red) ? MessageType.Win : MessageType.Lose);
                 }
                 if (value.blue_grailSpecified)
                 {
@@ -172,6 +170,8 @@ namespace AGrail
                 {
                     MessageSystem<MessageType>.Notify(MessageType.GrailChange, Team.Red, value.red_grail - Grail[(int)Team.Red]);
                     Grail[(int)Team.Red] = value.red_grail;
+                    if (value.red_grail == 5)
+                        MessageSystem<MessageType>.Notify((MainPlayer.team == (uint)Team.Red) ? MessageType.Win : MessageType.Lose);
                 }
                 if (value.is_startedSpecified)
                 {
