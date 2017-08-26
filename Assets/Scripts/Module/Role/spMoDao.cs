@@ -218,7 +218,7 @@ namespace AGrail
                     };
                     return;
                 case 805:
-                    if (BattleData.Instance.Agent.SelectPlayers.Count == 2 && BattleData.Instance.Agent.SelectCards.Count == 1)
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == 1)
                     {
                         sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
                             BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state,
