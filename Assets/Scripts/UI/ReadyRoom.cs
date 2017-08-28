@@ -23,6 +23,10 @@ namespace AGrail
         private Button btnChooseBlueTeam;
         [SerializeField]
         private Button btnChooseRandomTeam;
+        [SerializeField]
+        private Button ChooseTeam;
+        [SerializeField]
+        private Button btnExit;
 
         public override WindowType Type
         {
@@ -112,6 +116,8 @@ namespace AGrail
 
         public void OnReadyClick()
         {
+            ChooseTeam.interactable = BattleData.Instance.MainPlayer.ready;
+            btnExit.interactable = BattleData.Instance.MainPlayer.ready;
             BattleData.Instance.Ready(!BattleData.Instance.MainPlayer.ready);
         }
 
