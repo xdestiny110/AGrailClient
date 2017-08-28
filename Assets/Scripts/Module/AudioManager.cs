@@ -113,11 +113,13 @@ namespace AGrail
                     playSEAudio(AssetBundleManager.Instance.LoadAsset<AudioClip>("audio", "sys-hurt"));
                     break;
                 case MessageType.MoraleChange:
-                    playSEAudio(AssetBundleManager.Instance.LoadAsset<AudioClip>("audio", "sys-morale"));
+                    if (GetComponent<BattleUIMobile>())
+                        playSEAudio(AssetBundleManager.Instance.LoadAsset<AudioClip>("audio", "sys-morale"));
                     break;
                 case MessageType.GemChange:
                 case MessageType.CrystalChange:
-                    playSEAudio(AssetBundleManager.Instance.LoadAsset<AudioClip>("audio", "sys-energy"));
+                    if (GetComponent<BattleUIMobile>())
+                        playSEAudio(AssetBundleManager.Instance.LoadAsset<AudioClip>("audio", "sys-energy"));
                     break;
                 case MessageType.ChooseRole:
                     playSEAudio(AssetBundleManager.Instance.LoadAsset<AudioClip>("audio", "sys-turn"));
