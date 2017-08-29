@@ -272,13 +272,14 @@ namespace AGrail
                     chatChange();
                     break;
                 case MessageType.POLLINGREQUEST:
+                    BattleData.Instance.Agent.AgentState = (int)PlayerAgentState.Polling;
                     var pollReq = parameters[0] as network.PollingRequest;
-                    var selectList = new List<List<int>>();
+                    var selectList = new List<List<uint>>();
                     var explainList = new List<string>();
-                    for(int i = 0; i < pollReq.options.Count; i++)
+                    for(uint i = 0; i < pollReq.options.Count; i++)
                     {
-                        selectList.Add(new List<int>() { i });
-                        explainList.Add(pollReq.options[i]);
+                        selectList.Add(new List<uint>() { i });
+                        explainList.Add(pollReq.options[(int)i]);
                     }
                     MessageSystem<MessageType>.Notify(MessageType.ShowNewArgsUI, selectList, explainList);
                     break;

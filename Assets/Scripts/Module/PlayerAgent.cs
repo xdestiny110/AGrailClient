@@ -136,6 +136,8 @@ namespace AGrail
                 return typeof(StateSkill);
             if (state.Check(PlayerAgentState.ActionNone))
                 return typeof(StateActionNone);
+            if (state.Check(PlayerAgentState.Polling))
+                return typeof(StatePolling);
             return typeof(StateIdle);
         }
     }

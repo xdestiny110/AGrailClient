@@ -98,6 +98,8 @@ public class ProtoSerializer
             case ProtoNameIds.TALK: Serializer.Serialize(stream, (network.Talk)proto); break;
             case ProtoNameIds.GOSSIP: Serializer.Serialize(stream, (network.Gossip)proto); break;
             case ProtoNameIds.ERROR: Serializer.Serialize(stream, (network.Error)proto); break;
+            case ProtoNameIds.POLLINGREQUEST: Serializer.Serialize(stream, (network.PollingRequest)proto); break;
+            case ProtoNameIds.POLLINGRESPONSE: Serializer.Serialize(stream, (network.PollingResponse)proto); break;
             case ProtoNameIds.ROLEREQUEST: Serializer.Serialize(stream, (network.RoleRequest)proto); break;
             case ProtoNameIds.PICKBAN: Serializer.Serialize(stream, (network.PickBan)proto); break;
             case ProtoNameIds.ACTION: Serializer.Serialize(stream, (network.Action)proto); break;

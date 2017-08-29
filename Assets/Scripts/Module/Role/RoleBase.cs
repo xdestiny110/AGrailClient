@@ -879,6 +879,15 @@ namespace AGrail
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(3106, 1));
 
                     return;
+                case 999:
+                    if (msg == UIStateMsg.ClickArgs)
+                    {
+                        PollingResponse proto = new PollingResponse() {option = BattleData.Instance.Agent.SelectArgs[0] };
+                        GameManager.TCPInstance.Send(new Protobuf() { Proto = proto, ProtoID = ProtoNameIds.POLLINGRESPONSE });
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, "已投票，请稍等");
+                    }
+                    return;
             }
             if (BattleData.Instance.Agent.AgentState.Check(PlayerAgentState.CanResign))
                 ResignAction = () =>
