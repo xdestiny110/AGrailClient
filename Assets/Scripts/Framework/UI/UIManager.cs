@@ -100,6 +100,8 @@ namespace Framework.UI
 
         public WindowType PeekWindow()
         {
+            if (winStack.Count == 0)
+                return WindowType.None;
             return winStack.Last().Type;
         }
 

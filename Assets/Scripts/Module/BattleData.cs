@@ -5,6 +5,7 @@ using Framework.Message;
 using Framework.Network;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace AGrail
 {
@@ -61,6 +62,8 @@ namespace AGrail
                     gameInfo = parameters[0] as network.GameInfo;
                     break;
                 case MessageType.COMMANDREQUEST:
+                    if(SceneManager.GetActiveScene().buildIndex == 1)
+                        MessageSystem<MessageType>.Notify(MessageType.GameStart);
                     cmdReq = parameters[0] as network.CommandRequest;
                     break;
                 case MessageType.ERROR:
@@ -184,38 +187,29 @@ namespace AGrail
                     if (value.red_grail == 5)
                         MessageSystem<MessageType>.Notify((MainPlayer.team == (uint)Team.Red) ? MessageType.Win : MessageType.Lose);
                 }
-                if (value.is_startedSpecified)
+                if (value.player_infos.Count == Lobby.Instance.SelectRoom.max_player && !IsStarted)
                 {
                     //游戏开始，可能需要重新定位玩家位置
-                    if (!IsStarted && value.is_started)
+                    IsStarted = true;
+                    PlayerIdxOrder.Clear();
+                    int t = -1;
+                    StartPlayerID = value.player_infos[0].id;
+                    for (int i = 0; i < value.player_infos.Count; i++)
                     {
-                        PlayerIdxOrder.Clear();
-                        int t = -1;
-                        StartPlayerID = value.player_infos[0].id;
-                        for (int i = 0; i < value.player_infos.Count; i++)
+                        PlayerIdxOrder.Add((int)value.player_infos[i].id);
+                        if (value.player_infos[i].id == PlayerID)
                         {
-                            PlayerIdxOrder.Add((int)value.player_infos[i].id);
-                            if (value.player_infos[i].id == PlayerID)
-                            {
-                                MainPlayer = value.player_infos[i];
-                                t = i;
-                            }
+                            MainPlayer = value.player_infos[i];
+                            t = i;
                         }
-                        if (t != -1)
-                        {
-                            PlayerIdxOrder.AddRange(PlayerIdxOrder.GetRange(0, t));
-                            PlayerIdxOrder.RemoveRange(0, t);
-                        }
-                        if (value.player_id == 9)
-                            MainPlayer = new network.SinglePlayerInfo() { id = 9, team = (uint)Team.Other };
-                        MessageSystem<MessageType>.Notify(MessageType.GameStart);
                     }
-                    //需要再发一次准备
-                    //以前是不用的...不知道现在改成这样的目的是什么
-                    var proto = new network.ReadyForGameRequest() { type = network.ReadyForGameRequest.Type.SEAT_READY };
-                    GameManager.TCPInstance.Send(new Protobuf() { Proto = proto, ProtoID = ProtoNameIds.READYFORGAMEREQUEST });
-                    IsStarted = value.is_started;
-                    MessageSystem<MessageType>.Notify(MessageType.GameStart);
+                    if (t != -1)
+                    {
+                        PlayerIdxOrder.AddRange(PlayerIdxOrder.GetRange(0, t));
+                        PlayerIdxOrder.RemoveRange(0, t);
+                    }
+                    if (value.player_id == 9)
+                        MainPlayer = new network.SinglePlayerInfo() { id = 9, team = (uint)Team.Other };
                 }
                 foreach (var v in value.player_infos)
                 {
@@ -315,11 +309,17 @@ namespace AGrail
                         MessageSystem<MessageType>.Notify(MessageType.PlayerTokenChange,
                             idx, player.yellow_token, player.blue_token, player.covered_count);
                     if (v.basic_cards.Count > 0 && player != v)
-                            player.basic_cards = v.basic_cards;
+                    {
+                        player.basic_cards.Clear();
+                        player.basic_cards.AddRange(v.basic_cards);
+                    }
                     if (v.ex_cards.Count > 0)
                     {
                         if(player != v)
-                            player.ex_cards = v.ex_cards;
+                        {
+                            player.ex_cards.Clear();
+                            player.ex_cards.AddRange(v.ex_cards);
+                        }                            
                         //为了进行卡牌编号的区分, 专有牌的序号都+1000
                         for (int i = 0; i < player.ex_cards.Count; i++)
                             player.ex_cards[i] += 1000;
@@ -329,9 +329,9 @@ namespace AGrail
                         foreach(var u in v.delete_field)
                         {
                             if (u == "ex_cards")
-                                player.ex_cards = new List<uint>();
+                                player.ex_cards.Clear();
                             if (u == "basic_cards")
-                                player.basic_cards = new List<uint>();
+                                player.basic_cards.Clear();
                         }
                     }
                     if(v.basic_cards.Count > 0 || v.ex_cards.Count > 0 || v.delete_field.Count > 0)
