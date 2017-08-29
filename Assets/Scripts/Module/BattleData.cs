@@ -5,7 +5,6 @@ using Framework.Message;
 using Framework.Network;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace AGrail
 {
@@ -62,8 +61,6 @@ namespace AGrail
                     gameInfo = parameters[0] as network.GameInfo;
                     break;
                 case MessageType.COMMANDREQUEST:
-                    if(SceneManager.GetActiveScene().buildIndex == 1)
-                        MessageSystem<MessageType>.Notify(MessageType.GameStart);
                     cmdReq = parameters[0] as network.CommandRequest;
                     break;
                 case MessageType.ERROR:
@@ -187,29 +184,35 @@ namespace AGrail
                     if (value.red_grail == 5)
                         MessageSystem<MessageType>.Notify((MainPlayer.team == (uint)Team.Red) ? MessageType.Win : MessageType.Lose);
                 }
-                if (value.player_infos.Count == Lobby.Instance.SelectRoom.max_player && !IsStarted)
+                if (value.is_startedSpecified)
                 {
                     //游戏开始，可能需要重新定位玩家位置
-                    IsStarted = true;
-                    PlayerIdxOrder.Clear();
-                    int t = -1;
-                    StartPlayerID = value.player_infos[0].id;
-                    for (int i = 0; i < value.player_infos.Count; i++)
+                    if (!IsStarted && value.is_started)
                     {
-                        PlayerIdxOrder.Add((int)value.player_infos[i].id);
-                        if (value.player_infos[i].id == PlayerID)
+                        PlayerIdxOrder.Clear();
+                        int t = -1;
+                        StartPlayerID = value.player_infos[0].id;
+                        for (int i = 0; i < value.player_infos.Count; i++)
                         {
-                            MainPlayer = value.player_infos[i];
-                            t = i;
+                            PlayerIdxOrder.Add((int)value.player_infos[i].id);
+                            if (value.player_infos[i].id == PlayerID)
+                            {
+                                MainPlayer = value.player_infos[i];
+                                t = i;
+                            }
                         }
+                        if (t != -1)
+                        {
+                            PlayerIdxOrder.AddRange(PlayerIdxOrder.GetRange(0, t));
+                            PlayerIdxOrder.RemoveRange(0, t);
+                        }
+                        if (value.player_id == 9)
+                            MainPlayer = new network.SinglePlayerInfo() { id = 9, team = (uint)Team.Other };
+                        MessageSystem<MessageType>.Notify(MessageType.GameStart);
                     }
-                    if (t != -1)
-                    {
-                        PlayerIdxOrder.AddRange(PlayerIdxOrder.GetRange(0, t));
-                        PlayerIdxOrder.RemoveRange(0, t);
-                    }
-                    if (value.player_id == 9)
-                        MainPlayer = new network.SinglePlayerInfo() { id = 9, team = (uint)Team.Other };
+                    //需要再发一次准备
+                    //以前是不用的...不知道现在改成这样的目的是什么
+                    MessageSystem<MessageType>.Notify(MessageType.GameStart);
                 }
                 foreach (var v in value.player_infos)
                 {

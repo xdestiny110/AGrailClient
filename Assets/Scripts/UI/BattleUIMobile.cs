@@ -100,6 +100,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.TURNBEGIN, this);
             MessageSystem<MessageType>.Regist(MessageType.LogChange, this);
             MessageSystem<MessageType>.Regist(MessageType.ChatChange, this);
+            MessageSystem<MessageType>.Regist(MessageType.POLLINGREQUEST, this);
 
             //依据数据初始化界面
             MessageSystem<MessageType>.Notify(MessageType.PlayBGM);
@@ -160,6 +161,7 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.TURNBEGIN, this);
             MessageSystem<MessageType>.UnRegist(MessageType.LogChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.ChatChange, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.POLLINGREQUEST, this);
 
             base.OnDestroy();
         }
@@ -268,6 +270,17 @@ namespace AGrail
                     break;
                 case MessageType.ChatChange:
                     chatChange();
+                    break;
+                case MessageType.POLLINGREQUEST:
+                    var pollReq = parameters[0] as network.PollingRequest;
+                    var selectList = new List<List<int>>();
+                    var explainList = new List<string>();
+                    for(int i = 0; i < pollReq.options.Count; i++)
+                    {
+                        selectList.Add(new List<int>() { i });
+                        explainList.Add(pollReq.options[i]);
+                    }
+                    MessageSystem<MessageType>.Notify(MessageType.ShowNewArgsUI, selectList, explainList);
                     break;
             }
         }

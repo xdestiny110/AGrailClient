@@ -1438,8 +1438,26 @@ namespace network
     private bool ShouldSerializediscard() { return discardSpecified; }
     private void Resetdiscard() { discardSpecified = false; }
     
+
+    private bool? _is_started;
+    [global::ProtoBuf.ProtoMember(13, IsRequired = false, Name=@"is_started", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    public bool is_started
+    {
+      get { return _is_started?? (bool)false; }
+      set { _is_started = value; }
+    }
+    [global::System.Xml.Serialization.XmlIgnore]
+    [global::System.ComponentModel.Browsable(false)]
+    public bool is_startedSpecified
+    {
+      get { return _is_started != null; }
+      set { if (value == (_is_started== null)) _is_started = value ? is_started : (bool?)null; }
+    }
+    private bool ShouldSerializeis_started() { return is_startedSpecified; }
+    private void Resetis_started() { is_startedSpecified = false; }
+    
     private readonly global::System.Collections.Generic.List<network.SinglePlayerInfo> _player_infos = new global::System.Collections.Generic.List<network.SinglePlayerInfo>();
-    [global::ProtoBuf.ProtoMember(13, Name=@"player_infos", DataFormat = global::ProtoBuf.DataFormat.Default)]
+    [global::ProtoBuf.ProtoMember(14, Name=@"player_infos", DataFormat = global::ProtoBuf.DataFormat.Default)]
     public global::System.Collections.Generic.List<network.SinglePlayerInfo> player_infos
     {
       get { return _player_infos; }
