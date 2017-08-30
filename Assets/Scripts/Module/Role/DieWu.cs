@@ -344,7 +344,7 @@ namespace AGrail
                         selectCards.AddRange(BattleData.Instance.Agent.SelectCards);
                         BattleData.Instance.Agent.RemoveAllSelectCard();
                     }
-                    else if (additionalState == 0 && BattleData.Instance.Agent.SelectCards.Count == MaxSelectCard(state))
+                    if (additionalState == 0 && BattleData.Instance.Agent.SelectCards.Count == MaxSelectCard(state))
                     {
                         selectList.Add(new List<uint>() { 1 });
                         mList.Add("对目标角色造成1点无视治疗的法术伤害");
