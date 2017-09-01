@@ -1860,6 +1860,8 @@ MonoBehaviour:
   btnChooseRedTeam: {fileID: 114090275309909232}
   btnChooseBlueTeam: {fileID: 114643737530246612}
   btnChooseRandomTeam: {fileID: 114535190147482260}
+  ChooseTeam: {fileID: 114463328772962966}
+  btnExit: {fileID: 114008217083028532}
 --- !u!114 &114966367419471952
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -280,6 +280,8 @@ namespace AGrail
                         return true;
                     break;
                 case 5:
+                    if (BattleData.Instance.Agent.Cmd.args[0] == 801 || BattleData.Instance.Agent.Cmd.args[0] == 805)
+                        return !isCovered && card.Type == Card.CardType.magic;
                     return !isCovered;
                 case 8:
                     return isCovered;
@@ -494,7 +496,7 @@ namespace AGrail
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                        string.Format(StateHint.GetHint(StateEnum.Drop), BattleData.Instance.Agent.Cmd.args[1]));
+                        string.Format(StateHint.GetHint(StateEnum.Drop, (int)BattleData.Instance.Agent.Cmd.args[0]),BattleData.Instance.Agent.Cmd.args[1]));
                     break;
                 case (uint)StateEnum.Weaken:
                     //虚弱

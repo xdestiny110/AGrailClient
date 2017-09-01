@@ -92,14 +92,21 @@ namespace Framework.UI
                 throw new System.Exception("Winstack is empty!");
         }
 
+        public void PopAllWindow()
+        {
+            while (winStack.Count > 0)
+                PopWindow(WinMsg.None);
+        }
+
         public void ClearAllWindow()
         {
-            //只是全部弹出,用于切换场景
-            winStack.Clear();
+            winStack.Clear();            
         }
 
         public WindowType PeekWindow()
         {
+            if (winStack.Count == 0)
+                return WindowType.None;
             return winStack.Last().Type;
         }
 

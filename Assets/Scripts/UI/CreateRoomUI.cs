@@ -27,6 +27,12 @@ namespace AGrail
         private Toggle spMoDaoExtension;
         [SerializeField]
         private ToggleGroup seatModeChoose;
+        [SerializeField]
+        private Toggle seat3Combo;
+        [SerializeField]
+        private Toggle seatCM;
+        [SerializeField]
+        private Toggle seat2Combo;
 
         public override WindowType Type
         {
@@ -48,6 +54,23 @@ namespace AGrail
         {
             base.OnDestroy();
         }
+
+        public void On4PToggled()
+        {
+            if (fourPeople.isOn)
+            { 
+            seat3Combo.interactable = false;
+            seatCM.interactable = false;
+                if (seat3Combo.isOn || seatCM.isOn)
+                    seat2Combo.isOn = true;
+            }
+            else
+            {
+                seat3Combo.interactable = true;
+                seatCM.interactable = true;
+            }
+        }
+
 
         public void OnOKClick()
         {
