@@ -53,6 +53,12 @@ namespace AGrail
                 Skills.Add(i, Skill.GetSkill(i));
         }
 
+        public override bool CheckOK(uint uiState, List<uint> cardIDs, List<uint> playerIDs, uint? skillID)
+        {   if(uiState == 806)
+                    return cardIDs.Count > 0;
+            return base.CheckOK(uiState, cardIDs, playerIDs, skillID);
+        }
+
         public override bool CanSelect(uint uiState, Card card, bool isCovered)
         {
             switch (uiState)
@@ -216,6 +222,7 @@ namespace AGrail
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
+                    MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case 805:
                     if (BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == 1)

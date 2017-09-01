@@ -282,26 +282,26 @@ namespace AGrail
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);
                     };
+                    selectList = new List<List<uint>>() { new List<uint>() { 45 }, new List<uint>() { 133 },
+                        new List<uint>() { 87 }, new List<uint>() { 66 }, new List<uint>() { 110 }};
+                    explainList = new List<string>() { "地", "水", "火", "风", "雷" };
+                    if (Util.HasCard("same", BattleData.Instance.MainPlayer.hands, 3))
+                    {
+                        selectList.Insert(0, new List<uint>() { 39 });
+                        explainList.Insert(0, "暗");
+                    }
                     if (BattleData.Instance.Agent.SelectArgs.Count == 0)
                     {
 
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
-                        selectList = new List<List<uint>>() { new List<uint>() { 45 }, new List<uint>() { 133 },
-                        new List<uint>() { 87 }, new List<uint>() { 66 }, new List<uint>() { 110 }};
-                        explainList = new List<string>() { "地", "水", "火", "风", "雷" };
-                        if (Util.HasCard("same", BattleData.Instance.MainPlayer.hands, 3))
-                        {
-                            selectList.Insert(0, new List<uint>() { 39 });
-                            explainList.Insert(0,"暗");
-                        }
-
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, explainList);
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,StateHint.GetHint(state));
                     }
                     else
                     {
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state,1));
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, 
+                            string.Format( StateHint.GetHint(state,1), explainList[selectList.FindIndex(c => c[0].Equals(BattleData.Instance.Agent.SelectArgs[0]))]) );
                         if (BattleData.Instance.Agent.SelectArgs[0] == 39)
                             qizhaSelectCard = 3;
                         else
