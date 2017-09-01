@@ -65,7 +65,7 @@ namespace AGrail
                     break;
                 case MessageType.ERROR:
                     var error = parameters[0] as network.Error;
-                    if(error.id == 29)
+                    if (error.id == 29)
                     {
                         //离开房间
                         var idx = PlayerInfos.FindIndex(u =>
@@ -98,7 +98,7 @@ namespace AGrail
             var player = PlayerInfos.DefaultIfEmpty(null).FirstOrDefault(
                u =>
                {
-                  return u != null && u.id == playerID;
+                   return u != null && u.id == playerID;
                });
             return player;
         }
@@ -109,7 +109,7 @@ namespace AGrail
             {
                 NowPlayerID = (uint)value.id;
                 if (NowPlayerID == MainPlayer.id)
-                    //if (MainPlayer != null && MainPlayer.id != 9 )
+                //if (MainPlayer != null && MainPlayer.id != 9 )
                 {
                     Agent.PlayerRole.IsStart = false;
                     Agent.PlayerRole.attackable = true;
@@ -138,7 +138,7 @@ namespace AGrail
                         Dialog.instance.Log += "蓝方士气由" + Morale[(int)Team.Blue] + (Morale[(int)Team.Blue] > value.blue_morale ? "下降至" : "上升至") + value.blue_morale + "\n";
                     Morale[(int)Team.Blue] = value.blue_morale;
                     MessageSystem<MessageType>.Notify(MessageType.MoraleChange, Team.Blue, Morale[(int)Team.Blue]);
-                    if(value.blue_morale == 0)
+                    if (value.blue_morale == 0)
                         MessageSystem<MessageType>.Notify((MainPlayer.team == (uint)Team.Blue) ? MessageType.Lose : MessageType.Win);
                 }
                 if (value.red_moraleSpecified)
@@ -228,7 +228,7 @@ namespace AGrail
                         MainPlayer = player;
                     //这里可能有些乱...以后再整理吧
                     var idx = PlayerInfos.IndexOf(player);
-                    if(PlayerIdxOrder.Count > 0)
+                    if (PlayerIdxOrder.Count > 0)
                         idx = PlayerIdxOrder.IndexOf((int)player.id);
                     if (v.readySpecified)
                     {
@@ -264,14 +264,23 @@ namespace AGrail
                     if (v.max_handSpecified)
                         player.max_hand = v.max_hand;
                     if (v.hand_countSpecified)
+                    {
+                        int offset = (int)v.hand_count - (int)player.hand_count;
+                        if(offset!=0)
+                        {
+                            Dialog.instance.Log += RoleFactory.Create(player.role_id).RoleName + (player.hand_count > v.hand_count ? "失去了" : "获得了") + Math.Abs((int)player.hand_count - (int)v.hand_count) + "张手牌" + "\n";
+                                 
+                        }
                         player.hand_count = v.hand_count;
+                    }
+                       
                     if (v.max_handSpecified || v.hand_countSpecified)
                     {
                         MessageSystem<MessageType>.Notify(MessageType.PlayerHandChange, idx, player.hand_count, player.max_hand);
                         if (MainPlayer != null && player.id == MainPlayer.id && v.hand_countSpecified)
                         {
                             //如果两个是同一个引用则不清空
-                            if(player != v)
+                            if (player != v)
                             {
                                 player.hands.Clear();
                                 foreach (var u in v.hands)
@@ -281,7 +290,7 @@ namespace AGrail
                         }
                     }
                     if (v.heal_countSpecified)
-                    {
+                    {                   
                         Dialog.instance.Log += RoleFactory.Create(player.role_id).RoleName + (player.heal_count > v.heal_count ? "失去了" : "获得了") + Math.Abs((int)player.heal_count - (int)v.heal_count) + "点治疗" + "\n";
                         player.heal_count = v.heal_count;
                         MessageSystem<MessageType>.Notify(MessageType.PlayerHealChange, idx, player.heal_count);
@@ -300,12 +309,15 @@ namespace AGrail
                     {
                         if (player != v)
                         {
+                            //加入盖牌改变的log
+                            // UnityEngine.Debug.Log();
+                            Dialog.instance.Log +=RoleFactory.Create( player.role_id).RoleName+"的盖牌变为"+v.covered_count+Environment.NewLine;
                             player.covered_count = v.covered_count;
                             player.covereds.Clear();
                             foreach (var u in v.covereds)
                                 player.covereds.Add(u);
                         }
-                        if(MainPlayer != null && v.id == MainPlayer.id)
+                        if (MainPlayer != null && v.id == MainPlayer.id)
                             MessageSystem<MessageType>.Notify(MessageType.AgentHandChange);
                     }
                     if (v.yellow_tokenSpecified || v.blue_tokenSpecified || v.covered_countSpecified)
@@ -318,18 +330,18 @@ namespace AGrail
                     }
                     if (v.ex_cards.Count > 0)
                     {
-                        if(player != v)
+                        if (player != v)
                         {
                             player.ex_cards.Clear();
                             player.ex_cards.AddRange(v.ex_cards);
-                        }                            
+                        }
                         //为了进行卡牌编号的区分, 专有牌的序号都+1000
                         for (int i = 0; i < player.ex_cards.Count; i++)
                             player.ex_cards[i] += 1000;
                     }
-                    if(v.delete_field.Count > 0)
+                    if (v.delete_field.Count > 0)
                     {
-                        foreach(var u in v.delete_field)
+                        foreach (var u in v.delete_field)
                         {
                             if (u == "ex_cards")
                                 player.ex_cards.Clear();
@@ -337,7 +349,7 @@ namespace AGrail
                                 player.basic_cards.Clear();
                         }
                     }
-                    if(v.basic_cards.Count > 0 || v.ex_cards.Count > 0 || v.delete_field.Count > 0)
+                    if (v.basic_cards.Count > 0 || v.ex_cards.Count > 0 || v.delete_field.Count > 0)
                         MessageSystem<MessageType>.Notify(MessageType.PlayerBasicAndExCardChange, idx, player.basic_cards, player.ex_cards);
                 }
             }
@@ -380,10 +392,29 @@ namespace AGrail
                             break;
                         case (uint)network.BasicRespondType.RESPOND_DISCARD:
                             if (v.dst_ids[0] != MainPlayer.id)
-                            {
+                            {            
+                              if (v.args[0]==1)
+                                {
+                                   // MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, v.dst_ids[0], v.args[2],v.args[1]);
+                                    string heroName =RoleFactory.Create( GetPlayerInfo(v.dst_ids[0]).role_id).RoleName;
+                                 //   UnityEngine.Debug.Log("名字:"+heroName);
+                                    string isShow = v.args[2] == 1 ? "明弃" : "暗弃";
+                                 //   UnityEngine.Debug.Log("方式:" + isShow);
+                                    int numberOfDiscard =(int) v.args[1];
+                                  //  UnityEngine.Debug.Log("数量:" + numberOfDiscard);
+                                    string msg = heroName + "需要" + isShow + numberOfDiscard + "张牌"+Environment.NewLine;
+                                    Dialog.instance.Log += msg;
+                                  //  Dialog.instance.Log +=string.Format("玩家[0]需要[1][2]张牌",v.dst_ids[0], v.args[2] == 1 ? "明弃" : "暗弃", v.args[1]);
+                                    Agent.AgentState = (int)PlayerAgentState.Idle;
+                                    continue;
+                                }
+                                else                           
+                                {
                                 MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, v.dst_ids[0], "等待弃牌响应");
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
                                 continue;
+                                }
+
                             }
                             Agent.Cmd = v;
                             Agent.AgentState = (int)PlayerAgentState.Discard;
@@ -512,6 +543,7 @@ namespace AGrail
             }
         }
     }
+
 }
 
 
