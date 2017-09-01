@@ -110,7 +110,7 @@ namespace Framework.AssetBundle
             }
         }
         private const string remoteSrv = "http://101.201.155.94:5061/";
-        private const string version = "20170821";
+        private const string version = "20170901";
         private Dictionary<string, UnityEngine.AssetBundle> bundles = new Dictionary<string, UnityEngine.AssetBundle>();
         private List<WWW> wwws = new List<WWW>();
 
