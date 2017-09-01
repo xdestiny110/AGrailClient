@@ -23,10 +23,6 @@ namespace AGrail
         private Button btnChooseBlueTeam;
         [SerializeField]
         private Button btnChooseRandomTeam;
-        [SerializeField]
-        private Button ChooseTeam;
-        [SerializeField]
-        private Button btnExit;
 
         public override WindowType Type
         {
@@ -38,7 +34,6 @@ namespace AGrail
 
         public override void Awake()
         {
-            MessageSystem<MessageType>.Regist(MessageType.RoomIDChange, this);
             MessageSystem<MessageType>.Regist(MessageType.ChooseRole, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerLeave, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerIsReady, this);
@@ -72,7 +67,6 @@ namespace AGrail
 
         public override void OnDestroy()
         {
-            MessageSystem<MessageType>.UnRegist(MessageType.RoomIDChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.ChooseRole, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerLeave, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerIsReady, this);
@@ -86,9 +80,6 @@ namespace AGrail
         {
             switch (eventType)
             {
-                case MessageType.RoomIDChange:
-                    roomTitle.text = string.Format("{0} {1}", Lobby.Instance.SelectRoom.room_id, Lobby.Instance.SelectRoom.room_name);
-                    break;
                 case MessageType.ChooseRole:
                     var roleStrategy = (network.ROLE_STRATEGY)parameters[0];
                     switch (roleStrategy)
@@ -121,8 +112,6 @@ namespace AGrail
 
         public void OnReadyClick()
         {
-            ChooseTeam.interactable = BattleData.Instance.MainPlayer.ready;
-            btnExit.interactable = BattleData.Instance.MainPlayer.ready;
             BattleData.Instance.Ready(!BattleData.Instance.MainPlayer.ready);
         }
 

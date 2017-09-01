@@ -53,7 +53,6 @@
         RoomList,
         InputBox,
         EnterRoom,
-        RoomIDChange,
         GameStart,
         ChooseRole,
         MoraleChange,

@@ -124,8 +124,7 @@ namespace AGrail
                 if (value.room_idSpecified && !RoomID.HasValue)
                 {
                     RoomID = value.room_id;
-                    Lobby.Instance.SelectRoom.room_id = value.room_id;
-                    MessageSystem<MessageType>.Notify(MessageType.RoomIDChange);
+                    //MessageSystem<MessageType>.Notify(MessageType.EnterRoom);
                 }
                 if (value.player_idSpecified)
                 {

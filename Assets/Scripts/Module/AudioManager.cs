@@ -17,7 +17,6 @@ namespace AGrail
         public static AudioManager Instance { private set; get; }
         private List<AudioSource> ses = new List<AudioSource>();
         private AudioSource bgm;
-        private uint turn = 0;
 
         public float BGMVolume
         {
@@ -114,20 +113,17 @@ namespace AGrail
                     playSEAudio(AssetBundleManager.Instance.LoadAsset<AudioClip>("audio", "sys-hurt"));
                     break;
                 case MessageType.MoraleChange:
-                    if (turn!=0)
-                        playSEAudio(AssetBundleManager.Instance.LoadAsset<AudioClip>("audio", "sys-morale"));
+                    playSEAudio(AssetBundleManager.Instance.LoadAsset<AudioClip>("audio", "sys-morale"));
                     break;
                 case MessageType.GemChange:
                 case MessageType.CrystalChange:
-                    if (turn != 0)
-                        playSEAudio(AssetBundleManager.Instance.LoadAsset<AudioClip>("audio", "sys-energy"));
+                    playSEAudio(AssetBundleManager.Instance.LoadAsset<AudioClip>("audio", "sys-energy"));
                     break;
                 case MessageType.ChooseRole:
                     playSEAudio(AssetBundleManager.Instance.LoadAsset<AudioClip>("audio", "sys-turn"));
                     break;
                 case MessageType.TURNBEGIN:
                     var tb = parameters[0] as network.TurnBegin;
-                    turn = tb.round;
                     if (tb.idSpecified)
                         playSEAudio(AssetBundleManager.Instance.LoadAsset<AudioClip>("audio", BattleData.Instance.GetPlayerInfo(tb.id).role_id.ToString()));
                     break;
