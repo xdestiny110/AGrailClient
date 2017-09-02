@@ -25,8 +25,6 @@ namespace AGrail
         private Button btnSetting;
         [SerializeField]
         private Button btnCovered;
-        [SerializeField]
-        private GameObject winPanel;
 
         private List<PlayerStatusMobile> players;
         private List<SkillUI> skillUIs = new List<SkillUI>();
@@ -113,24 +111,6 @@ namespace AGrail
                 case MessageType.CloseNewArgsUI:
                     if (GameManager.UIInstance.PeekWindow() == Framework.UI.WindowType.ArgsUI)
                         GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
-                    break;
-                case MessageType.Win:
-                    winPanel.SetActive(true);
-                    winPanel.transform.GetChild(0).GetComponent<Image>().sprite =
-                        (BattleData.Instance.MainPlayer.team == (uint)Team.Blue) ?
-                        AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "WinBlue") :
-                        AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "WinRed");
-                    winPanel.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-                    winPanel.transform.DOScale(1, 1);
-                    break;
-                case MessageType.Lose:
-                    winPanel.SetActive(true);
-                    winPanel.transform.GetChild(0).GetComponent<Image>().sprite =
-                        (BattleData.Instance.MainPlayer.team == (uint)Team.Red) ?
-                        AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "WinBlue") :
-                        AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "WinRed");
-                    winPanel.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-                    winPanel.transform.DOScale(1, 1);
                     break;
             }
         }

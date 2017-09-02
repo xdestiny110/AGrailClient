@@ -24,6 +24,7 @@ namespace AGrail
         public List<int> PlayerIdxOrder = new List<int>();//按照顺序排列玩家ID, 第一个一定是主玩家
         public uint StartPlayerID = 0;//第一个行动玩家的ID
         public uint NowPlayerID = 0;//当前回合行动玩家的ID
+        public List<uint> DisConnectedPlayer = new List<uint>();
 
         public PlayerAgent Agent { get; private set; }
         public network.SinglePlayerInfo MainPlayer { get; private set; }
@@ -34,6 +35,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.GAMEINFO, this);
             MessageSystem<MessageType>.Regist(MessageType.COMMANDREQUEST, this);
             MessageSystem<MessageType>.Regist(MessageType.ERROR, this);
+            MessageSystem<MessageType>.Regist(MessageType.GOSSIP, this);
             Reset();
             var inst = RoleChoose.Instance;
         }
@@ -54,6 +56,16 @@ namespace AGrail
         {
             switch (eventType)
             {
+                case MessageType.GOSSIP:
+                    var gossip = parameters[0] as network.Gossip;
+                    if (gossip.idSpecified)
+                    {
+                        if (GameManager.UIInstance.PeekWindow() == Framework.UI.WindowType.DisConnectedPoll)
+                            GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
+                        if (DisConnectedPlayer.Contains(gossip.id))
+                            DisConnectedPlayer.Remove(gossip.id);
+                    }
+                    break;
                 case MessageType.TURNBEGIN:
                     turnBegin = parameters[0] as network.TurnBegin;
                     break;
@@ -65,14 +77,18 @@ namespace AGrail
                     break;
                 case MessageType.ERROR:
                     var error = parameters[0] as network.Error;
-                    if(error.id == 29)
+                    if(error.id == 30)
                     {
                         //离开房间
                         var idx = PlayerInfos.FindIndex(u =>
                         {
                             return u != null && u.id == error.dst_id;
                         });
+                        if(!DisConnectedPlayer.Contains((uint)error.dst_id))
+                        {
+                        DisConnectedPlayer.Add((uint)error.dst_id);
                         MessageSystem<MessageType>.Notify(MessageType.PlayerLeave, error.dst_id, idx);
+                        }
                     }
                     break;
             }

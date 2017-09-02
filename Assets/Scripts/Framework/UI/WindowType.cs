@@ -18,5 +18,6 @@
         RoleChooseAny,
         SpecialActionUI,
         Loading,
+        DisConnectedPoll
     }
 }
