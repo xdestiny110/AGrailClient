@@ -140,7 +140,8 @@ namespace AGrail
                 if (value.room_idSpecified && !RoomID.HasValue)
                 {
                     RoomID = value.room_id;
-                    //MessageSystem<MessageType>.Notify(MessageType.EnterRoom);
+                    Lobby.Instance.SelectRoom.room_id = value.room_id;
+                    MessageSystem<MessageType>.Notify(MessageType.RoomIDChange);
                 }
                 if (value.player_idSpecified)
                 {
@@ -229,6 +230,7 @@ namespace AGrail
                     //需要再发一次准备
                     //以前是不用的...不知道现在改成这样的目的是什么
                     MessageSystem<MessageType>.Notify(MessageType.GameStart);
+                    IsStarted = value.is_started;
                 }
                 foreach (var v in value.player_infos)
                 {

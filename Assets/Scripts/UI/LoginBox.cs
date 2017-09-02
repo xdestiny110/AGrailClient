@@ -62,6 +62,13 @@ namespace AGrail
             root.transform.DOLocalMoveX(-1280, 1.0f);
         }
 
+        public override void OnShow()
+        {
+            root.transform.localPosition = new Vector3(-1280, 0, 0);
+            root.transform.DOLocalMoveX(0, 1.0f);
+            base.OnShow();
+        }
+
         public override void OnEventTrigger(MessageType eventType, params object[] parameters)
         {
             switch (eventType)

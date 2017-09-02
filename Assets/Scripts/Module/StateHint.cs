@@ -18,7 +18,10 @@ namespace AGrail
 
         public static string GetHint(StateEnum state, int additional = 0)
         {
-            return hint[state.ToString()][additional.ToString()];
+            if (hint[state.ToString()].ContainsKey(additional.ToString()))
+                return hint[state.ToString()][additional.ToString()];
+            else
+                return hint[state.ToString()]["0"];
         }
 
         public static string GetHint(uint state, int additional = 0)

@@ -159,23 +159,27 @@ namespace AGrail
             for (int i = 0; i < handArea.childCount; i++)
                 Destroy(handArea.GetChild(i).gameObject);
             cardUIs.Clear();
-            List<uint> cards = isShowCovered ? BattleData.Instance.MainPlayer.covereds : BattleData.Instance.MainPlayer.hands;
-            var cardPrefab = AssetBundleManager.Instance.LoadAsset("battle", "Card");
-            foreach (var v in cards)
+            if(BattleData.Instance.MainPlayer != null)
             {
-                var go = Instantiate(cardPrefab);
-                go.transform.SetParent(handArea);
-                go.transform.localPosition = Vector3.zero;
-                go.transform.localRotation = Quaternion.identity;
-                go.transform.localScale = Vector3.one;
-                var cardUI = go.GetComponent<CardUI>();
-                cardUI.Card = Card.GetCard(v);
-                cardUIs.Add(cardUI);
+                List<uint> cards = isShowCovered ? BattleData.Instance.MainPlayer.covereds : BattleData.Instance.MainPlayer.hands;
+                var cardPrefab = AssetBundleManager.Instance.LoadAsset("battle", "Card");
+                foreach (var v in cards)
+                {
+                    var go = Instantiate(cardPrefab);
+                    go.transform.SetParent(handArea);
+                    go.transform.localPosition = Vector3.zero;
+                    go.transform.localRotation = Quaternion.identity;
+                    go.transform.localScale = Vector3.one;
+                    var cardUI = go.GetComponent<CardUI>();
+                    cardUI.Card = Card.GetCard(v);
+                    cardUIs.Add(cardUI);
+                }
             }
         }
 
         private void onUIStateChange()
         {
+            if (!BattleData.Instance.IsStarted) return;
             //UI状态变化，确认哪些能够选择
             foreach (var v in cardUIs)
             {
