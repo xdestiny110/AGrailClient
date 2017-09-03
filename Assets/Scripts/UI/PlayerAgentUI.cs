@@ -25,6 +25,8 @@ namespace AGrail
         private Button btnSetting;
         [SerializeField]
         private Button btnCovered;
+        [SerializeField]
+        private GameObject winPanel;
 
         private List<PlayerStatusMobile> players;
         private List<SkillUI> skillUIs = new List<SkillUI>();
@@ -44,16 +46,13 @@ namespace AGrail
 
             MessageSystem<MessageType>.Regist(MessageType.AgentUpdate, this);
             MessageSystem<MessageType>.Regist(MessageType.AgentHandChange, this);
+            MessageSystem<MessageType>.Regist(MessageType.AgentStateChange, this);
             MessageSystem<MessageType>.Regist(MessageType.AgentSelectSkill, this);
             MessageSystem<MessageType>.Regist(MessageType.AgentUIStateChange, this);
             MessageSystem<MessageType>.Regist(MessageType.ShowNewArgsUI, this);
             MessageSystem<MessageType>.Regist(MessageType.CloseNewArgsUI, this);
             MessageSystem<MessageType>.Regist(MessageType.Lose, this);
             MessageSystem<MessageType>.Regist(MessageType.Win, this);
-
-            //初始化界面
-            MessageSystem<MessageType>.Notify(MessageType.AgentHandChange);
-            BattleData.Instance.Agent.AgentState = BattleData.Instance.Agent.AgentState;
 
             MessageSystem<MessageType>.Notify(MessageType.AgentUpdate);
         }
@@ -104,13 +103,48 @@ namespace AGrail
                     else
                         updateAgentCards();
                     break;
+                case MessageType.AgentStateChange:
+                    //保证在初始状态
+                    //foreach (var v in cardUIs)
+                    //        v.IsEnable = false;
+                    //foreach (var v in skillUIs)
+                    //        v.IsEnable = false;
+                    //foreach (var v in players)
+                    //        v.IsEnable = false;
+                    //btnOK.gameObject.SetActive(false);
+                    //btnCancel.gameObject.SetActive(false);
+                    //while (GameManager.UIInstance.PeekWindow() != Framework.UI.WindowType.BattleUIMobile)
+                    //    GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
+                    break;
                 case MessageType.ShowNewArgsUI:
                     if (GameManager.UIInstance.PeekWindow() != Framework.UI.WindowType.ArgsUI)
+                    { 
+                        if (GameManager.UIInstance.PeekWindow() == Framework.UI.WindowType.InfomationUI)
+                            GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
                         GameManager.UIInstance.PushWindow(Framework.UI.WindowType.ArgsUI, Framework.UI.WinMsg.None, -1, Vector3.zero, parameters);
+                    }
                     break;
                 case MessageType.CloseNewArgsUI:
                     if (GameManager.UIInstance.PeekWindow() == Framework.UI.WindowType.ArgsUI)
                         GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
+                    break;
+                case MessageType.Win:
+                    winPanel.SetActive(true);
+                    winPanel.transform.GetChild(0).GetComponent<Image>().sprite =
+                        (BattleData.Instance.MainPlayer.team == (uint)Team.Blue) ?
+                        AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "WinBlue") :
+                        AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "WinRed");
+                    winPanel.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                    winPanel.transform.DOScale(1, 1);
+                    break;
+                case MessageType.Lose:
+                    winPanel.SetActive(true);
+                    winPanel.transform.GetChild(0).GetComponent<Image>().sprite =
+                        (BattleData.Instance.MainPlayer.team == (uint)Team.Red) ?
+                        AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "WinBlue") :
+                        AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "WinRed");
+                    winPanel.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                    winPanel.transform.DOScale(1, 1);
                     break;
             }
         }
@@ -159,27 +193,23 @@ namespace AGrail
             for (int i = 0; i < handArea.childCount; i++)
                 Destroy(handArea.GetChild(i).gameObject);
             cardUIs.Clear();
-            if(BattleData.Instance.MainPlayer != null)
+            List<uint> cards = isShowCovered ? BattleData.Instance.MainPlayer.covereds : BattleData.Instance.MainPlayer.hands;
+            var cardPrefab = AssetBundleManager.Instance.LoadAsset("battle", "Card");
+            foreach (var v in cards)
             {
-                List<uint> cards = isShowCovered ? BattleData.Instance.MainPlayer.covereds : BattleData.Instance.MainPlayer.hands;
-                var cardPrefab = AssetBundleManager.Instance.LoadAsset("battle", "Card");
-                foreach (var v in cards)
-                {
-                    var go = Instantiate(cardPrefab);
-                    go.transform.SetParent(handArea);
-                    go.transform.localPosition = Vector3.zero;
-                    go.transform.localRotation = Quaternion.identity;
-                    go.transform.localScale = Vector3.one;
-                    var cardUI = go.GetComponent<CardUI>();
-                    cardUI.Card = Card.GetCard(v);
-                    cardUIs.Add(cardUI);
-                }
+                var go = Instantiate(cardPrefab);
+                go.transform.SetParent(handArea);
+                go.transform.localPosition = Vector3.zero;
+                go.transform.localRotation = Quaternion.identity;
+                go.transform.localScale = Vector3.one;
+                var cardUI = go.GetComponent<CardUI>();
+                cardUI.Card = Card.GetCard(v);
+                cardUIs.Add(cardUI);
             }
         }
 
         private void onUIStateChange()
         {
-            if (!BattleData.Instance.IsStarted) return;
             //UI状态变化，确认哪些能够选择
             foreach (var v in cardUIs)
             {
