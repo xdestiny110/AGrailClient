@@ -24,6 +24,7 @@ namespace AGrail
         public List<int> PlayerIdxOrder = new List<int>();//按照顺序排列玩家ID, 第一个一定是主玩家
         public uint StartPlayerID = 0;//第一个行动玩家的ID
         public uint NowPlayerID = 0;//当前回合行动玩家的ID
+        public List<uint> DisConnectedPlayer = new List<uint>();
 
         public PlayerAgent Agent { get; private set; }
         public network.SinglePlayerInfo MainPlayer { get; private set; }
@@ -34,6 +35,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.GAMEINFO, this);
             MessageSystem<MessageType>.Regist(MessageType.COMMANDREQUEST, this);
             MessageSystem<MessageType>.Regist(MessageType.ERROR, this);
+            MessageSystem<MessageType>.Regist(MessageType.GOSSIP, this);
             Reset();
             var inst = RoleChoose.Instance;
         }
@@ -54,6 +56,16 @@ namespace AGrail
         {
             switch (eventType)
             {
+                case MessageType.GOSSIP:
+                    var gossip = parameters[0] as network.Gossip;
+                    if (gossip.idSpecified)
+                    {
+                        if (GameManager.UIInstance.PeekWindow() == Framework.UI.WindowType.DisConnectedPoll)
+                            GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
+                        if (DisConnectedPlayer.Contains(gossip.id))
+                            DisConnectedPlayer.Remove(gossip.id);
+                    }
+                    break;
                 case MessageType.TURNBEGIN:
                     turnBegin = parameters[0] as network.TurnBegin;
                     break;
@@ -65,14 +77,18 @@ namespace AGrail
                     break;
                 case MessageType.ERROR:
                     var error = parameters[0] as network.Error;
-                    if(error.id == 29)
+                    if(error.id == 30)
                     {
                         //离开房间
                         var idx = PlayerInfos.FindIndex(u =>
                         {
                             return u != null && u.id == error.dst_id;
                         });
+                        if(!DisConnectedPlayer.Contains((uint)error.dst_id))
+                        {
+                        DisConnectedPlayer.Add((uint)error.dst_id);
                         MessageSystem<MessageType>.Notify(MessageType.PlayerLeave, error.dst_id, idx);
+                        }
                     }
                     break;
             }
@@ -213,10 +229,8 @@ namespace AGrail
                     }
                     //需要再发一次准备
                     //以前是不用的...不知道现在改成这样的目的是什么
-                    var proto = new network.ReadyForGameRequest() { type = network.ReadyForGameRequest.Type.SEAT_READY };
-                    GameManager.TCPInstance.Send(new Protobuf() { Proto = proto, ProtoID = ProtoNameIds.READYFORGAMEREQUEST });
-                    IsStarted = value.is_started;
                     MessageSystem<MessageType>.Notify(MessageType.GameStart);
+                    IsStarted = value.is_started;
                 }
                 foreach (var v in value.player_infos)
                 {
@@ -316,11 +330,17 @@ namespace AGrail
                         MessageSystem<MessageType>.Notify(MessageType.PlayerTokenChange,
                             idx, player.yellow_token, player.blue_token, player.covered_count);
                     if (v.basic_cards.Count > 0 && player != v)
-                            player.basic_cards = v.basic_cards;
+                    {
+                        player.basic_cards.Clear();
+                        player.basic_cards.AddRange(v.basic_cards);
+                    }
                     if (v.ex_cards.Count > 0)
                     {
                         if(player != v)
-                            player.ex_cards = v.ex_cards;
+                        {
+                            player.ex_cards.Clear();
+                            player.ex_cards.AddRange(v.ex_cards);
+                        }                            
                         //为了进行卡牌编号的区分, 专有牌的序号都+1000
                         for (int i = 0; i < player.ex_cards.Count; i++)
                             player.ex_cards[i] += 1000;
@@ -330,9 +350,9 @@ namespace AGrail
                         foreach(var u in v.delete_field)
                         {
                             if (u == "ex_cards")
-                                player.ex_cards = new List<uint>();
+                                player.ex_cards.Clear();
                             if (u == "basic_cards")
-                                player.basic_cards = new List<uint>();
+                                player.basic_cards.Clear();
                         }
                     }
                     if(v.basic_cards.Count > 0 || v.ex_cards.Count > 0 || v.delete_field.Count > 0)

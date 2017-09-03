@@ -1,8 +1,6 @@
-﻿//
-using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using ProtoBuf;
+
 public enum ProtoNameIds {
     REGISTERREQUEST = 1,
     REGISTERRESPONSE = 2,
@@ -22,6 +20,9 @@ public enum ProtoNameIds {
     TALK = 17,
     GOSSIP = 18,
     ERROR = 19,
+    HEARTBEAT = 20,
+    POLLINGREQUEST = 23,
+    POLLINGRESPONSE = 24,
     ROLEREQUEST = 101,
     PICKBAN = 102,
     ACTION = 103,
@@ -34,47 +35,7 @@ public enum ProtoNameIds {
     HURTMSG = 111,
     SKILLMSG = 112,
 }
-public class ProtoEncryptList
-{
-	public static HashSet<ProtoNameIds> protoEncryptList = new HashSet<ProtoNameIds>();
-	static ProtoEncryptList() {
-	}
-}
-public class ProtoIdNames
-{
-    public static Dictionary<ProtoNameIds, string> protoIdNames = new Dictionary<ProtoNameIds, string>();
-    static ProtoIdNames() {
-        protoIdNames.Add(ProtoNameIds.REGISTERREQUEST, "network.RegisterRequest");
-        protoIdNames.Add(ProtoNameIds.REGISTERRESPONSE, "network.RegisterResponse");
-        protoIdNames.Add(ProtoNameIds.LOGINREQUEST, "network.LoginRequest");
-        protoIdNames.Add(ProtoNameIds.LOGINRESPONSE, "network.LoginResponse");
-        protoIdNames.Add(ProtoNameIds.LOGOUTREQUEST, "network.LogoutRequest");
-        protoIdNames.Add(ProtoNameIds.LOGOUTRESPONSE, "network.LogoutResponse");
-        protoIdNames.Add(ProtoNameIds.ROOMLISTREQUEST, "network.RoomListRequest");
-        protoIdNames.Add(ProtoNameIds.ROOMLISTRESPONSE, "network.RoomListResponse");
-        protoIdNames.Add(ProtoNameIds.CREATEROOMREQUEST, "network.CreateRoomRequest");
-        protoIdNames.Add(ProtoNameIds.ENTERROOMREQUEST, "network.EnterRoomRequest");
-        protoIdNames.Add(ProtoNameIds.LEAVEROOMREQUEST, "network.LeaveRoomRequest");
-        protoIdNames.Add(ProtoNameIds.JOINTEAMREQUEST, "network.JoinTeamRequest");
-        protoIdNames.Add(ProtoNameIds.READYFORGAMEREQUEST, "network.ReadyForGameRequest");
-        protoIdNames.Add(ProtoNameIds.SINGLEPLAYERINFO, "network.SinglePlayerInfo");
-        protoIdNames.Add(ProtoNameIds.GAMEINFO, "network.GameInfo");
-        protoIdNames.Add(ProtoNameIds.TALK, "network.Talk");
-        protoIdNames.Add(ProtoNameIds.GOSSIP, "network.Gossip");
-        protoIdNames.Add(ProtoNameIds.ERROR, "network.Error");
-        protoIdNames.Add(ProtoNameIds.ROLEREQUEST, "network.RoleRequest");
-        protoIdNames.Add(ProtoNameIds.PICKBAN, "network.PickBan");
-        protoIdNames.Add(ProtoNameIds.ACTION, "network.Action");
-        protoIdNames.Add(ProtoNameIds.RESPOND, "network.Respond");
-        protoIdNames.Add(ProtoNameIds.COMMANDREQUEST, "network.CommandRequest");
-        protoIdNames.Add(ProtoNameIds.ERRORINPUT, "network.ErrorInput");
-        protoIdNames.Add(ProtoNameIds.HITMSG, "network.HitMsg");
-        protoIdNames.Add(ProtoNameIds.TURNBEGIN, "network.TurnBegin");
-        protoIdNames.Add(ProtoNameIds.CARDMSG, "network.CardMsg");
-        protoIdNames.Add(ProtoNameIds.HURTMSG, "network.HurtMsg");
-        protoIdNames.Add(ProtoNameIds.SKILLMSG, "network.SkillMsg");
-    }
-}
+
 public class ProtoSerializer
 {
     public static object ParseFrom(ProtoNameIds protoType, Stream stream)
@@ -98,6 +59,8 @@ public class ProtoSerializer
             case ProtoNameIds.TALK: return Serializer.Deserialize<network.Talk>(stream);
             case ProtoNameIds.GOSSIP: return Serializer.Deserialize<network.Gossip>(stream);
             case ProtoNameIds.ERROR: return Serializer.Deserialize<network.Error>(stream);
+            case ProtoNameIds.POLLINGREQUEST: return Serializer.Deserialize<network.PollingRequest>(stream);
+            case ProtoNameIds.POLLINGRESPONSE: return Serializer.Deserialize<network.PollingResponse>(stream);
             case ProtoNameIds.ROLEREQUEST: return Serializer.Deserialize<network.RoleRequest>(stream);
             case ProtoNameIds.PICKBAN: return Serializer.Deserialize<network.PickBan>(stream);
             case ProtoNameIds.ACTION: return Serializer.Deserialize<network.Action>(stream);
@@ -135,6 +98,8 @@ public class ProtoSerializer
             case ProtoNameIds.TALK: Serializer.Serialize(stream, (network.Talk)proto); break;
             case ProtoNameIds.GOSSIP: Serializer.Serialize(stream, (network.Gossip)proto); break;
             case ProtoNameIds.ERROR: Serializer.Serialize(stream, (network.Error)proto); break;
+            case ProtoNameIds.POLLINGREQUEST: Serializer.Serialize(stream, (network.PollingRequest)proto); break;
+            case ProtoNameIds.POLLINGRESPONSE: Serializer.Serialize(stream, (network.PollingResponse)proto); break;
             case ProtoNameIds.ROLEREQUEST: Serializer.Serialize(stream, (network.RoleRequest)proto); break;
             case ProtoNameIds.PICKBAN: Serializer.Serialize(stream, (network.PickBan)proto); break;
             case ProtoNameIds.ACTION: Serializer.Serialize(stream, (network.Action)proto); break;

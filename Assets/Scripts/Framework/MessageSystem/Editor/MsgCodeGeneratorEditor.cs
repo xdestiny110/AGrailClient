@@ -1,4 +1,6 @@
-﻿using UnityEditor;
+﻿using System;
+using System.Collections.Generic;
+using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
 
@@ -67,6 +69,7 @@ namespace Framework.Message
 
         private void writeCode()
         {
+            MsgCodeGenerator.Instance.msgTypesProto = new List<string>(Enum.GetNames(typeof(ProtoNameIds)));
             using (var fw = new FileWriter(EditorTool.UnityPathToSystemPath(MsgCodeGenerator.MessageTypePath)))
             {
                 fw.Append("namespace Framework.Message");
