@@ -70,7 +70,7 @@ namespace AGrail
                     r1 = RoleFactory.Create(srcPlayer.role_id);
                     r2 = RoleFactory.Create(dstPlayer.role_id);
                     str.Append(string.Format("{0}命中了{1}" + Environment.NewLine, r1.RoleName, r2.RoleName));
-                    Log += str.ToString();
+                    Log += "<color=#ffffff>"+str.ToString() + "</color>";
                     MessageSystem<MessageType>.Notify(MessageType.SendHint, str.ToString());
                     break;
                 case MessageType.HURTMSG:
@@ -85,7 +85,7 @@ namespace AGrail
                         str.Append("对" + r2.RoleName);
                     }
                     str.Append(string.Format("造成{0}点伤害" + Environment.NewLine, hurtMsg.hurt));
-                    Log += str.ToString();
+                    Log += string.Format("<color=#ffffff>" + str.ToString() + "</color>");
                     MessageSystem<MessageType>.Notify(MessageType.SendHint, str.ToString());
                     break;
                 case MessageType.CARDMSG:
@@ -130,7 +130,7 @@ namespace AGrail
                         str.Append(string.Format("使用了技能{0}" + Environment.NewLine, s.SkillName));
                     else
                         str.Append(string.Format("使用了技能{0}" + Environment.NewLine, skillMsg.skill_id));
-                    log += str.ToString();
+                    log += string.Format("<color=#ffffff>" + str.ToString()+"</color>");
                     MessageSystem<MessageType>.Notify(MessageType.SendHint, str.ToString());
                     break;
                 case MessageType.GOSSIP:
@@ -147,7 +147,7 @@ namespace AGrail
                         BattleData.instance.GetPlayerInfo((uint)(int)parameters[0]).nickname);
                     break;
                 case MessageType.TURNBEGIN:
-                    Log += "<color=#00FF00FF>=======================</color>" + Environment.NewLine;
+                    Log += "<color=#606060>---------------------------------</color>" + Environment.NewLine;
                     break;
                 case MessageType.ACTION:
                     var act = parameters[0] as network.Action;

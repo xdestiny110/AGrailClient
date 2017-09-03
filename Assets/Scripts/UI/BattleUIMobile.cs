@@ -44,6 +44,16 @@ namespace AGrail
         private InputField inptChat;
         [SerializeField]
         private Button btnSubmit;
+        [SerializeField]
+        private GameObject winPanel;
+        [SerializeField]
+        private Text endText;
+        [SerializeField]
+        private Image winImage;
+        [SerializeField]
+        private Transform MVProot;
+        [SerializeField]
+        public List<PlayerIco> MVPS;
 
         public List<PlayerStatusMobile> PlayerStatus
         {
@@ -69,6 +79,10 @@ namespace AGrail
                 playerStatus.RemoveAt(2);
                 GameObject.Destroy(playerStatus[3].gameObject);
                 playerStatus.RemoveAt(3);
+                GameObject.Destroy(MVPS[0].gameObject);
+                MVPS.RemoveAt(0);
+                GameObject.Destroy(MVPS[1].gameObject);
+                MVPS.RemoveAt(1);
             }
             Dialog.Instance.Reset();
 
@@ -100,6 +114,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.TURNBEGIN, this);
             MessageSystem<MessageType>.Regist(MessageType.LogChange, this);
             MessageSystem<MessageType>.Regist(MessageType.ChatChange, this);
+            MessageSystem<MessageType>.Regist(MessageType.POLLINGREQUEST, this);
 
             //依据数据初始化界面
             MessageSystem<MessageType>.Notify(MessageType.PlayBGM);
@@ -160,6 +175,7 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.TURNBEGIN, this);
             MessageSystem<MessageType>.UnRegist(MessageType.LogChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.ChatChange, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.POLLINGREQUEST, this);
 
             base.OnDestroy();
         }
@@ -192,8 +208,21 @@ namespace AGrail
                     }
                     break;
                 case MessageType.Win:
-                    break;
                 case MessageType.Lose:
+                    for (int i=0;i < MVPS.Count;i++)
+                    {
+                        MVPS[i].IcoID = (uint)i;
+                        MVPS[i].canselect = true;
+                        int a = i;
+                        MVPS[i].MVP.onClick.AddListener(delegate { onMVPClick(a); });
+                    }
+                    winPanel.SetActive(true);
+                    winImage.sprite =
+                        (
+                        (BattleData.Instance.Morale[0] == 0 || BattleData.Instance.Grail[1]==5 ) ?
+                        AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "WinRed") :
+                        AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "WinBlue")
+                        );
                     break;
                 case MessageType.PlayerNickName:
                     playerStatus[(int)parameters[0]].NickName = parameters[1].ToString();
@@ -268,6 +297,16 @@ namespace AGrail
                     break;
                 case MessageType.ChatChange:
                     chatChange();
+                    break;
+                case MessageType.POLLINGREQUEST:
+                    var pollReq = parameters[0] as network.PollingRequest;
+                    if(pollReq.options.Count == 2)
+                    {
+                        BattleData.Instance.Agent.AgentState = (int)PlayerAgentState.Polling;
+                        if (GameManager.UIInstance.PeekWindow() == Framework.UI.WindowType.DisConnectedPoll)
+                            GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
+                        GameManager.UIInstance.PushWindow(Framework.UI.WindowType.DisConnectedPoll, Framework.UI.WinMsg.None, -1, Vector3.zero);
+                    }
                     break;
             }
         }
@@ -440,6 +479,19 @@ namespace AGrail
         private void hideHint()
         {
             hint.transform.parent.gameObject.SetActive(false);
+        }
+
+        private void onMVPClick(int mvp)
+        {
+            for (int i = 0; i < MVPS.Count; i++)
+            {
+                MVPS[i].canselect = false;
+                if (i == mvp)
+                    MVPS[mvp].Selected = true;
+            }
+            network.PollingResponse proto = new network.PollingResponse() { option = (uint)mvp };
+            GameManager.TCPInstance.Send(new Framework.Network.Protobuf() { Proto = proto, ProtoID = ProtoNameIds.POLLINGRESPONSE });
+            endText.text = "你选择了" + BattleData.Instance.GetPlayerInfo((uint)mvp).nickname + "作为MVP,你可以等待结果,也可以选择退出";
         }
 
         public void winAndExit()
