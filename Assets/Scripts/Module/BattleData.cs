@@ -152,7 +152,7 @@ namespace AGrail
                 if (value.blue_moraleSpecified)
                 {
                     if (Morale[(int)Team.Blue] != value.blue_morale)
-                        Dialog.instance.Log += "蓝方士气由" + Morale[(int)Team.Blue] + (Morale[(int)Team.Blue] > value.blue_morale ? "下降至" : "上升至") + value.blue_morale + "\n";
+                        Dialog.instance.Log += "<color=#E61E19>蓝方士气由" + Morale[(int)Team.Blue] + (Morale[(int)Team.Blue] > value.blue_morale ? "下降至" : "上升至") + value.blue_morale + "</color>"+"\n";
                     Morale[(int)Team.Blue] = value.blue_morale;
                     MessageSystem<MessageType>.Notify(MessageType.MoraleChange, Team.Blue, Morale[(int)Team.Blue]);
                     if(value.blue_morale == 0)
@@ -161,7 +161,7 @@ namespace AGrail
                 if (value.red_moraleSpecified)
                 {
                     if (Morale[(int)Team.Red] != value.red_morale)
-                        Dialog.instance.Log += "红方士气由" + Morale[(int)Team.Red] + (Morale[(int)Team.Red] > value.red_morale ? "下降至" : "上升至") + value.red_morale + "\n";
+                        Dialog.instance.Log += "<color=#E61E19>红方士气由" + Morale[(int)Team.Red] + (Morale[(int)Team.Red] > value.red_morale ? "下降至" : "上升至") + value.red_morale + "</color>"+"\n";
                     Morale[(int)Team.Red] = value.red_morale;
                     MessageSystem<MessageType>.Notify(MessageType.MoraleChange, Team.Red, Morale[(int)Team.Red]);
                     if (value.red_morale == 0)
@@ -282,7 +282,16 @@ namespace AGrail
                     if (v.max_handSpecified)
                         player.max_hand = v.max_hand;
                     if (v.hand_countSpecified)
+                    {
+                        int offset = (int)v.hand_count - (int)player.hand_count;
+                        if (offset != 0)
+                        {
+                            Dialog.instance.Log += "<color=#FFF000>" + RoleFactory.Create(player.role_id).RoleName + (player.hand_count > v.hand_count ? "失去了" : "获得了") + Math.Abs((int)player.hand_count - (int)v.hand_count) + "张手牌" + "</color>\n";
+
+                        }
                         player.hand_count = v.hand_count;
+                    }
+                
                     if (v.max_handSpecified || v.hand_countSpecified)
                     {
                         MessageSystem<MessageType>.Notify(MessageType.PlayerHandChange, idx, player.hand_count, player.max_hand);
@@ -318,6 +327,10 @@ namespace AGrail
                     {
                         if (player != v)
                         {
+                            //加入盖牌改变的log
+                            // UnityEngine.Debug.Log();
+                            Dialog.instance.Log += "<color=#FFF000>" + RoleFactory.Create(player.role_id).RoleName + "的盖牌变为" + v.covered_count+"</color>" + Environment.NewLine;
+
                             player.covered_count = v.covered_count;
                             player.covereds.Clear();
                             foreach (var u in v.covereds)
@@ -399,9 +412,28 @@ namespace AGrail
                         case (uint)network.BasicRespondType.RESPOND_DISCARD:
                             if (v.dst_ids[0] != MainPlayer.id)
                             {
-                                MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, v.dst_ids[0], "等待弃牌响应");
+                                if (v.args[0] == 1)
+                                {
+                                    // MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, v.dst_ids[0], v.args[2],v.args[1]);
+                                    string heroName = RoleFactory.Create(GetPlayerInfo(v.dst_ids[0]).role_id).RoleName;
+                                    //   UnityEngine.Debug.Log("名字:"+heroName);
+                                    string isShow = v.args[2] == 1 ? "明弃" : "暗弃";
+                                    //   UnityEngine.Debug.Log("方式:" + isShow);
+                                    int numberOfDiscard = (int)v.args[1];
+                                    //  UnityEngine.Debug.Log("数量:" + numberOfDiscard);
+                                    string msg = heroName + "需要" + isShow + numberOfDiscard + "张牌" + Environment.NewLine;
+                                    Dialog.instance.Log += "<color=#FFF000>" + msg+"</color>";
+                                    //  Dialog.instance.Log +=string.Format("玩家[0]需要[1][2]张牌",v.dst_ids[0], v.args[2] == 1 ? "明弃" : "暗弃", v.args[1]);
+                                    Agent.AgentState = (int)PlayerAgentState.Idle;
+                                    continue;
+                                }
+                                else
+                                {
+                                 MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, v.dst_ids[0], "等待弃牌响应");
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
                                 continue;
+                                }
+                                 
                             }
                             Agent.Cmd = v;
                             Agent.AgentState = (int)PlayerAgentState.Discard;
@@ -409,7 +441,7 @@ namespace AGrail
                         case (uint)network.BasicRespondType.RESPOND_DISCARD_COVER:
                             if (v.dst_ids[0] != MainPlayer.id)
                             {
-                                MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, v.dst_ids[0], "等待弃盖牌响应");
+                                 MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, v.dst_ids[0], "等待弃盖牌响应");
                                 Agent.AgentState = (int)PlayerAgentState.Idle;
                                 continue;
                             }
