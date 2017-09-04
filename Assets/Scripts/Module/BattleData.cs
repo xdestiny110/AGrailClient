@@ -225,13 +225,16 @@ namespace AGrail
                         }
                         if (value.player_id == 9)
                             MainPlayer = new network.SinglePlayerInfo() { id = 9, team = (uint)Team.Other };
-                        MessageSystem<MessageType>.Notify(MessageType.GameStart);
+                        //if(RoleChoose.Instance.RoleStrategy == network.ROLE_STRATEGY.ROLE_STRATEGY_31)
+                      //  MessageSystem<MessageType>.Notify(MessageType.GameStart);
                     }
                     //需要再发一次准备
                     //以前是不用的...不知道现在改成这样的目的是什么
-                    MessageSystem<MessageType>.Notify(MessageType.GameStart);
+                  //  if (RoleChoose.Instance.RoleStrategy == network.ROLE_STRATEGY.ROLE_STRATEGY_31)
+                  //      MessageSystem<MessageType>.Notify(MessageType.GameStart);
                     IsStarted = value.is_started;
                 }
+                int count = 0;
                 foreach (var v in value.player_infos)
                 {
                     var player = GetPlayerInfo(v.id);
@@ -260,6 +263,7 @@ namespace AGrail
                     }
                     if (v.role_idSpecified)
                     {
+                        count++;
                         player.role_id = v.role_id;
                         MessageSystem<MessageType>.Notify(MessageType.PlayerRoleChange, idx, player.role_id);
                         if (player.id == PlayerID)
@@ -371,6 +375,9 @@ namespace AGrail
                     if(v.basic_cards.Count > 0 || v.ex_cards.Count > 0 || v.delete_field.Count > 0)
                         MessageSystem<MessageType>.Notify(MessageType.PlayerBasicAndExCardChange, idx, player.basic_cards, player.ex_cards);
                 }
+                if(count == BattleData.Instance.PlayerInfos.Count)
+                    MessageSystem<MessageType>.Notify(MessageType.GameStart);
+
             }
         }
 

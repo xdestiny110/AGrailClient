@@ -9,8 +9,10 @@ namespace AGrail
     public class RoleChoose : Singleton<RoleChoose>, IMessageListener<MessageType>
     {
         public network.ROLE_STRATEGY RoleStrategy { get; private set; }
-        public bool CanIChoose { get; private set; }
+        public network.BP_OPRATION BPopration { get; private set; }
+        public uint oprater{ get; private set; }
         public List<uint> RoleIDs { get; private set; }
+        public List<int> options { get; private set; }
 
         public RoleChoose() : base()
         {
@@ -19,7 +21,8 @@ namespace AGrail
 
         public void Choose(uint roleID)
         {
-            var proto = new network.PickBan() { strategy = (uint)RoleStrategy, is_pick = true };
+            bool IsPick = (BPopration == network.BP_OPRATION.BP_BAN) ? false : true ;
+            var proto = new network.PickBan() { strategy = (uint)RoleStrategy, is_pick = IsPick };
             proto.role_ids.Add(roleID);
             GameManager.TCPInstance.Send(new Protobuf() { Proto = proto, ProtoID = ProtoNameIds.PICKBAN });
         }
@@ -31,10 +34,22 @@ namespace AGrail
                 case MessageType.ROLEREQUEST:
                     var proto = parameters[0] as network.RoleRequest;
                     RoleStrategy = proto.strategy;
-                    CanIChoose = proto.id == BattleData.Instance.PlayerID;
+                    oprater = proto.id;
                     RoleIDs = proto.role_ids;
-                    MessageSystem<MessageType>.Notify(MessageType.ChooseRole, RoleStrategy);
+                    if (RoleStrategy == network.ROLE_STRATEGY.ROLE_STRATEGY_31)
+                    {
+                        MessageSystem<MessageType>.Notify(MessageType.ChooseRole, RoleStrategy);
+                        break;
+                    }
+                    if(RoleStrategy == network.ROLE_STRATEGY.ROLE_STRATEGY_BP)
+                    {
+                        options = proto.args;
+                        BPopration = (network.BP_OPRATION)proto.opration;
+                        MessageSystem<MessageType>.Notify(MessageType.ChooseRole, RoleStrategy);
+                        MessageSystem<MessageType>.Notify(MessageType.PICKBAN);
+                    }
                     break;
+                default : break;
             }
         }
     }
