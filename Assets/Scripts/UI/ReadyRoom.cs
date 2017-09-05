@@ -99,6 +99,11 @@ namespace AGrail
                             else
                                 GameManager.UIInstance.PushWindow(WindowType.RoleChoose31, WinMsg.Pause);
                             break;
+                        case network.ROLE_STRATEGY.ROLE_STRATEGY_BP:
+                            if(GameManager.UIInstance.PeekWindow()!=WindowType.RoleChooseBP)
+                                GameManager.UIInstance.PushWindow(WindowType.RoleChooseBP, WinMsg.Pause);
+                            MessageSystem<MessageType>.Regist(MessageType.PICKBAN, this);
+                            break;
                         default:
                             Debug.LogError("不支持的选将模式");
                             break;

@@ -18,6 +18,7 @@
         ReadyRoom,
         RoleChoose31,
         RoleChooseAny,
+        RoleChooseBP,
         SpecialActionUI,
         Loading,
     }
