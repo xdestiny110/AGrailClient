@@ -23,12 +23,12 @@ namespace AGrail
             if (History.Count > 0)
             {
                 var t = History.Pop();
+				BattleData.Instance.Agent.SelectCards.Clear();
+				BattleData.Instance.Agent.SelectPlayers.Clear();
                 if (t == typeof(StateIdle))
                 {
                     //一般是多次行动时的取消
                     Current.Process(msg, paras);
-                    BattleData.Instance.Agent.SelectCards.Clear();
-                    BattleData.Instance.Agent.SelectPlayers.Clear();
                     BattleData.Instance.Agent.SelectSkill = null;
                     BattleData.Instance.Agent.SelectArgs.Clear();
                     MessageSystem<MessageType>.Notify(MessageType.AgentSelectPlayer);
