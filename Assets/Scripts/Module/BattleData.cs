@@ -35,7 +35,6 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.GAMEINFO, this);
             MessageSystem<MessageType>.Regist(MessageType.COMMANDREQUEST, this);
             MessageSystem<MessageType>.Regist(MessageType.ERROR, this);
-            MessageSystem<MessageType>.Regist(MessageType.GOSSIP, this);
             Reset();
             var inst = RoleChoose.Instance;
         }
@@ -56,16 +55,6 @@ namespace AGrail
         {
             switch (eventType)
             {
-                case MessageType.GOSSIP:
-                    var gossip = parameters[0] as network.Gossip;
-                    if (gossip.idSpecified)
-                    {
-                        if (GameManager.UIInstance.PeekWindow() == Framework.UI.WindowType.DisConnectedPoll)
-                            GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
-                        if (DisConnectedPlayer.Contains(gossip.id))
-                            DisConnectedPlayer.Remove(gossip.id);
-                    }
-                    break;
                 case MessageType.TURNBEGIN:
                     turnBegin = parameters[0] as network.TurnBegin;
                     break;
@@ -374,6 +363,15 @@ namespace AGrail
                     }
                     if(v.basic_cards.Count > 0 || v.ex_cards.Count > 0 || v.delete_field.Count > 0)
                         MessageSystem<MessageType>.Notify(MessageType.PlayerBasicAndExCardChange, idx, player.basic_cards, player.ex_cards);
+                    if(v.onlineSpecified)
+                    {
+                        if(!v.online && !DisConnectedPlayer.Contains(v.id) )
+                            DisConnectedPlayer.Add(v.id);
+                        if (v.online && DisConnectedPlayer.Contains(v.id))
+                            DisConnectedPlayer.Remove(v.id);
+                        if(DisConnectedPlayer.Count == 0 && GameManager.UIInstance.PeekWindow() == Framework.UI.WindowType.DisConnectedPoll)
+                            GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
+                    }
                 }
                 if(count == BattleData.Instance.PlayerInfos.Count)
                     MessageSystem<MessageType>.Notify(MessageType.GameStart);

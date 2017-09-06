@@ -226,6 +226,7 @@ namespace AGrail
                 case (uint)SkillID.XI_WANG_FU_GE_QU:
                     if (msg == UIStateMsg.ClickPlayer)
                     {
+						IsStart = true;	
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectPlayers, null, new List<uint>() { 1 });
                         //sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 1 });
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
