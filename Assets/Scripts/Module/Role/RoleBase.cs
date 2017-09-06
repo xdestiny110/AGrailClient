@@ -458,8 +458,11 @@ namespace AGrail
                         }
                     }
                     else
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                            StateHint.GetHint(StateEnum.Attacked));
+                    {
+                          // MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                          //  StateHint.GetHint(StateEnum.Attacked));
+                    }
+                      
                     CancelAction = () =>
                     {
                         AttackedReply();

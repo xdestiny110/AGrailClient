@@ -414,6 +414,8 @@ namespace AGrail
                                 continue;
                             }
                             Agent.Cmd = v;
+                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                           RoleFactory.Create( BattleData.instance.GetPlayerInfo(v.args[3]).role_id).RoleName+"对你使用了"+Card.GetCard(v.args[1]).Name);
                             Agent.AgentState = (int)PlayerAgentState.Attacked;
                             break;
                         case (uint)network.BasicRespondType.RESPOND_DISCARD:
