@@ -458,8 +458,11 @@ namespace AGrail
                         }
                     }
                     else
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                            StateHint.GetHint(StateEnum.Attacked));
+                    {
+                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                         string.Format(StateHint.GetHint(StateEnum.Attacked), Dialog.Instance.ChineseElement(Card.GetCard( BattleData.Instance.Agent.Cmd.args[1]).Element,true)) );
+                    }
+
                     CancelAction = () =>
                     {
                         AttackedReply();

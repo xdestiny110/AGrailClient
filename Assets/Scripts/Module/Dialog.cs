@@ -55,6 +55,57 @@ namespace AGrail
             GameManager.TCPInstance.Send(new Protobuf() { Proto = proto, ProtoID = ProtoNameIds.TALK });
         }
 
+        public string ChineseElement(Card.CardElement ele, bool attack = false)
+        {
+            string element;
+            switch(ele.ToString())
+            {
+                case "water":
+                    if (attack)
+                        element = "<color=#1E90FF>水</color>";
+                    else
+                        element = "水";
+                    break;
+                case "fire":
+                    if(attack)
+                        element = "<color=#FF4500>火</color>";
+                    else
+                        element = "火";
+                    break;
+                case "darkness":
+                    element = "暗";
+                    break;
+                case "light":
+                    element = "光";
+                    break;
+                case "wind":
+                    if (attack)
+                        element = "<color=#7FFF00>风</color>";
+                    else
+                        element = "风";
+                    break;
+                case "earth":
+                    if (attack)
+                        element = "<color=#B8860B>地</color>";
+                    else
+                        element = "地";
+                    break;
+                case "thunder":
+                    if (attack)
+                        element = "<color=#BF3EFF>雷</color>";
+                    else
+                        element = "雷";
+                    break;
+                case "none":
+                    element = "无";
+                    break;
+                default:
+                    element = "第八元素";
+                    break;
+            }
+            return element;
+        }
+
         StringBuilder str = new StringBuilder(1024);
         public void OnEventTrigger(MessageType eventType, params object[] parameters)
         {
@@ -93,6 +144,7 @@ namespace AGrail
                     srcPlayer = BattleData.Instance.GetPlayerInfo(cardMsg.src_id);
                     r1 = RoleFactory.Create(srcPlayer.role_id);
                     str.Append(r1.RoleName);
+                    bool sent = true;
                     if (cardMsg.dst_idSpecified)
                     {
                         dstPlayer = BattleData.Instance.GetPlayerInfo(cardMsg.dst_id);
@@ -100,15 +152,22 @@ namespace AGrail
                         str.Append("对" + r2.RoleName + "使用了");
                     }
                     else
+                    {
                         str.Append("展示了");
+                        sent = false;
+                    }
                     foreach (var v in cardMsg.card_ids)
                     {
                         var c = Card.GetCard(v);
-                        str.Append(c.Name + "-" + c.Property.ToString() +"　");
+                        if (c.Type == Card.CardType.attack || c.Name == Card.CardName.圣光)
+                            str.Append(c.Name + "-" + c.Property.ToString() + "　");
+                        else
+                            str.Append(c.Name + "-" + ChineseElement(c.Element) + "　");
                     }
                     str.Append(Environment.NewLine);
                     Log += str.ToString();
-                    MessageSystem<MessageType>.Notify(MessageType.SendHint, str.ToString());
+                    if (sent)
+                        MessageSystem<MessageType>.Notify(MessageType.SendHint, str.ToString());
                     break;
                 case MessageType.SKILLMSG:
                     var skillMsg = parameters[0] as network.SkillMsg;
