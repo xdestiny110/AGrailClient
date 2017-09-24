@@ -262,7 +262,7 @@ namespace AGrail
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state,1));
                         selectList.Clear();
                         mList.Clear();
-                        for (uint i = 1; i < 5; i++)
+                        for (uint i = 4; i > 0 ; i--)
                         {
                             selectList.Add(new List<uint>() { i });
                             mList.Add("摸" + i.ToString() + "张牌");

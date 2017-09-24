@@ -165,6 +165,7 @@ namespace AGrail
             {
                 case 601:
                 case 602:
+                case 603:
                 case 604:
                 case 605:
                     return true;
@@ -223,6 +224,11 @@ namespace AGrail
                         BattleData.Instance.Agent.SelectPlayers, null, new List<uint>() { 1 });
                         return;
                     }
+                    CancelAction = () =>
+                    {
+                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                    };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case 604:
