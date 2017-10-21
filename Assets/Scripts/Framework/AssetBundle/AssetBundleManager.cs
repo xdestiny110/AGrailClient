@@ -399,7 +399,7 @@ namespace Framework.AssetBundle
             get
             {
                 return
-#if UNITY_EDITOR || UNITY_STANDALONE
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_IPHONE || UNITY_IOS
                  "file://" + Application.streamingAssetsPath + "/";
 #elif UNITY_ANDROID
                 "jar:file://" + Application.dataPath + "!/assets/";
@@ -414,7 +414,7 @@ namespace Framework.AssetBundle
                 return
 #if UNITY_EDITOR || UNITY_STANDALONE
                     "file:///" + Application.persistentDataPath + "/";
-#elif UNITY_ANDROID
+#elif UNITY_ANDROID || UNITY_IPHONE || UNITY_IOS
                     "file://" + Application.persistentDataPath + "/";
 #endif
             }
