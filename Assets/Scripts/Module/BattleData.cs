@@ -51,6 +51,12 @@ namespace AGrail
             GameManager.TCPInstance.Send(new Protobuf() { Proto = proto, ProtoID = ProtoNameIds.JOINTEAMREQUEST });
         }
 
+        public void ChooseLeader(bool lead)
+        {
+            var proto = new network.BecomeLeaderResponse() { yes = lead };
+            GameManager.TCPInstance.Send(new Protobuf() { Proto = proto, ProtoID = ProtoNameIds.LEADERRESPONSE });
+        }
+
         public void OnEventTrigger(MessageType eventType, params object[] parameters)
         {
             switch (eventType)
@@ -96,6 +102,9 @@ namespace AGrail
             RoomID = null;
             PlayerID = null;
             IsStarted = false;
+            StartPlayerID = 0;
+            NowPlayerID = 0;
+            DisConnectedPlayer.Clear();
         }
 
         public network.SinglePlayerInfo GetPlayerInfo(uint playerID)

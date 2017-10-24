@@ -9,6 +9,7 @@ namespace AGrail
     {
         public abstract RoleID RoleID { get; }
         public abstract string RoleName { get; }
+        public abstract string ShortName { get; }
         public abstract Card.CardProperty RoleProperty { get; }
         public abstract string HeroName { get; }
         public virtual uint MaxHealCount { get { return 2; } }

@@ -22,6 +22,13 @@ namespace AGrail
                 return "神官";
             }
         }
+        public override string ShortName
+        {
+            get
+            {
+                return "神官";
+            }
+        }
 
         public override string HeroName
         {

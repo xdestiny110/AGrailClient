@@ -21,6 +21,13 @@ namespace AGrail
                 return "魔枪";
             }
         }
+        public override string ShortName
+        {
+            get
+            {
+                return "魔枪";
+            }
+        }
 
         public override string HeroName
         {

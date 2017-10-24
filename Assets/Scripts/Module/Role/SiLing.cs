@@ -21,6 +21,13 @@ namespace AGrail
                 return "死灵法师";
             }
         }
+        public override string ShortName
+        {
+            get
+            {
+                return "死灵";
+            }
+        }
 
         public override Card.CardProperty RoleProperty
         {

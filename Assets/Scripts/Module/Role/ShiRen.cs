@@ -44,6 +44,13 @@ namespace AGrail
                 return "吟游诗人";
             }
         }
+        public override string ShortName
+        {
+            get
+            {
+                return "诗人";
+            }
+        }
 
         public override string HeroName
         {

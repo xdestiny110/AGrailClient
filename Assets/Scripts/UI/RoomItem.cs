@@ -41,7 +41,6 @@ namespace AGrail
                         break;
                     case network.ROLE_STRATEGY.ROLE_STRATEGY_CM:
                         roomMode.text = "CM";
-                        GetComponent<Button>().interactable = false;
                         break;
                     case network.ROLE_STRATEGY.ROLE_STRATEGY_RANDOM:
                         roomMode.text = "随机";

@@ -18,6 +18,10 @@ namespace AGrail
         [SerializeField]
         private Toggle fourPeople;
         [SerializeField]
+        private Toggle sixPeople;
+        [SerializeField]
+        private Toggle CmMode;
+        [SerializeField]
         private InputField password;
         [SerializeField]
         private Toggle firstExtension;
@@ -68,6 +72,19 @@ namespace AGrail
             {
                 seat3Combo.interactable = true;
                 seatCM.interactable = true;
+            }
+        }
+        public void OnCmToggled()
+        {
+            if(CmMode.isOn)
+            {
+                seatCM.isOn = true;
+                sixPeople.isOn = true;
+                fourPeople.interactable = false;
+            }
+            else
+            {
+                fourPeople.interactable = true;
             }
         }
 

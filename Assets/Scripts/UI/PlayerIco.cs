@@ -42,6 +42,7 @@ namespace AGrail
             
         }
         public uint ID { get; set; }
+        public int Seat { get; set; }
 
 
         public bool canselect

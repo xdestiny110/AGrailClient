@@ -21,6 +21,8 @@ public enum ProtoNameIds {
     GOSSIP = 18,
     ERROR = 19,
     HEARTBEAT = 20,
+    LEADERREQUEST = 21,
+    LEADERRESPONSE = 22,
     POLLINGREQUEST = 23,
     POLLINGRESPONSE = 24,
     ROLEREQUEST = 101,
@@ -59,6 +61,8 @@ public class ProtoSerializer
             case ProtoNameIds.TALK: return Serializer.Deserialize<network.Talk>(stream);
             case ProtoNameIds.GOSSIP: return Serializer.Deserialize<network.Gossip>(stream);
             case ProtoNameIds.ERROR: return Serializer.Deserialize<network.Error>(stream);
+            case ProtoNameIds.LEADERREQUEST: return Serializer.Deserialize<network.BecomeLeaderRequest>(stream);
+            case ProtoNameIds.LEADERRESPONSE: return Serializer.Deserialize<network.BecomeLeaderResponse>(stream);
             case ProtoNameIds.POLLINGREQUEST: return Serializer.Deserialize<network.PollingRequest>(stream);
             case ProtoNameIds.POLLINGRESPONSE: return Serializer.Deserialize<network.PollingResponse>(stream);
             case ProtoNameIds.ROLEREQUEST: return Serializer.Deserialize<network.RoleRequest>(stream);
@@ -98,6 +102,8 @@ public class ProtoSerializer
             case ProtoNameIds.TALK: Serializer.Serialize(stream, (network.Talk)proto); break;
             case ProtoNameIds.GOSSIP: Serializer.Serialize(stream, (network.Gossip)proto); break;
             case ProtoNameIds.ERROR: Serializer.Serialize(stream, (network.Error)proto); break;
+            case ProtoNameIds.LEADERREQUEST: Serializer.Serialize(stream, (network.BecomeLeaderRequest)proto); break;
+            case ProtoNameIds.LEADERRESPONSE: Serializer.Serialize(stream, (network.BecomeLeaderResponse)proto); break;
             case ProtoNameIds.POLLINGREQUEST: Serializer.Serialize(stream, (network.PollingRequest)proto); break;
             case ProtoNameIds.POLLINGRESPONSE: Serializer.Serialize(stream, (network.PollingResponse)proto); break;
             case ProtoNameIds.ROLEREQUEST: Serializer.Serialize(stream, (network.RoleRequest)proto); break;

@@ -26,6 +26,13 @@ namespace AGrail
             }
         }
 
+        public override string ShortName
+        {
+            get
+            {
+                return "魔弓";
+            }
+        }
         public override uint Star
         {
             get

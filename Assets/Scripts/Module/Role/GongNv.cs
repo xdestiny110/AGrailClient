@@ -21,6 +21,13 @@ namespace AGrail
                 return "弓之女神";
             }
         }
+        public override string ShortName
+        {
+            get
+            {
+                return "弓女";
+            }
+        }
 
         public override Card.CardProperty RoleProperty
         {

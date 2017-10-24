@@ -22,6 +22,13 @@ namespace AGrail
             }
         }
 
+        public override string ShortName
+        {
+            get
+            {
+                return "冒险";
+            }
+        }
         public override Card.CardProperty RoleProperty
         {
             get

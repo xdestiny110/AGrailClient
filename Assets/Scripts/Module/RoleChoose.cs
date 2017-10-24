@@ -9,7 +9,7 @@ namespace AGrail
     public class RoleChoose : Singleton<RoleChoose>, IMessageListener<MessageType>
     {
         public network.ROLE_STRATEGY RoleStrategy { get; private set; }
-        public network.BP_OPRATION BPopration { get; private set; }
+        public uint opration { get; private set; }//1234:null,ban,pick,ib
         public uint oprater{ get; private set; }
         public List<uint> RoleIDs { get; private set; }
         public List<int> options { get; private set; }
@@ -21,7 +21,7 @@ namespace AGrail
 
         public void Choose(uint roleID)
         {
-            bool IsPick = (BPopration == network.BP_OPRATION.BP_BAN) ? false : true ;
+            bool IsPick = (opration == (uint)network.BP_OPRATION.BP_PICK) ? true : false ;
             var proto = new network.PickBan() { strategy = (uint)RoleStrategy, is_pick = IsPick };
             proto.role_ids.Add(roleID);
             GameManager.TCPInstance.Send(new Protobuf() { Proto = proto, ProtoID = ProtoNameIds.PICKBAN });
@@ -44,10 +44,37 @@ namespace AGrail
                     if(RoleStrategy == network.ROLE_STRATEGY.ROLE_STRATEGY_BP)
                     {
                         options = proto.args;
-                        BPopration = (network.BP_OPRATION)proto.opration;
+                        opration = proto.opration;
                         MessageSystem<MessageType>.Notify(MessageType.ChooseRole, RoleStrategy);
                         MessageSystem<MessageType>.Notify(MessageType.PICKBAN);
+                        break;
                     }
+                    if (RoleStrategy == network.ROLE_STRATEGY.ROLE_STRATEGY_CM)
+                    {
+                        options = proto.args;
+                        switch(proto.opration)
+                        {
+                            case 1:
+                                opration = 1;
+                                break;
+                            case 2:
+                            case 5:
+                                opration = 2;
+                                break;
+                            case 3:
+                            case 6:
+                                opration = 4;
+                                break;
+                            case 4:
+                            case 7:
+                                opration = 3;
+                                break;
+                        }
+                        MessageSystem<MessageType>.Notify(MessageType.ChooseRole, RoleStrategy);
+                        MessageSystem<MessageType>.Notify(MessageType.PICKBAN);
+                        break;
+                    }
+
                     break;
                 default : break;
             }

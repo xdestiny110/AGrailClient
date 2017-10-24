@@ -34,6 +34,8 @@
         GOSSIP,
         ERROR,
         HEARTBEAT,
+        LEADERREQUEST,
+        LEADERRESPONSE,
         POLLINGREQUEST,
         POLLINGRESPONSE,
         ROLEREQUEST,
