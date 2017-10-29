@@ -55,6 +55,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.PlayerNickName, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerTeamChange, this);
             MessageSystem<MessageType>.Regist(MessageType.LEADERREQUEST, this);
+            MessageSystem<MessageType>.Regist(MessageType.GameStart, this);
 
             foreach (var v in players)
                 v.Reset();
@@ -92,6 +93,7 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerNickName, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerTeamChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.LEADERREQUEST, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.GameStart, this);
             base.OnDestroy();
         }
 
@@ -144,6 +146,9 @@ namespace AGrail
                     break;
                 case MessageType.LEADERREQUEST:
                     leaderPanel.SetActive(true);
+                    break;
+                case MessageType.GameStart:
+                    UnityEngine.SceneManagement.SceneManager.LoadScene(2);
                     break;
             }
         }
