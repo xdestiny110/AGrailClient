@@ -12,6 +12,8 @@ namespace AGrail
         [SerializeField]
         private Transform handArea;
         [SerializeField]
+        private Transform chooseArea;
+        [SerializeField]
         private Transform skillArea;
         [SerializeField]
         private Button btnOK;
@@ -51,7 +53,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.CloseNewArgsUI, this);
             MessageSystem<MessageType>.Regist(MessageType.Lose, this);
             MessageSystem<MessageType>.Regist(MessageType.Win, this);
-
+            MessageSystem<MessageType>.Regist(MessageType.AgentSelectCard, this);
             MessageSystem<MessageType>.Notify(MessageType.AgentUpdate);
             MessageSystem<MessageType>.Notify(MessageType.AgentHandChange);
         }
@@ -67,12 +69,34 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.CloseNewArgsUI, this);
             MessageSystem<MessageType>.UnRegist(MessageType.Lose, this);
             MessageSystem<MessageType>.UnRegist(MessageType.Win, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.AgentSelectCard, this);
         }
+
 
         public void OnEventTrigger(MessageType eventType, params object[] parameters)
         {
             switch (eventType)
             {
+                case MessageType.AgentSelectCard:
+                    var cards = BattleData.Instance.Agent.SelectCards;
+                    if (cards.Count > 1)
+                    {
+                        chooseArea.gameObject.SetActive(true);
+                        foreach (var v in cardUIs)
+                        {
+                            if (cards.Contains(v.Card.ID))
+                                v.transform.SetParent(chooseArea);
+                            else
+                                v.transform.SetParent(handArea);
+                        }
+                    }
+                    else
+                    {
+                        chooseArea.gameObject.SetActive(false);
+                        foreach (var v in cardUIs)
+                            v.transform.SetParent(handArea);
+                    }
+                    break;
                 case MessageType.AgentUIStateChange:
                     onUIStateChange();
                     break;
@@ -129,7 +153,6 @@ namespace AGrail
                     break;
             }
         }
-
         public void OnCoveredClick()
         {
             isShowCovered = !isShowCovered;
