@@ -61,6 +61,7 @@ public class ProtoSerializer
             case ProtoNameIds.TALK: return Serializer.Deserialize<network.Talk>(stream);
             case ProtoNameIds.GOSSIP: return Serializer.Deserialize<network.Gossip>(stream);
             case ProtoNameIds.ERROR: return Serializer.Deserialize<network.Error>(stream);
+            case ProtoNameIds.HEARTBEAT: return Serializer.Deserialize<network.HeartBeat>(stream);
             case ProtoNameIds.LEADERREQUEST: return Serializer.Deserialize<network.BecomeLeaderRequest>(stream);
             case ProtoNameIds.LEADERRESPONSE: return Serializer.Deserialize<network.BecomeLeaderResponse>(stream);
             case ProtoNameIds.POLLINGREQUEST: return Serializer.Deserialize<network.PollingRequest>(stream);
@@ -102,6 +103,7 @@ public class ProtoSerializer
             case ProtoNameIds.TALK: Serializer.Serialize(stream, (network.Talk)proto); break;
             case ProtoNameIds.GOSSIP: Serializer.Serialize(stream, (network.Gossip)proto); break;
             case ProtoNameIds.ERROR: Serializer.Serialize(stream, (network.Error)proto); break;
+            case ProtoNameIds.HEARTBEAT: Serializer.Serialize(stream, (network.HeartBeat)proto); break;
             case ProtoNameIds.LEADERREQUEST: Serializer.Serialize(stream, (network.BecomeLeaderRequest)proto); break;
             case ProtoNameIds.LEADERRESPONSE: Serializer.Serialize(stream, (network.BecomeLeaderResponse)proto); break;
             case ProtoNameIds.POLLINGREQUEST: Serializer.Serialize(stream, (network.PollingRequest)proto); break;

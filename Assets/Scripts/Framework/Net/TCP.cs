@@ -237,6 +237,10 @@ namespace Framework.Network
 
         private void afterReceiveProto(Protobuf protobuf)
         {
+            if (protobuf.ProtoID == ProtoNameIds.HEARTBEAT)
+            {
+                AGrail.GameManager.heart = 0;
+            }
             var msgType = (Message.MessageType)Enum.Parse(typeof(Message.MessageType), protobuf.ProtoID.ToString());
             actions.Enqueue(() =>
             {

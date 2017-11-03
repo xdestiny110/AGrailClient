@@ -42,6 +42,9 @@ namespace AGrail
             else
             {
                 Lobby.Instance.LeaveRoom();
+                if(SceneManager.GetActiveScene().buildIndex==2)
+                SceneManager.LoadScene(1);
+                else
                 GameManager.UIInstance.PopAllWindow();
                 GameManager.UIInstance.PushWindow(WindowType.Lobby, WinMsg.None);
             }

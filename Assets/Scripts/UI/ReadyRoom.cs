@@ -154,6 +154,7 @@ namespace AGrail
                     leaderPanel.SetActive(true);
                     break;
                 case MessageType.GameStart:
+                    PlayerPrefs.SetInt("lastGame", Lobby.Instance.SelectRoom.room_id);
                     UnityEngine.SceneManagement.SceneManager.LoadScene(2);
                     break;
                 case MessageType.ChatChange:

@@ -26,6 +26,14 @@ namespace AGrail
             MessageSystem<MessageType>.Notify(MessageType.RoomList);
         }
 
+        private network.RoomListResponse.RoomInfo getRoomInfoByID(int roomid)
+        {
+            foreach (var v in RoomInfo)
+                if (v.room_id == roomid)
+                    return v;
+            return null;
+        }
+
         public void JoinRoom(network.RoomListResponse.RoomInfo roomInfo, string password = null)
         {
             var proto = new network.EnterRoomRequest() { room_id = roomInfo.room_id};
@@ -62,6 +70,7 @@ namespace AGrail
             var proto = new network.LeaveRoomRequest();
             GameManager.TCPInstance.Send(new Protobuf() { Proto = proto, ProtoID = ProtoNameIds.LEAVEROOMREQUEST });
             SelectRoom = null;
+            if(PlayerPrefs.HasKey("lastGame"))PlayerPrefs.DeleteKey("lastGame");
             BattleData.Instance.Reset();
         }
 
@@ -72,6 +81,14 @@ namespace AGrail
                 case MessageType.ROOMLISTRESPONSE:
                     var roomListProto = parameters[0] as network.RoomListResponse;
                     RoomInfo = roomListProto.rooms.OrderBy(t => t.playing).ThenBy(t => t.room_id).ToList();
+                    if (PlayerPrefs.HasKey("lastGame"))
+                    {
+                        network.RoomListResponse.RoomInfo room = getRoomInfoByID(PlayerPrefs.GetInt("lastGame"));
+                        if (room != null)
+                        {
+                            JoinRoom(room);
+                        }
+                    }
                     MessageSystem<MessageType>.Notify(MessageType.RoomList);
                     break;
             }

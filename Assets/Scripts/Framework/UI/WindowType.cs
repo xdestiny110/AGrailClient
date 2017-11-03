@@ -16,9 +16,11 @@
         LoginBox,
         OptionsUI,
         ReadyRoom,
+        ReConBox,
         RoleChoose31,
         RoleChooseAny,
         RoleChooseBPCM,
+        RoomChatUI,
         SpecialActionUI,
         Loading,
     }
