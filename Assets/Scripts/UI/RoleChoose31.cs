@@ -90,7 +90,6 @@ namespace AGrail
                 case MessageType.GameStart:
                     if (coro != null)
                         StopCoroutine(coro);
-                    SceneManager.LoadScene(2);
                     break;
             }
             base.OnEventTrigger(eventType, parameters);

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Framework.AssetBundle;
 using UnityEngine.SceneManagement;
 using Framework.Message;
+using DG.Tweening;
 
 namespace AGrail
 {
@@ -38,6 +39,26 @@ namespace AGrail
         private Image pointer;
         [SerializeField]
         private List<Text> Hname;
+        [SerializeField]
+        private Text talks;
+
+        [SerializeField]
+        private Transform logRoot;
+        [SerializeField]
+        private Text log;
+        [SerializeField]
+        private Transform chatRoot;
+        [SerializeField]
+        private Transform chat;
+        [SerializeField]
+        private Button btnLogExpand;
+        [SerializeField]
+        private Button btnChatExpand;
+        [SerializeField]
+        private InputField inptChat;
+        [SerializeField]
+        private Button btnSubmit;
+
         public override WindowType Type
         {
             get
@@ -102,63 +123,119 @@ namespace AGrail
                 pools[i].MVP.onClick.AddListener(delegate { onHeroClick(id); });
             }
             choosing = 0;
+            lastChosen = 0;
             redBP.onClick.AddListener(onSureClick);
             blueBP.onClick.AddListener(onSureClick);
             redCancel.onClick.AddListener(cancelIB);
             blueCancel.onClick.AddListener(cancelIB);
+            btnLogExpand.onClick.AddListener(delegate { onBtnLogExpandClick(true); });
+            btnChatExpand.onClick.AddListener(delegate { onBtnChatExpandClick(true); });
+            btnSubmit.onClick.AddListener(delegate { onBtnSubmitClick(null); });
+            inptChat.onEndEdit.AddListener(onBtnSubmitClick);
+
+            MessageSystem<MessageType>.Regist(MessageType.ChatChange, this);
             MessageSystem<MessageType>.Regist(MessageType.GameStart, this);
             MessageSystem<MessageType>.Regist(MessageType.PICKBAN, this);
             MessageSystem<MessageType>.Regist(MessageType.GAMEINFO, this);
+
             base.Awake();
         }
 
         public override void OnDestroy()
         {
+            MessageSystem<MessageType>.Regist(MessageType.ChatChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.GameStart, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PICKBAN, this);
             MessageSystem<MessageType>.UnRegist(MessageType.GAMEINFO, this);
             base.OnDestroy();
         }
 
+        private int lastChosen { get; set; }
+        private bool start = false;
+
         public override void OnEventTrigger(MessageType eventType, params object[] parameters)
         {
             switch (eventType)
             {
-                case MessageType.GameStart:
-                    SceneManager.LoadScene(2);
-                    break;
                 case MessageType.PICKBAN:
+                    bool changed = false;
                     for (int i = 0; i < RoleChoose.Instance.RoleIDs.Count; i++)
                     {
                         pools[i].HeroID = RoleChoose.Instance.RoleIDs[i];
-                        pools[i].Selected = (RoleChoose.Instance.options[i] > 0);
+                        if(RoleChoose.Instance.options[i] > 0)
+                        {
+                            start = true;
+                            if (!pools[i].Selected)
+                            { 
+                            pools[i].Selected = true;
+                            changed = true;
+                            lastChosen = i;
+                            }
+                        }
                         pools[i].canselect = (RoleChoose.Instance.oprater==BattleData.Instance.PlayerID) && !pools[i].Selected;
                     }
                     if (RoleChoose.Instance.oprater == BattleData.Instance.PlayerID && RoleChoose.Instance.opration == 4)
                         if (BattleData.Instance.MainPlayer.team == 0)
-                            blueCancel.gameObject.SetActive(RoleChoose.Instance.opration == 4);
+                            blueCancel.gameObject.SetActive(true);
                         else
-                            redCancel.gameObject.SetActive(RoleChoose.Instance.opration == 4);
+                            redCancel.gameObject.SetActive(true);
 
-                    string who = (RoleChoose.Instance.oprater == BattleData.Instance.PlayerID) ? "轮到你" :
-                        (("等待<color=#ff0>" + BattleData.Instance.GetPlayerInfo(RoleChoose.Instance.oprater).nickname) + "</color>");
-                    string what="";
-                    switch (RoleChoose.Instance.opration)
+                    if (RoleChoose.Instance.opration != 1)
                     {
-                        case 1:
-                            what = "错误";
-                            break;
-                        case 2:
-                            what = "<color=#ff0000>禁用</color>";
-                            break;
-                        case 3:
-                            what = "选择";
-                            break;
-                        case 4:
-                            what = "选择是否额外<color=#ff0000>禁用</color>";
-                            break;
+                        string who = (RoleChoose.Instance.oprater == BattleData.Instance.PlayerID) ? "轮到你" :
+                            (("等待<color=#ff0>" + BattleData.Instance.GetPlayerInfo(RoleChoose.Instance.oprater).nickname) + "</color>");
+                        string what = "";
+
+                        switch (RoleChoose.Instance.opration)
+                        {
+                            case 2:
+                                what = "<color=#ff0000>禁用</color>";
+                                break;
+                            case 3:
+                                what = "选择";
+                                break;
+                            case 4:
+                                what = "选择是否额外<color=#ff0000>禁用</color>";
+                                break;
+                        }
+                        info.text = who + what + "角色";
                     }
-                    info.text = who + what + "角色" ;
+                    if (RoleChoose.Instance.opration==1 && changed)
+                    {
+                        if(RoleChoose.Instance.RoleStrategy == network.ROLE_STRATEGY.ROLE_STRATEGY_CM)
+                        { 
+                        string what2 = "";
+                        switch (RoleChoose.Instance.options[lastChosen])
+                        { 
+                            case 12:
+                            case 15:
+                                what2 = "　禁用了　";
+                                break;
+                            case 14:
+                            case 17:
+                                what2 = "　选择了　";
+                                break;
+                            case 13:
+                            case 16:
+                                what2 = "　额外禁用了　";
+                                break;
+                        }
+                        log.text += "<color=#ff0>" + BattleData.Instance.GetPlayerInfo(RoleChoose.Instance.oprater).nickname + "</color>" + what2 + "<color=#ff0>"+ RoleFactory.Create(RoleChoose.Instance.RoleIDs[lastChosen]).RoleName+ "</color>"+"\n";
+                        }
+                        if (RoleChoose.Instance.RoleStrategy == network.ROLE_STRATEGY.ROLE_STRATEGY_BP)
+                        { 
+                            int isPick = ((RoleChoose.Instance.options[lastChosen] - 1) / 2) % 2;
+                            log.text += "<color=#ff0>" + BattleData.Instance.GetPlayerInfo(RoleChoose.Instance.oprater).nickname + "</color>" + (isPick == 0 ? "　禁用了　" : "　选择了　") + "<color=#ff0>" + RoleFactory.Create(RoleChoose.Instance.RoleIDs[lastChosen]).RoleName + "</color>" + "\n";
+                        }
+                    }
+                    if(!start)
+                    {
+                        start = true;
+                        log.text += "以下角色响应了召集　";
+                        foreach (var v in RoleChoose.Instance.RoleIDs)
+                            log.text += "<color=#ff0>"+RoleFactory.Create(v).RoleName+"</color>　";
+                        log.text += "\n";
+                    }
                     break;
                 case MessageType.GAMEINFO:
                     var BPInfo = parameters[0] as network.GameInfo;
@@ -184,12 +261,14 @@ namespace AGrail
                         if (v.role_id != 0)
                             count++;
                     }
-                    Debug.LogError(count);
                     int a = count / 2;
                     if (count % 2 == 0)
                         pointer.transform.localPosition = new Vector3(-250 + ((players[a - 1].Seat) * 100), pointer.transform.localPosition.y, pointer.transform.localPosition.z);
                     else
                         pointer.transform.localPosition = new Vector3(-250+ ( (players[a + players.Count/2].Seat) * 100), pointer.transform.localPosition.y, pointer.transform.localPosition.z);
+                    break;
+                case MessageType.ChatChange:
+                    chatChange();
                     break;
             }
             base.OnEventTrigger(eventType, parameters);
@@ -240,6 +319,71 @@ namespace AGrail
             redCancel.gameObject.SetActive(false);
             RoleChoose.Instance.Choose(100);
 
+        }
+
+        private void chatChange()
+        {
+            var go = Instantiate<GameObject>(AssetBundleManager.Instance.LoadAsset("battle", "ChatItem"));
+            go.transform.SetParent(this.chat);
+            go.transform.localScale = Vector3.one;
+            go.transform.localPosition = Vector3.zero;
+            go.transform.localRotation = Quaternion.identity;
+            var chatItem = go.GetComponent<ChatItem>();
+            var chat = Dialog.Instance.Chat.Last();
+            chatItem.RoleID = chat.RoleID;
+            chatItem.Msg = (chat.RoleID == null) ? BattleData.Instance.GetPlayerInfo(chat.ID).nickname + ": " + chat.msg : chat.msg;
+            if (chat.ID != BattleData.Instance.PlayerID)
+                chatItem.IsMainPlayer = false;
+
+            //生成气泡文字
+            //playerStatus[BattleData.Instance.PlayerIdxOrder.IndexOf((int)chat.ID)].Chat = chat.msg;
+        }
+
+        private Tweener logTweener = null;
+        private void onBtnLogExpandClick(bool flag)
+        {
+            if (logTweener != null && logTweener.IsPlaying())
+                return;
+            btnLogExpand.onClick.RemoveAllListeners();
+            if (flag)
+            {
+                logRoot.localPosition = new Vector3(960, 0, 0);
+                logTweener = logRoot.DOLocalMoveX(320, 0.5f);
+                btnLogExpand.onClick.AddListener(delegate { onBtnLogExpandClick(false); });
+            }
+            else
+            {
+                logRoot.localPosition = new Vector3(320, 0, 0);
+                logTweener = logRoot.DOLocalMoveX(960, 0.5f);
+                btnLogExpand.onClick.AddListener(delegate { onBtnLogExpandClick(true); });
+            }
+        }
+
+        private Tweener chatTweener = null;
+        private void onBtnChatExpandClick(bool flag)
+        {
+            if (chatTweener != null && chatTweener.IsPlaying())
+                return;
+            btnChatExpand.onClick.RemoveAllListeners();
+            if (flag)
+            {
+                chatRoot.localPosition = new Vector3(-960, 0, 0);
+                chatTweener = chatRoot.DOLocalMoveX(-320, 0.5f);
+                btnChatExpand.onClick.AddListener(delegate { onBtnChatExpandClick(false); });
+            }
+            else
+            {
+                chatRoot.localPosition = new Vector3(-320, 0, 0);
+                chatTweener = chatRoot.DOLocalMoveX(-960, 0.5f);
+                btnChatExpand.onClick.AddListener(delegate { onBtnChatExpandClick(true); });
+            }
+        }
+
+        private void onBtnSubmitClick(string str)
+        {
+            if (!string.IsNullOrEmpty(inptChat.text))
+                Dialog.Instance.SendTalk(inptChat.text);
+            inptChat.text = string.Empty;
         }
     }
 }

@@ -36,7 +36,7 @@ namespace AGrail
             }
             set
             {
-                Hero.sprite = Hero.sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("hero_h", value.ToString() + "h");
+                Hero.sprite =  AssetBundleManager.Instance.LoadAsset<Sprite>("hero_h", value.ToString() + "h");
                 heroid = value;
             }
             

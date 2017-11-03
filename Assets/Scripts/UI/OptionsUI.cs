@@ -35,23 +35,16 @@ namespace AGrail
 
         public void OnExitClick()
         {
-            if(SceneManager.GetActiveScene().buildIndex == 2)
-            {
-                Lobby.Instance.LeaveRoom();
-                SceneManager.LoadScene(1);
-            }
+            GameManager.UIInstance.PopWindow(WinMsg.None);
+            if (GameManager.UIInstance.PeekWindow() == WindowType.LoginBox ||
+                    GameManager.UIInstance.PeekWindow() == WindowType.Lobby)
+                return;
             else
             {
-                GameManager.UIInstance.PopWindow(WinMsg.None);
-                if (GameManager.UIInstance.PeekWindow() == WindowType.LoginBox ||
-                    GameManager.UIInstance.PeekWindow() == WindowType.Lobby)
-                    return;                
-                else
-                {
-                    GameManager.UIInstance.PopAllWindow();
-                    GameManager.UIInstance.PushWindow(WindowType.Lobby, WinMsg.None);
-                }
-            }            
+                Lobby.Instance.LeaveRoom();
+                GameManager.UIInstance.PopAllWindow();
+                GameManager.UIInstance.PushWindow(WindowType.Lobby, WinMsg.None);
+            }
         }
 
         public void OnBGMVolChange(float vol)

@@ -4,6 +4,9 @@ using UnityEngine;
 using Framework.Message;
 using UnityEngine.UI;
 using DG.Tweening;
+using System;
+using System.Linq;
+using System.Collections;
 
 namespace AGrail
 {
@@ -27,7 +30,6 @@ namespace AGrail
         private Button ChooseTeam;
         [SerializeField]
         private Button btnExit;
-
         [SerializeField]
         private GameObject leaderPanel;
         [SerializeField]
@@ -36,7 +38,8 @@ namespace AGrail
         private Button btnBecomeLeader;
         [SerializeField]
         private Button btnNotLeader;
-
+        [SerializeField]
+        private Text talks;
 
         public override WindowType Type
         {
@@ -49,6 +52,7 @@ namespace AGrail
         public override void Awake()
         {
             MessageSystem<MessageType>.Regist(MessageType.RoomIDChange, this);
+            MessageSystem<MessageType>.Regist(MessageType.ChatChange, this);
             MessageSystem<MessageType>.Regist(MessageType.ChooseRole, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerLeave, this);
             MessageSystem<MessageType>.Regist(MessageType.PlayerIsReady, this);
@@ -56,6 +60,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.PlayerTeamChange, this);
             MessageSystem<MessageType>.Regist(MessageType.LEADERREQUEST, this);
             MessageSystem<MessageType>.Regist(MessageType.GameStart, this);
+            MessageSystem<MessageType>.Regist(MessageType.ERROR, this);
 
             foreach (var v in players)
                 v.Reset();
@@ -74,7 +79,7 @@ namespace AGrail
             }
 
             root.localPosition = new Vector3(1280, 0, 0);
-            root.DOLocalMoveX(0, 1);
+            root.DOLocalMoveX(0, 1).OnComplete(() => { btnExit.interactable = true; }) ;
 
             btnChooseRedTeam.onClick.AddListener(delegate { chooseTeam(Team.Red); });
             btnChooseBlueTeam.onClick.AddListener(delegate { chooseTeam(Team.Blue); });
@@ -86,6 +91,7 @@ namespace AGrail
 
         public override void OnDestroy()
         {
+            MessageSystem<MessageType>.UnRegist(MessageType.ChatChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.RoomIDChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.ChooseRole, this);
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerLeave, this);
@@ -94,6 +100,7 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.PlayerTeamChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.LEADERREQUEST, this);
             MessageSystem<MessageType>.UnRegist(MessageType.GameStart, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.ERROR, this);
             base.OnDestroy();
         }
 
@@ -117,7 +124,6 @@ namespace AGrail
                         case network.ROLE_STRATEGY.ROLE_STRATEGY_BP:
                             if(GameManager.UIInstance.PeekWindow()!=WindowType.RoleChooseBPCM)
                             {
-                                Debug.LogError(GameManager.UIInstance.PeekWindow());
                                 GameManager.UIInstance.PushWindow(WindowType.RoleChooseBPCM, WinMsg.Pause);
                             }
                             MessageSystem<MessageType>.Notify(MessageType.PICKBAN, this);
@@ -150,7 +156,28 @@ namespace AGrail
                 case MessageType.GameStart:
                     UnityEngine.SceneManagement.SceneManager.LoadScene(2);
                     break;
+                case MessageType.ChatChange:
+                    var chat = Dialog.Instance.Chat.Last();
+                    talks.text += (chat.RoleID == null) ? BattleData.Instance.GetPlayerInfo(chat.ID).nickname + ": " + chat.msg : chat.msg;
+                    talks.text += "\n";
+                    break;
+                case MessageType.ERROR:
+                    var errorProto = parameters[0] as network.Error;
+                    Debug.LogError(errorProto.id);
+                    if (errorProto.id == 32)
+                    {
+                        StartCoroutine(Wait1());
+                    }
+                    break;
             }
+        }
+        IEnumerator Wait1()
+        {
+            yield return new WaitForSeconds(1);
+            GameManager.UIInstance.PushWindow(Framework.UI.WindowType.InputBox, Framework.UI.WinMsg.None, -1, Vector3.zero,
+                new Action<string>((str) => { GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None); OnExitClick(); }),
+                new Action<string>((str) => { GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None); OnExitClick(); }),
+                "瞎蒙果然是不行的~");
         }
 
         public void OnReadyClick()
@@ -164,7 +191,7 @@ namespace AGrail
         {
             Lobby.Instance.LeaveRoom();
             Lobby.Instance.GetRoomList();
-            GameManager.UIInstance.PopWindow(WinMsg.Show);
+            GameManager.UIInstance.PopWindow(WinMsg.Resume);
         }
 
         public void OnBtnChooseTeamClick()

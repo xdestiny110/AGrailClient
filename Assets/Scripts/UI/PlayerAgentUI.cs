@@ -53,6 +53,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.Win, this);
 
             MessageSystem<MessageType>.Notify(MessageType.AgentUpdate);
+            MessageSystem<MessageType>.Notify(MessageType.AgentHandChange);
         }
 
         void OnDestroy()

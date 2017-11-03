@@ -473,6 +473,7 @@ namespace AGrail
                             Agent.AgentState = (int)PlayerAgentState.HealCost;
                             break;
                         case (uint)network.BasicRespondType.RESPOND_WEAKEN:
+                            Dialog.instance.Log += RoleFactory.Create(instance.GetPlayerInfo(v.args[0]).role_id).RoleName + " 被虚弱了"+Environment.NewLine;
                             if (v.args[0] != MainPlayer.id)
                             {
                                 MessageSystem<MessageType>.Notify(MessageType.PlayerActionChange, v.args[0], "等待虚弱响应");

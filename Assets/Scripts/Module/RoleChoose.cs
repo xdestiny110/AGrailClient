@@ -21,7 +21,10 @@ namespace AGrail
 
         public void Choose(uint roleID)
         {
-            bool IsPick = (opration == (uint)network.BP_OPRATION.BP_PICK) ? true : false ;
+            bool IsPick;
+            if (RoleStrategy == network.ROLE_STRATEGY.ROLE_STRATEGY_BP && RoleStrategy == network.ROLE_STRATEGY.ROLE_STRATEGY_CM)
+                IsPick = (opration == 3 ? true : false);
+            else IsPick = true;
             var proto = new network.PickBan() { strategy = (uint)RoleStrategy, is_pick = IsPick };
             proto.role_ids.Add(roleID);
             GameManager.TCPInstance.Send(new Protobuf() { Proto = proto, ProtoID = ProtoNameIds.PICKBAN });

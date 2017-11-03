@@ -212,21 +212,26 @@ namespace AGrail
                     var act = parameters[0] as network.Action;
                     srcPlayer = BattleData.Instance.GetPlayerInfo(act.src_id);
                     r1 = RoleFactory.Create(srcPlayer.role_id);
-                    str.Append(string.Format("{0}进行了", r1.RoleName));
-                    switch (act.action_id)
+                    if (act.action_type == 9)
+                        str.Append(r1.RoleName + "宣告了无法行动"+Environment.NewLine);
+                    else
                     {
-                        case 0:
-                            str.Append("购买" + Environment.NewLine);
-                            break;
-                        case 1:
-                            str.Append("合成" + Environment.NewLine);
-                            break;
-                        case 2:
-                            str.Append("提炼" + Environment.NewLine);
-                            break;
-                        default:
-                            str.Append("奇怪的行动" + Environment.NewLine);
-                            break;
+                        str.Append(string.Format("{0}进行了", r1.RoleName));
+                        switch (act.action_id)
+                        {
+                            case 0:
+                                str.Append("购买" + Environment.NewLine);
+                                break;
+                            case 1:
+                                str.Append("合成" + Environment.NewLine);
+                                break;
+                            case 2:
+                                str.Append("提炼" + Environment.NewLine);
+                                break;
+                            default:
+                                str.Append("奇怪的行动" + Environment.NewLine);
+                                break;
+                        }
                     }
                     log += str.ToString();
                     MessageSystem<MessageType>.Notify(MessageType.SendHint, str.ToString());
