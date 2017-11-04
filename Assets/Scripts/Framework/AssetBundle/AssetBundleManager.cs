@@ -5,7 +5,7 @@ using UnityEngine.Networking;
 using System;
 using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
+using System.Text;
 
 namespace Framework.AssetBundle
 {
@@ -56,7 +56,7 @@ namespace Framework.AssetBundle
             get
 #if !UNITY_EDITOR
             {
-                return false;
+                return true;
             }
 #else
             {
@@ -209,12 +209,7 @@ namespace Framework.AssetBundle
 
             //更新本地checkfile
             finalCheckFile.ForEach(cf => { cf.location = (cf.location == CheckFile.Location.Remote) ? CheckFile.Location.Persistent : cf.location; });
-            using (FileStream fs = new FileStream(Path.Combine(Application.persistentDataPath, "CheckFile"), FileMode.Create, FileAccess.Write))
-            {
-                var json = JsonConvert.SerializeObject(finalCheckFile, Formatting.Indented);
-                var bytes = System.Text.Encoding.UTF8.GetBytes(json);
-                fs.Write(bytes, 0, bytes.Length);
-            }
+			writeCheckFile (Path.Combine(Application.persistentDataPath, "CheckFile"), finalCheckFile);
 
             //读取所有bundle
             foreach (var v in finalCheckFile)
@@ -354,9 +349,27 @@ namespace Framework.AssetBundle
                     Debug.LogErrorFormat("WWW error occur. Error = {0}", www.error);
                     yield break;
                 }
-                checkFile.AddRange(JsonConvert.DeserializeObject<List<CheckFile>>(www.text));
+				LitJson.JsonData data = LitJson.JsonMapper.ToObject(www.text);
+				for(int i = 0;i<data.Count;i++){
+					var c = new CheckFile(){
+						name = data[i]["name"].ToString(), 
+						hash = data[i]["hash"].ToString(), 
+						location = (CheckFile.Location)(int)data[i]["location"]
+					};
+					checkFile.Add(c);
+				}
             }
         }
+
+		private void writeCheckFile(string filePath, List<CheckFile> checkFiles)
+		{
+			var json = LitJson.JsonMapper.ToJson (checkFiles);
+			using (FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+			{
+				var bytes = Encoding.UTF8.GetBytes(json);
+				fs.Write(bytes, 0, bytes.Length);
+			}
+		}
 
         private IEnumerator downloadAssetBundle(string bundlePath, string bundleName)
         {
@@ -399,7 +412,7 @@ namespace Framework.AssetBundle
             get
             {
                 return
-#if UNITY_EDITOR || UNITY_STANDALONE
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_IOS || UNITY_IPHONE
                  "file://" + Application.streamingAssetsPath + "/";
 #elif UNITY_ANDROID
                 "jar:file://" + Application.dataPath + "!/assets/";
@@ -414,7 +427,7 @@ namespace Framework.AssetBundle
                 return
 #if UNITY_EDITOR || UNITY_STANDALONE
                     "file:///" + Application.persistentDataPath + "/";
-#elif UNITY_ANDROID
+#elif UNITY_ANDROID || UNITY_IOS || UNITY_IPHONE
                     "file://" + Application.persistentDataPath + "/";
 #endif
             }

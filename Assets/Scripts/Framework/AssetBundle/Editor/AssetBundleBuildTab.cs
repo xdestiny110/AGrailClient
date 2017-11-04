@@ -4,7 +4,6 @@ using System.IO;
 
 using UnityEngine.AssetBundles.AssetBundleDataSource;
 using System.Text;
-using Newtonsoft.Json;
 
 namespace UnityEngine.AssetBundles
 {
@@ -426,12 +425,12 @@ namespace UnityEngine.AssetBundles
             foreach(var v in files)
                 if(!v.Name.EndsWith("manifest"))
                     ret.Add(new Framework.AssetBundle.CheckFile() { name = v.Name, hash = computeMD5(v.FullName) });
-            var json = JsonConvert.SerializeObject(ret, Formatting.Indented);
-            using (FileStream fs = new FileStream(Path.Combine(m_OutputPath, "CheckFile"), FileMode.Create, FileAccess.Write))
-            {
-                var bytes = Encoding.UTF8.GetBytes(json);
-                fs.Write(bytes, 0, bytes.Length);
-            }
+			var json = LitJson.JsonMapper.ToJson (ret);            
+			using (FileStream fs = new FileStream(Path.Combine(m_OutputPath, "CheckFile"), FileMode.Create, FileAccess.Write))
+			{
+				var bytes = Encoding.UTF8.GetBytes(json);
+				fs.Write(bytes, 0, bytes.Length);
+			}
         }
 
         private string computeMD5(string fileName)

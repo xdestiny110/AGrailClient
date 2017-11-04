@@ -1,5 +1,4 @@
 ﻿using Framework.AssetBundle;
-using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,7 +12,13 @@ namespace AGrail
         static StateHint()
         {
             var txt = AssetBundleManager.Instance.LoadAsset<TextAsset>("battle", "hint").text;
-            hint = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, string>>>(txt);
+			LitJson.JsonData data = LitJson.JsonMapper.ToObject(txt);
+			foreach (var v in data.Keys) {
+				var d = new Dictionary<string, string> ();
+				hint.Add (v, d);
+				foreach (var u in data[v].Keys)
+					d.Add (u, data [v] [u].ToString());
+			}            
         }
 
         public static string GetHint(StateEnum state, int additional = 0)
