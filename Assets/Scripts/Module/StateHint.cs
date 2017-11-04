@@ -7,7 +7,7 @@ namespace AGrail
 {
     public static class StateHint
     {
-        private static Dictionary<string, Dictionary<string, string>> hint;
+		private static Dictionary<string, Dictionary<string, string>> hint = new Dictionary<string, Dictionary<string, string>>();
 
         static StateHint()
         {
