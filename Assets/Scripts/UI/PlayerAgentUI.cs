@@ -56,6 +56,7 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.AgentSelectCard, this);
             MessageSystem<MessageType>.Notify(MessageType.AgentUpdate);
             MessageSystem<MessageType>.Notify(MessageType.AgentHandChange);
+            MessageSystem<MessageType>.Notify(MessageType.AgentUIStateChange);
         }
 
         void OnDestroy()

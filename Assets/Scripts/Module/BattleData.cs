@@ -381,6 +381,8 @@ namespace AGrail
                         if(DisConnectedPlayer.Count == 0 && GameManager.UIInstance.PeekWindow() == Framework.UI.WindowType.DisConnectedPoll)
                             GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
                     }
+                    if (v.leaderSpecified)
+                        player.leader = v.leader;
                 }
                 if(count == BattleData.Instance.PlayerInfos.Count)
                     MessageSystem<MessageType>.Notify(MessageType.GameStart);

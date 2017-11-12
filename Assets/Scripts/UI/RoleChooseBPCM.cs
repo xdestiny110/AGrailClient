@@ -26,22 +26,15 @@ namespace AGrail
         [SerializeField]
         private Image blueHero;
         [SerializeField]
-        private Button redBP;
+        private Button BPBtn;
         [SerializeField]
-        private Button blueBP;
-        [SerializeField]
-        private Button redCancel;
-        [SerializeField]
-        private Button blueCancel;
+        private Button CancelBtn;
         [SerializeField]
         private List<Image> seats;
         [SerializeField]
         private Image pointer;
         [SerializeField]
         private List<Text> Hname;
-        [SerializeField]
-        private Text talks;
-
         [SerializeField]
         private Transform logRoot;
         [SerializeField]
@@ -58,6 +51,16 @@ namespace AGrail
         private InputField inptChat;
         [SerializeField]
         private Button btnSubmit;
+        [SerializeField]
+        private Transform FlagGroup;
+        [SerializeField]
+        private Transform RedGroup;
+        [SerializeField]
+        private Transform BlueGroup;
+        [SerializeField]
+        private Image BlueLeader;
+        [SerializeField]
+        private Image RedLeader;
 
         public override WindowType Type
         {
@@ -66,7 +69,6 @@ namespace AGrail
                 return WindowType.RoleChooseBPCM;
             }
         }
-
         public override void Awake()
         {
             if (Lobby.Instance.SelectRoom.max_player != 6)
@@ -93,6 +95,14 @@ namespace AGrail
                 seats.RemoveAt(5);
                 seats.RemoveAt(4);
             }
+            if (BattleData.Instance.MainPlayer.team == 0)
+            {
+                RedGroup.localPosition = new Vector3(450, 300, 0);
+                BlueGroup.localPosition = new Vector3(-450, 300, 0);
+                redHero.transform.localPosition = new Vector3(370, -100, 0);
+                blueHero.transform.localPosition = new Vector3(-370, -100, 0);
+                FlagGroup.localScale = new Vector3(-1, 1, 0);
+            }
             var idx = BattleData.Instance.PlayerIdxOrder.IndexOf((int)BattleData.Instance.StartPlayerID);
             int a = 0, b = players.Count/2;
             for (int i = 0; i < players.Count; i++)
@@ -105,12 +115,25 @@ namespace AGrail
                 {
                     players[a].ID = player.id;
                     players[a].Seat = i;
+                    if (player.leader == 1)
+                    {
+                        BlueLeader.transform.SetParent(players[a].transform);
+                        BlueLeader.transform.localPosition = new Vector3(0, 0, 0);
+                        BlueLeader.gameObject.SetActive(true);
+                    }
                     nicknames[a++].text = player.nickname;
+
                 }
                 else
                 {
                     players[b].ID = player.id;
                     players[b].Seat = i;
+                    if (player.leader == 1)
+                    {
+                        RedLeader.transform.SetParent(players[b].transform);
+                        RedLeader.transform.localPosition = new Vector3(0, 0, 0);
+                        RedLeader.gameObject.SetActive(true);
+                    }
                     nicknames[b++].text = player.nickname;
                 }
             }
@@ -124,10 +147,8 @@ namespace AGrail
             }
             choosing = 0;
             lastChosen = 0;
-            redBP.onClick.AddListener(onSureClick);
-            blueBP.onClick.AddListener(onSureClick);
-            redCancel.onClick.AddListener(cancelIB);
-            blueCancel.onClick.AddListener(cancelIB);
+            BPBtn.onClick.AddListener(onSureClick);
+            CancelBtn.onClick.AddListener(cancelIB);
             btnLogExpand.onClick.AddListener(delegate { onBtnLogExpandClick(true); });
             btnChatExpand.onClick.AddListener(delegate { onBtnChatExpandClick(true); });
             btnSubmit.onClick.AddListener(delegate { onBtnSubmitClick(null); });
@@ -175,11 +196,7 @@ namespace AGrail
                         pools[i].canselect = (RoleChoose.Instance.oprater==BattleData.Instance.PlayerID) && !pools[i].Selected;
                     }
                     if (RoleChoose.Instance.oprater == BattleData.Instance.PlayerID && RoleChoose.Instance.opration == 4)
-                        if (BattleData.Instance.MainPlayer.team == 0)
-                            blueCancel.gameObject.SetActive(true);
-                        else
-                            redCancel.gameObject.SetActive(true);
-
+                            CancelBtn.gameObject.SetActive(true);
                     if (RoleChoose.Instance.opration != 1)
                     {
                         string who = (RoleChoose.Instance.oprater == BattleData.Instance.PlayerID) ? "轮到你" :
@@ -278,33 +295,22 @@ namespace AGrail
         private void onHeroClick(uint id)
         {
             choosing = id;
+            BPBtn.gameObject.SetActive(true);
+            BPBtn.GetComponent<Image>().sprite =
+                RoleChoose.Instance.opration == 3 ?
+                AssetBundleManager.Instance.LoadAsset<Sprite>("lobby_texture", "r03-pick") :
+                AssetBundleManager.Instance.LoadAsset<Sprite>("lobby_texture", "r03-ban");
             if (BattleData.Instance.MainPlayer.team == 0)
-            {
                 blueHero.sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("hero_l", id + "L");
-                blueBP.gameObject.SetActive(true);
-                blueBP.GetComponent<Image>().sprite =
-                    RoleChoose.Instance.opration == 3 ?
-                    AssetBundleManager.Instance.LoadAsset<Sprite>("lobby_texture","r03-pick") :
-                    AssetBundleManager.Instance.LoadAsset<Sprite>("lobby_texture","r03-ban");
-            }
             else
-            {
                 redHero.sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("hero_l", id + "L");
-                redBP.gameObject.SetActive(true);
-                redBP.GetComponent<Image>().sprite =
-                    RoleChoose.Instance.opration == 3 ?
-                    AssetBundleManager.Instance.LoadAsset<Sprite>("lobby_texture", "r03-pick") :
-                    AssetBundleManager.Instance.LoadAsset<Sprite>("lobby_texture", "r03-ban");
-            }
         }
         private void onSureClick()
         {
             foreach (var v in pools)
                 v.canselect = false;
-            blueBP.gameObject.SetActive(false);
-            blueCancel.gameObject.SetActive(false);
-            redBP.gameObject.SetActive(false);
-            redCancel.gameObject.SetActive(false);
+            BPBtn.gameObject.SetActive(false);
+            CancelBtn.gameObject.SetActive(false);
             RoleChoose.Instance.Choose(choosing);
 
         }
@@ -313,10 +319,8 @@ namespace AGrail
         {
             foreach (var v in pools)
                 v.canselect = false;
-            blueBP.gameObject.SetActive(false);
-            blueCancel.gameObject.SetActive(false);
-            redBP.gameObject.SetActive(false);
-            redCancel.gameObject.SetActive(false);
+            BPBtn.gameObject.SetActive(false);
+            CancelBtn.gameObject.SetActive(false);
             RoleChoose.Instance.Choose(100);
 
         }
