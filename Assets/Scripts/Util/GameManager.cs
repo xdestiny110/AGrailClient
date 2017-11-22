@@ -86,6 +86,23 @@ namespace AGrail
 
         void Update()
         {
+            if(Input.GetMouseButtonDown(0))
+            {
+                var prefab = AssetBundleManager.Instance.LoadAsset("ui", "ClickCircle");
+                var ClickCircle = Instantiate(prefab);
+                ClickCircle.transform.SetParent(instance.transform);
+                ClickCircle.transform.position = new Vector3( (Input.mousePosition.x-640)*0.1603751f, (Input.mousePosition.y - 360) * 0.1603751f, 100f);
+                ClickCircle.transform.localScale = new Vector3(1,1,1);
+            }
+            else if (Input.GetMouseButton(0))
+            {
+                var prefab = AssetBundleManager.Instance.LoadAsset("ui", "Draging");
+                var Draging = Instantiate(prefab);
+                Draging.transform.SetParent(instance.transform);
+                Draging.transform.position = new Vector3((Input.mousePosition.x - 640) * 0.1603751f, (Input.mousePosition.y - 360) * 0.1603751f, 100f);
+                Draging.transform.localScale = new Vector3(1, 1, 1);
+            }
+
             if (UIInstance.PeekWindow() != WindowType.LoginBox && UIInstance.PeekWindow() != WindowType.ReConBox)
             {
                 timer -= Time.deltaTime;
