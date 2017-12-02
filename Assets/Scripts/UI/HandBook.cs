@@ -34,6 +34,7 @@ namespace AGrail
                 if (a == 32) i = 108;
                 var go = Instantiate(prefab);
                 go.transform.SetParent(SkillArea);
+                go.transform.localScale = new Vector3(1, 1, 1);
                 var role = RoleFactory.Create(i);
                 go.transform.GetComponent<Image>().sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("hero_h", i.ToString() + "h");
                 go.transform.GetComponent<Button>().onClick.AddListener(
@@ -41,11 +42,6 @@ namespace AGrail
                 go.transform.GetChild(0).GetComponent<Text>().text = role.RoleName;
             }
             base.Awake();
-        }
-
-        public void test()
-        {
-            GameManager.UIInstance.PushWindow(Framework.UI.WindowType.InfomationUI, Framework.UI.WinMsg.None, -1, Vector3.zero, 1);
         }
 
     }
