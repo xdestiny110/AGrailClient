@@ -2420,8 +2420,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Content: {fileID: 224532648915560100}
-  m_Horizontal: 0
-  m_Vertical: 1
+  m_Horizontal: 1
+  m_Vertical: 0
   m_MovementType: 0
   m_Elasticity: 0.1
   m_Inertia: 0
@@ -4034,8 +4034,8 @@ MonoBehaviour:
   m_StartAxis: 0
   m_CellSize: {x: 75, y: 66}
   m_Spacing: {x: 50, y: 70}
-  m_Constraint: 1
-  m_ConstraintCount: 8
+  m_Constraint: 2
+  m_ConstraintCount: 3
 --- !u!114 &114913767288656970
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -37,6 +37,8 @@ namespace AGrail
             }
         }
 
+        private Vector3 oriposition;
+
         public override void Awake()
         {
             button0.onClick.AddListener(delegate { GenerateHero(0); });
@@ -45,11 +47,13 @@ namespace AGrail
             button3.onClick.AddListener(delegate { GenerateHero(3); });
             button4.onClick.AddListener(delegate { GenerateHero(4); });
             button5.onClick.AddListener(delegate { GenerateHero(5); });
+            oriposition = SkillArea.position;
             GenerateHero(0);
             base.Awake();
         }
-        public void GenerateHero(uint p)
+        private void GenerateHero(uint p)
         {
+            SkillArea.position=oriposition;
             for (int i = 0; i < SkillArea.childCount; i++)
             {
                 Destroy(SkillArea.GetChild(i).gameObject);
