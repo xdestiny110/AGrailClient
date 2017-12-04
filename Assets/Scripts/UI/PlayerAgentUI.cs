@@ -141,15 +141,15 @@ namespace AGrail
                     //    GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
                     break;
                 case MessageType.ShowNewArgsUI:
-                    if (GameManager.UIInstance.PeekWindow() != Framework.UI.WindowType.ArgsUI)
+                    if (GameManager.UIInstance.PeekWindowType() != Framework.UI.WindowType.ArgsUI)
                     { 
-                        if (GameManager.UIInstance.PeekWindow() == Framework.UI.WindowType.InfomationUI)
+                        if (GameManager.UIInstance.PeekWindowType() == Framework.UI.WindowType.InfomationUI)
                             GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
                         GameManager.UIInstance.PushWindow(Framework.UI.WindowType.ArgsUI, Framework.UI.WinMsg.None, -1, Vector3.zero, parameters);
                     }
                     break;
                 case MessageType.CloseNewArgsUI:
-                    if (GameManager.UIInstance.PeekWindow() == Framework.UI.WindowType.ArgsUI)
+                    if (GameManager.UIInstance.PeekWindowType() == Framework.UI.WindowType.ArgsUI)
                         GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
                     break;
             }

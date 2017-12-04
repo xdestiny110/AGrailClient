@@ -30,6 +30,8 @@ namespace AGrail
 
         void Awake()
         {
+            Debug.Log(Screen.width);
+            Debug.Log(Screen.height);
             instance = this;
             DontDestroyOnLoad(this);
             lh = new Framework.Log.LogHandler();
@@ -88,24 +90,36 @@ namespace AGrail
         {
             if (Input.GetMouseButtonDown(0))
             {
-                var prefab = AssetBundleManager.Instance.LoadAsset("ui", "ClickCircle");
-                var ClickCircle = Instantiate(prefab);
-                ClickCircle.name = "ClickCircle";
-                ClickCircle.transform.SetParent(instance.transform);
-                ClickCircle.transform.position = new Vector3((Input.mousePosition.x - 640) * 0.1603751f, (Input.mousePosition.y - 360) * 0.1603751f, 100f);
-                ClickCircle.transform.localScale = new Vector3(1, 1, 1);
+                var topWin = UIInstance.PeekWindow();
+                if(topWin != null)
+                {
+                    Vector3 pt = new Vector3();
+                    RectTransformUtility.ScreenPointToWorldPointInRectangle(topWin.transform as RectTransform, Input.mousePosition, Camera.main, out pt);
+                    var prefab = AssetBundleManager.Instance.LoadAsset("ui", "ClickCircle");
+                    var ClickCircle = Instantiate(prefab);
+                    ClickCircle.name = "ClickCircle";
+                    ClickCircle.transform.SetParent(instance.transform);
+                    ClickCircle.transform.localPosition = pt;
+                    ClickCircle.transform.localScale = new Vector3(1, 1, 1);
+                }
             }
             else if (Input.GetMouseButton(0))
             {
-                var prefab = AssetBundleManager.Instance.LoadAsset("ui", "Draging");
-                var Draging = Instantiate(prefab);
-                Draging.name = "Draging";
-                Draging.transform.SetParent(instance.transform);
-                Draging.transform.position = new Vector3((Input.mousePosition.x - 640) * 0.1603751f, (Input.mousePosition.y - 360) * 0.1603751f, 100f);
-                Draging.transform.localScale = new Vector3(1, 1, 1);
+                var topWin = UIInstance.PeekWindow();                
+                if (topWin != null)
+                {
+                    Vector3 pt = new Vector3();
+                    RectTransformUtility.ScreenPointToWorldPointInRectangle(topWin.transform as RectTransform, Input.mousePosition, Camera.main, out pt);
+                    var prefab = AssetBundleManager.Instance.LoadAsset("ui", "Draging");
+                    var Draging = Instantiate(prefab);
+                    Draging.name = "Draging";
+                    Draging.transform.SetParent(instance.transform);
+                    Draging.transform.localPosition = pt;
+                    Draging.transform.localScale = new Vector3(1, 1, 1);
+                }
             }
 
-            if (UIInstance.PeekWindow() != WindowType.LoginBox && UIInstance.PeekWindow() != WindowType.ReConBox)
+            if (UIInstance.PeekWindowType() != WindowType.LoginBox && UIInstance.PeekWindowType() != WindowType.ReConBox)
             {
                 timer -= Time.deltaTime;
                 if (timer <= 0)

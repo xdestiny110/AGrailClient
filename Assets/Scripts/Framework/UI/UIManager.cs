@@ -103,11 +103,18 @@ namespace Framework.UI
             winStack.Clear();            
         }
 
-        public WindowType PeekWindow()
+        public WindowType PeekWindowType()
         {
             if (winStack.Count == 0)
                 return WindowType.None;
             return winStack.Last().Type;
+        }
+
+        public WindowsBase PeekWindow()
+        {
+            if (winStack.Count == 0)
+                return null;
+            return winStack.Last();
         }
 
         private void dealWinMsg(WindowsBase topWin, WinMsg msg)

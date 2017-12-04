@@ -122,14 +122,14 @@ namespace AGrail
                                 GameManager.UIInstance.PushWindow(WindowType.RoleChoose31, WinMsg.Pause);
                             break;
                         case network.ROLE_STRATEGY.ROLE_STRATEGY_BP:
-                            if(GameManager.UIInstance.PeekWindow()!=WindowType.RoleChooseBPCM)
+                            if(GameManager.UIInstance.PeekWindowType()!=WindowType.RoleChooseBPCM)
                             {
                                 GameManager.UIInstance.PushWindow(WindowType.RoleChooseBPCM, WinMsg.Pause);
                             }
                             MessageSystem<MessageType>.Notify(MessageType.PICKBAN, this);
                             break;
                         case network.ROLE_STRATEGY.ROLE_STRATEGY_CM:
-                            if (GameManager.UIInstance.PeekWindow() != WindowType.RoleChooseBPCM)
+                            if (GameManager.UIInstance.PeekWindowType() != WindowType.RoleChooseBPCM)
                                 GameManager.UIInstance.PushWindow(WindowType.RoleChooseBPCM, WinMsg.Pause);
                             MessageSystem<MessageType>.Notify(MessageType.PICKBAN, this);
                             break;
