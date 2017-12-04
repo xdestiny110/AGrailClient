@@ -29,6 +29,8 @@ namespace AGrail
         [SerializeField]
         private Text turn;
         [SerializeField]
+        private Text roomID;
+        [SerializeField]
         private Transform logRoot;
         [SerializeField]
         private Text log;
@@ -44,6 +46,22 @@ namespace AGrail
         private InputField inptChat;
         [SerializeField]
         private Button btnSubmit;
+        [SerializeField]
+        private GameObject winPanel;
+        [SerializeField]
+        private Text endText;
+        [SerializeField]
+        private Image winImage;
+        [SerializeField]
+        private Transform MVProot;
+        [SerializeField]
+        public List<PlayerIco> MVPS;
+        [SerializeField]
+        public GameObject WaitWindow;
+        [SerializeField]
+        public Text DisConPlayer;
+        [SerializeField]
+        public Text WaitText;
 
         public List<PlayerStatusMobile> PlayerStatus
         {
@@ -69,6 +87,10 @@ namespace AGrail
                 playerStatus.RemoveAt(2);
                 GameObject.Destroy(playerStatus[3].gameObject);
                 playerStatus.RemoveAt(3);
+                GameObject.Destroy(MVPS[0].gameObject);
+                MVPS.RemoveAt(0);
+                GameObject.Destroy(MVPS[1].gameObject);
+                MVPS.RemoveAt(1);
             }
             Dialog.Instance.Reset();
 
@@ -76,7 +98,7 @@ namespace AGrail
             btnChatExpand.onClick.AddListener(delegate { onBtnChatExpandClick(true); });
             btnSubmit.onClick.AddListener(delegate { onBtnSubmitClick(null); });
             inptChat.onEndEdit.AddListener(onBtnSubmitClick);
-
+            MessageSystem<MessageType>.Regist(MessageType.RoomIDChange, this);
             MessageSystem<MessageType>.Regist(MessageType.MoraleChange, this);
             MessageSystem<MessageType>.Regist(MessageType.GemChange, this);
             MessageSystem<MessageType>.Regist(MessageType.CrystalChange, this);
@@ -100,6 +122,8 @@ namespace AGrail
             MessageSystem<MessageType>.Regist(MessageType.TURNBEGIN, this);
             MessageSystem<MessageType>.Regist(MessageType.LogChange, this);
             MessageSystem<MessageType>.Regist(MessageType.ChatChange, this);
+            MessageSystem<MessageType>.Regist(MessageType.POLLINGREQUEST, this);
+            MessageSystem<MessageType>.Regist(MessageType.POLLINGRESPONSE, this);
 
             //依据数据初始化界面
             MessageSystem<MessageType>.Notify(MessageType.PlayBGM);
@@ -111,6 +135,7 @@ namespace AGrail
             MessageSystem<MessageType>.Notify(MessageType.CrystalChange, Team.Blue, (int)BattleData.Instance.Crystal[(int)Team.Blue]);
             MessageSystem<MessageType>.Notify(MessageType.GrailChange, Team.Red, BattleData.Instance.Grail[(int)Team.Red]);
             MessageSystem<MessageType>.Notify(MessageType.GrailChange, Team.Blue, BattleData.Instance.Grail[(int)Team.Blue]);
+            MessageSystem<MessageType>.Notify(MessageType.RoomIDChange);
 
             var playerIdxOrder = BattleData.Instance.PlayerIdxOrder;
             if(playerIdxOrder.Count == BattleData.Instance.PlayerInfos.Count && playerIdxOrder.Count > 0)
@@ -129,7 +154,9 @@ namespace AGrail
                     MessageSystem<MessageType>.Notify(MessageType.PlayerEnergeChange, i, playerInfo.gem, playerInfo.crystal);
                     MessageSystem<MessageType>.Notify(MessageType.PlayerKneltChange, i, playerInfo.is_knelt);
                     MessageSystem<MessageType>.Notify(MessageType.PlayerBasicAndExCardChange, i, playerInfo.basic_cards, playerInfo.ex_cards);
+                    
                 }
+                MessageSystem<MessageType>.Notify(MessageType.AgentHandChange);
             }
 
             base.Awake();
@@ -137,6 +164,7 @@ namespace AGrail
 
         public override void OnDestroy()
         {
+            MessageSystem<MessageType>.UnRegist(MessageType.RoomIDChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.MoraleChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.GemChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.CrystalChange, this);
@@ -160,6 +188,8 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.TURNBEGIN, this);
             MessageSystem<MessageType>.UnRegist(MessageType.LogChange, this);
             MessageSystem<MessageType>.UnRegist(MessageType.ChatChange, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.POLLINGREQUEST, this);
+            MessageSystem<MessageType>.UnRegist(MessageType.POLLINGRESPONSE, this);
 
             base.OnDestroy();
         }
@@ -192,7 +222,6 @@ namespace AGrail
                     }
                     break;
                 case MessageType.Win:
-                    break;
                 case MessageType.Lose:
                     break;
                 case MessageType.PlayerNickName:
@@ -268,6 +297,72 @@ namespace AGrail
                     break;
                 case MessageType.ChatChange:
                     chatChange();
+                    break;
+                case MessageType.POLLINGRESPONSE:
+                    var pollRes = parameters[0] as network.PollingResponse;
+                    if (winPanel.activeSelf == false)
+                    {
+                        if (pollRes.option == 1)
+                        { 
+                            WaitText.text = "游戏已废，您可以退出房间了";
+                            WaitWindow.SetActive(true);
+                        }
+                        else
+                            WaitText.text = "大家决定在等一分钟，一分钟后将再次投票";
+                    }
+                    else
+                    {
+                        Debug.LogError(pollRes.option);
+                        if ( (pollRes.option<=0) || (pollRes.option >= 5) )
+                        { 
+                            endText.text = "没有人获得票数过半，本场MVP空缺";
+                        }
+                        else
+                            endText.text = "恭喜　" + BattleData.Instance.GetPlayerInfo(pollRes.option).nickname + "　成为本局MVP";
+
+                    }
+
+                    ;
+                    break;
+                case MessageType.POLLINGREQUEST:
+                    var pollReq = parameters[0] as network.PollingRequest;
+                    if (pollReq.type == network.PollingType.POLLING_FORCE_WAIT)
+                    {
+                        string players = "";
+                        foreach( var v in BattleData.Instance.DisConnectedPlayer)
+                        players += "<color=#ffff00>" + BattleData.Instance.GetPlayerInfo(v).nickname + "</color>　";
+                        DisConPlayer.text = "玩家　" + players + "已掉线";
+                        if (GameManager.UIInstance.PeekWindow() == Framework.UI.WindowType.DisConnectedPoll)
+                            GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
+                        WaitWindow.SetActive(true);
+                    }
+                    if (pollReq.type == network.PollingType.POLLING_LEGAL_LEAVE)
+                    {
+                        BattleData.Instance.Agent.AgentState = (int)PlayerAgentState.Polling;
+                        if (GameManager.UIInstance.PeekWindow() == Framework.UI.WindowType.DisConnectedPoll)
+                            GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
+                        GameManager.UIInstance.PushWindow(Framework.UI.WindowType.DisConnectedPoll, Framework.UI.WinMsg.None, -1, Vector3.zero);
+                    }
+                    if(pollReq.type == network.PollingType.POLLING_MVP)
+                    {
+                        for (int i = 0; i < MVPS.Count; i++)
+                        {
+                            MVPS[i].IcoID = (uint)i;
+                            MVPS[i].canselect = true;
+                            int a = i;
+                            MVPS[i].MVP.onClick.AddListener(delegate { onMVPClick(a); });
+                        }
+                        winPanel.SetActive(true);
+                        winImage.sprite =
+                            (
+                            (BattleData.Instance.Morale[0] == 0 || BattleData.Instance.Grail[1] == 5) ?
+                            AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "WinRed") :
+                            AssetBundleManager.Instance.LoadAsset<Sprite>("battle_texture", "WinBlue")
+                            );
+                    }
+                    break;
+                case MessageType.RoomIDChange:
+                    roomID.text = BattleData.Instance.RoomID.ToString();
                     break;
             }
         }
@@ -375,7 +470,7 @@ namespace AGrail
         private void chatChange()
         {
             var go = Instantiate<GameObject>(AssetBundleManager.Instance.LoadAsset("battle", "ChatItem"));
-            go.transform.parent = this.chat;
+            go.transform.SetParent(this.chat);
             go.transform.localScale = Vector3.one;
             go.transform.localPosition = Vector3.zero;
             go.transform.localRotation = Quaternion.identity;
@@ -440,6 +535,19 @@ namespace AGrail
         private void hideHint()
         {
             hint.transform.parent.gameObject.SetActive(false);
+        }
+
+        private void onMVPClick(int mvp)
+        {
+            for (int i = 0; i < MVPS.Count; i++)
+            {
+                MVPS[i].canselect = false;
+                if (i == mvp)
+                    MVPS[mvp].Selected = true;
+            }
+            network.PollingResponse proto = new network.PollingResponse() { option = (uint)mvp };
+            GameManager.TCPInstance.Send(new Framework.Network.Protobuf() { Proto = proto, ProtoID = ProtoNameIds.POLLINGRESPONSE });
+            endText.text = "你选择了" + BattleData.Instance.GetPlayerInfo((uint)mvp).nickname + "作为MVP,你可以等待结果,也可以选择退出";
         }
 
         public void winAndExit()

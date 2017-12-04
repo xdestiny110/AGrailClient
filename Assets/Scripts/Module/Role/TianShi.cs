@@ -23,6 +23,14 @@ namespace AGrail
             }
         }
 
+        public override string ShortName
+        {
+            get
+            {
+                return "天使";
+            }
+        }
+
         public override Card.CardProperty RoleProperty
         {
             get
@@ -160,6 +168,7 @@ namespace AGrail
             {
                 case 701:
                 case 702:
+                case 704:
                 case 703:
                 case 705:
                 case 706:
@@ -240,6 +249,11 @@ namespace AGrail
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectPlayers);
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                         return;
+                    };
+                    CancelAction = () =>
+                    {
+                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;

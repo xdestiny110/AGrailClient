@@ -4,6 +4,8 @@ using Framework.Network;
 using Framework.UI;
 using System;
 using Framework.AssetBundle;
+using System.Collections;
+using Framework.Message;
 
 namespace AGrail
 {
@@ -11,7 +13,7 @@ namespace AGrail
     {
         public static TCP TCPInstance { private set; get; }
         public static UIManager UIInstance { private set; get; }
-        public const int Version = 161001;
+        public const int Version = 171203;
         private static GameManager instance;
         private Framework.Log.LogHandler lh;
         private event Action UpdateActions;
@@ -30,21 +32,13 @@ namespace AGrail
         {
             instance = this;
             DontDestroyOnLoad(this);
-
             lh = new Framework.Log.LogHandler();
-
-            var config = new ServerConfig();
-            var coder = new Coder();
-            TCPInstance = new TCP(config, coder);
-            UpdateActions += TCPInstance.DoActions;
-            TCPInstance.Connect();
-
+            initTCP();
             UIInstance = new UIManager();
             var userDataInst = UserData.Instance;
             var roomInst = Lobby.Instance;
             var battleInst = BattleData.Instance;
             var dialogInst = Dialog.Instance;
-
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
             SceneManager.sceneLoaded += SceneManager_sceneLoaded;
@@ -52,6 +46,14 @@ namespace AGrail
 
             AssetBundleManager.Instance.LoadManifestAsyn(m => { /*SceneManager.LoadScene(1);*/ } , () => {  });
             UIInstance.PushWindowFromResource(WindowType.Loading, WinMsg.None);
+        }
+        public static void initTCP()
+        {
+            var config = new ServerConfig();
+            var coder = new Coder();
+            TCPInstance = new TCP(config, coder);
+            instance.UpdateActions += TCPInstance.DoActions;
+            TCPInstance.Connect();
         }
 
         private int previousSceneIdx = -1;
@@ -79,8 +81,46 @@ namespace AGrail
             }
         }
 
+        private float timer = 5.0f;
+        public static uint heart = 0;
+
         void Update()
         {
+            if (Input.GetMouseButtonDown(0))
+            {
+                var prefab = AssetBundleManager.Instance.LoadAsset("ui", "ClickCircle");
+                var ClickCircle = Instantiate(prefab);
+                ClickCircle.name = "ClickCircle";
+                ClickCircle.transform.SetParent(instance.transform);
+                ClickCircle.transform.position = new Vector3((Input.mousePosition.x - 640) * 0.1603751f, (Input.mousePosition.y - 360) * 0.1603751f, 100f);
+                ClickCircle.transform.localScale = new Vector3(1, 1, 1);
+            }
+            else if (Input.GetMouseButton(0))
+            {
+                var prefab = AssetBundleManager.Instance.LoadAsset("ui", "Draging");
+                var Draging = Instantiate(prefab);
+                Draging.name = "Draging";
+                Draging.transform.SetParent(instance.transform);
+                Draging.transform.position = new Vector3((Input.mousePosition.x - 640) * 0.1603751f, (Input.mousePosition.y - 360) * 0.1603751f, 100f);
+                Draging.transform.localScale = new Vector3(1, 1, 1);
+            }
+
+            if (UIInstance.PeekWindow() != WindowType.LoginBox && UIInstance.PeekWindow() != WindowType.ReConBox)
+            {
+                timer -= Time.deltaTime;
+                if (timer <= 0)
+                {
+                    heart++;
+                    var proto = new network.HeartBeat();
+                    TCPInstance.Send(new Protobuf() { Proto = proto, ProtoID = ProtoNameIds.HEARTBEAT });
+                    if (heart >= 2)
+                    {
+                        heart = 0;
+                        UIInstance.PushWindow(WindowType.ReConBox, WinMsg.None,59);
+                    }
+                    timer = 5.0f;
+                }
+            }
             if (UpdateActions != null)
                 UpdateActions();
         }

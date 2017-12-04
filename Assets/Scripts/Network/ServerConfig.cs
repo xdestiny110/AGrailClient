@@ -9,7 +9,6 @@ namespace AGrail
             "115.28.77.222";
         private const int receiveBufferSize = 8192;
         private const int sendBufferSize = 8192;
-        private const int version = 20161210;
 
         public int Port
         {

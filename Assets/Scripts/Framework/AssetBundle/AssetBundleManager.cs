@@ -110,7 +110,7 @@ namespace Framework.AssetBundle
             }
         }
         private const string remoteSrv = "http://101.201.155.94:5061/";
-        private const string version = "20170901";
+        private const string version = "20171204";
         private Dictionary<string, UnityEngine.AssetBundle> bundles = new Dictionary<string, UnityEngine.AssetBundle>();
         private List<WWW> wwws = new List<WWW>();
 
@@ -399,7 +399,7 @@ namespace Framework.AssetBundle
             get
             {
                 return
-#if UNITY_EDITOR || UNITY_STANDALONE
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_IPHONE || UNITY_IOS
                  "file://" + Application.streamingAssetsPath + "/";
 #elif UNITY_ANDROID
                 "jar:file://" + Application.dataPath + "!/assets/";
@@ -414,7 +414,7 @@ namespace Framework.AssetBundle
                 return
 #if UNITY_EDITOR || UNITY_STANDALONE
                     "file:///" + Application.persistentDataPath + "/";
-#elif UNITY_ANDROID
+#elif UNITY_ANDROID || UNITY_IPHONE || UNITY_IOS
                     "file://" + Application.persistentDataPath + "/";
 #endif
             }

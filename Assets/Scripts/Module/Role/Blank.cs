@@ -22,6 +22,14 @@ namespace AGrail
             }
         }
 
+        public override string ShortName
+        {
+            get
+            {
+                return "TBD";
+            }
+        }
+
         public override Card.CardProperty RoleProperty
         {
             get

@@ -65,7 +65,7 @@ namespace AGrail
                 foreach(var v in role.Mations.Values)
                 {
                     var go = Instantiate(prefab);
-                    go.transform.parent = skillRoot;
+                    go.transform.SetParent(skillRoot);
                     go.transform.localPosition = Vector3.zero;
                     go.transform.localRotation = Quaternion.identity;
                     go.transform.localScale = Vector3.one;

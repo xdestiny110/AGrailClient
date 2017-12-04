@@ -9,6 +9,7 @@ namespace AGrail
     {
         public abstract RoleID RoleID { get; }
         public abstract string RoleName { get; }
+        public abstract string ShortName { get; }
         public abstract Card.CardProperty RoleProperty { get; }
         public abstract string HeroName { get; }
         public virtual uint MaxHealCount { get { return 2; } }
@@ -458,8 +459,11 @@ namespace AGrail
                         }
                     }
                     else
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
-                            StateHint.GetHint(StateEnum.Attacked));
+                    {
+                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint,
+                         string.Format(StateHint.GetHint(StateEnum.Attacked), Dialog.Instance.ChineseElement(Card.GetCard( BattleData.Instance.Agent.Cmd.args[1]).Element,true)) );
+                    }
+
                     CancelAction = () =>
                     {
                         AttackedReply();
@@ -880,6 +884,8 @@ namespace AGrail
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, mList);
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(3106, 1));
 
+                    return;
+                case 999:
                     return;
             }
             if (BattleData.Instance.Agent.AgentState.Check(PlayerAgentState.CanResign))

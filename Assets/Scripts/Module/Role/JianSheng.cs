@@ -21,6 +21,14 @@ namespace AGrail
             }
         }
 
+        public override string ShortName
+        {
+            get
+            {
+                return "剑圣";
+            }
+        }
+
         public override Card.CardProperty RoleProperty
         {
             get

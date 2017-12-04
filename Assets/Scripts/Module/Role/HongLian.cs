@@ -23,6 +23,13 @@ namespace AGrail
             }
         }
 
+        public override string ShortName
+        {
+            get
+            {
+                return "红莲";
+            }
+        }
         public override Card.CardProperty RoleProperty
         {
             get
