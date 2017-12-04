@@ -13,7 +13,7 @@ namespace AGrail
     {
         public static TCP TCPInstance { private set; get; }
         public static UIManager UIInstance { private set; get; }
-        public const int Version = 161001;
+        public const int Version = 171203;
         private static GameManager instance;
         private Framework.Log.LogHandler lh;
         private event Action UpdateActions;
@@ -86,18 +86,20 @@ namespace AGrail
 
         void Update()
         {
-            if(Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0))
             {
                 var prefab = AssetBundleManager.Instance.LoadAsset("ui", "ClickCircle");
                 var ClickCircle = Instantiate(prefab);
+                ClickCircle.name = "ClickCircle";
                 ClickCircle.transform.SetParent(instance.transform);
-                ClickCircle.transform.position = new Vector3( (Input.mousePosition.x-640)*0.1603751f, (Input.mousePosition.y - 360) * 0.1603751f, 100f);
-                ClickCircle.transform.localScale = new Vector3(1,1,1);
+                ClickCircle.transform.position = new Vector3((Input.mousePosition.x - 640) * 0.1603751f, (Input.mousePosition.y - 360) * 0.1603751f, 100f);
+                ClickCircle.transform.localScale = new Vector3(1, 1, 1);
             }
             else if (Input.GetMouseButton(0))
             {
                 var prefab = AssetBundleManager.Instance.LoadAsset("ui", "Draging");
                 var Draging = Instantiate(prefab);
+                Draging.name = "Draging";
                 Draging.transform.SetParent(instance.transform);
                 Draging.transform.position = new Vector3((Input.mousePosition.x - 640) * 0.1603751f, (Input.mousePosition.y - 360) * 0.1603751f, 100f);
                 Draging.transform.localScale = new Vector3(1, 1, 1);
@@ -122,6 +124,7 @@ namespace AGrail
             if (UpdateActions != null)
                 UpdateActions();
         }
+
         void OnApplicationQuit()
         {
             TCPInstance.Close();
