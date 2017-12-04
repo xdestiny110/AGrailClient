@@ -36,8 +36,8 @@ namespace AGrail
         public void OnExitClick()
         {
             GameManager.UIInstance.PopWindow(WinMsg.None);
-            if (GameManager.UIInstance.PeekWindow() == WindowType.LoginBox ||
-                    GameManager.UIInstance.PeekWindow() == WindowType.Lobby)
+            if (GameManager.UIInstance.PeekWindowType() == WindowType.LoginBox ||
+                    GameManager.UIInstance.PeekWindowType() == WindowType.Lobby)
                 return;
             else
             {

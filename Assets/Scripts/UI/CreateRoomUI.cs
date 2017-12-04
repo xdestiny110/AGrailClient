@@ -22,6 +22,8 @@ namespace AGrail
         [SerializeField]
         private Toggle CmMode;
         [SerializeField]
+        private Toggle bpMode;
+        [SerializeField]
         private InputField password;
         [SerializeField]
         private Toggle firstExtension;
@@ -50,6 +52,9 @@ namespace AGrail
         {
             root.localPosition = new Vector3(1280, 0, 0);
             root.DOLocalMoveX(0, 1);
+
+            CmMode.interactable = UserData.Instance.IsVIP;
+            bpMode.interactable = UserData.Instance.IsVIP;          
 
             base.Awake();
         }

@@ -378,7 +378,7 @@ namespace AGrail
                             DisConnectedPlayer.Add(v.id);
                         if (v.online && DisConnectedPlayer.Contains(v.id))
                             DisConnectedPlayer.Remove(v.id);
-                        if(DisConnectedPlayer.Count == 0 && GameManager.UIInstance.PeekWindow() == Framework.UI.WindowType.DisConnectedPoll)
+                        if(DisConnectedPlayer.Count == 0 && GameManager.UIInstance.PeekWindowType() == Framework.UI.WindowType.DisConnectedPoll)
                             GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
                     }
                     if (v.leaderSpecified)
