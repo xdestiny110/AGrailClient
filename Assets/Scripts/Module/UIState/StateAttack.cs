@@ -32,6 +32,9 @@ namespace AGrail
                         stateMachine.BackState(UIStateMsg.Init, paras);
                     base.Process(msg, paras);
                     break;
+                case UIStateMsg.ClickSkill:
+                    stateMachine.ChangeState<StateSkill>(msg, true, BattleData.Instance.Agent.SelectSkill.Value, paras);
+                    break;
                 default:
                     base.Process(msg, paras);
                     break;

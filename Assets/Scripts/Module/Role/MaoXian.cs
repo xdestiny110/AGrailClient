@@ -76,6 +76,8 @@ namespace AGrail
             switch (uiState)
             {
                 case 1201:
+                    if (BattleData.Instance.MainPlayer.ex_cards.Contains(1001))
+                        if (player.role_id != (uint)RoleID.YongZhe) return false;
                     return BattleData.Instance.Agent.SelectCards.Count == qizhaSelectCard &&
                         player.team != BattleData.Instance.MainPlayer.team;
                 case 13:
@@ -89,6 +91,10 @@ namespace AGrail
         {
             switch (uiState)
             {
+                case 1:
+                    if (skill.SkillID == 1201)
+                        return Util.HasCard("same", BattleData.Instance.MainPlayer.hands, 2);
+                    return false;
                 case 10:
                 case 11:
                 case 1201:

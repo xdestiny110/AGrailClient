@@ -212,16 +212,15 @@ namespace AGrail
 			List<List<uint>> selectList = new List<List<uint>>();
 			switch (state)
 			{
-			case 1:	//躺斩
-				if (BattleData.Instance.MainPlayer.is_knelt) {
-					MessageSystem<Framework.Message.MessageType>.Notify (Framework.Message.MessageType.SendHint, StateHint.GetHint(StateEnum.Attack));
-                        if (BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == 1) {
-						sendActionMsg (BasicActionType.ACTION_ATTACK_SKILL, BattleData.Instance.MainPlayer.id,
-							BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, (uint)SkillID.MO_NV_ZHI_NU_ATTACK);
-						BattleData.Instance.Agent.FSM.ChangeState<StateIdle> (UIStateMsg.Init, true);
-					}
-				}
-				else base.UIStateChange (state, msg, paras);
+			case 1: //躺斩
+                    if (BattleData.Instance.MainPlayer.is_knelt && BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == 1 &&
+                            Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Element != Card.CardElement.water && Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Element != Card.CardElement.darkness)
+                    {
+                        sendActionMsg(BasicActionType.ACTION_ATTACK_SKILL, BattleData.Instance.MainPlayer.id,
+                            BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, (uint)SkillID.MO_NV_ZHI_NU_ATTACK);
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                    }
+                    else base.UIStateChange (state, msg, paras);
 					return;
 				case (uint)SkillID.CANG_YAN_FA_DIAN:
                     if (BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == 1)
