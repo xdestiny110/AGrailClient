@@ -24,6 +24,13 @@ namespace AGrail
                 return "祈祷师";
             }
         }
+        public override string ShortName
+        {
+            get
+            {
+                return "祈祷";
+            }
+        }
 
         public override Card.CardProperty RoleProperty
         {
@@ -98,7 +105,7 @@ namespace AGrail
                         if (c.HasSkill(uiState))
                             return false;
                     }
-                    return BattleData.Instance.Agent.SelectCards.Count == MaxSelectCard(uiState) &&
+                    return BattleData.Instance.Agent.SelectCards.Count == Math.Min(BattleData.Instance.MainPlayer.hand_count, 2) &&
                         player.team == BattleData.Instance.MainPlayer.team &&
                         player.id != BattleData.Instance.PlayerID;
                 case 1605:

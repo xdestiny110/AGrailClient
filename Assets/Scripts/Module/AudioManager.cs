@@ -124,6 +124,7 @@ namespace AGrail
                     break;
                 case MessageType.ChooseRole:
                     playSEAudio(AssetBundleManager.Instance.LoadAsset<AudioClip>("audio", "sys-turn"));
+                    turn = 0;
                     break;
                 case MessageType.TURNBEGIN:
                     var tb = parameters[0] as network.TurnBegin;

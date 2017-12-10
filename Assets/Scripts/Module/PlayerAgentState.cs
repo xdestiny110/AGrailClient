@@ -3,6 +3,7 @@
     public enum PlayerAgentState
     {
         Idle = 0x0,
+        Polling = 0x1,
         Attacked = 0x2,
         MoDaned = 0x4,
         Weaken = 0x8,

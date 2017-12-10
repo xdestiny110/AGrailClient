@@ -44,6 +44,13 @@ namespace AGrail
                 return "吟游诗人";
             }
         }
+        public override string ShortName
+        {
+            get
+            {
+                return "诗人";
+            }
+        }
 
         public override string HeroName
         {
@@ -212,7 +219,7 @@ namespace AGrail
                         for (uint i = BattleData.Instance.MainPlayer.yellow_token; i >= 2; i--)
                         {
                             selectList.Add(new List<uint>() { i + 5 });
-                            explainList.Add(string.Format("与目标各弃{0:D1}张牌", i));
+                            explainList.Add(string.Format("与目标各弃{0:D1}张牌", i-1));
                         }
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.ShowNewArgsUI, selectList, explainList);
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state, 1));
@@ -226,6 +233,7 @@ namespace AGrail
                 case (uint)SkillID.XI_WANG_FU_GE_QU:
                     if (msg == UIStateMsg.ClickPlayer)
                     {
+						IsStart = true;	
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, BattleData.Instance.Agent.SelectPlayers, null, new List<uint>() { 1 });
                         //sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 1 });
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);

@@ -18,6 +18,12 @@ namespace AGrail
         [SerializeField]
         private Toggle fourPeople;
         [SerializeField]
+        private Toggle sixPeople;
+        [SerializeField]
+        private Toggle CmMode;
+        [SerializeField]
+        private Toggle bpMode;
+        [SerializeField]
         private InputField password;
         [SerializeField]
         private Toggle firstExtension;
@@ -47,6 +53,9 @@ namespace AGrail
             root.localPosition = new Vector3(1280, 0, 0);
             root.DOLocalMoveX(0, 1);
 
+            CmMode.interactable = UserData.Instance.IsVIP;
+            bpMode.interactable = UserData.Instance.IsVIP;          
+
             base.Awake();
         }
 
@@ -68,6 +77,19 @@ namespace AGrail
             {
                 seat3Combo.interactable = true;
                 seatCM.interactable = true;
+            }
+        }
+        public void OnCmToggled()
+        {
+            if(CmMode.isOn)
+            {
+                seatCM.isOn = true;
+                sixPeople.isOn = true;
+                fourPeople.interactable = false;
+            }
+            else
+            {
+                fourPeople.interactable = true;
             }
         }
 

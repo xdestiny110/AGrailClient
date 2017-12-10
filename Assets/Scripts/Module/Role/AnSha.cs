@@ -21,6 +21,14 @@ namespace AGrail
             }
         }
 
+        public override string ShortName
+        {
+            get
+            {
+                return "暗杀";
+            }
+        }
+
         public override Card.CardProperty RoleProperty
         {
             get
@@ -74,6 +82,7 @@ namespace AGrail
                     if (cardIDs.Count > 0)
                         return true;
                     return false;
+                case 501:
                 case 503:
                     return true;
             }
@@ -84,6 +93,7 @@ namespace AGrail
         {
             switch (uiState)
             {
+                case 501:
                 case 502:
                 case 503:
                     return true;
@@ -102,6 +112,19 @@ namespace AGrail
         {
             switch (state)
             {
+                case 501:
+                    OKAction = () =>
+                    {
+                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 1 });
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                    };
+                    CancelAction = () =>
+                    {
+                        sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
+                        BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                    };
+                    MessageSystem<MessageType>.Notify(MessageType.SendHint, StateHint.GetHint(state));
+                    return;
                 case 502:
                     OKAction = () =>
                     {

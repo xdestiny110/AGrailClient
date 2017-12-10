@@ -96,18 +96,7 @@ namespace AGrail
 				roomInfos = Lobby.Instance.RoomInfo;
 				break;
 			case MessageType.EnterRoom:
-				if (Lobby.Instance.SelectRoom.playing)
-					SceneManager.LoadScene(2);
-				else
 					GameManager.UIInstance.PushWindow(WindowType.ReadyRoom, WinMsg.Hide);
-				break;
-			case MessageType.ERROR:
-				var errorProto = parameters[0] as network.Error;
-				if (errorProto.id == 31)
-					GameManager.UIInstance.PushWindow(Framework.UI.WindowType.InputBox, Framework.UI.WinMsg.Pause, -1, Vector3.zero,
-						new Action<string>((str) => { GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.Resume); }),
-						new Action<string>((str) => { GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.Resume); }),
-						"瞎蒙果然是不行的~");
 				break;
 			}
 		}
@@ -122,7 +111,12 @@ namespace AGrail
 			GameManager.UIInstance.PushWindow(WindowType.CreateRoomUI, WinMsg.Hide);
 		}
 
-		private Coroutine coroHandle = null;
+        public void OnBtnHandBookClick()
+        {
+            GameManager.UIInstance.PushWindow(WindowType.HandBook, WinMsg.Hide);
+        }
+
+        private Coroutine coroHandle = null;
 		private IEnumerator addRoomItem(List<network.RoomListResponse.RoomInfo> roomInfos)
 		{
 			if (roomInfos == null) yield break;

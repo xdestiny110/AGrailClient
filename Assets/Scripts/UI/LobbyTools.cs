@@ -17,7 +17,7 @@ namespace AGrail
 
         private void onBtnSettingClick()
         {
-            if (GameManager.UIInstance.PeekWindow() == Framework.UI.WindowType.OptionsUI)
+            if (GameManager.UIInstance.PeekWindowType() == Framework.UI.WindowType.OptionsUI)
                 GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
             else
                 GameManager.UIInstance.PushWindow(Framework.UI.WindowType.OptionsUI, Framework.UI.WinMsg.None, 59);

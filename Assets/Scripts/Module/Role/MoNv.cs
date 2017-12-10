@@ -22,6 +22,13 @@ namespace AGrail
                 return "苍炎魔女";
             }
         }
+        public override string ShortName
+        {
+            get
+            {
+                return "魔女";
+            }
+        }
 
         public override Card.CardProperty RoleProperty
         {
