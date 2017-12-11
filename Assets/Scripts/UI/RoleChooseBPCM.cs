@@ -118,7 +118,7 @@ namespace AGrail
                     if (player.leader == 1)
                     {
                         BlueLeader.transform.SetParent(players[a].transform);
-                        BlueLeader.transform.localPosition = new Vector3(0, 0, 0);
+                        BlueLeader.transform.localPosition = new Vector3(0, 35, 0);
                         BlueLeader.gameObject.SetActive(true);
                     }
                     nicknames[a++].text = player.nickname;
