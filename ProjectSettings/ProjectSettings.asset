@@ -7,7 +7,7 @@ PlayerSettings:
   productGUID: c0397055809b4054b8992b6b56d67c14
   AndroidProfiler: 0
   AndroidFilterTouchesWhenObscured: 0
-  defaultScreenOrientation: 4
+  defaultScreenOrientation: 3
   targetDevice: 2
   useOnDemandResources: 0
   accelerometerFrequency: 60
@@ -151,7 +151,7 @@ PlayerSettings:
     Android: com.CodifyProjectTeam.Codify
     Standalone: unity.Codify.Codify
     Tizen: com.Company.ProductName
-    iOS: com.Codify.Codify
+    iOS: com.Codify.AGrail
     tvOS: com.Company.ProductName
   buildNumber:
     Standalone: 1
