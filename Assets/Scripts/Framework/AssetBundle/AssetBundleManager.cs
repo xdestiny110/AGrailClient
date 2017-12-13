@@ -110,7 +110,7 @@ namespace Framework.AssetBundle
             }
         }
         private const string remoteSrv = "http://101.201.155.94:5061/";
-        private const string version = "20171204";
+        private const string version = "20171213";
         private Dictionary<string, UnityEngine.AssetBundle> bundles = new Dictionary<string, UnityEngine.AssetBundle>();
         private List<WWW> wwws = new List<WWW>();
 
@@ -327,7 +327,7 @@ namespace Framework.AssetBundle
                 yield break;
             }
 
-            if (www.text != version)
+            if (www.text.StartsWith(version))
             {
                 IsError = true;
                 ErrorInfo = "需要更新版本";
