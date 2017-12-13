@@ -105,7 +105,7 @@ namespace AGrail
                         if (c.HasSkill(uiState))
                             return false;
                     }
-                    return BattleData.Instance.Agent.SelectCards.Count == Math.Min(BattleData.Instance.MainPlayer.hand_count, 2) &&
+                    return BattleData.Instance.Agent.SelectCards.Count == Math.Min(BattleData.Instance.MainPlayer.hand_count, MaxSelectCard(uiState)) &&
                         player.team == BattleData.Instance.MainPlayer.team &&
                         player.id != BattleData.Instance.PlayerID;
                 case 1605:

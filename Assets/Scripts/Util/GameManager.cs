@@ -30,8 +30,6 @@ namespace AGrail
 
         void Awake()
         {
-            Debug.Log(Screen.width);
-            Debug.Log(Screen.height);
             instance = this;
             DontDestroyOnLoad(this);
             lh = new Framework.Log.LogHandler();
