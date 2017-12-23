@@ -105,7 +105,7 @@ namespace AGrail
                         if (c.HasSkill(uiState))
                             return false;
                     }
-                    return BattleData.Instance.Agent.SelectCards.Count == Math.Min(BattleData.Instance.MainPlayer.hand_count, MaxSelectCard(uiState)) &&
+                    return BattleData.Instance.Agent.SelectCards.Count == MaxSelectCard(uiState) &&
                         player.team == BattleData.Instance.MainPlayer.team &&
                         player.id != BattleData.Instance.PlayerID;
                 case 1605:
@@ -141,7 +141,7 @@ namespace AGrail
                 case 1602:
                     return 1;
                 case 1604:
-                    return 2;
+                    return (uint)Math.Max(2, BattleData.Instance.MainPlayer.hand_count);
             }
             return base.MaxSelectCard(uiState);
         }
@@ -221,7 +221,7 @@ namespace AGrail
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case 1604:
-                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == 2)
+                    if (BattleData.Instance.Agent.SelectPlayers.Count == 1 && BattleData.Instance.Agent.SelectCards.Count == MaxSelectCard(state))
                     {
                         sendActionMsg(BasicActionType.ACTION_MAGIC_SKILL, BattleData.Instance.MainPlayer.id,
                             BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectCards, state,
