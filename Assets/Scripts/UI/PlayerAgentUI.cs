@@ -195,8 +195,8 @@ namespace AGrail
 
         private void updateAgentCards()
         {
-            for (int i = 0; i < handArea.childCount; i++)
-                Destroy(handArea.GetChild(i).gameObject);
+            for (int i = 0; i < cardUIs.Count; i++)
+                Destroy(cardUIs[i].gameObject);
             cardUIs.Clear();
             List<uint> cards = isShowCovered ? BattleData.Instance.MainPlayer.covereds : BattleData.Instance.MainPlayer.hands;
             var cardPrefab = AssetBundleManager.Instance.LoadAsset("battle", "Card");
