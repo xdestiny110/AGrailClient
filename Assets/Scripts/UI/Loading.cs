@@ -22,9 +22,10 @@ namespace AGrail
             }
         }
 
-        void Start()
+        public override IEnumerator Start()
         {
-            StartCoroutine(refreshRate());
+            yield return StartCoroutine(refreshRate());
+            yield return base.Start();
         }
 
         private IEnumerator refreshRate()

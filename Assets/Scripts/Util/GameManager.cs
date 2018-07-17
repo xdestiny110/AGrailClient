@@ -44,7 +44,7 @@ namespace AGrail
             SceneManager.sceneLoaded += SceneManager_sceneLoaded;
             SceneManager.sceneUnloaded += SceneManager_sceneUnloaded;
 
-            AssetBundleManager.Instance.LoadCheckFileAsync();
+            StartCoroutine(AssetBundleManager.Instance.LoadCheckFileAsync());
             UIInstance.PushWindowFromResource(WindowType.Loading, WinMsg.None);
         }
         public static void initTCP()
