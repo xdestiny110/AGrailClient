@@ -270,7 +270,8 @@ namespace UnityEngine.AssetBundles.AssetBundleModel
             }
         }
         public override bool HandleRename(string newName, int reverseDepth)
-        { 
+        {
+
             RefreshAssetList();
             if (!base.HandleRename(newName, reverseDepth))
                 return false;
@@ -307,7 +308,8 @@ namespace UnityEngine.AssetBundles.AssetBundleModel
             }
             m_DependentAssets.Clear();
             m_BundleDependencies.Clear();
-            
+
+
             bool assetInBundle = false;
             bool sceneError = false;
             var assets = AssetBundleModel.Model.DataSource.GetAssetPathsFromAssetBundle(m_Name.fullNativeName);
@@ -327,14 +329,17 @@ namespace UnityEngine.AssetBundles.AssetBundleModel
                 }
 
                 var bundleName = Model.GetBundleName(assetName);
-                if (bundleName == string.Empty)  
+                if (bundleName == string.Empty)
+
                 {
                     ///we get here if the current asset is only added due to being in an explicitly added folder
-                    
+
+
 
                     var partialPath = assetName;
                     while(
-                        partialPath != string.Empty && 
+                        partialPath != string.Empty &&
+
                         partialPath != "Assets" &&
                         bundleName == string.Empty)
                     {
@@ -349,7 +354,8 @@ namespace UnityEngine.AssetBundles.AssetBundleModel
                         {
                             m_ConcreteAssets.Add(folderAsset);
                         }
-                        
+
+
                         m_DependentAssets.Add(Model.CreateAsset(assetName, folderAsset));
                         m_TotalSize += m_DependentAssets.Last().fileSize;
                     }
@@ -368,7 +374,8 @@ namespace UnityEngine.AssetBundles.AssetBundleModel
                     }
                 }
             }
-            
+
+
             if(sceneError)
             {
                 foreach (var asset in m_ConcreteAssets)
@@ -466,7 +473,8 @@ namespace UnityEngine.AssetBundles.AssetBundleModel
         {
             foreach(var asset in m_DependentAssets)
             {
-                if (asset.IsMessageSet(MessageSystem.MessageFlag.AssetsDuplicatedInMultBundles)) 
+                if (asset.IsMessageSet(MessageSystem.MessageFlag.AssetsDuplicatedInMultBundles))
+
                 {
                     SetDuplicateWarning();
                     return true;
@@ -513,7 +521,8 @@ namespace UnityEngine.AssetBundles.AssetBundleModel
             newName += m_Name.shortName;
             if (newName == m_Name.bundleName)
                 return;
-            
+
+
             foreach (var asset in m_ConcreteAssets)
             {
                 Model.MoveAssetToBundle(asset, newName, m_Name.variant);
@@ -662,7 +671,8 @@ namespace UnityEngine.AssetBundles.AssetBundleModel
         {
             m_Children = new Dictionary<string, BundleInfo>();
         }
-        
+
+
         public BundleFolderInfo(List<string> path, int depth, BundleFolderInfo parent) : base("", parent)
         {
             m_Children = new Dictionary<string, BundleInfo>();

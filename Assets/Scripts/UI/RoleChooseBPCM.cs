@@ -11,7 +11,7 @@ using DG.Tweening;
 
 namespace AGrail
 {
-    public class RoleChooseBPCM : WindowsBase
+    public class RoleChooseBPCM : UIBase
     {
         [SerializeField]
         private List<PlayerIco> players;
@@ -62,11 +62,11 @@ namespace AGrail
         [SerializeField]
         private Image RedLeader;
 
-        public override WindowType Type
+        public override string Type
         {
             get
             {
-                return WindowType.RoleChooseBPCM;
+                return WindowType.RoleChooseBPCM.ToString();
             }
         }
         public override void Awake()

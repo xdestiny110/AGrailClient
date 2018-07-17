@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace AGrail
 {
-    public class ChooseArgsUI : WindowsBase
+    public class ChooseArgsUI : UIBase
     {
         [SerializeField]
         private Dropdown args;
@@ -17,11 +17,11 @@ namespace AGrail
 
         private List<List<uint>> argsCache = new List<List<uint>>();
 
-        public override WindowType Type
+        public override string Type
         {
             get
             {
-                return WindowType.ChooseArgsUI;
+                return WindowType.ChooseArgsUI.ToString();
             }
         }
 

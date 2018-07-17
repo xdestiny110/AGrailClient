@@ -9,7 +9,7 @@ using Framework.AssetBundle;
 
 namespace AGrail
 {
-    public class CardUI : MonoBehaviour,  IMessageListener<MessageType>
+    public class CardUI : MonoBehaviour, IMessageListener<MessageType>, IMessageListener
     {
         [SerializeField]
         private Canvas canvas;
@@ -95,6 +95,14 @@ namespace AGrail
         void OnDestroy()
         {
             MessageSystem<MessageType>.UnRegist(MessageType.AgentSelectCard, this);
+        }
+
+        public void OnEventTrigger(string eventType, params object[] parameters)
+        {
+            if (Array.Exists(Enum.GetNames(typeof(MessageType)), (s) => { return s.Equals(eventType); }))
+            {
+                OnEventTrigger((MessageType)Enum.Parse(typeof(MessageType), eventType));
+            }
         }
 
         public void OnEventTrigger(MessageType eventType, params object[] parameters)

@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 
 namespace AGrail
 {
-	public class LobbyUI : WindowsBase
+	public class LobbyUI : UIBase
 	{
 		[SerializeField]
 		private Transform root;
@@ -38,11 +38,11 @@ namespace AGrail
 			}
 		}
 
-		public override WindowType Type
+		public override string Type
 		{
 			get
 			{
-				return WindowType.Lobby;
+                return WindowType.Lobby.ToString();
 			}
 		}
 

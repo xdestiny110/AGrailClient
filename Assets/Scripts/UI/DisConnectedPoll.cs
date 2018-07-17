@@ -9,7 +9,7 @@ using network;
 
 namespace AGrail
 {
-    public class DisConnectedPoll : WindowsBase
+    public class DisConnectedPoll : UIBase
     {
         [SerializeField]
         private Transform PlayerIcosRoot;
@@ -19,11 +19,11 @@ namespace AGrail
         private Button Wait;
         [SerializeField]
         private Button GiveUp;
-        public override WindowType Type
+        public override string Type
         {
             get
             {
-                return WindowType.DisConnectedPoll;
+                return WindowType.DisConnectedPoll.ToString();
             }
         }
 

@@ -3,10 +3,11 @@ using System.Collections;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using Framework.Message;
+using System;
 
 namespace AGrail
 {
-    public class PlayerStatusQT : MonoBehaviour, IMessageListener<MessageType>
+    public class PlayerStatusQT : MonoBehaviour, IMessageListener<MessageType>, IMessageListener
     {
         [SerializeField]
         private Transform teamBG;
@@ -337,6 +338,14 @@ namespace AGrail
         void OnDestroy()
         {
             MessageSystem<MessageType>.UnRegist(MessageType.AgentSelectPlayer, this);
+        }
+
+        public void OnEventTrigger(string eventType, params object[] parameters)
+        {
+            if (Array.Exists(Enum.GetNames(typeof(MessageType)), (s) => { return s.Equals(eventType); }))
+            {
+                OnEventTrigger((MessageType)Enum.Parse(typeof(MessageType), eventType));
+            }
         }
 
         public void OnEventTrigger(MessageType eventType, params object[] parameters)

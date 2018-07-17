@@ -9,16 +9,16 @@ using UnityEngine.SceneManagement;
 
 namespace AGrail
 {
-    public class Loading : WindowsBase
+    public class Loading : UIBase
     {
         [SerializeField]
         private Text progress;
 
-        public override WindowType Type
+        public override string Type
         {
             get
             {
-                return WindowType.Loading;
+                return WindowType.Loading.ToString();
             }
         }
 
@@ -43,18 +43,18 @@ namespace AGrail
                 }
             }
 
-            StartCoroutine(WindowFactory.Instance.PreloadAllWindow());
-            var str = "场景资源预加载.";
-            var idx = 0;
-            while (!WindowFactory.Instance.allWindowReady)
-            {
-                progress.text = str;
-                for (int i = 0; i < idx; i++)
-                    progress.text += ".";
-                idx = (idx + 1) % 3;
-                yield return new WaitForSeconds(0.5f);
-            }
-            yield return new WaitForSeconds(1);
+            //StartCoroutine(UIFactory.Instance.PreloadAllWindow());
+            //var str = "场景资源预加载.";
+            //var idx = 0;
+            //while (!UIFactory.Instance.allWindowReady)
+            //{
+            //    progress.text = str;
+            //    for (int i = 0; i < idx; i++)
+            //        progress.text += ".";
+            //    idx = (idx + 1) % 3;
+            //    yield return new WaitForSeconds(0.5f);
+            //}
+            //yield return new WaitForSeconds(1);
             SceneManager.LoadScene(1);
         }
     }

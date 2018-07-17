@@ -6,7 +6,7 @@ using System;
 
 namespace AGrail
 {
-    public class InputBox : WindowsBase
+    public class InputBox : UIBase
     {
         [SerializeField]
         private InputField inpt;
@@ -17,11 +17,11 @@ namespace AGrail
         [SerializeField]
         private Button btnCancel;
 
-        public override WindowType Type
+        public override string Type
         {
             get
             {
-                return WindowType.InputBox;
+                return WindowType.InputBox.ToString();
             }
         }
 

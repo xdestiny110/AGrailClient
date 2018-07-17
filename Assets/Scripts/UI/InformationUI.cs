@@ -6,7 +6,7 @@ using Framework.AssetBundle;
 
 namespace AGrail
 {
-    public class InformationUI : WindowsBase
+    public class InformationUI : UIBase
     {
         [SerializeField]
         private Transform root;
@@ -29,11 +29,11 @@ namespace AGrail
         [SerializeField]
         private Button btnClose;
 
-        public override WindowType Type
+        public override string Type
         {
             get
             {
-                return WindowType.InfomationUI;
+                return WindowType.InfomationUI.ToString();
             }
         }
 

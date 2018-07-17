@@ -6,7 +6,7 @@ using System.IO;
 
 namespace Framework.UI
 {
-    [CustomEditor(typeof(WindowFactory))]
+    [CustomEditor(typeof(UIFactory))]
     public class WindowFactoryEditor : Editor
     {
         private static List<string> windowTypes = new List<string>();        
@@ -18,14 +18,14 @@ namespace Framework.UI
         [MenuItem("Framework/Window Factory")]        
         public static void GenerateCode()
         {
-            List<string> uiPrefabs = EditorTool.AssetPathOfUnityFolder("Prefabs/" + WindowFactory.WindowPrefabPath, false, ".prefab");
+            List<string> uiPrefabs = EditorTool.AssetPathOfUnityFolder("Prefabs/" + UIFactory.UIPrefabPath, false, ".prefab");
             foreach (var v in uiPrefabs)
             {
                 var goPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(v);
                 windowTypes.Add(goPrefab.name);
                 //writeWindowBase(goPrefab.name);
             }
-            uiPrefabs = EditorTool.AssetPathOfUnityFolder("Resources/" + WindowFactory.WindowPrefabPath, false, ".prefab");
+            uiPrefabs = EditorTool.AssetPathOfUnityFolder("Resources/" + UIFactory.UIPrefabPath, false, ".prefab");
             foreach (var v in uiPrefabs)
             {
                 var goPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(v);

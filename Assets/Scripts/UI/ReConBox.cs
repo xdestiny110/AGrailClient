@@ -7,16 +7,16 @@ using System.Collections;
 
 namespace AGrail
 {
-    public class ReConBox : WindowsBase
+    public class ReConBox : UIBase
 	{
         [SerializeField]
         private Button ReCon;
 
-        public override WindowType Type
+        public override string Type
         {
             get
             {
-                return WindowType.ReConBox;
+                return WindowType.ReConBox.ToString();
             }
         }
 

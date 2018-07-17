@@ -8,18 +8,18 @@ using UnityEngine.UI;
 
 namespace AGrail
 {
-    public class ArgsUI : WindowsBase
+    public class ArgsUI : UIBase
     {
         [SerializeField]
         private Transform root;
         [SerializeField]
         private Transform panel;
 
-        public override WindowType Type
+        public override string Type
         {
             get
             {
-                return WindowType.ArgsUI;
+                return WindowType.ArgsUI.ToString();
             }
         }
 

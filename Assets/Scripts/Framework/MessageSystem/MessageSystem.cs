@@ -1,41 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
-using AGrail;
+﻿using System.Collections.Generic;
 
 namespace Framework
 {
     namespace Message
     {
-        public static class MessageSystem<T> where T : struct
+        public static class MessageSystem
         {
-            private static Dictionary<T, List<IMessageListener<T>>> maps = new Dictionary<T, List<IMessageListener<T>>>();
+            private static Dictionary<string, List<IMessageListener>> maps = new Dictionary<string, List<IMessageListener>>();
 
-            public static void Regist(T eventType, IMessageListener<T> listener)
+            public static void Regist(string eventType, IMessageListener listener)
             {
                 if (!maps.ContainsKey(eventType))
-                    maps.Add(eventType, new List<IMessageListener<T>>() { listener });
+                    maps.Add(eventType, new List<IMessageListener>() { listener });
                 else
                     maps[eventType].Add(listener);
             }
 
-            public static void UnRegist(T eventType, IMessageListener<T> listener)
+            public static void UnRegist(string eventType, IMessageListener listener)
             {
                 if (maps.ContainsKey(eventType))
                     maps[eventType].Remove(listener);
             }
 
-            public static void UnRegist(IMessageListener<T> listener)
+            public static void UnRegist(IMessageListener listener)
             {
                 foreach (var v in maps.Keys)
                     UnRegist(v, listener);
             }
 
-            public static void Notify(T eventType, params object[] parameters)
+            public static void Notify(string eventType, params object[] parameters)
             {
-                //UnityEngine.Debug.LogFormat("MessageSystem notify {0}", eventType.ToString());
                 if (maps.ContainsKey(eventType))
                 {
-                    var listeners = new List<IMessageListener<T>>(maps[eventType]);
+                    var listeners = new List<IMessageListener>(maps[eventType]);
                     foreach (var v in listeners)
                     {
                         v.OnEventTrigger(eventType, parameters);
@@ -43,7 +40,28 @@ namespace Framework
                 }
             }
         }
+
+        public static class MessageSystem<T> where T : struct
+        {
+            public static void Regist(T eventType, IMessageListener listener)
+            {
+                MessageSystem.Regist(eventType.ToString(), listener);
+            }
+
+            public static void UnRegist(T eventType, IMessageListener listener)
+            {
+                MessageSystem.UnRegist(eventType.ToString(), listener);
+            }
+
+            public static void UnRegist(IMessageListener listener)
+            {
+                MessageSystem.UnRegist(listener);
+            }
+
+            public static void Notify(T eventType, params object[] parameters)
+            {
+                MessageSystem.Notify(eventType.ToString(), parameters);
+            }
+        }
     }
 }
-
-

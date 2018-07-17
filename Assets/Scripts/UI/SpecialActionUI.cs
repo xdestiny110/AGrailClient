@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace AGrail
 {
-    public class SpecialActionUI : WindowsBase
+    public class SpecialActionUI : UIBase
     {
         [SerializeField]
         private Button btnBuy;
@@ -15,11 +15,11 @@ namespace AGrail
         [SerializeField]
         private Button btnBack;
 
-        public override WindowType Type
+        public override string Type
         {
             get
             {
-                return WindowType.SpecialActionUI;
+                return WindowType.SpecialActionUI.ToString();
             }
         }
 

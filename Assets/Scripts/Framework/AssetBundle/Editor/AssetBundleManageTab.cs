@@ -6,7 +6,8 @@ using System.Collections.Generic;
 namespace UnityEngine.AssetBundles
 {
     [System.Serializable]
-    public class AssetBundleManageTab 
+    public class AssetBundleManageTab
+
     {
         [SerializeField]
         TreeViewState m_BundleTreeState;
@@ -127,7 +128,8 @@ namespace UnityEngine.AssetBundles
                 m_BundleTree.Refresh();
                 m_Parent.Repaint();
             }
-            
+
+
             HandleHorizontalResize();
             HandleVerticalResize();
 
@@ -139,7 +141,8 @@ namespace UnityEngine.AssetBundles
                 style.alignment = TextAnchor.MiddleCenter;
                 style.wordWrap = true;
                 GUI.Label(
-                    new Rect(m_Position.x + 1f, m_Position.y + 1f, m_Position.width - 2f, m_Position.height - 2f), 
+                    new Rect(m_Position.x + 1f, m_Position.y + 1f, m_Position.width - 2f, m_Position.height - 2f),
+
                     new GUIContent(AssetBundleModel.Model.GetEmptyMessage()),
                     style);
             }
@@ -152,7 +155,8 @@ namespace UnityEngine.AssetBundles
                     m_Position.y,
                     m_HorizontalSplitterRect.x,
                     m_VerticalSplitterRectLeft.y - m_Position.y);
-                
+
+
                 m_BundleTree.OnGUI(bundleTreeRect);
                 m_DetailsList.OnGUI(new Rect(
                     bundleTreeRect.x,
@@ -188,7 +192,7 @@ namespace UnityEngine.AssetBundles
             m_HorizontalSplitterRect.height = m_Position.height;
 
             EditorGUIUtility.AddCursorRect(m_HorizontalSplitterRect, MouseCursor.ResizeHorizontal);
-            if (Event.current.type == EventType.mouseDown && m_HorizontalSplitterRect.Contains(Event.current.mousePosition))
+            if (Event.current.type == EventType.MouseDown && m_HorizontalSplitterRect.Contains(Event.current.mousePosition))
                 m_ResizingHorizontalSplitter = true;
 
             if (m_ResizingHorizontalSplitter)
@@ -211,11 +215,11 @@ namespace UnityEngine.AssetBundles
 
 
             EditorGUIUtility.AddCursorRect(m_VerticalSplitterRectRight, MouseCursor.ResizeVertical);
-            if (Event.current.type == EventType.mouseDown && m_VerticalSplitterRectRight.Contains(Event.current.mousePosition))
+            if (Event.current.type == EventType.MouseDown && m_VerticalSplitterRectRight.Contains(Event.current.mousePosition))
                 m_ResizingVerticalSplitterRight = true;
 
             EditorGUIUtility.AddCursorRect(m_VerticalSplitterRectLeft, MouseCursor.ResizeVertical);
-            if (Event.current.type == EventType.mouseDown && m_VerticalSplitterRectLeft.Contains(Event.current.mousePosition))
+            if (Event.current.type == EventType.MouseDown && m_VerticalSplitterRectLeft.Contains(Event.current.mousePosition))
                 m_ResizingVerticalSplitterLeft = true;
 
 

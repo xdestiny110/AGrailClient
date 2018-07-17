@@ -9,7 +9,8 @@ using System;
 namespace UnityEngine.AssetBundles
 {
     internal class AssetBundleTree : TreeView
-    { 
+    {
+
         AssetBundleManageTab m_Controller;
         private bool m_ContextOnItem = false;
         List<UnityEngine.Object> m_EmptyObjectList = new List<Object>();
@@ -56,7 +57,8 @@ namespace UnityEngine.AssetBundles
         }
 
         protected override void RenameEnded(RenameEndedArgs args)
-        { 
+        {
+
             base.RenameEnded(args);
             if (args.newName.Length > 0 && args.newName != args.originalName)
             {
@@ -115,7 +117,8 @@ namespace UnityEngine.AssetBundles
             GenericMenu menu = new GenericMenu();
 
             if (!AssetBundleModel.Model.DataSource.IsReadOnly ()) {
-                menu.AddItem(new GUIContent("Add new bundle"), false, CreateNewBundle, selectedNodes); 
+                menu.AddItem(new GUIContent("Add new bundle"), false, CreateNewBundle, selectedNodes);
+
                 menu.AddItem(new GUIContent("Add new folder"), false, CreateFolder, selectedNodes);
             }
 
@@ -135,9 +138,11 @@ namespace UnityEngine.AssetBundles
             {
                 selectedNodes.Add(FindItem(nodeID, rootItem) as AssetBundleModel.BundleTreeItem);
             }
-            
+
+
             GenericMenu menu = new GenericMenu();
-            
+
+
             if(selectedNodes.Count == 1)
             {
                 if ((selectedNodes[0].bundle as AssetBundleModel.BundleFolderConcreteInfo) != null)
@@ -171,10 +176,12 @@ namespace UnityEngine.AssetBundles
                     menu.AddItem(new GUIContent("Move duplicates to new bundle"), false, DedupeAllBundles, selectedNodes);
                 menu.AddItem(new GUIContent("Rename"), false, RenameBundle, selectedNodes);
                 menu.AddItem(new GUIContent("Delete " + selectedNodes[0].displayName), false, DeleteBundles, selectedNodes);
-                
+
+
             }
             else if (selectedNodes.Count > 1)
-            { 
+            {
+
                 menu.AddItem(new GUIContent("Move duplicates shared by selected"), false, DedupeOverlappedBundles, selectedNodes);
                 menu.AddItem(new GUIContent("Move duplicates existing in any selected"), false, DedupeAllBundles, selectedNodes);
                 menu.AddItem(new GUIContent("Delete " + selectedNodes.Count + " selected bundles"), false, DeleteBundles, selectedNodes);
@@ -404,7 +411,8 @@ namespace UnityEngine.AssetBundles
         {
             DragAndDropVisualMode visualMode = DragAndDropVisualMode.None;
             DragAndDropData data = new DragAndDropData(args);
-            
+
+
             if (AssetBundleModel.Model.DataSource.IsReadOnly ()) {
                 return DragAndDropVisualMode.Rejected;
             }
@@ -412,7 +420,8 @@ namespace UnityEngine.AssetBundles
             if ( (data.hasScene && data.hasNonScene) ||
                 (data.hasVariantChild) )
                 return DragAndDropVisualMode.Rejected;
-            
+
+
             switch (args.dragAndDropPosition)
             {
                 case DragAndDropPosition.UponItem:
@@ -468,7 +477,8 @@ namespace UnityEngine.AssetBundles
 
                 }
 
-               
+
+
                 if (data.args.performDrop)
                 {
                     if (data.draggedNodes != null)
@@ -505,7 +515,8 @@ namespace UnityEngine.AssetBundles
                 }
                 else
                     visualMode = DragAndDropVisualMode.Rejected; //must be a variantfolder
-                
+
+
             }
             return visualMode;
         }

@@ -68,7 +68,8 @@ namespace UnityEngine.AssetBundles
             if ((args.item as BundleDetailItem) != null)
             {
                 EditorGUI.HelpBox(
-                    new Rect(args.rowRect.x + k_DoubleIndent, args.rowRect.y, args.rowRect.width - k_DoubleIndent, args.rowRect.height), 
+                    new Rect(args.rowRect.x + k_DoubleIndent, args.rowRect.y, args.rowRect.width - k_DoubleIndent, args.rowRect.height),
+
                     args.item.displayName,
                     (args.item as BundleDetailItem).MessageLevel);
             }

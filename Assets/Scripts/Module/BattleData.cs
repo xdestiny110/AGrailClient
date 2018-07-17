@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace AGrail
 {
-    public class BattleData : Singleton<BattleData>, IMessageListener<MessageType>
+    public class BattleData : Singleton<BattleData>, IMessageListener, IMessageListener<MessageType>
     {
         public int? RoomID { get; private set; }
         public int? PlayerID { get; private set; }
@@ -31,10 +31,10 @@ namespace AGrail
 
         public BattleData() : base()
         {
-            MessageSystem<MessageType>.Regist(MessageType.TURNBEGIN, this);
-            MessageSystem<MessageType>.Regist(MessageType.GAMEINFO, this);
-            MessageSystem<MessageType>.Regist(MessageType.COMMANDREQUEST, this);
-            MessageSystem<MessageType>.Regist(MessageType.ERROR, this);
+            MessageSystem.Regist(MessageType.TURNBEGIN.ToString(), this);
+            MessageSystem.Regist(MessageType.GAMEINFO.ToString(), this);
+            MessageSystem.Regist(MessageType.COMMANDREQUEST.ToString(), this);
+            MessageSystem.Regist(MessageType.ERROR.ToString(), this);
             Reset();
             var inst = RoleChoose.Instance;
         }
@@ -81,8 +81,8 @@ namespace AGrail
                         });
                         if(!DisConnectedPlayer.Contains((uint)error.dst_id))
                         {
-                        DisConnectedPlayer.Add((uint)error.dst_id);
-                        MessageSystem<MessageType>.Notify(MessageType.PlayerLeave, error.dst_id, idx);
+                            DisConnectedPlayer.Add((uint)error.dst_id);
+                            MessageSystem.Notify(MessageType.PlayerLeave.ToString(), error.dst_id, idx);
                         }
                     }
                     break;
@@ -115,6 +115,14 @@ namespace AGrail
                   return u != null && u.id == playerID;
                });
             return player;
+        }
+
+        public void OnEventTrigger(string eventType, params object[] parameters)
+        {
+            if (Array.Exists(Enum.GetNames(typeof(MessageType)), (s) => { return s.Equals(eventType); }))
+            {
+                OnEventTrigger((MessageType)Enum.Parse(typeof(MessageType), eventType));
+            }
         }
 
         private network.TurnBegin turnBegin
@@ -378,7 +386,7 @@ namespace AGrail
                             DisConnectedPlayer.Add(v.id);
                         if (v.online && DisConnectedPlayer.Contains(v.id))
                             DisConnectedPlayer.Remove(v.id);
-                        if(DisConnectedPlayer.Count == 0 && GameManager.UIInstance.PeekWindowType() == Framework.UI.WindowType.DisConnectedPoll)
+                        if(DisConnectedPlayer.Count == 0 && GameManager.UIInstance.PeekWindowType() == Framework.UI.WindowType.DisConnectedPoll.ToString())
                             GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
                     }
                     if (v.leaderSpecified)

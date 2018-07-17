@@ -1,10 +1,11 @@
 ﻿using Framework;
 using Framework.Network;
 using Framework.Message;
+using System;
 
 namespace AGrail
 {
-    public class UserData : Singleton<UserData>, IMessageListener<MessageType>
+    public class UserData : Singleton<UserData>, IMessageListener<MessageType>, IMessageListener
     {
         private LoginState state = LoginState.Prepare;
 
@@ -37,6 +38,14 @@ namespace AGrail
         {
             var request = new network.LoginRequest() { asGuest = false, user_id = userName, user_password = password, version = GameManager.Version };
             GameManager.TCPInstance.Send(new Protobuf() { Proto = request, ProtoID = ProtoNameIds.LOGINREQUEST });
+        }
+
+        public void OnEventTrigger(string eventType, params object[] parameters)
+        {
+            if (Array.Exists(Enum.GetNames(typeof(MessageType)), (s) => { return s.Equals(eventType); }))
+            {
+                OnEventTrigger((MessageType)Enum.Parse(typeof(MessageType), eventType));
+            }
         }
 
         public void OnEventTrigger(MessageType eventType, params object[] parameters)

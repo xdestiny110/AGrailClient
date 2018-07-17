@@ -7,7 +7,7 @@ using DG.Tweening;
 
 namespace AGrail
 {
-    public class CreateRoomUI : WindowsBase
+    public class CreateRoomUI : UIBase
     {
         [SerializeField]
         private Transform root;
@@ -40,11 +40,11 @@ namespace AGrail
         [SerializeField]
         private Toggle seat2Combo;
 
-        public override WindowType Type
+        public override string Type
         {
             get
             {
-                return WindowType.CreateRoomUI;
+                return WindowType.CreateRoomUI.ToString();
             }
         }
 

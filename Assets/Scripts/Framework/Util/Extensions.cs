@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Framework
 {
@@ -46,6 +47,25 @@ namespace Framework
             }
             item = default(T);
             return false;
+        }
+        #endregion
+
+        #region DateTime扩展
+        public static DateTime dt1970 = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
+        public static long GetMiliSecFrom1970(this DateTime dt)
+        {
+            return (long)dt.Subtract(dt1970).TotalMilliseconds;
+        }
+
+        public static DateTime GetDateTime(this long miliSec)
+        {
+            TimeSpan toNow = new TimeSpan(miliSec * 10000);
+            return dt1970.Add(toNow);
+        }
+        public static DateTime GetDiffTime(this long miliSec)
+        {
+            TimeSpan toNow = new TimeSpan(miliSec * 10000);
+            return new DateTime().Add(toNow);
         }
         #endregion
     }

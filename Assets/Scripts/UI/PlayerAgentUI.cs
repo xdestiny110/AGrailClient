@@ -4,10 +4,11 @@ using Framework.Message;
 using System.Collections.Generic;
 using Framework.AssetBundle;
 using DG.Tweening;
+using System;
 
 namespace AGrail
 {
-    public class PlayerAgentUI : MonoBehaviour, IMessageListener<MessageType>
+    public class PlayerAgentUI : MonoBehaviour, IMessageListener<MessageType>, IMessageListener
     {
         [SerializeField]
         private Transform handArea;
@@ -73,6 +74,13 @@ namespace AGrail
             MessageSystem<MessageType>.UnRegist(MessageType.AgentSelectCard, this);
         }
 
+        public void OnEventTrigger(string eventType, params object[] parameters)
+        {
+            if (Array.Exists(Enum.GetNames(typeof(MessageType)), (s) => { return s.Equals(eventType); }))
+            {
+                OnEventTrigger((MessageType)Enum.Parse(typeof(MessageType), eventType));
+            }
+        }
 
         public void OnEventTrigger(MessageType eventType, params object[] parameters)
         {
@@ -141,15 +149,15 @@ namespace AGrail
                     //    GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
                     break;
                 case MessageType.ShowNewArgsUI:
-                    if (GameManager.UIInstance.PeekWindowType() != Framework.UI.WindowType.ArgsUI)
+                    if (GameManager.UIInstance.PeekWindowType() != Framework.UI.WindowType.ArgsUI.ToString())
                     { 
-                        if (GameManager.UIInstance.PeekWindowType() == Framework.UI.WindowType.InfomationUI)
+                        if (GameManager.UIInstance.PeekWindowType() == Framework.UI.WindowType.InfomationUI.ToString())
                             GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
                         GameManager.UIInstance.PushWindow(Framework.UI.WindowType.ArgsUI, Framework.UI.WinMsg.None, -1, Vector3.zero, parameters);
                     }
                     break;
                 case MessageType.CloseNewArgsUI:
-                    if (GameManager.UIInstance.PeekWindowType() == Framework.UI.WindowType.ArgsUI)
+                    if (GameManager.UIInstance.PeekWindowType() == Framework.UI.WindowType.ArgsUI.ToString())
                         GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
                     break;
             }

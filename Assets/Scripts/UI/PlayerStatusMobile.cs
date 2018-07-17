@@ -6,12 +6,13 @@ using Framework.AssetBundle;
 using Framework.UI;
 using DG.Tweening;
 using System.Collections;
+using System;
 
 namespace AGrail
 {
     [RequireComponent(typeof(LongPress))]
     [RequireComponent(typeof(Button))]
-    public class PlayerStatusMobile : MonoBehaviour, IMessageListener<MessageType>
+    public class PlayerStatusMobile : MonoBehaviour, IMessageListener<MessageType>, IMessageListener
     {
         [SerializeField]
         private Image redTeam;
@@ -365,6 +366,14 @@ namespace AGrail
         void OnDestroy()
         {
             MessageSystem<MessageType>.UnRegist(MessageType.AgentSelectPlayer, this);
+        }
+
+        public void OnEventTrigger(string eventType, params object[] parameters)
+        {
+            if (Array.Exists(Enum.GetNames(typeof(MessageType)), (s) => { return s.Equals(eventType); }))
+            {
+                OnEventTrigger((MessageType)Enum.Parse(typeof(MessageType), eventType));
+            }
         }
 
         public void OnEventTrigger(MessageType eventType, params object[] parameters)

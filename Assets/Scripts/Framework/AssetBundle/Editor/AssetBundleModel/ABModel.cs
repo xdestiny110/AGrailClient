@@ -48,7 +48,8 @@ namespace UnityEngine.AssetBundles.AssetBundleModel
             ExecuteAssetMove(false);     //this should never do anything. just a safety check.
 
             //TODO - look into EditorApplication callback functions.
-            
+
+
             int size = m_BundlesToUpdate.Count;
             if (size > 0)
             {
@@ -246,7 +247,8 @@ namespace UnityEngine.AssetBundles.AssetBundleModel
         {
             if (name == null)
                 return null;
-            
+
+
             BundleNameData nameData = new BundleNameData(name);
 
             BundleFolderInfo folder = AddFoldersToBundle(m_RootLevelBundles, nameData);
@@ -300,19 +302,23 @@ namespace UnityEngine.AssetBundles.AssetBundleModel
                     message += " exists both as a standard bundle, and a bundle with variants.  ";
                     message += "This message is not supported for display or actual bundle building.  ";
                     message += "You must manually fix bundle naming in the inspector.";
-                    
+
+
                     LogError(message);
                     return null;
                 }
-                
-                
+
+
+
+
                 currInfo = folder.GetChild(nameData.variant);
                 if (currInfo == null)
                 {
                     currInfo = new BundleVariantDataInfo(nameData.fullNativeName, folder);
                     folder.AddChild(currInfo);
                 }
-                
+
+
             }
             else
             {
@@ -395,7 +401,8 @@ namespace UnityEngine.AssetBundles.AssetBundleModel
                 Debug.LogError(message);
             }
 
-            return result;  
+            return result;
+
         }
 
         public static void HandleBundleReparent(IEnumerable<BundleInfo> bundles, BundleFolderInfo parent)
@@ -503,7 +510,8 @@ namespace UnityEngine.AssetBundles.AssetBundleModel
 
             if (dupeAssets.Count == 0)
                 return null;
-            
+
+
             MoveAssetToBundle(dupeAssets, newBundle.m_Name.bundleName, string.Empty);
             ExecuteAssetMove();
             return newBundle;
@@ -590,13 +598,16 @@ namespace UnityEngine.AssetBundles.AssetBundleModel
                 Refresh();
             }
         }
-        
-        //this version of CreateAsset is only used for dependent assets. 
+
+
+        //this version of CreateAsset is only used for dependent assets.
+
         public static AssetInfo CreateAsset(string name, AssetInfo parent)
         {
             if (ValidateAsset(name))
             {
-                var bundleName = GetBundleName(name); 
+                var bundleName = GetBundleName(name);
+
                 return CreateAsset(name, bundleName, parent);
             }
             return null;
@@ -661,7 +672,8 @@ namespace UnityEngine.AssetBundles.AssetBundleModel
             var bundles = new HashSet<string>();
             bundles.Add(bundle);
             m_DependencyTracker.Add(asset.fullAssetName, bundles);
-            return 1;            
+            return 1;
+
         }
 
         public static void UnRegisterAsset(AssetInfo asset, string bundle)
@@ -692,7 +704,8 @@ namespace UnityEngine.AssetBundles.AssetBundleModel
             }
             return new HashSet<string>();
         }
-        
+
+
         //TODO - switch local cache server on and utilize this method to stay up to date.
         //static List<string> m_importedAssets = new List<string>();
         //static List<string> m_deletedAssets = new List<string>();

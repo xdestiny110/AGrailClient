@@ -1,7 +1,4 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-
-namespace Framework.AssetBundle
+﻿namespace Framework.AssetBundle
 {
     public class CheckFile
     {
@@ -14,7 +11,6 @@ namespace Framework.AssetBundle
 
         public string name;
         public string hash;
-        [JsonConverter(typeof(StringEnumConverter))]
         public Location location = Location.Local;
 
         public override bool Equals(object obj)

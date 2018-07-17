@@ -10,7 +10,7 @@ using System.Collections;
 
 namespace AGrail
 {
-    public class ReadyRoom : WindowsBase
+    public class ReadyRoom : UIBase
     {
         [SerializeField]
         private Transform root;
@@ -41,11 +41,11 @@ namespace AGrail
         [SerializeField]
         private Text talks;
 
-        public override WindowType Type
+        public override string Type
         {
             get
             {
-                return WindowType.ReadyRoom;
+                return WindowType.ReadyRoom.ToString();
             }
         }
 
@@ -122,14 +122,14 @@ namespace AGrail
                                 GameManager.UIInstance.PushWindow(WindowType.RoleChoose31, WinMsg.Pause);
                             break;
                         case network.ROLE_STRATEGY.ROLE_STRATEGY_BP:
-                            if(GameManager.UIInstance.PeekWindowType()!=WindowType.RoleChooseBPCM)
+                            if(GameManager.UIInstance.PeekWindowType()!=WindowType.RoleChooseBPCM.ToString())
                             {
                                 GameManager.UIInstance.PushWindow(WindowType.RoleChooseBPCM, WinMsg.Pause);
                             }
                             MessageSystem<MessageType>.Notify(MessageType.PICKBAN, this);
                             break;
                         case network.ROLE_STRATEGY.ROLE_STRATEGY_CM:
-                            if (GameManager.UIInstance.PeekWindowType() != WindowType.RoleChooseBPCM)
+                            if (GameManager.UIInstance.PeekWindowType() != WindowType.RoleChooseBPCM.ToString())
                                 GameManager.UIInstance.PushWindow(WindowType.RoleChooseBPCM, WinMsg.Pause);
                             MessageSystem<MessageType>.Notify(MessageType.PICKBAN, this);
                             break;

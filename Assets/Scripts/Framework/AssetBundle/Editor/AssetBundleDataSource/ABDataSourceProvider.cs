@@ -27,7 +27,8 @@ namespace UnityEngine.AssetBundles.AssetBundleDataSource
 
 
             var properList = new List<Type>();
-            properList.Add(null); //empty spot for "default" 
+            properList.Add(null); //empty spot for "default"
+
             for(int count = 0; count < list.Count; count++)
             {
                 if(list[count].Name == "AssetDatabaseABDataSource")

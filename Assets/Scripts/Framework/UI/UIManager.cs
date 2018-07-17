@@ -2,24 +2,29 @@
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
+using XLua;
 
 namespace Framework.UI
 {
+    [LuaCallCSharp]
     public class UIManager
     {
-        private List<WindowsBase> winStack = new List<WindowsBase>();
+        private List<UIBase> winStack = new List<UIBase>();
 
-        public WindowsBase PushWindow(WindowType type, WinMsg msg, int sortLayer = -1, Vector3 initPos = default(Vector3), params object[] parameters)
+        public void PushWindow(WindowType type, WinMsg msg, int sortLayer = -1, Vector3 initPos = default(Vector3), params object[] parameters){
+            PushWindow(type.ToString(), msg, sortLayer, initPos, parameters);
+        }
+
+        public void PushWindow(string uiName, WinMsg msg, int sortLayer = -1, Vector3 initPos = default(Vector3), params object[] parameters)
         {
-            var guid = System.Guid.NewGuid();
-            TimeScope.Start(guid, "push window " + type.ToString());
-            var go = WindowFactory.Instance.CreateWindows(type);
-            TimeScope.Stop(guid);
-            go.name = type.ToString();
+            var go = UIFactory.Instance.CreateUI(uiName);
+            go.name = uiName;
             go.transform.position = initPos;
-            var win = go.GetComponent<WindowsBase>();
+            var win = go.GetComponent<UIBase>();
+            if (win == null)
+                win = go.AddComponent<UIBase>();
             win.Parameters = parameters;
-            if(winStack.Count > 0)
+            if (winStack.Count > 0)
             {
                 dealWinMsg(winStack.Last(), msg);
                 if (sortLayer == -1)
@@ -39,22 +44,26 @@ namespace Framework.UI
                     return 1;
                 return 0;
             });
-            return win;
         }
 
-        public IEnumerator PushWindowAsyn(WindowType type, WinMsg msg, Vector3 initPos = default(Vector3), params object[] parameters)
+        public IEnumerator PushWindowAsyn(string uiName, WinMsg msg, Vector3 initPos = default(Vector3), params object[] parameters)
         {
             //先加载等待画面
-            yield return WindowFactory.Instance.CreateWindowsAnyn(type);
+            yield return UIFactory.Instance.CreateUIAnyn(uiName);
             //之后再完善
         }
 
-        public WindowsBase PushWindowFromResource(WindowType type, WinMsg msg, int sortLayer = -1, Vector3 initPos = default(Vector3), params object[] parameters)
+        public UIBase PushWindowFromResource(WindowType type, WinMsg msg, int sortLayer = -1, Vector3 initPos = default(Vector3), params object[] parameters)
         {
-            var go = WindowFactory.Instance.CreateWindows(type, true);
-            go.name = type.ToString();
+            return PushWindowFromResource(type.ToString(), msg, sortLayer, initPos, parameters);
+        }
+
+        public UIBase PushWindowFromResource(string uiName, WinMsg msg, int sortLayer = -1, Vector3 initPos = default(Vector3), params object[] parameters)
+        {
+            var go = UIFactory.Instance.CreateUI(uiName, true);
+            go.name = uiName;
             go.transform.position = initPos;
-            var win = go.GetComponent<WindowsBase>();
+            var win = go.GetComponent<UIBase>();
             win.Parameters = parameters;
             if (winStack.Count > 0)
             {
@@ -81,7 +90,7 @@ namespace Framework.UI
 
         public void PopWindow(WinMsg msg)
         {
-            if(winStack.Count > 0)
+            if (winStack.Count > 0)
             {
                 GameObject.Destroy(winStack.Last().gameObject);
                 winStack.RemoveAt(winStack.Count - 1);
@@ -103,21 +112,21 @@ namespace Framework.UI
             winStack.Clear();            
         }
 
-        public WindowType PeekWindowType()
+        public string PeekWindowType()
         {
             if (winStack.Count == 0)
-                return WindowType.None;
+                return WindowType.None.ToString();
             return winStack.Last().Type;
         }
 
-        public WindowsBase PeekWindow()
+        public UIBase PeekWindow()
         {
             if (winStack.Count == 0)
                 return null;
             return winStack.Last();
         }
 
-        private void dealWinMsg(WindowsBase topWin, WinMsg msg)
+        private void dealWinMsg(UIBase topWin, WinMsg msg)
         {
             switch (msg)
             {

@@ -12,7 +12,7 @@ namespace AGrail
     /// <summary>
     /// 真的是凑合一下...未来肯定要改成协程回调的方式, 轮询好傻
     /// </summary>
-    public class AudioManager : MonoBehaviour, IMessageListener<MessageType>
+    public class AudioManager : MonoBehaviour, IMessageListener
     {
         public static AudioManager Instance { private set; get; }
         private List<AudioSource> ses = new List<AudioSource>();
@@ -60,18 +60,18 @@ namespace AGrail
             bgm.playOnAwake = false;
             bgm.volume = BGMVolume;
 
-            MessageSystem<MessageType>.Regist(MessageType.CARDMSG, this);
-            MessageSystem<MessageType>.Regist(MessageType.HITMSG, this);
-            MessageSystem<MessageType>.Regist(MessageType.PlayerHealChange, this);
-            MessageSystem<MessageType>.Regist(MessageType.HURTMSG, this);
-            MessageSystem<MessageType>.Regist(MessageType.MoraleChange, this);
-            MessageSystem<MessageType>.Regist(MessageType.GemChange, this);
-            MessageSystem<MessageType>.Regist(MessageType.CrystalChange, this);
-            MessageSystem<MessageType>.Regist(MessageType.TURNBEGIN, this);
-            MessageSystem<MessageType>.Regist(MessageType.ChooseRole, this);
-            MessageSystem<MessageType>.Regist(MessageType.PlayBGM, this);
-            MessageSystem<MessageType>.Regist(MessageType.Win, this);
-            MessageSystem<MessageType>.Regist(MessageType.Lose, this);
+            MessageSystem.Regist(MessageType.CARDMSG.ToString(), this);
+            MessageSystem.Regist(MessageType.HITMSG.ToString(), this);
+            MessageSystem.Regist(MessageType.PlayerHealChange.ToString(), this);
+            MessageSystem.Regist(MessageType.HURTMSG.ToString(), this);
+            MessageSystem.Regist(MessageType.MoraleChange.ToString(), this);
+            MessageSystem.Regist(MessageType.GemChange.ToString(), this);
+            MessageSystem.Regist(MessageType.CrystalChange.ToString(), this);
+            MessageSystem.Regist(MessageType.TURNBEGIN.ToString(), this);
+            MessageSystem.Regist(MessageType.ChooseRole.ToString(), this);
+            MessageSystem.Regist(MessageType.PlayBGM.ToString(), this);
+            MessageSystem.Regist(MessageType.Win.ToString(), this);
+            MessageSystem.Regist(MessageType.Lose.ToString(), this);
         }
 
         void Update()
@@ -89,9 +89,9 @@ namespace AGrail
                 playBGM(SceneManager.GetActiveScene());
         }
 
-        public void OnEventTrigger(MessageType eventType, params object[] parameters)
+        public void OnEventTrigger(string eventType, params object[] parameters)
         {
-            switch (eventType)
+            switch ((MessageType)Enum.Parse(typeof(MessageType), eventType))
             {
                 case MessageType.CARDMSG:
                     var cardMsg = parameters[0] as network.CardMsg;

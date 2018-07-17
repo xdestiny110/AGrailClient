@@ -8,7 +8,7 @@ using System.Text;
 
 namespace AGrail
 {
-    public class Dialog : Singleton<Dialog>, IMessageListener<MessageType>
+    public class Dialog : Singleton<Dialog>, IMessageListener, IMessageListener<MessageType>
     {
         private string log;
         public string Log
@@ -104,6 +104,14 @@ namespace AGrail
                     break;
             }
             return element;
+        }
+
+        public void OnEventTrigger(string eventType, params object[] parameters)
+        {
+            if (Array.Exists(Enum.GetNames(typeof(MessageType)), (s) => { return s.Equals(eventType); }))
+            {
+                OnEventTrigger((MessageType)Enum.Parse(typeof(MessageType), eventType));
+            }
         }
 
         StringBuilder str = new StringBuilder(1024);

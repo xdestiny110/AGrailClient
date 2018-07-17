@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace AGrail
 {
-    public class OptionsUI : WindowsBase
+    public class OptionsUI : UIBase
     {
         [SerializeField]
         private Transform root;
@@ -17,11 +17,11 @@ namespace AGrail
         [SerializeField]
         private Slider seSlider;
 
-        public override WindowType Type
+        public override string Type
         {
             get
             {
-                return WindowType.OptionsUI;
+                return WindowType.OptionsUI.ToString();
             }
         }
 
@@ -36,8 +36,8 @@ namespace AGrail
         public void OnExitClick()
         {
             GameManager.UIInstance.PopWindow(WinMsg.None);
-            if (GameManager.UIInstance.PeekWindowType() == WindowType.LoginBox ||
-                    GameManager.UIInstance.PeekWindowType() == WindowType.Lobby)
+            if (GameManager.UIInstance.PeekWindowType() == WindowType.LoginBox.ToString() ||
+                GameManager.UIInstance.PeekWindowType() == WindowType.Lobby.ToString())
                 return;
             else
             {

@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace AGrail
 {
-    public class ChooseEnergyUI : WindowsBase
+    public class ChooseEnergyUI : UIBase
     {
         [SerializeField]
         private Transform root;
@@ -23,11 +23,11 @@ namespace AGrail
         [SerializeField]
         private Button btnBack;
 
-        public override WindowType Type
+        public override string Type
         {
             get
             {
-                return WindowType.ChooseEnergy;
+                return WindowType.ChooseEnergy.ToString();
             }
         }
 

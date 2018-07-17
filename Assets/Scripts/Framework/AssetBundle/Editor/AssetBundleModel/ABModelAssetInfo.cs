@@ -107,7 +107,8 @@ namespace UnityEngine.AssetBundles.AssetBundleModel
         }
         public string bundleName
         { get { return m_BundleName == "" ? "auto" : m_BundleName; } }
-        
+
+
         public Color GetColor()
         {
             if (m_BundleName == "")

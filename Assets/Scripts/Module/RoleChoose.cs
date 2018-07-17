@@ -6,7 +6,7 @@ using Framework.Network;
 
 namespace AGrail
 {
-    public class RoleChoose : Singleton<RoleChoose>, IMessageListener<MessageType>
+    public class RoleChoose : Singleton<RoleChoose>, IMessageListener<MessageType>, IMessageListener
     {
         public network.ROLE_STRATEGY RoleStrategy { get; private set; }
         public uint opration { get; private set; }//1234:null,ban,pick,ib
@@ -28,6 +28,14 @@ namespace AGrail
             var proto = new network.PickBan() { strategy = (uint)RoleStrategy, is_pick = IsPick };
             proto.role_ids.Add(roleID);
             GameManager.TCPInstance.Send(new Protobuf() { Proto = proto, ProtoID = ProtoNameIds.PICKBAN });
+        }
+
+        public void OnEventTrigger(string eventType, params object[] parameters)
+        {
+            if (Array.Exists(Enum.GetNames(typeof(MessageType)), (s) => { return s.Equals(eventType); }))
+            {
+                OnEventTrigger((MessageType)Enum.Parse(typeof(MessageType), eventType));
+            }
         }
 
         public void OnEventTrigger(MessageType eventType, params object[] parameters)

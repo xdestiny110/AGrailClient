@@ -10,7 +10,7 @@ using UnityEngine.SceneManagement;
 
 namespace AGrail
 {
-    public class BattleUIMobile : WindowsBase
+    public class BattleUIMobile : UIBase
     {
         [SerializeField]
         private Transform root;
@@ -71,11 +71,11 @@ namespace AGrail
             }
         }
 
-        public override WindowType Type
+        public override string Type
         {
             get
             {
-                return WindowType.BattleUIMobile;
+                return WindowType.BattleUIMobile.ToString();
             }
         }
 
@@ -332,14 +332,14 @@ namespace AGrail
                         foreach( var v in BattleData.Instance.DisConnectedPlayer)
                         players += "<color=#ffff00>" + BattleData.Instance.GetPlayerInfo(v).nickname + "</color>　";
                         DisConPlayer.text = "玩家　" + players + "已掉线";
-                        if (GameManager.UIInstance.PeekWindowType() == Framework.UI.WindowType.DisConnectedPoll)
+                        if (GameManager.UIInstance.PeekWindowType() == Framework.UI.WindowType.DisConnectedPoll.ToString())
                             GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
                         WaitWindow.SetActive(true);
                     }
                     if (pollReq.type == network.PollingType.POLLING_LEGAL_LEAVE)
                     {
                         BattleData.Instance.Agent.AgentState = (int)PlayerAgentState.Polling;
-                        if (GameManager.UIInstance.PeekWindowType() == Framework.UI.WindowType.DisConnectedPoll)
+                        if (GameManager.UIInstance.PeekWindowType() == Framework.UI.WindowType.DisConnectedPoll.ToString())
                             GameManager.UIInstance.PopWindow(Framework.UI.WinMsg.None);
                         GameManager.UIInstance.PushWindow(Framework.UI.WindowType.DisConnectedPoll, Framework.UI.WinMsg.None, -1, Vector3.zero);
                     }

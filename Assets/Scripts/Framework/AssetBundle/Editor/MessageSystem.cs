@@ -37,9 +37,11 @@ namespace UnityEngine.AssetBundles
 
         public class MessageState
         {
-            //I have an enum and a set of enums to make some logic cleaner.  
+            //I have an enum and a set of enums to make some logic cleaner.
+
             // The enum has masks for Error/Warning/Info that won't ever be in the set
-            // this allows for easy checking of IsSet for error rather than specific errors. 
+            // this allows for easy checking of IsSet for error rather than specific errors.
+
             private MessageFlag m_MessageFlags;
             private HashSet<MessageFlag> m_MessageSet;
 

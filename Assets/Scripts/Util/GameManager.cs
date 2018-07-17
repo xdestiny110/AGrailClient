@@ -44,7 +44,7 @@ namespace AGrail
             SceneManager.sceneLoaded += SceneManager_sceneLoaded;
             SceneManager.sceneUnloaded += SceneManager_sceneUnloaded;
 
-            AssetBundleManager.Instance.LoadManifestAsyn(m => { /*SceneManager.LoadScene(1);*/ } , () => {  });
+            AssetBundleManager.Instance.LoadCheckFileAsync();
             UIInstance.PushWindowFromResource(WindowType.Loading, WinMsg.None);
         }
         public static void initTCP()
@@ -117,7 +117,7 @@ namespace AGrail
                 }
             }
 
-            if (UIInstance.PeekWindowType() != WindowType.LoginBox && UIInstance.PeekWindowType() != WindowType.ReConBox)
+            if (UIInstance.PeekWindowType() != WindowType.LoginBox.ToString() && UIInstance.PeekWindowType() != WindowType.ReConBox.ToString())
             {
                 timer -= Time.deltaTime;
                 if (timer <= 0)

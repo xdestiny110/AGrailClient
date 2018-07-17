@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 
 namespace AGrail
 {
-    public class RoleChooseAny : WindowsBase
+    public class RoleChooseAny : UIBase
     {
         [SerializeField]
         private Transform root;
@@ -19,11 +19,11 @@ namespace AGrail
 
         private Regex re = new Regex(@"(?<=\()\d+");
 
-        public override WindowType Type
+        public override string Type
         {
             get
             {
-                return WindowType.RoleChooseAny;
+                return WindowType.RoleChooseAny.ToString();
             }
         }
 

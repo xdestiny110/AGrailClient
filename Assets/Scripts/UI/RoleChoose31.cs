@@ -10,7 +10,7 @@ using Framework.Message;
 
 namespace AGrail
 {
-    public class RoleChoose31 : WindowsBase
+    public class RoleChoose31 : UIBase
     {
         [SerializeField]
         private Transform root;
@@ -21,11 +21,11 @@ namespace AGrail
         [SerializeField]
         private Text info;
 
-        public override WindowType Type
+        public override string Type
         {
             get
             {
-                return WindowType.RoleChoose31;
+                return WindowType.RoleChoose31.ToString();
             }
         }
 

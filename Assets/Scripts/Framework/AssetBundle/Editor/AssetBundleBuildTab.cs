@@ -1,10 +1,10 @@
-using UnityEditor;
+锘縰sing UnityEditor;
 using System.Collections.Generic;
 using System.IO;
 
 using UnityEngine.AssetBundles.AssetBundleDataSource;
 using System.Text;
-using Newtonsoft.Json;
+using System.Text.RegularExpressions;
 
 namespace UnityEngine.AssetBundles
 {
@@ -16,7 +16,10 @@ namespace UnityEngine.AssetBundles
         [SerializeField]
         private ValidBuildTarget m_BuildTarget = ValidBuildTarget.StandaloneWindows;
         [SerializeField]
-        private CompressOptions m_Compression = CompressOptions.StandardCompression;        
+        private CompressOptions m_Compression = CompressOptions.StandardCompression;
+        [SerializeField]
+        private string m_protoBinPath = "Assets/ProtoFile";
+
         private string m_OutputPath = string.Empty;
         [SerializeField]
         private bool m_UseDefaultPath = true;
@@ -28,11 +31,15 @@ namespace UnityEngine.AssetBundles
         [SerializeField]
         private Vector2 m_ScrollPosition;
 
+        private string oldCheckFileStr = null;
+
 
         class ToggleData
         {
-            public ToggleData(bool s, 
-                string title, 
+            public ToggleData(bool s,
+
+                string title,
+
                 string tooltip,
                 List<string> onToggles,
                 BuildAssetBundleOptions opt = BuildAssetBundleOptions.None)
@@ -165,6 +172,14 @@ namespace UnityEngine.AssetBundles
                 }
             }
 
+            // proto bin path
+            using (new EditorGUI.DisabledScope(false))
+            {
+                EditorGUILayout.Space();
+                GUILayout.BeginHorizontal();
+                var newPath = EditorGUILayout.TextField("Proto bin Path", m_protoBinPath);
+                GUILayout.EndHorizontal();
+            }
 
             ////output path
             using (new EditorGUI.DisabledScope (!AssetBundleModel.Model.DataSource.CanSpecifyBuildOutputDirectory)) {
@@ -222,7 +237,8 @@ namespace UnityEngine.AssetBundles
                     var indent = EditorGUI.indentLevel;
                     EditorGUI.indentLevel = 1;
                     CompressOptions cmp = (CompressOptions)EditorGUILayout.IntPopup(
-                        m_CompressionContent, 
+                        m_CompressionContent,
+
                         (int)m_Compression,
                         m_CompressionOptions,
                         m_CompressionValues);
@@ -273,6 +289,10 @@ namespace UnityEngine.AssetBundles
                     return;
                 }
 
+                //淇濈暀鍘熸湁鐨刢heckfile
+                if (File.Exists(Path.Combine(m_OutputPath, "CheckFile")))
+                    oldCheckFileStr = File.ReadAllText(Path.Combine(m_OutputPath, "CheckFile"));
+
                 if (m_ForceRebuild.state)
                 {
                     string message = "Do you want to delete all files in the directory " + m_OutputPath;
@@ -284,11 +304,10 @@ namespace UnityEngine.AssetBundles
                         try
                         {
                             if (Directory.Exists(m_OutputPath))
-                                Directory.Delete(m_OutputPath, true);
+                                Framework.Tool.DeleteDirContent(m_OutputPath);
 
-                            if (m_CopyToStreaming.state)
-                            if (Directory.Exists(m_streamingPath))
-                                Directory.Delete(m_streamingPath, true);
+                            if (m_CopyToStreaming.state && Directory.Exists(m_streamingPath))
+                                Framework.Tool.DeleteDirContent(m_streamingPath);
                         }
                         catch (System.Exception e)
                         {
@@ -323,41 +342,17 @@ namespace UnityEngine.AssetBundles
             AssetBundleModel.Model.DataSource.BuildAssetBundles (buildInfo);
 
             AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+            //澶嶅埗pb鏂囦欢
+            if (Directory.Exists(m_protoBinPath))
+                Framework.Tool.DirectoryCopy(m_protoBinPath, m_OutputPath, new Regex(@".*\.pb$"));
+
             generateCheckFile();
 
             if(m_CopyToStreaming.state)
-                DirectoryCopy(m_OutputPath, m_streamingPath);
+                Framework.Tool.DirectoryCopy(m_OutputPath, m_streamingPath, new Regex(@".*\.manifest"), true);
 
             AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
         }
-
-        private static void DirectoryCopy(string sourceDirName, string destDirName)
-        {
-            // Get the subdirectories for the specified directory.
-            DirectoryInfo dir = new DirectoryInfo(sourceDirName);
-
-            // If the destination directory doesn't exist, create it.
-            if (!Directory.Exists(destDirName))
-            {
-                Directory.CreateDirectory(destDirName);
-            }
-
-            // Get the files in the directory and copy them to the new location.
-            FileInfo[] files = dir.GetFiles();
-            foreach (FileInfo file in files)
-            {
-                string temppath = Path.Combine(destDirName, file.Name);
-                file.CopyTo(temppath, false);
-            }
-
-            DirectoryInfo[] dirs = dir.GetDirectories();
-            foreach (DirectoryInfo subdir in dirs)
-            {
-                string temppath = Path.Combine(destDirName, subdir.Name);
-                DirectoryCopy(subdir.FullName, temppath);
-            }
-        }
-
         private void BrowseForFolder()
         {
             m_UseDefaultPath = false;
@@ -419,14 +414,25 @@ namespace UnityEngine.AssetBundles
 
         private void generateCheckFile()
         {
-            //生成用于增量更新的json文件
+            //鐢熸垚鐢ㄤ簬澧為噺鏇存柊鐨刯son鏂囦欢
             var dir = new DirectoryInfo(m_OutputPath);
             var files = dir.GetFiles();
             List<Framework.AssetBundle.CheckFile> ret = new List<Framework.AssetBundle.CheckFile>();
             foreach(var v in files)
                 if(!v.Name.EndsWith("manifest"))
                     ret.Add(new Framework.AssetBundle.CheckFile() { name = v.Name, hash = computeMD5(v.FullName) });
-            var json = JsonConvert.SerializeObject(ret, Formatting.Indented);
+            var json = LitJson.JsonMapper.ToJson(ret);
+
+            if (!string.IsNullOrEmpty(oldCheckFileStr))
+            {
+                var oldCheckFile = LitJson.JsonMapper.ToObject<List<Framework.AssetBundle.CheckFile>>(oldCheckFileStr);
+                foreach(var v in ret)
+                {
+                    if (!oldCheckFile.Exists(t => t.hash == v.hash))
+                        Debug.LogFormat("New bundle {0}", v.name);
+                }
+            }
+
             using (FileStream fs = new FileStream(Path.Combine(m_OutputPath, "CheckFile"), FileMode.Create, FileAccess.Write))
             {
                 var bytes = Encoding.UTF8.GetBytes(json);

@@ -12,7 +12,7 @@ namespace AGrail
 {
 
 
-    public class HandBook : WindowsBase
+    public class HandBook : UIBase
     {
         [SerializeField]
         private Transform SkillArea;
@@ -29,11 +29,11 @@ namespace AGrail
         [SerializeField]
         private Button button5;
 
-        public override WindowType Type
+        public override string Type
         {
             get
             {
-                return WindowType.HandBook;
+                return WindowType.HandBook.ToString();
             }
         }
 

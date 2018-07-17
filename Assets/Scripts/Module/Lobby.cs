@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace AGrail
 {
-    public class Lobby : Singleton<Lobby>, IMessageListener<MessageType>
+    public class Lobby : Singleton<Lobby>, IMessageListener<MessageType>, IMessageListener
     {
         public List<network.RoomListResponse.RoomInfo> RoomInfo = null;
         public network.RoomListResponse.RoomInfo SelectRoom { get; private set; }
@@ -72,6 +72,14 @@ namespace AGrail
             SelectRoom = null;
             if(PlayerPrefs.HasKey("lastGame"))PlayerPrefs.DeleteKey("lastGame");
             BattleData.Instance.Reset();
+        }
+
+        public void OnEventTrigger(string eventType, params object[] parameters)
+        {
+            if (Array.Exists(Enum.GetNames(typeof(MessageType)), (s) => { return s.Equals(eventType); }))
+            {
+                OnEventTrigger((MessageType)Enum.Parse(typeof(MessageType), eventType));
+            }
         }
 
         public void OnEventTrigger(MessageType eventType, params object[] parameters)

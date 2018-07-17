@@ -7,7 +7,7 @@ using System;
 
 namespace AGrail
 {
-    public class LoginBox : WindowsBase
+    public class LoginBox : UIBase
     {
         [SerializeField]
         private Transform root;
@@ -30,11 +30,11 @@ namespace AGrail
         [SerializeField]
         private Text txtVersion;
 
-        public override WindowType Type
+        public override string Type
         {
             get
             {
-                return WindowType.LoginBox;
+                return WindowType.LoginBox.ToString();
             }
         }
 

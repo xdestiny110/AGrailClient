@@ -137,8 +137,9 @@ namespace UnityEngine.AssetBundles
                 GUILayout.Space(m_RefreshTexture.width + k_ToolbarPadding);
             }
             float toolbarWidth = position.width - k_ToolbarPadding * 4 - m_RefreshTexture.width;
-            string[] labels = new string[2] { "Configure", "Build" };//, "Inspect" }; 
-            m_Mode = (Mode)GUILayout.Toolbar((int)m_Mode, labels, "LargeButton", GUILayout.Width(toolbarWidth) );
+            string[] labels = new string[2] { "Configure", "Build" };//, "Inspect" };
+
+            m_Mode = (Mode)GUILayout.Toolbar((int)m_Mode, labels, "LargeButton", GUILayout.Width(toolbarWidth));
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
             if(multiDataSource)
@@ -160,7 +161,8 @@ namespace UnityEngine.AssetBundles
                         {
                             List<AssetBundleDataSource.ABDataSource> dataSourceList = null;
                             dataSourceList = info.GetMethod("CreateDataSources").Invoke(null, null) as List<AssetBundleDataSource.ABDataSource>;
-                        
+
+
 
                             if (dataSourceList == null)
                                 continue;

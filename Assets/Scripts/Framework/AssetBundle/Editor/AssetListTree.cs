@@ -152,9 +152,12 @@ namespace UnityEngine.AssetBundles
                         var iconRect = new Rect(cellRect.x + 1, cellRect.y + 1, cellRect.height - 2, cellRect.height - 2);
                         GUI.DrawTexture(iconRect, item.icon, ScaleMode.ScaleToFit);
                         DefaultGUI.Label(
-                            new Rect(cellRect.x + iconRect.xMax + 1, cellRect.y, cellRect.width - iconRect.width, cellRect.height), 
-                            item.displayName, 
-                            args.selected, 
+                            new Rect(cellRect.x + iconRect.xMax + 1, cellRect.y, cellRect.width - iconRect.width, cellRect.height),
+
+                            item.displayName,
+
+                            args.selected,
+
                             args.focused);
                     }
                     break;
@@ -220,13 +223,15 @@ namespace UnityEngine.AssetBundles
         {
             DragAndDrop.PrepareStartDrag();
             DragAndDrop.objectReferences = m_EmptyObjectList.ToArray();
-            List<AssetBundleModel.AssetTreeItem> items = 
+            List<AssetBundleModel.AssetTreeItem> items =
+
                 new List<AssetBundleModel.AssetTreeItem>(args.draggedItemIDs.Select(id => FindItem(id, rootItem) as AssetBundleModel.AssetTreeItem));
             DragAndDrop.paths = items.Select(a => a.asset.fullAssetName).ToArray();
             DragAndDrop.SetGenericData("AssetListTreeSource", this);
             DragAndDrop.StartDrag("AssetListTree");
         }
-        
+
+
         protected override DragAndDropVisualMode HandleDragAndDrop(DragAndDropArgs args)
         {
             if(IsValidDragDrop(args))
@@ -255,7 +260,8 @@ namespace UnityEngine.AssetBundles
             //can't drag onto none or >1 bundles
             if (m_SourceBundles.Count == 0 || m_SourceBundles.Count > 1)
                 return false;
-            
+
+
             //can't drag nothing
             if (DragAndDrop.paths == null || DragAndDrop.paths.Length == 0)
                 return false;
@@ -272,7 +278,8 @@ namespace UnityEngine.AssetBundles
             var thing = DragAndDrop.GetGenericData("AssetListTreeSource") as AssetListTree;
             if (thing != null)
                 return false;
-            
+
+
             if(data.IsEmpty())
                 return true;
 
@@ -405,7 +412,8 @@ namespace UnityEngine.AssetBundles
                 default:
                     return myTypes.Order(l => l.asset.bundleName, ascending);
             }
-            
+
+
         }
 
         private void ReloadAndSelect(IList<int> hashCodes)
