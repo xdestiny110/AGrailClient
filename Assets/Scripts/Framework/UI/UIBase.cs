@@ -120,7 +120,7 @@ namespace Framework.UI
             if (luaOnEventTriiger != null) luaOnEventTriiger(eventType, parameters);
             if(Array.Exists(Enum.GetNames(typeof(MessageType)), (s)=> { return s.Equals(eventType); }))
             {
-                OnEventTrigger((MessageType)Enum.Parse(typeof(MessageType), eventType));
+                OnEventTrigger((MessageType)Enum.Parse(typeof(MessageType), eventType), parameters);
             }
         }
 
