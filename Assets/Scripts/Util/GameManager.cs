@@ -15,7 +15,6 @@ namespace AGrail
         public static UIManager UIInstance { private set; get; }
         public const int Version = 171203;
         private static GameManager instance;
-        private Framework.Log.LogHandler lh;
         private event Action UpdateActions;
 
         public static void AddUpdateAction(Action action)
@@ -32,7 +31,6 @@ namespace AGrail
         {
             instance = this;
             DontDestroyOnLoad(this);
-            lh = new Framework.Log.LogHandler();
             initTCP();
             UIInstance = new UIManager();
             var userDataInst = UserData.Instance;
@@ -140,7 +138,6 @@ namespace AGrail
         void OnApplicationQuit()
         {
             TCPInstance.Close();
-            lh.Close();
         }
     }
 }
