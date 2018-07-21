@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
@@ -18,21 +17,21 @@ namespace Framework.UI
         [MenuItem("Framework/Window Factory")]        
         public static void GenerateCode()
         {
-            List<string> uiPrefabs = EditorTool.AssetPathOfUnityFolder("Prefabs/" + UIFactory.UIPrefabPath, false, ".prefab");
-            foreach (var v in uiPrefabs)
-            {
-                var goPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(v);
-                windowTypes.Add(goPrefab.name);
-                //writeWindowBase(goPrefab.name);
-            }
-            uiPrefabs = EditorTool.AssetPathOfUnityFolder("Resources/" + UIFactory.UIPrefabPath, false, ".prefab");
-            foreach (var v in uiPrefabs)
-            {
-                var goPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(v);
-                windowTypes.Add(goPrefab.name);
-                //writeWindowBase(goPrefab.name);
-            }
-            writeWindowType();
+            //List<string> uiPrefabs = EditorTool.AssetPathOfUnityFolder("Prefabs/" + UIFactory.UIPrefabPath, false, ".prefab");
+            //foreach (var v in uiPrefabs)
+            //{
+            //    var goPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(v);
+            //    windowTypes.Add(goPrefab.name);
+            //    //writeWindowBase(goPrefab.name);
+            //}
+            //uiPrefabs = EditorTool.AssetPathOfUnityFolder("Resources/" + UIFactory.UIPrefabPath, false, ".prefab");
+            //foreach (var v in uiPrefabs)
+            //{
+            //    var goPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(v);
+            //    windowTypes.Add(goPrefab.name);
+            //    //writeWindowBase(goPrefab.name);
+            //}
+            //writeWindowType();
         }
 
         private static void writeWindowType()

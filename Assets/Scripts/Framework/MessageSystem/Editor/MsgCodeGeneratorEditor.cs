@@ -19,7 +19,7 @@ namespace Framework.Message
         [MenuItem("Framework/Message Code Generate")]
         public static void generateCode()
         {
-            Selection.activeObject = MsgCodeGenerator.Instance;
+            //Selection.activeObject = MsgCodeGenerator.Instance;
         }
 
         void OnEnable()
