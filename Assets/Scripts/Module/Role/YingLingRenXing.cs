@@ -103,7 +103,7 @@ namespace AGrail
             switch (uiState)
             {
                 case 2706:
-                    return true;
+                    return player.id != BattleData.Instance.Agent.Cmd.args[0];
             }
             return base.CanSelect(uiState, player);
         }
@@ -192,7 +192,7 @@ namespace AGrail
                     CancelAction = () =>
                     {
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
-                        sendReponseMsg(2071, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
+                        sendReponseMsg(2701, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
                     selectList.Clear();

@@ -77,7 +77,7 @@ namespace AGrail
         public override bool CanSelect(uint uiState, Card card, bool isCovered)
         {
             if (additionalState == 103 && uiState==1)
-                return card.Element == Card.CardElement.wind;
+                return card.Element == Card.CardElement.wind && card.Type == Card.CardType.attack;
             return base.CanSelect(uiState, card, isCovered);
         }
 

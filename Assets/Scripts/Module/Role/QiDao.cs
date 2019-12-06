@@ -141,7 +141,7 @@ namespace AGrail
                 case 1602:
                     return 1;
                 case 1604:
-                    return (uint)Math.Max(2, BattleData.Instance.MainPlayer.hand_count);
+                    return (uint)Math.Min(2, BattleData.Instance.MainPlayer.hand_count);
             }
             return base.MaxSelectCard(uiState);
         }
