@@ -67,6 +67,19 @@ namespace AGrail
                 Skills.Add(i, Skill.GetSkill(i));
         }
 
+        private Card GetSelectCardOneType()
+        {
+            for (int i = 0; i < BattleData.Instance.Agent.SelectCards.Count; i++)
+            {
+                var mc = Card.GetCard(BattleData.Instance.Agent.SelectCards[i]);
+                if (mc.Element == Card.CardElement.thunder && mc.Type == Card.CardType.magic)
+                    continue;
+                else
+                    return mc;
+            }
+            return null;
+        }
+
         public override bool CanSelect(uint uiState, Card card, bool isCovered)
         {
             switch (uiState)
@@ -84,8 +97,14 @@ namespace AGrail
                     if (BattleData.Instance.Agent.SelectCards.Count == 0)
                         return card.Element == Card.CardElement.thunder || card.Type == Card.CardType.magic;
                     else
-                        return (Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Element == Card.CardElement.thunder && card.Element == Card.CardElement.thunder) ||
-                        (Card.GetCard(BattleData.Instance.Agent.SelectCards[0]).Type == Card.CardType.magic && card.Type == Card.CardType.magic);
+                    {
+                        var sc = GetSelectCardOneType();
+                        if (sc == null)
+                            return card.Element == Card.CardElement.thunder || card.Type == Card.CardType.magic;
+                        else
+                            return (sc.Element == Card.CardElement.thunder && card.Element == Card.CardElement.thunder) ||
+                            (sc.Type == Card.CardType.magic && card.Type == Card.CardType.magic);
+                    }
                 case (uint)SkillID.充盈:
                     return card.Type == Card.CardType.magic || card.Element == Card.CardElement.thunder;
             }
@@ -110,7 +129,7 @@ namespace AGrail
                 case 10:
                 case 11:
                     if (skill.SkillID == (uint)SkillID.充盈 && additionalState != 29011)
-                        return ( Util.HasCard(Card.CardType.magic, BattleData.Instance.MainPlayer.hands) || Util.HasCard(Card.CardElement.thunder, BattleData.Instance.MainPlayer.hands) );
+                        return (Util.HasCard(Card.CardType.magic, BattleData.Instance.MainPlayer.hands) || Util.HasCard(Card.CardElement.thunder, BattleData.Instance.MainPlayer.hands));
                     return false;
             }
             return base.CanSelect(uiState, skill);
@@ -247,7 +266,7 @@ namespace AGrail
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                     List<List<uint>> selectList = new List<List<uint>>();
                     var mList = new List<string>();
-                    for(uint i = BattleData.Instance.MainPlayer.crystal + BattleData.Instance.MainPlayer.gem; i > 0; i--)
+                    for (uint i = BattleData.Instance.MainPlayer.crystal + BattleData.Instance.MainPlayer.gem; i > 0; i--)
                     {
                         selectList.Add(new List<uint>() { i });
                         mList.Add(i.ToString() + "个能量");
