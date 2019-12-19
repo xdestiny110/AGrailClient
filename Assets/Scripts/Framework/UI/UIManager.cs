@@ -9,6 +9,20 @@ namespace Framework.UI
     {
         private List<WindowsBase> winStack = new List<WindowsBase>();
 
+        public float UIEdge
+        {
+            set
+            {
+                PlayerPrefs.SetFloat("UIEdge", value);
+            }
+            get
+            {
+                if (!PlayerPrefs.HasKey("UIEdge"))
+                    PlayerPrefs.SetFloat("UIEdge", 0.0f);
+                return PlayerPrefs.GetFloat("UIEdge");
+            }
+        }
+
         public WindowsBase PushWindow(WindowType type, WinMsg msg, int sortLayer = -1, Vector3 initPos = default(Vector3), params object[] parameters)
         {
             var guid = System.Guid.NewGuid();
