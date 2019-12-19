@@ -22,9 +22,9 @@ public class UIEdgeFix : MonoBehaviour
             if (root.anchorMin == Vector2.zero && root.anchorMax == Vector2.one)
             {
                 //设置左下
-                root.offsetMin = new Vector2(value * 30, 0);
+                root.offsetMin = new Vector2(value * 100, 0);
                 //设置右上
-                root.offsetMax = new Vector2(-value * 30, 0);
+                root.offsetMax = new Vector2(-value * 100, 0);
             }
         }
     }
