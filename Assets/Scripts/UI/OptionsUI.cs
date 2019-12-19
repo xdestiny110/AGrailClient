@@ -16,6 +16,9 @@ namespace AGrail
         private Slider bgmSlider;
         [SerializeField]
         private Slider seSlider;
+        [SerializeField]
+        private Slider uiSlider;
+
 
         public override WindowType Type
         {
@@ -29,8 +32,22 @@ namespace AGrail
         {
             bgmSlider.value = AudioManager.Instance.BGMVolume;
             seSlider.value = AudioManager.Instance.SEVolume;
+            uiSlider.value = GameManager.UIInstance.UIEdge;
+
+            bgmSlider.onValueChanged.AddListener(OnBGMVolChange);
+            seSlider.onValueChanged.AddListener(OnSEVolChange);
+            uiSlider.onValueChanged.AddListener(OnUIEdgeChange);
 
             base.Awake();
+        }
+
+        public  override void OnDestroy()
+        {
+            bgmSlider.onValueChanged.RemoveAllListeners();
+            seSlider.onValueChanged.RemoveAllListeners();
+            uiSlider.onValueChanged.RemoveAllListeners();
+
+            base.OnDestroy();
         }
 
         public void OnExitClick()
@@ -42,10 +59,10 @@ namespace AGrail
             else
             {
                 Lobby.Instance.LeaveRoom();
-                if(SceneManager.GetActiveScene().buildIndex==2)
-                SceneManager.LoadScene(1);
+                if (SceneManager.GetActiveScene().buildIndex == 2)
+                    SceneManager.LoadScene(1);
                 else
-                GameManager.UIInstance.PopAllWindow();
+                    GameManager.UIInstance.PopAllWindow();
                 GameManager.UIInstance.PushWindow(WindowType.Lobby, WinMsg.None);
             }
         }
@@ -63,6 +80,16 @@ namespace AGrail
         public void OnBackClick()
         {
             GameManager.UIInstance.PopWindow(WinMsg.None);
+        }
+
+        public void OnUIEdgeChange(float vol)
+        {
+            GameManager.UIInstance.UIEdge = vol;
+            var fixList = FindObjectsOfType<UIEdgeFix>();
+            foreach (var item in fixList)
+            {
+                item.FixEdge(vol);
+            }
         }
     }
 }

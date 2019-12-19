@@ -82,6 +82,7 @@ namespace AGrail
         public void Login()
         {
             UserData.Instance.Login(inptUserName.text, inptPassword.text);
+            gameObject.SetActive(false);
         }
 
         public void OnBtnStartClick()
