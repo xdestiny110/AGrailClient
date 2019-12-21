@@ -13,15 +13,8 @@ public class UIEdgeFix : MonoBehaviour
 
     private void Start()
     {
-        //StartCoroutine(DelayFix());
         FixEdge(GameManager.UIInstance.UIEdge);
     }
-
-    //private IEnumerator DelayFix()
-    //{
-    //    yield return new WaitForSeconds(.0f);
-    //    FixEdge(GameManager.UIInstance.UIEdge);
-    //}
 
     public void FixEdge(float value)
     {
