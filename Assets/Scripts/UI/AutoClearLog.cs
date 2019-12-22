@@ -3,28 +3,66 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
+using System;
 
 public class AutoClearLog : MonoBehaviour
 {
-    public void AutoClearText(int maxLineCount)
+    public void AutoClearText(string content,int maxLineCount)
     {
-        var text = GetComponent<Text>();
-        var lines = text.cachedTextGenerator.lineCount;
+       // Debug.LogWarning(content);
 
-        if (lines > maxLineCount)
+        string[] contentLines = content.Split(new string[] { "\r\n" }, StringSplitOptions.None);
+        string newString = content;
+        if (contentLines.Length > maxLineCount)
         {
-            
-            using (StringReader sr = new StringReader(text.text))
+            newString = "";
+            for (int i = 0; i < contentLines.Length; i++)
             {
-                string ntext="";
-                string line;
-                for(int i = 0; i < maxLineCount; i++)
+                //这里真是坑啊，还要手动移动标签
+                if (contentLines[i].StartsWith("</color>"))
                 {
-                    line = sr.ReadLine();
-                    ntext += line;
+                    contentLines[i - 1] += "</color>";
+                    contentLines[i] = contentLines[i].Remove(0, 8);
                 }
-                text.text = ntext;
-            }          
+            }
+           // Debug.LogWarning("second line:"+contentLines[1]);
+            int startLine = contentLines.Length - maxLineCount;
+            
+            for(int i = startLine; i < contentLines.Length; i++)
+            {
+                newString += contentLines[i]+"\n";
+            }
+
+           // Debug.LogWarning("New String:" + newString);
+            //content = newString;
         }
+        //Debug.LogWarning(contentLines[1]);
+
+        var text = GetComponent<Text>();
+        text.text = newString;
+        //var lines = text.cachedTextGenerator.lineCount;
+
+        //if (lines > maxLineCount)
+        //{
+        //    var content = text.text;
+        //    var chari = content.ToCharArray();
+
+        //    var lineInfo = text.cachedTextGenerator.lines;
+        //    int idx=0;
+        //    int endCharIdx=0;
+        //    foreach(var item in lineInfo)
+        //    {
+        //        if (idx > lines - maxLineCount)
+        //        {
+        //            endCharIdx = item.startCharIdx;
+        //            break;
+        //        }
+        //        idx++;
+        //    }
+        //    Debug.LogWarning(chari[endCharIdx]);
+        //    content= content.Substring(endCharIdx);
+        //    text.text = content;
+        //    LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
+        //}
     }
 }
