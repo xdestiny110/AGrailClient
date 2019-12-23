@@ -18,7 +18,7 @@ namespace Framework.UI
             get
             {
                 if (!PlayerPrefs.HasKey("UIEdge"))
-                    PlayerPrefs.SetFloat("UIEdge", 0.0f);
+                    PlayerPrefs.SetFloat("UIEdge", 0.5f);
                 return PlayerPrefs.GetFloat("UIEdge");
             }
         }

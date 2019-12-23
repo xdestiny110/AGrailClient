@@ -29,6 +29,7 @@ namespace AGrail
                 roomInfo = value;
                 roomID.text = roomInfo.room_id.ToString();
                 roomName.text = roomInfo.room_name;
+                //roomName.text = RandomRoomText();
                 roomPeople.text = string.Format("{0}/{1}", roomInfo.now_player, roomInfo.max_player);
                 roomStatus.text = (roomInfo.playing) ? "进行中" : "等待中";
                 switch (roomInfo.role_strategy)

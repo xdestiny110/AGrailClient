@@ -59,6 +59,11 @@ namespace AGrail
             base.Awake();
         }
 
+        private void Start()
+        {
+            roomTitle.text= RandomRoomText();
+        }
+
         public override void OnDestroy()
         {
             base.OnDestroy();
@@ -119,6 +124,24 @@ namespace AGrail
             GameManager.UIInstance.PopWindow(WinMsg.Show);
         }
 
+        private string RandomRoomText()
+        {
+            string[] rs = new string[]
+            {
+                "友谊才是第一呀",
+                "脸不行就先洗洗",
+                "要友善对待新人哟",
+                "新速查手册好多攻略呀！",
+                "官网竟然是codifygrail.cn！",
+                "玩了这么久，写点攻略呗",
+                "mvp真的不选我吗",
+                "战绩系统要推出啦！",
+                "Q群184705348欢迎你"
+            };
+
+            var ridx = UnityEngine.Random.Range(0, 9);
+            return rs[ridx];
+        }
     }
 }
 

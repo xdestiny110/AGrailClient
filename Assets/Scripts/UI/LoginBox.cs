@@ -59,7 +59,7 @@ namespace AGrail
 
         public override void OnHide()
         {
-            root.transform.DOLocalMoveX(-1280, 1.0f);
+            root.transform.DOLocalMoveX(-1280, 1.0f).OnComplete(()=>gameObject.SetActive(false));
         }
 
         public override void OnShow()
@@ -82,7 +82,6 @@ namespace AGrail
         public void Login()
         {
             UserData.Instance.Login(inptUserName.text, inptPassword.text);
-            gameObject.SetActive(false);
         }
 
         public void OnBtnStartClick()

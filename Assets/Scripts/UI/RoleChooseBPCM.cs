@@ -162,6 +162,12 @@ namespace AGrail
             base.Awake();
         }
 
+        private void Start()
+        {
+            logRoot.gameObject.SetActive(false);
+            chatRoot.gameObject.SetActive(false);
+        }
+
         public override void OnDestroy()
         {
             MessageSystem<MessageType>.Regist(MessageType.ChatChange, this);
@@ -349,16 +355,19 @@ namespace AGrail
             if (logTweener != null && logTweener.IsPlaying())
                 return;
             btnLogExpand.onClick.RemoveAllListeners();
+            var rt = logRoot.GetComponent<RectTransform>();
+            var w = rt.sizeDelta.x;
             if (flag)
             {
-                logRoot.localPosition = new Vector3(960, 0, 0);
-                logTweener = logRoot.DOLocalMoveX(320, 0.5f);
+                logRoot.gameObject.SetActive(true);
+                rt.anchoredPosition = new Vector2(-w * .5f, 0);
+                //logTweener = logRoot.DOLocalMoveX(320, 0.5f);
                 btnLogExpand.onClick.AddListener(delegate { onBtnLogExpandClick(false); });
             }
             else
             {
-                logRoot.localPosition = new Vector3(320, 0, 0);
-                logTweener = logRoot.DOLocalMoveX(960, 0.5f);
+                rt.anchoredPosition = new Vector2(w * .5f, 0);
+                logRoot.gameObject.SetActive(false);
                 btnLogExpand.onClick.AddListener(delegate { onBtnLogExpandClick(true); });
             }
         }
@@ -369,16 +378,18 @@ namespace AGrail
             if (chatTweener != null && chatTweener.IsPlaying())
                 return;
             btnChatExpand.onClick.RemoveAllListeners();
+            var rt = chatRoot.GetComponent<RectTransform>();
+            var width = rt.sizeDelta.x;
             if (flag)
             {
-                chatRoot.localPosition = new Vector3(-960, 0, 0);
-                chatTweener = chatRoot.DOLocalMoveX(-320, 0.5f);
+                chatRoot.gameObject.SetActive(true);
+                rt.anchoredPosition = new Vector2(width * .5f, 0);
                 btnChatExpand.onClick.AddListener(delegate { onBtnChatExpandClick(false); });
             }
             else
             {
-                chatRoot.localPosition = new Vector3(-320, 0, 0);
-                chatTweener = chatRoot.DOLocalMoveX(-960, 0.5f);
+                rt.anchoredPosition = new Vector2(-width * .5f, 0);
+                chatRoot.gameObject.SetActive(false);
                 btnChatExpand.onClick.AddListener(delegate { onBtnChatExpandClick(true); });
             }
         }
