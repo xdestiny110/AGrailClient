@@ -162,6 +162,12 @@ namespace AGrail
             base.Awake();
         }
 
+        private void Start()
+        {
+            logRoot.gameObject.SetActive(false);
+            chatRoot.gameObject.SetActive(false);
+        }
+
         public override void OnDestroy()
         {
             MessageSystem<MessageType>.UnRegist(MessageType.RoomIDChange, this);
@@ -293,7 +299,8 @@ namespace AGrail
                     }
                     break;
                 case MessageType.LogChange:
-                    log.text = Dialog.Instance.Log;
+                    //log.text = Dialog.Instance.Log;
+                    log.GetComponent<AutoClearLog>().AutoClearText(Dialog.Instance.Log, 233);
                     break;
                 case MessageType.ChatChange:
                     chatChange();
