@@ -2,16 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System.IO;
 using System;
 
 public class AutoClearLog : MonoBehaviour
 {
+    private List<string> ContentLines = new List<string>();
+    private float CurrentLogPos;
     public void AutoClearText(string content,int maxLineCount)
     {
-       // Debug.LogWarning(content);
+        Debug.LogWarning(content);
 
-        string[] contentLines = content.Split(new string[] { "\r\n" }, StringSplitOptions.None);
+        string[] contentLines = content.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
         string newString = content;
         if (contentLines.Length > maxLineCount)
         {
@@ -25,15 +26,16 @@ public class AutoClearLog : MonoBehaviour
                     contentLines[i] = contentLines[i].Remove(0, 8);
                 }
             }
-           // Debug.LogWarning("second line:"+contentLines[1]);
+            Debug.LogWarning("second line:"+contentLines[1]);
+            //UpdateContentLines(contentLines);
             int startLine = contentLines.Length - maxLineCount;
             
             for(int i = startLine; i < contentLines.Length; i++)
             {
-                newString += contentLines[i]+"\n";
+                newString += contentLines[i]+ Environment.NewLine;
             }
 
-           // Debug.LogWarning("New String:" + newString);
+            Debug.LogWarning("New String:" + newString);
             //content = newString;
         }
         //Debug.LogWarning(contentLines[1]);
@@ -64,5 +66,22 @@ public class AutoClearLog : MonoBehaviour
         //    text.text = content;
         //    LayoutRebuilder.ForceRebuildLayoutImmediate(GetComponent<RectTransform>());
         //}
+    }
+
+    //上下预留15行，一次加载10行，下0上1
+    //public void ChangeText(float value)
+    //{
+    //    CurrentLogPos = value;
+    //}
+
+    private void UpdateContentLines(string[] fixedDatas)
+    {
+        foreach(var item in fixedDatas)
+        {
+            if (!ContentLines.Contains(item))
+            {
+                ContentLines.Add(item);
+            }
+        }
     }
 }
