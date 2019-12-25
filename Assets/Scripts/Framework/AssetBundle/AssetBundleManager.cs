@@ -354,7 +354,7 @@ namespace Framework.AssetBundle
 					var c = new CheckFile(){
 						name = data[i]["name"].ToString(), 
 						hash = data[i]["hash"].ToString(), 
-						location = (CheckFile.Location)(int)data[i]["location"]
+						location = (CheckFile.Location)Enum.Parse(typeof(CheckFile.Location), data[i]["location"].ToString())
 					};
 					checkFile.Add(c);
 				}
