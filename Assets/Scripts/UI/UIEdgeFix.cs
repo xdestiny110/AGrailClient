@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using AGrail;
-using System;
+
 
 //这个脚本用于执行调整UI的边缘
 public class UIEdgeFix : MonoBehaviour

@@ -118,7 +118,8 @@ namespace AGrail
                     if (player.leader == 1)
                     {
                         BlueLeader.transform.SetParent(players[a].transform);
-                        BlueLeader.transform.localPosition = new Vector3(0, 35, 0);
+                        BlueLeader.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 35);
+                        //BlueLeader.transform.localPosition = new Vector3(0, 35, 0);
                         BlueLeader.gameObject.SetActive(true);
                     }
                     nicknames[a++].text = player.nickname;
@@ -131,7 +132,8 @@ namespace AGrail
                     if (player.leader == 1)
                     {
                         RedLeader.transform.SetParent(players[b].transform);
-                        RedLeader.transform.localPosition = new Vector3(0, 0, 0);
+                        BlueLeader.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 35);
+                        //RedLeader.transform.localPosition = new Vector3(0, 35, 0);
                         RedLeader.gameObject.SetActive(true);
                     }
                     nicknames[b++].text = player.nickname;
