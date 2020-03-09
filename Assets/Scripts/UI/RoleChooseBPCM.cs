@@ -136,7 +136,7 @@ namespace AGrail
                     if (player.leader == 1)
                     {
                         BlueLeader.transform.SetParent(players[a].transform);
-                        BlueLeader.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 35);
+                        BlueLeader.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -75);
                         //BlueLeader.transform.localPosition = new Vector3(0, 35, 0);
                         BlueLeader.gameObject.SetActive(true);
                     }
@@ -150,7 +150,7 @@ namespace AGrail
                     if (player.leader == 1)
                     {
                         RedLeader.transform.SetParent(players[b].transform);
-                        BlueLeader.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 35);
+                        RedLeader.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -75);
                         //RedLeader.transform.localPosition = new Vector3(0, 35, 0);
                         RedLeader.gameObject.SetActive(true);
                     }
