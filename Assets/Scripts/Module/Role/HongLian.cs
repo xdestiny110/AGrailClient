@@ -194,6 +194,12 @@ namespace AGrail
                     return;
                 case (uint)SkillID.血腥祷言:
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                    //如果没有治疗就取消该技能
+                    if (BattleData.Instance.MainPlayer.heal_count == 0)
+                    {
+                        CancelSkill_2083(state);
+                        return;
+                    }                       
                     if(additionalState == 0 && BattleData.Instance.Agent.SelectArgs.Count == 0)
                     {
                         selectList.Clear();
@@ -251,18 +257,7 @@ namespace AGrail
                     }
                     CancelAction = () =>
                     {
-                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
-                        if(additionalState == 0)
-                        {
-                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
-                            sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
-                        }
-                        else
-                        {
-                            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
-                            additionalState = 0;
-                            BattleData.Instance.Agent.RemoveSelectPlayer(0);
-                        }
+                        CancelSkill_2083(state);
                     };
                     return;
                 case (uint)SkillID.腥红十字:
@@ -278,6 +273,22 @@ namespace AGrail
                     return;
             }
             base.UIStateChange(state, msg, paras);
+        }
+
+        private void CancelSkill_2083(uint state)
+        {
+            MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+            if (additionalState == 0)
+            {
+                //MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
+            }
+            else
+            {
+                //MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
+                additionalState = 0;
+                BattleData.Instance.Agent.RemoveSelectPlayer(0);
+            }
         }
 
         private List<SinglePlayerInfo> allies

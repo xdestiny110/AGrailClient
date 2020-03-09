@@ -75,7 +75,7 @@ namespace AGrail
                 case 1001:
                     return card.Element == Card.CardElement.water;
                 case 1002:
-                    return card.Type == Card.CardType.magic;
+                    return card.Type == Card.CardType.magic && IsPlayersHasHeal();
             }
             return base.CanSelect(uiState, card, isCovered);
         }
@@ -105,7 +105,7 @@ namespace AGrail
                     if (skill.SkillID == 1001)
                         return Util.HasCard(Card.CardElement.water, BattleData.Instance.MainPlayer.hands);
                     if (skill.SkillID == 1002)
-                        return Util.HasCard(Card.CardType.magic, BattleData.Instance.MainPlayer.hands);
+                        return Util.HasCard(Card.CardType.magic, BattleData.Instance.MainPlayer.hands) && IsPlayersHasHeal();
                     return false;
             }
             return base.CanSelect(uiState, skill);
@@ -235,5 +235,20 @@ namespace AGrail
             base.UIStateChange(state, msg, paras);
         }
 
+        private bool IsPlayersHasHeal()
+        {
+            bool result = false;
+            foreach(var p in BattleData.Instance.PlayerIdxOrder)
+            {
+                if (p == BattleData.Instance.NowPlayerID)
+                    continue;
+                if (BattleData.Instance.GetPlayerInfo((uint)p).heal_count > 0)
+                {
+                    result = true;
+                    break;
+                }
+            }
+            return result;
+        }
     }
 }
