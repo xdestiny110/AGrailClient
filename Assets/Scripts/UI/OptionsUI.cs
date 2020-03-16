@@ -18,7 +18,8 @@ namespace AGrail
         private Slider seSlider;
         [SerializeField]
         private Slider uiSlider;
-
+        [SerializeField]
+        private Button resetButton;
 
         public override WindowType Type
         {
@@ -37,8 +38,15 @@ namespace AGrail
             bgmSlider.onValueChanged.AddListener(OnBGMVolChange);
             seSlider.onValueChanged.AddListener(OnSEVolChange);
             uiSlider.onValueChanged.AddListener(OnUIEdgeChange);
+            resetButton.onClick.AddListener(OnReset);
 
             base.Awake();
+        }
+
+        private void OnReset()
+        {
+            //OnUIEdgeChange(.5f);
+            uiSlider.value = .5f;
         }
 
         public  override void OnDestroy()
@@ -46,6 +54,7 @@ namespace AGrail
             bgmSlider.onValueChanged.RemoveAllListeners();
             seSlider.onValueChanged.RemoveAllListeners();
             uiSlider.onValueChanged.RemoveAllListeners();
+            resetButton.onClick.RemoveAllListeners();
 
             base.OnDestroy();
         }
