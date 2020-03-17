@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using AGrail;
-using System;
+
 
 //这个脚本用于执行调整UI的边缘
 public class UIEdgeFix : MonoBehaviour
@@ -23,7 +21,7 @@ public class UIEdgeFix : MonoBehaviour
             //判断为四周扩展类型的锚点预设
             if (root.anchorMin == Vector2.zero && root.anchorMax == Vector2.one)
             {
-                if (value > .5f)
+                if (value >= .5f)
                 {
                     //设置左下
                     root.offsetMin = new Vector2((value - .5f) * 200, 0);

@@ -216,6 +216,7 @@ namespace AGrail
         private void onUIStateChange()
         {
             //UI状态变化，确认哪些能够选择
+            var fsm = BattleData.Instance.Agent.FSM.Current;
             foreach (var v in cardUIs)
             {
                 if (BattleData.Instance.Agent.PlayerRole.CanSelect(BattleData.Instance.Agent.FSM.Current.StateNumber, v.Card, isShowCovered))
@@ -232,19 +233,27 @@ namespace AGrail
             }
             for (int i = 0; i < players.Count; i++)
             {
-                if (BattleData.Instance.Agent.PlayerRole.CanSelect(BattleData.Instance.Agent.FSM.Current.StateNumber, BattleData.Instance.GetPlayerInfo((uint)BattleData.Instance.PlayerIdxOrder[i])))
-                    players[i].IsEnable = true;
-                else
-                    players[i].IsEnable = false;
+                //var fsm = BattleData.Instance.Agent.FSM.Current;
+                if (fsm != null)
+                {
+                    if (BattleData.Instance.Agent.PlayerRole.CanSelect(fsm.StateNumber, BattleData.Instance.GetPlayerInfo((uint)BattleData.Instance.PlayerIdxOrder[i])))
+                        players[i].IsEnable = true;
+                    else
+                        players[i].IsEnable = false;
+                }
             }
-            btnOK.gameObject.SetActive(BattleData.Instance.Agent.PlayerRole.CheckOK(BattleData.Instance.Agent.FSM.Current.StateNumber,
-                BattleData.Instance.Agent.SelectCards, BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectSkill));
-            btnCancel.gameObject.SetActive(BattleData.Instance.Agent.PlayerRole.CheckCancel(BattleData.Instance.Agent.FSM.Current.StateNumber,
-                BattleData.Instance.Agent.SelectCards, BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectSkill));
-            btnResign.gameObject.SetActive(BattleData.Instance.Agent.PlayerRole.CheckResign(BattleData.Instance.Agent.FSM.Current.StateNumber));
-            btnSpecial.gameObject.SetActive(BattleData.Instance.Agent.PlayerRole.CheckBuy(BattleData.Instance.Agent.FSM.Current.StateNumber) ||
-                BattleData.Instance.Agent.PlayerRole.CheckExtract(BattleData.Instance.Agent.FSM.Current.StateNumber) ||
-                BattleData.Instance.Agent.PlayerRole.CheckSynthetize(BattleData.Instance.Agent.FSM.Current.StateNumber));
+            
+            if (fsm != null)
+            {
+                btnOK.gameObject.SetActive(BattleData.Instance.Agent.PlayerRole.CheckOK(fsm.StateNumber,
+                    BattleData.Instance.Agent.SelectCards, BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectSkill));
+                btnCancel.gameObject.SetActive(BattleData.Instance.Agent.PlayerRole.CheckCancel(fsm.StateNumber,
+                    BattleData.Instance.Agent.SelectCards, BattleData.Instance.Agent.SelectPlayers, BattleData.Instance.Agent.SelectSkill));
+                btnResign.gameObject.SetActive(BattleData.Instance.Agent.PlayerRole.CheckResign(fsm.StateNumber));
+                btnSpecial.gameObject.SetActive(BattleData.Instance.Agent.PlayerRole.CheckBuy(fsm.StateNumber) ||
+                    BattleData.Instance.Agent.PlayerRole.CheckExtract(fsm.StateNumber) ||
+                    BattleData.Instance.Agent.PlayerRole.CheckSynthetize(fsm.StateNumber));
+            }
             btnCovered.gameObject.SetActive(BattleData.Instance.Agent.PlayerRole.HasCoverd);
             MessageSystem<MessageType>.Notify(MessageType.AgentSelectPlayer);
             MessageSystem<MessageType>.Notify(MessageType.AgentSelectCard);

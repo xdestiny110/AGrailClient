@@ -69,6 +69,21 @@ namespace AGrail
                 return WindowType.RoleChooseBPCM;
             }
         }
+
+        private void Exchange<T>(T a,T b)
+        {
+            T t = a;
+            a = b;
+            b = t;
+        }
+
+        private void ExchangeRt(RectTransform a,RectTransform b)
+        {
+            Exchange(a.anchorMin, b.anchorMin);
+            Exchange(a.anchorMax, b.anchorMax);
+            Exchange(a.anchoredPosition, b.anchoredPosition);
+        }
+
         public override void Awake()
         {
             if (Lobby.Instance.SelectRoom.max_player != 6)
@@ -96,11 +111,14 @@ namespace AGrail
                 seats.RemoveAt(4);
             }
             if (BattleData.Instance.MainPlayer.team == 0)
-            {
-                RedGroup.localPosition = new Vector3(450, 300, 0);
-                BlueGroup.localPosition = new Vector3(-450, 300, 0);
-                redHero.transform.localPosition = new Vector3(370, -100, 0);
-                blueHero.transform.localPosition = new Vector3(-370, -100, 0);
+            {             
+                ExchangeRt(RedGroup.GetComponent<RectTransform>(), BlueGroup.GetComponent<RectTransform>());
+                ExchangeRt(redHero.GetComponent<RectTransform>(), blueHero.GetComponent<RectTransform>());
+                
+                //RedGroup.localPosition = new Vector3(450, 300, 0);
+                //BlueGroup.localPosition = new Vector3(-450, 300, 0);
+                //redHero.transform.localPosition = new Vector3(370, -100, 0);
+                //blueHero.transform.localPosition = new Vector3(-370, -100, 0);
                 FlagGroup.localScale = new Vector3(-1, 1, 0);
             }
             var idx = BattleData.Instance.PlayerIdxOrder.IndexOf((int)BattleData.Instance.StartPlayerID);
@@ -118,7 +136,8 @@ namespace AGrail
                     if (player.leader == 1)
                     {
                         BlueLeader.transform.SetParent(players[a].transform);
-                        BlueLeader.transform.localPosition = new Vector3(0, 35, 0);
+                        BlueLeader.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -75);
+                        //BlueLeader.transform.localPosition = new Vector3(0, 35, 0);
                         BlueLeader.gameObject.SetActive(true);
                     }
                     nicknames[a++].text = player.nickname;
@@ -131,7 +150,8 @@ namespace AGrail
                     if (player.leader == 1)
                     {
                         RedLeader.transform.SetParent(players[b].transform);
-                        RedLeader.transform.localPosition = new Vector3(0, 0, 0);
+                        RedLeader.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, -75);
+                        //RedLeader.transform.localPosition = new Vector3(0, 35, 0);
                         RedLeader.gameObject.SetActive(true);
                     }
                     nicknames[b++].text = player.nickname;

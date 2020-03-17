@@ -19,11 +19,13 @@ public class FixCanvasTool : MonoBehaviour
         {
             //匹配宽
             scaler.matchWidthOrHeight = 0;
+            Debug.LogWarning(gameObject.name + ":" + "已匹配宽度");
         }
         else
         {
             //匹配高
             scaler.matchWidthOrHeight = 1;
+            Debug.LogWarning(gameObject.name + ":" + "已匹配高度");
         }
     }
 }
