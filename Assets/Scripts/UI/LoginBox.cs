@@ -40,7 +40,9 @@ namespace AGrail
 
         public override void Awake()
         {
-            txtVersion.text = "Ver." + Application.version;
+            btnStart.SetActive(true);
+            loginInput.SetActive(false);
+            txtVersion.text = "Ver. " + Application.version;
             state = UserData.Instance.State;
             MessageSystem<MessageType>.Regist(MessageType.LoginState, this);
             btnSwitchAccount.onClick.AddListener(() =>
