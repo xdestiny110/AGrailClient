@@ -111,7 +111,8 @@ namespace AGrail
                 seats.RemoveAt(4);
             }
             if (BattleData.Instance.MainPlayer.team == 0)
-            {             
+            {
+                //
                 ExchangeRt(RedGroup.GetComponent<RectTransform>(), BlueGroup.GetComponent<RectTransform>());
                 ExchangeRt(redHero.GetComponent<RectTransform>(), blueHero.GetComponent<RectTransform>());
                 
