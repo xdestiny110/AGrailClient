@@ -226,6 +226,7 @@ namespace AGrail
             return false;
         }
 
+        //购买
         public virtual bool CheckBuy(uint uiState)
         {
             var m = BattleData.Instance.MainPlayer;
@@ -234,6 +235,7 @@ namespace AGrail
             return false;
         }
 
+        //提炼
         public virtual bool CheckExtract(uint uiState)
         {
             var m = BattleData.Instance.MainPlayer;
@@ -243,6 +245,7 @@ namespace AGrail
             return false;
         }
 
+        //合成
         public virtual bool CheckSynthetize(uint uiState)
         {
             var m = BattleData.Instance.MainPlayer;
