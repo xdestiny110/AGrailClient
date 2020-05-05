@@ -255,6 +255,11 @@ namespace AGrail
                             selectPlayers, null, selectHealCnt);
                         additionalState = 0;
                     }
+                    //都选择了0个治疗，则自动取消
+                    if (!CheckSkill_2083(selectList))
+                    {
+                        CancelSkill_2083(state);
+                    }
                     CancelAction = () =>
                     {
                         CancelSkill_2083(state);
@@ -273,6 +278,21 @@ namespace AGrail
                     return;
             }
             base.UIStateChange(state, msg, paras);
+        }
+
+        private bool CheckSkill_2083(List<List<uint>> selectList)
+        {
+            foreach(var s in selectList)
+            {
+                foreach(var c in s)
+                {
+                    if (c != 0)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         private void CancelSkill_2083(uint state)
