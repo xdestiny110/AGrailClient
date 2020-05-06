@@ -110,7 +110,7 @@ namespace AGrail
                 seats.RemoveAt(5);
                 seats.RemoveAt(4);
             }
-            if (BattleData.Instance.MainPlayer.team == 0)
+            if (BattleData.Instance.MainPlayer.team == (uint)Team.Blue)
             {
                 //
                 ExchangeRt(RedGroup.GetComponent<RectTransform>(), BlueGroup.GetComponent<RectTransform>());
@@ -292,7 +292,7 @@ namespace AGrail
                             {
                                 if (v.role_id != 0 && c.HeroID == 0)
                                 {
-                                    if (BattleData.Instance.GetPlayerInfo(c.ID).team == 0)
+                                    if (BattleData.Instance.GetPlayerInfo(c.ID).team == (uint)Team.Blue)
                                         blueHero.sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("hero_l", v.role_id + "L");
                                     else
                                         redHero.sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("hero_l", v.role_id + "L");
@@ -327,7 +327,7 @@ namespace AGrail
                 RoleChoose.Instance.opration == 3 ?
                 AssetBundleManager.Instance.LoadAsset<Sprite>("lobby_texture", "r03-pick") :
                 AssetBundleManager.Instance.LoadAsset<Sprite>("lobby_texture", "r03-ban");
-            if (BattleData.Instance.MainPlayer.team == 0)
+            if (BattleData.Instance.MainPlayer.team == (uint)Team.Blue)
                 blueHero.sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("hero_l", id + "L");
             else
                 redHero.sprite = AssetBundleManager.Instance.LoadAsset<Sprite>("hero_l", id + "L");
