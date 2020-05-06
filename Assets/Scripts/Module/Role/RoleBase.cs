@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Framework.Network;
 using Framework.Message;
+using UnityEngine;
 
 namespace AGrail
 {
@@ -18,7 +19,19 @@ namespace AGrail
         public virtual bool HasBlue { get { return false; } }
         public virtual bool HasCoverd { get { return false; } }
         public virtual string Knelt { get { return null; } }
-        public virtual bool IsStart { set; get; }
+        public virtual bool IsStart
+        {
+            set
+            {
+                PlayerPrefs.SetInt("IsStart", value ? 1 : 0);
+            }
+            get
+            {
+                if (!PlayerPrefs.HasKey("IsStart"))
+                    PlayerPrefs.SetInt("IsStart", 0);
+                return PlayerPrefs.GetInt("IsStart") == 1;
+            }
+        }
         public Dictionary<uint, Skill> Skills = new Dictionary<uint, Skill>();
         public Dictionary<uint, Mation> Mations { get { return Mation.GetMation((uint)RoleID); } }
         public abstract uint Star { get; }
@@ -802,8 +815,6 @@ namespace AGrail
                             MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                             return;
                         }
-
-
                     };
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
 
