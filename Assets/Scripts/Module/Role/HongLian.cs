@@ -197,7 +197,7 @@ namespace AGrail
                     //如果没有治疗就取消该技能
                     if (BattleData.Instance.MainPlayer.heal_count == 0)
                     {
-                        CancelSkill_2083(state);
+                        CancelSkill_2803(state);
                         return;
                     }                       
                     if(additionalState == 0 && BattleData.Instance.Agent.SelectArgs.Count == 0)
@@ -256,13 +256,15 @@ namespace AGrail
                         additionalState = 0;
                     }
                     //都选择了0个治疗，则自动取消
-                    if (!CheckSkill_2083(selectList))
+                    if (!CheckSkill_2803(selectList))
                     {
-                        CancelSkill_2083(state);
+                        IsStart = false;
+                        CancelSkill_2803(state);
                     }
                     CancelAction = () =>
                     {
-                        CancelSkill_2083(state);
+                        IsStart = false;
+                        CancelSkill_2803(state);
                     };
                     return;
                 case (uint)SkillID.腥红十字:
@@ -280,7 +282,7 @@ namespace AGrail
             base.UIStateChange(state, msg, paras);
         }
 
-        private bool CheckSkill_2083(List<List<uint>> selectList)
+        private bool CheckSkill_2803(List<List<uint>> selectList)
         {
             foreach(var s in selectList)
             {
@@ -295,7 +297,7 @@ namespace AGrail
             return false;
         }
 
-        private void CancelSkill_2083(uint state)
+        private void CancelSkill_2803(uint state)
         {
             MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
             if (additionalState == 0)
