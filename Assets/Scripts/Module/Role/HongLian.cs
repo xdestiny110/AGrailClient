@@ -256,7 +256,7 @@ namespace AGrail
                         additionalState = 0;
                     }
                     //都选择了0个治疗，则自动取消
-                    if (!CheckSkill_2803(selectList))
+                    if (!CheckSkill_2803(selectHealCnt))
                     {
                         IsStart = false;
                         CancelSkill_2803(state);
@@ -282,17 +282,12 @@ namespace AGrail
             base.UIStateChange(state, msg, paras);
         }
 
-        private bool CheckSkill_2803(List<List<uint>> selectList)
+        private bool CheckSkill_2803(List<uint> shc)
         {
-            foreach(var s in selectList)
+            foreach(var s in shc)
             {
-                foreach(var c in s)
-                {
-                    if (c != 0)
-                    {
-                        return true;
-                    }
-                }
+                if (s != 0)
+                    return true;
             }
             return false;
         }
