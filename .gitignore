@@ -36,3 +36,6 @@ Thumbs.db
 AssetBundles/
 StreamingAssets/
 StreamingAssets.meta
+
+.vs
+XCodeProj/
