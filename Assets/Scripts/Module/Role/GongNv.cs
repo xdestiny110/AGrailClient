@@ -178,12 +178,18 @@ namespace AGrail
                     {
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 1 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
+                        return;
                     };
                     CancelAction = () =>
                     {
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
+                        MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
+                        return;
                     };
+                    sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
+                    BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                     return;
                 case 305:

@@ -262,6 +262,7 @@ namespace AGrail
                     }
                     CancelAction = () =>
                     {
+                        IsStart = false;
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.BackState(UIStateMsg.Init);

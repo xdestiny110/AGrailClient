@@ -262,7 +262,10 @@ namespace AGrail
                     MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                     if(BattleData.Instance.Agent.SelectArgs.Count == 0)
                     {
-
+                        //
+                        IsStart = true;
+                        isChongNengUsed = true;
+                        //
                         if (BattleData.Instance.MainPlayer.hand_count > 4)
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.SendHint, StateHint.GetHint(state));
                         else
@@ -297,6 +300,7 @@ namespace AGrail
 
                     CancelAction = () =>
                     {
+                        IsStart = false;
                         MessageSystem<Framework.Message.MessageType>.Notify(Framework.Message.MessageType.CloseNewArgsUI);
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
@@ -332,6 +336,7 @@ namespace AGrail
                     }
                     CancelAction = () =>
                     {
+                        IsStart = false;
                         sendReponseMsg(state, BattleData.Instance.MainPlayer.id, null, null, new List<uint>() { 0 });
                         BattleData.Instance.Agent.FSM.ChangeState<StateIdle>(UIStateMsg.Init, true);
                     };
