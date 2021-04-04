@@ -110,7 +110,7 @@ namespace AGrail
                 password = password.text,
                 seat_mode = (int)Enum.Parse(typeof(network.SEAT_MODE), seatModeChoose.ActiveToggles().First().name),
                 first_extension = firstExtension.isOn,
-                second_extension = firstExtension.isOn,
+                second_extension = thirdExtension.isOn,
                 silence = false,
                 sp_mo_dao = spMoDaoExtension.isOn,
             };
