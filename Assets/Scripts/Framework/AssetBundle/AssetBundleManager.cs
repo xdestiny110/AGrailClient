@@ -328,7 +328,7 @@ namespace Framework.AssetBundle
             {
                 IsError = true;
                 ErrorInfo = www.error;
-                Debug.LogErrorFormat("WWW error occur. Error = {0}", www.error);
+                Debug.LogErrorFormat("WWW error occur. Error = {0},url = {1}", www.error, www.url);
                 yield break;
             }
 
@@ -351,7 +351,7 @@ namespace Framework.AssetBundle
                 {
                     IsError = true;
                     ErrorInfo = www.error;
-                    Debug.LogErrorFormat("WWW error occur. Error = {0}", www.error);
+                    Debug.LogErrorFormat("WWW error occur. Error = {0},url = {1}", www.error, www.url);
                     yield break;
                 }
                 checkFile.AddRange(JsonConvert.DeserializeObject<List<CheckFile>>(www.text));
@@ -368,7 +368,7 @@ namespace Framework.AssetBundle
                 {
                     IsError = true;
                     ErrorInfo = www.error;
-                    Debug.LogErrorFormat("WWW error occur. Error = {0}", www.error);
+                    Debug.LogErrorFormat("WWW error occur. Error = {0},url = {1}", www.error, www.url);
                     yield break;
                 }
                 bundles[bundleName] = www.assetBundle;
@@ -385,7 +385,7 @@ namespace Framework.AssetBundle
             {
                 IsError = true;
                 ErrorInfo = www.error;
-                Debug.LogErrorFormat("WWW error occur. Error = {0}", www.error);
+                Debug.LogErrorFormat("WWW error occur. Error = {0},url = {1}", www.error, www.url);
                 yield break;
             }
             using (FileStream fs = new FileStream(Path.Combine(Application.persistentDataPath, bundleName), FileMode.Create, FileAccess.Write))
