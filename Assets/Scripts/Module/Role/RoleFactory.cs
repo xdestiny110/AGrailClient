@@ -66,6 +66,7 @@ namespace AGrail
         MoQiang,
         MoNv,
         ShiRen,
+        XueSeJianLing=34,
         spMoDao=108,
     }
 }
