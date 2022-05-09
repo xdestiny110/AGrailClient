@@ -59,10 +59,11 @@ namespace AGrail
                 Destroy(SkillArea.GetChild(i).gameObject);
             }
             var prefab = AssetBundleManager.Instance.LoadAsset("lobby", "HeroIco");
-            for (uint a = 1; a < 33; a++)
+            for (uint a = 1; a < 34; a++)
             {
                 uint i = a;
                 if (a == 32) i = 108;
+                if (a == 33) i = 34;
                 var role = RoleFactory.Create(i);
                 if(p==0 || role.RoleProperty == (Card.CardProperty)p)
                 { 
